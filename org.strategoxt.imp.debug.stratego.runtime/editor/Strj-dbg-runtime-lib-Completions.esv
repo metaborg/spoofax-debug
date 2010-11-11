@@ -1,0 +1,29 @@
+module Strj-dbg-runtime-lib-Completions
+
+imports Strj-dbg-runtime-lib-Completions.generated
+
+completions
+                                                                   
+  // This file is used to define content completion.               
+  //                                                               
+  // See the imported file for a brief introduction and examples.  
+                                                                   
+
+completions
+                                                                 
+  // Syntax completion:                                          
+// disabled all completion templates as this project only contains stratego library code                                                                 
+//  completion template : Start =      "module " <m> (blank)       
+                                                                 
+//  completion template : Definition = "entity " <e> " {}" (blank) 
+                                                                 
+//  completion template : Property =   <x> " : " <T> (blank)       
+                                                                 
+
+completions
+  // Semantic (identifier) completion:   
+  
+// disabled all completions  as this project only contains stratego library code                                          
+//  completion proposer                  : editor-complete
+                                         
+//  completion trigger                   : ":"

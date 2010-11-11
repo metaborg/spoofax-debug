@@ -1,0 +1,123 @@
+module gen-debug-var
+
+// generate debug info to keep track of local variables
+// e.g.: local_var := "value"
+// syntax 
+// Term ":=" Term -> Strategy {cons("Assign")}
+imports
+  libstratego-lib
+  include/Test
+  assert
+  location-util
+  
+rules
+	
+	// every rule and strategy that contains strategies is traversed
+	// outcome: every Assign strategy is followed by a s-var call
+	// used for debugging purposes
+	add-var-statements(|filename) = 
+		bottomup(try(add-var-in-r-def(|filename)))
+		; bottomup(try(add-var-in-s-def(|filename)))
+
+	// add s-var call to rules, first lookup the rule name		
+	add-var-in-r-def(|filename):
+		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r'){a}
+		where r' := <var-wrap-r(|filename, r-name)> r
+	add-var-in-r-def(|filename):
+		d@RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r'){a}
+		where r' := <var-wrap-r(|filename, r-name)> r
+	add-var-in-r-def(|filename):
+		d@RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r'){a}
+		where r' := <var-wrap-r(|filename, r-name)> r
+	
+	
+	// add s-var calls to strategies, first lookup the strategy name
+	add-var-in-s-def(|filename):
+		SDefNoArgs(s-name, s){a} -> SDefNoArgs(s-name, s'){a} // strategy with no args
+		where s' := <var-wrap-s(|filename, s-name)> s
+	add-var-in-s-def(|filename):
+		SDef(s-name, s-args, s){a} -> SDef(s-name, s-args, s'){a} // strategy with strategy-args
+		where s' := <var-wrap-s(|filename, s-name)> s
+	add-var-in-s-def(|filename):
+		SDefT(s-name,s-args, t-args, s){a} -> SDefT(s-name, s-args, t-args, s'){a} // strategy with strategy-args and term-args
+		where s' := <var-wrap-s(|filename, s-name)> s
+	
+	// current term is a Strategy
+	// change every Assign to a Seq(Assign, s-var)
+	var-wrap-s(|filename, name) = bottomup(try(match-assign-build-s-var(|filename, name)))
+	
+	// Rule has no Rule Conditions, so it does have a strategy
+	// TODO: strategy can also be used in the build term
+    var-wrap-r(|filename, r-name) :
+    	RuleNoCond(match-term, build-term){a} -> RuleNoCond(match-term, build-term'){a}
+    	with
+    		build-term' := <var-wrap-s(|filename, r-name)> build-term
+	
+	// current Rule has rule conditions, so traverse each condition
+	// TODO: strategy can also be used in the build term
+	var-wrap-r(|filename, r-name):
+		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term', rule-cond'){a}
+		where
+            rule-cond' := <add-var-to-rule-cond(|filename, r-name)> rule-cond
+    		; build-term' := <var-wrap-s(|filename, r-name)> build-term
+
+
+
+	
+    // current term can be a list with WhereClause and WithClause terms
+    // the r-enter call should be inserted before all these clauses at position 0
+	add-var-to-rule-cond(|filename, r-name) :
+		clause-list* -> clause-list'*
+		where <is-list> clause-list*
+		; clause-list'* := <map(add-s-var-to-clause(|filename, r-name))>
+	// current term is not a list of WhereClause or WithClause terms
+    // current term can be a Strategy
+	// traverse the strategies using var-wrap-s
+	add-var-to-rule-cond(|filename, r-name) :
+		s -> s'
+		where not(<is-list> s)
+		where s' := <var-wrap-s(|filename, r-name)>
+
+	// traverse the strategies in the WithClause
+	add-s-var-to-clause(|filename, r-name):
+		WithClause(s){a} -> WithClause(s'){a}
+		with s' := <var-wrap-s(|filename, r-name)> s
+	// traverse the strategies in the WhereClause
+	add-s-var-to-clause(|filename, r-name):
+		WhereClause(s){a} -> WhereClause(s'){a}
+		with s' := <var-wrap-s(|filename, r-name)> s
+	
+	  
+	// match againt Assign(Var("local_var"), term)
+	// and create a Seq(assign, s-var)
+	// s-var will emit debug info
+	match-assign-build-s-var(|filename, name):
+		 d@Assign(lhs, rhs){a} -> Seq(d, s-var-call)
+	with
+		var-name := <get-var-name> lhs
+		; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
+
+	
+	// create a s-var strategy call
+	create-s-var-call(|filename, name, var-name, a) =
+		where(
+			t-args* := <create-args-array(|filename, name, var-name, a)>
+		) ;
+		!CallT(SVar("s-var"), [], t-args*)
+
+	
+	// create the arguments for the s-var call	  
+	create-args-array(|filename, name, var-name, a) =
+	  	![<to-string> filename, <to-string> name, <to-string> var-name ,<location-to-term> a]
+	  
+	// return the name of the Var	
+	get-var-name:
+	  	Var(name) -> name
+	  	where not (?Var(ListVar(lv)))
+	// return the name of the Var  
+	get-var-name:
+	  	Var(ListVar(name)) -> name
+	
+	// convert the value to a string in the stratego AST format  	
+	to-string :
+	  	value ->  NoAnnoList(Str(value))

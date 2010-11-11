@@ -1,0 +1,4 @@
+../java/strategies/test_prop_lib/test_prop.java: \
+	/nix/store/vhrdwv6n5asnfdv4jz0cwgl0gx7ws95j-strategoxt-0.18pre20635/share/libstratego-lib.rtree \
+	/nix/store/vhrdwv6n5asnfdv4jz0cwgl0gx7ws95j-strategoxt-0.18pre20635/share/stratego-lib/libstrategolib.rtree \
+	./test-prop.str

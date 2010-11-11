@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?eclipse version="3.0"?>
+
+<plugin>
+       <extension point="org.eclipse.imp.runtime.languageDescription">
+          <language extensions="tes" description="Test" language="Test" derivedFrom="DynamicRoot" validator="test.TestValidator" validatorClass="test.TestValidator"></language>
+       </extension>
+       <extension id="test.parser" name="Test Parser" point="org.eclipse.imp.runtime.parser">
+          <parser class="test.TestParseController" language="Test">
+          </parser>
+       </extension>    
+    </plugin>

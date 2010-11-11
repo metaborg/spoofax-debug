@@ -1,0 +1,16 @@
+module Test-References
+
+imports Test-References.generated
+
+references
+                                                                                                   
+  // This file can be used to specify reference resolving and hover help, and content completion.  
+  //                                                                                               
+  // See the imported file for a brief introduction and examples.                                  
+                                                                                                   
+
+references
+
+// we do not need an editor so we dont need reference resolving/hover                
+//  reference _ : editor-resolve
+//  hover _     : editor-hover

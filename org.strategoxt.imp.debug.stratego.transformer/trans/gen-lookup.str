@@ -1,0 +1,59 @@
+module gen-lookup
+
+imports
+	include/Test
+	str-reader
+	assert
+	  
+// parse the given stratego file and create a lookup file containing all debug-call and their linenumbers
+rules
+	create-table: inputfilename -> contents
+	where(debug(!"create-table"))
+	where(
+//	  	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
+//  	; get-anno-ast(|absPath)
+	get-anno-ast(|inputfilename)
+  	; assert-module
+  	; collect-debug-calls
+  	; lines* :=  <create-table-entries>
+  	; contents := $[[lines*]]
+  	; filename := <guarantee-extension(|"table")> inputfilename
+  	; write-to-file(|filename, contents)
+  	  )
+  	  
+// strategy to collect all strago debug calls
+	collect-debug-calls =
+    	collect-all(is-debug-call)
+    
+    // matches: s-enter
+    is-debug-call = 
+    	?CallT(SVar("s-enter"), [], [NoAnnoList(Str(_)), NoAnnoList(Str(_)), _]){anno*}
+    	// filename, name, location-info
+     // matches: s-exit
+    is-debug-call = 
+    	?CallT(SVar("s-exit"), [], [NoAnnoList(Str(_)), NoAnnoList(Str(_)), _]){anno*}
+    	// filename, name, location-info
+    // matches: r-enter
+    is-debug-call = 
+    	?CallT(SVar("r-enter"), [], [NoAnnoList(Str(_)), NoAnnoList(Str(_)), _]){anno*}
+    	// filename, name, location-info
+    // matches: r-exit
+    is-debug-call = 
+    	?CallT(SVar("r-exit"), [], [NoAnnoList(Str(_)), NoAnnoList(Str(_)), _]){anno*}
+    	// filename, name, location-info
+    // matches: s-step
+    is-debug-call = 
+    	?CallT(SVar("s-step"), [], [NoAnnoList(Str(_)), NoAnnoList(Str(_)), _]){anno*}
+    	// filename, name, location-info
+    	
+    create-table-entries = map(convert-to-tuple; convert-to-line)
+    
+    convert-to-tuple :
+    	CallT(SVar(debug-event), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(name)), NoAnnoList(Op(_, [NoAnnoList(Str(a)), NoAnnoList(Str(b)), NoAnnoList(Str(c)), NoAnnoList(Str(d))] ))]){anno*}
+    	-> (debug-event{}, filename{}, name{}, a{}, b{}, c{}, d{})
+    	
+    convert-to-line :
+  (debug-event, filename, name, a, b, c, d) -> 
+    $[[debug-event]	[filename]	[name]	[a]	[b]	[c]	[d]
+     ]
+	test-create-table = <create-table> "/home/rlindeman/workspace/strj-dbg-test/working/localvar/stratego/localvar.str"

@@ -1,0 +1,1 @@
+this folder contains a stratego program compiled to java with debug info

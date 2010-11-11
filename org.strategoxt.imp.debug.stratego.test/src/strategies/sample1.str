@@ -1,0 +1,104 @@
+module sample1
+/*
+Parse stratego programs
+
+Parse stratego source code and write aterm:
+parse-stratego -i identity.str | pp-aterm -o terms/programs/identity.aterm
+
+Parse stratego source code and pretty print the source again 
+parse-stratego -i identity.str | pp-stratego --abstract
+
+Parse stratego, transform and pretty print the aterm
+parse-stratego -i identity.str | ./transform-str | pp-aterm
+*/
+
+imports libstrategolib
+
+    
+strategies
+	main = id
+
+strategies 
+	// no args
+	kaas = id // SDefNoArgs("kaas", Id())
+	
+	// with strategy args
+	first(s) = s // SDef("first", [DefaultVarDec("s")], CallNoArgs(SVar("s")))
+	first-then-second(s1, s2) = s1; s2
+	/*
+	SDef(
+          "first-then-second"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , Seq(CallNoArgs(SVar("s1")), CallNoArgs(SVar("s2")))
+        )
+	*/
+	one-two-three(s1, s2, s3) = s1; s2; s3
+	/*
+	SDef(
+          "one-two-three"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2"), DefaultVarDec("s3")]
+        , Seq(
+            CallNoArgs(SVar("s1"))
+          , Seq(CallNoArgs(SVar("s2")), CallNoArgs(SVar("s3")))
+          )
+        )
+    */
+        
+	// with term args
+	only-term(|term) = id // SDefT("only-term", [], [DefaultVarDec("term")], Id())
+	two-terms(|term1, term2) = id
+	/*
+	SDefT(
+         "two-terms"
+       , []
+       , [DefaultVarDec("term1"), DefaultVarDec("term2")]
+       , Id()
+       )
+	*/
+	three-terms(|t1, t2, t3) = id
+	/*
+	SDefT(
+          "three-terms"
+        , []
+        , [DefaultVarDec("t1"), DefaultVarDec("t2"), DefaultVarDec("t3")]
+        , Id()
+        )
+    */
+    
+	// with strategy and term args
+	s-and-t(s|t) = s
+	/*
+	SDefT(
+          "s-and-t"
+        , [DefaultVarDec("s")]
+        , [DefaultVarDec("t")]
+        , CallNoArgs(SVar("s"))
+        )
+        */
+	s2-and-t(s1, s2|t) = id
+	/*
+	SDefT(
+          "s2-and-t"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , [DefaultVarDec("t")]
+        , Id()
+        )
+	*/
+	s-and-t2(s|t1, t2) = id
+	/*
+	SDefT(
+          "s-and-t2"
+        , [DefaultVarDec("s")]
+        , [DefaultVarDec("t1"), DefaultVarDec("t2")]
+        , Id()
+        )
+	*/
+	s2-and-t2(s1,s2|t1,t2) = id
+	/*
+	SDefT(
+          "s2-and-t2"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , [DefaultVarDec("t1"), DefaultVarDec("t2")]
+        , Id()
+        )
+	*/	

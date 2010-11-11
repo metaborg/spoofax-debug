@@ -1,0 +1,12 @@
+Start thread
+====== main ======
+| invoke  --  strjdebugruntime.strategies.java_s_enter_0_3
+| invoke  --  strjdebugruntime.strategies.java_s_enter_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_enter_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_exit_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_enter_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_exit_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_enter_0_3
+| invoke  --  strjdebugruntime.strategies.java_r_exit_0_3
+| invoke  --  strjdebugruntime.strategies.java_s_exit_0_3
+====== main end ======

@@ -1,0 +1,1 @@
+And(Impl(True,And(Atom("p"),Atom("q"))),ATom("p"))

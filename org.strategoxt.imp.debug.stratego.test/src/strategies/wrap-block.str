@@ -1,0 +1,28 @@
+// compile stratego to java
+// strj -i wrap-block.str -la stratego-lib
+// compile to c
+// strj -i wrap-block.str -la stratego-lib
+
+// compile the java
+// javac -cp ../../lib/strategoxt.jar wrap_block.java
+
+// run the java
+// java -cp ../../lib/strategoxt.jar:. wrap_block
+// parse-java -i Foo2.java | java -cp ../../lib/strategoxt.jar:. wrap_block | pp-java
+// java -cp ../../lib/strategoxt.jar:. wrap_block -i foo2.parsed | pp-java
+// java -cp ../../lib/strategoxt.jar:. wrap_block -i /home/rlindeman/workspace/short-examples/java-front1/java/foo2.parsed -o /home/rlindeman/workspace/short-examples/str-output/output
+
+module wrap-block
+imports libstratego-lib libjava-front
+strategies
+
+  main =
+    io-wrap(add-block)
+
+  add-block = 
+    topdown(try(AddBlock))
+
+rules
+  
+  AddBlock:
+    If(c, stm) -> If(c, Block([stm]))

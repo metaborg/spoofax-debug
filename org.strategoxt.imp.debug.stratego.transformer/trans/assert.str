@@ -1,0 +1,14 @@
+module assert
+
+// util module to assert that the current term matches what we expect
+imports include/Test
+  
+strategies
+	  
+assert-module =
+ 	(?Module(_,_) <+ debug(!"Assert: current term is not a Module"); fail)
+ 	
+  echo(|msg):
+  	t -> t
+  	where
+  		<debug> msg

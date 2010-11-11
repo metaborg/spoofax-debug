@@ -1,0 +1,45 @@
+module rule-overview
+
+imports libstrategolib
+
+imports
+  stratego-debug-lib
+	
+rules
+	E : Not(True())      -> False()       
+  	E() : Not(False())     -> True()
+  
+    E(s) : Not(True())      -> False()       
+  	E(s1,s2) : Not(False())     -> True()
+  	
+    E(|t) : Not(True())      -> False()       
+  	E(|t1,t2) : Not(False())     -> True()
+	
+	E(s|t) : Not(True())      -> False()
+	 
+  	E : Not(False())     -> out
+  		where s-enter(|"E")
+  		with out := True()
+  		
+  	E : Not(False())     -> out
+  		where out := True()
+
+  	E : Not(False())     -> out
+  		where( out := True() )
+  		
+  	E : Not(False())     -> out'
+  		with 
+  			out := False() ;
+  			out' := out
+  		
+signature
+sorts Prop
+  constructors
+    False : Prop
+    True  : Prop
+    Atom  : String -> Prop
+    Not   : Prop -> Prop
+    And   : Prop * Prop -> Prop
+    Or    : Prop * Prop -> Prop
+    Impl  : Prop * Prop -> Prop
+    Eq    : Prop * Prop -> Prop

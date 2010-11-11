@@ -1,0 +1,26 @@
+packaging instructions for org.strategoxt.imp.debug.stratego.core
+
+before org.strategoxt.imp.debug.stratego.core can be packaged
+its libraries have to be built
+
+ * org.strjdbg.transformer.jar
+ build project org.strategoxt.imp.debug.stratego.transformer and copy include/org.strjdbg.transformer.jar to the lib dir
+ 
+ * strategodebuglib.rtree 
+ see org.strategoxt.imp.debug.stratego.runtime/str-lib/README.txt
+ Also copy it to the lib dir of projects org.strategoxt.imp.debug.stratego.transformer and org.strategoxt.imp.debug.stratego.test
+
+ * strj_dbg_runtime_lib-java.jar
+ build project org.strategoxt.imp.debug.stratego.runtime and copy include/strj_dbg_runtime_lib-java.jar to the lib dir
+ 
+ * strj_dbg_runtime_lib.jar
+ build project org.strategoxt.imp.debug.stratego.runtime and copy include/strj_dbg_runtime_lib.jar to the lib dir
+  
+  
+external libraries
+ * eclipse-ecj.jar: the eclipse java compiler
+ * jdi.jar and jdimodel.jar: eclipse implementations of the java debug interface
+ * strategoxt.jar: the strategoxt java runtime
+ * tools.jar: sun implementation of the java debug interface
+ 
+ 

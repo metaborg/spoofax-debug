@@ -1,0 +1,17 @@
+
+module Strj-dbg-runtime-lib.main
+
+imports Strj-dbg-runtime-lib-Builders Strj-dbg-runtime-lib-Colorer Strj-dbg-runtime-lib-Completions Strj-dbg-runtime-lib-Folding Strj-dbg-runtime-lib-Outliner Strj-dbg-runtime-lib-References Strj-dbg-runtime-lib-Syntax
+
+language General properties
+                  
+  name          : Strj-dbg-runtime-lib
+  id            : strjdbgruntimelib
+  extends       : Root
+                  
+  description   : "Spoofax/IMP-generated editor for the Strj-dbg-runtime-lib language"
+  url           : http://strategoxt.org
+                  
+  extensions    : strjdbg
+  table         : include/Strj-dbg-runtime-lib.tbl
+  start symbols : Start

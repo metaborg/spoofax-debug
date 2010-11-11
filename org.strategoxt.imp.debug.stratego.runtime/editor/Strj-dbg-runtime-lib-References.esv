@@ -1,0 +1,17 @@
+module Strj-dbg-runtime-lib-References
+
+imports Strj-dbg-runtime-lib-References.generated
+
+references
+                                                                                                   
+  // This file can be used to specify reference resolving and hover help, and content completion.  
+  //                                                                                               
+  // See the imported file for a brief introduction and examples.                                  
+                                                                                                   
+
+references
+
+// disabled all reference resolving, this project contains only stratego code
+                
+//  reference _ : editor-resolve
+//  hover _     : editor-hover

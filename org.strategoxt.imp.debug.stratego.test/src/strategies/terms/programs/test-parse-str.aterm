@@ -1,0 +1,61 @@
+Module(
+  "test-parse-str"
+, [ Imports([Import("libstrategolib")])
+  , Strategies([SDefNoArgs("main", Id())])
+  , Strategies(
+      [ SDefNoArgs("kaas", Id())
+      , SDef("first", [DefaultVarDec("s")], CallNoArgs(SVar("s")))
+      , SDef(
+          "first-then-second"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , Seq(CallNoArgs(SVar("s1")), CallNoArgs(SVar("s2")))
+        )
+      , SDef(
+          "one-two-three"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2"), DefaultVarDec("s3")]
+        , Seq(
+            CallNoArgs(SVar("s1"))
+          , Seq(CallNoArgs(SVar("s2")), CallNoArgs(SVar("s3")))
+          )
+        )
+      , SDefT("only-term", [], [DefaultVarDec("term")], Id())
+      , SDefT(
+          "two-terms"
+        , []
+        , [DefaultVarDec("term1"), DefaultVarDec("term2")]
+        , Id()
+        )
+      , SDefT(
+          "three-terms"
+        , []
+        , [DefaultVarDec("t1"), DefaultVarDec("t2"), DefaultVarDec("t3")]
+        , Id()
+        )
+      , SDefT(
+          "s-and-t"
+        , [DefaultVarDec("s")]
+        , [DefaultVarDec("t")]
+        , CallNoArgs(SVar("s"))
+        )
+      , SDefT(
+          "s2-and-t"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , [DefaultVarDec("t")]
+        , Id()
+        )
+      , SDefT(
+          "s-and-t2"
+        , [DefaultVarDec("s")]
+        , [DefaultVarDec("t1"), DefaultVarDec("t2")]
+        , Id()
+        )
+      , SDefT(
+          "s2-and-t2"
+        , [DefaultVarDec("s1"), DefaultVarDec("s2")]
+        , [DefaultVarDec("t1"), DefaultVarDec("t2")]
+        , Id()
+        )
+      ]
+    )
+  ]
+)

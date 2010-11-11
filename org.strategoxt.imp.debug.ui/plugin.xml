@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.strjdbg.eclipse.ui.str.launching.StrategoTabGroup"
+            description="Run or debug a Stratego program"
+            id="org.strjdbg.eclipse.ui.launchConfigurationTabGroup.str"
+            type="org.strjdbg.eclipse.core.launchConfigurationType.str">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.strjdbg.eclipse.core.launchConfigurationType.str"
+            icon="icons/strategoxt_logo_16.png"
+            id="org.strjdbg.eclipse.ui.str.launchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.strjdbg.eclipse.ui.str.launching.StrategoLaunchShortcut"
+            icon="icons/strategoxt_logo_16.png"
+            id="org.strjdbg.eclipse.ui.launchShortcut.str"
+            label="Stratego Program"
+            modes="run, debug">
+		<description
+     		description="Runs a local Stratego program"
+     		mode="run">
+    	</description>
+    	<description
+     		description="Debugs a local Stratego program"
+     		mode="debug">
+    	</description>
+     <contextualLaunch>
+        <enablement>
+           <with variable="selection">
+             <count value="1"/>
+              <iterate>
+              	<adapt type="org.eclipse.core.resources.IResource">
+	          		<test property="org.eclipse.core.resources.name" 
+	                	value="*.str"/>
+	       		</adapt>
+              </iterate>
+             </with>
+        </enablement>
+     </contextualLaunch>
+     <configurationType
+           id="org.strjdbg.eclipse.core.launchConfigurationType.str">
+     </configurationType>
+            
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.texteditor.ITextEditor"
+            class="org.strjdbg.eclipse.ui.str.model.StrategoBreakpointAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.strjdbg.eclipse.ui.str.model.StrategoModelPresentation"
+            id="org.strjdbg.eclipse.core">
+      </debugModelPresentation>
+   </extension>
+</plugin>

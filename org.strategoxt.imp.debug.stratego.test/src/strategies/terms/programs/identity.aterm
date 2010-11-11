@@ -1,0 +1,8 @@
+Module(
+  "identity"
+, [ Imports([Import("libstratego-lib")])
+  , Strategies(
+      [SDefNoArgs("main", Call(SVar("io-wrap"), [Id()]))]
+    )
+  ]
+)

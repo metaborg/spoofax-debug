@@ -1,0 +1,238 @@
+module gen-debug-info
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  gen-debug-step // add step debug information
+  gen-debug-var // add local var debug information
+  location-util
+  
+//
+// wrap r-enter/r-exit and s-enter/s-exit around rules and strategies.
+// these rules have the following parameters: r-enter(|<filename>, <rule/strategy name>, <LocationInfo>)
+//
+strategies  
+	// prepare debug, remove all annotations except 
+	// the ones connected to a Stat-aterm
+	
+	
+	// dicard all location annotations for all terms except 
+	//for the statements defined below	
+    //filter-location = bottomup(try(keep-location))
+    
+    // keep all Location annotations
+    filter-location = id
+    
+    keep-location =
+      if should-keep-location then id else discard-location end
+  
+    // For each statement list the constructor here to ensure the line numbers will be saved
+  	// three types of strategy definitions
+  	should-keep-location :
+  		e@SDefNoArgs(_,_) -> e
+  	should-keep-location :
+  		e@SDef(_,_,_) -> e
+	should-keep-location :	
+  		e@SDefT(_,_,_,_) -> e
+	should-keep-location :
+		e@RDefNoArgs(_,_) -> e
+	should-keep-location :
+  		e@RDef(_,_,_) -> e
+	should-keep-location :
+		e@RDefT(_,_,_,_) -> e
+		
+  	// drop the annotation	
+  	discard-location:
+  		e{a*} -> e{}    
+
+strategies
+	
+	// main rule for adding debug information
+	add-debug-info(|filename) = 
+		add-step-statements(|filename) // step statements, each strategy statement s will be replaced by Seq(step-s, s)
+		; 
+		  add-var-statements(|filename) // local var statements, add them after step statements are added
+		; add-s-entry-and-exit-calls(|filename) // s-enter, s-exit
+		; add-r-entry-and-exit-calls(|filename) // r-enter, r-exit
+		; add-s-debug-import // add import for debug library
+	
+	// current term should be a module
+	 add-s-entry-and-exit-calls(|filename) =
+	 	bottomup(try(add-s-entry-and-exit-call(|filename)))
+	 	
+	// current term should be a module
+	 add-r-entry-and-exit-calls(|filename) =
+	 	bottomup(try(add-r-entry-and-exit-call(|filename)))
+
+ 	
+rules 
+// 
+// add an s-entry and s-exit strategy call around each strategy definition
+//
+	add-s-entry-and-exit-call(|filename):
+		SDefNoArgs(s-name, s){a} -> SDefNoArgs(s-name, s') // strategy with no args
+		with s' := <wrap-s(|filename, s-name, a)> s
+	add-s-entry-and-exit-call(|filename):
+		SDef(s-name, s-args, s){a} -> SDef(s-name, s-args, s') // strategy with strategy-args
+		with s' := <wrap-s(|filename, s-name, a)> s
+	add-s-entry-and-exit-call(|filename):
+		SDefT(s-name, s-args, t-args, s){a} -> SDefT(s-name, s-args, t-args, s') // strategy with strategy-args and term-args
+		with s' := <wrap-s(|filename, s-name, a)> s
+		
+		
+	// current term s is a Strategy
+	// it is transformed to s-enter; s; s-exit
+	wrap-s(|filename, s-name, a):
+		s -> Seq(s-enter, Seq(s, s-exit))
+		with
+			s-enter := <create-s-enter-call(|filename, s-name, a)>
+			; s-exit := <create-s-exit-call(|filename, s-name, a)>
+
+
+//	
+// Add an r-entry and r-exit strategy call around each rule definition
+// See also "module Stratego-Sugar-Rules" for the sdf of the stratego language
+	add-r-entry-and-exit-call(|filename):
+		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r')
+		with r' := <wrap-r(|filename, r-name, a)> r
+		//with r' := r
+	add-r-entry-and-exit-call(|filename):
+		RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r')
+		with r' := <wrap-r(|filename, r-name, a)> r		
+	add-r-entry-and-exit-call(|filename):
+		RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r')
+		with r' := <wrap-r(|filename, r-name, a)> r	
+		
+	// current term r is a Rule
+	/*
+	transform 
+	  E : Eq(x, True()) ->  x
+	to
+      E : Eq(x, True()) -> <r-exit(|"E")> x 
+      	where r-enter(|"E")
+      	
+		RuleNoCond(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , NoAnnoList(Op("False", []))
+          )
+        
+        Rule(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , App(
+              CallT(SVar("r-exit"), [], [NoAnnoList(Str("\"E\""))])
+            , NoAnnoList(Op("False", []))
+            )
+          , CallT(SVar("r-enter"), [], [NoAnnoList(Str("\"E\""))])
+          )
+    */
+    wrap-r(|filename, r-name, a) :
+    	RuleNoCond(match-term, build-term) -> Rule(match-term, build-term', cond* )
+    	where 
+    	cond* := <create-r-enter-call(|filename, r-name, a)>
+    	; build-term' := App(<create-r-exit-call(|filename, r-name, a)>, build-term)
+    
+
+
+              
+    // rule conditions can be where or with clauses
+    // execution is as follows: ?match-term; rule-cond*; !build-term
+    // make the r-entry call the first
+    /*
+    E : Not(True())      -> False()
+    where out := True()  
+    
+    Rule(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , NoAnnoList(Op("False", []))
+          , Assign(Var("out"), NoAnnoList(Op("True", [])))
+          )
+          
+  	E : Not(True())      -> False()
+    with out := True()  
+    Rule(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , NoAnnoList(Op("False", []))
+          , [WithClause(Assign(Var("out"), NoAnnoList(Op("True", []))))]
+          )
+     
+    E : Not(True())      -> False()
+    where out := True(); kaas := False()      
+    Rule(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , NoAnnoList(Op("False", []))
+          , Seq(
+              Assign(Var("out"), NoAnnoList(Op("True", [])))
+            , Assign(Var("kaas"), NoAnnoList(Op("False", [])))
+            )
+          )
+          
+    E : Not(True())      -> False()
+    where out := True(); kaas := False()
+    with foo := False()       
+    Rule(
+            NoAnnoList(Op("Not", [NoAnnoList(Op("True", []))]))
+          , NoAnnoList(Op("False", []))
+          , [ WhereClause(
+                Seq(
+                  Assign(Var("out"), NoAnnoList(Op("True", [])))
+                , Assign(Var("kaas"), NoAnnoList(Op("False", [])))
+                )
+              )
+            , WithClause(Assign(Var("foo"), NoAnnoList(Op("False", []))))
+            ]
+          )
+          */
+	wrap-r(|filename, r-name, a):
+		Rule(match-term, build-term, rule-cond) -> Rule(match-term, build-term', rule-cond'*)
+		where
+			// if rule-cond is a list, insert the r-exit at index 1
+			// if rule-cond is not a list, create a list
+            rule-cond'* := <add-rule-cond(|filename, r-name, a)> rule-cond
+            ; build-term' := App(<create-r-exit-call(|filename, r-name, a)>, build-term)
+          
+    // current term can be a list with WhereClause and WithClause terms
+    // the r-enter call should be inserted before all these clauses at position 0
+	add-rule-cond(|filename, r-name, a) :
+		clause-list* -> clause-list'*
+		where <is-list> clause-list*
+		; clause-list'* := <insert> (0, <create-r-enter-whereclause(|filename, r-name, a)>, clause-list*)
+		
+	// current term is not a list of WhereClause or WithClause terms
+    // current term can be a Strategy
+	// create a list of size 2, with the first term a r-enter call and the second term the original Strategy
+	add-rule-cond(|filename, r-name, a) :
+		s -> clause-list*
+		where not(<is-list> s)
+		where clause-list* := [<create-r-enter-whereclause(|filename, r-name, a)>, WhereClause(s)]
+    
+
+    // create a where clause for the r-enter call
+    create-r-enter-whereclause(|filename, r-name, a) = !WhereClause(
+                <create-r-enter-call(|filename, r-name, a)>
+              )
+
+// add the imports stratego-debug-lib
+// current term should be a module
+	add-s-debug-import:
+		Module(x, def*) -> Module(x, def'*)
+		// insert Imports([Import("strategodebuglib")])
+		with def'* := <insert> (0, Imports([Import("strategodebuglib")]), def*)
+		// make sure strategodebuglib.rtree is on the path when compiling str to java
+
+ 
+strategies
+    // create a r-exit or r-enter call, 
+    // first argument of CallT is the name of the strategy, 
+    // second argument is a list of strategies, 
+    // third argument is a list of terms
+    // r-exit(| "execute", LocationInfo("37", "3", "40", "38"))
+    create-r-exit-call(|filename, r-name, a) = !CallT(SVar("r-exit"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(r-name)), <location-to-term> a])
+    // r-enter(| "execute", LocationInfo("37", "3", "40", "38"))
+    create-r-enter-call(|filename, r-name, a) = !CallT(SVar("r-enter"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(r-name)), <location-to-term> a])
+    
+    create-s-enter-call(|filename, s-name, a) = !CallT(SVar("s-enter"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(s-name)), <location-to-term> a])
+    
+    create-s-exit-call(|filename, s-name, a) = !CallT(SVar("s-exit"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(s-name)), <location-to-term> a])
+    
+	

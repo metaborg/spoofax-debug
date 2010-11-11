@@ -1,0 +1,220 @@
+module test-prop
+
+imports
+  strategodebuglib
+
+
+imports
+  libstrategolib
+
+
+signature
+  sorts
+    Prop
+
+  constructors
+    False : Prop
+    True  : Prop
+    Atom  : String -> Prop
+    Not   : Prop -> Prop
+    And   : Prop * Prop -> Prop
+    Or    : Prop * Prop -> Prop
+    Impl  : Prop * Prop -> Prop
+    Eq    : Prop * Prop -> Prop
+
+
+strategies
+  main =
+    s-enter(
+    | "main"
+    , LocationInfo("23", "3", "24", "18")
+    )
+    ; io-wrap(eval)
+    ; s-exit(
+      | "main"
+      , LocationInfo("23", "3", "24", "18")
+      )
+
+  eval =
+    s-enter(
+    | "eval"
+    , LocationInfo("26", "3", "27", "17")
+    )
+    ; innermost(E)
+    ; s-exit(
+      | "eval"
+      , LocationInfo("26", "3", "27", "17")
+      )
+
+
+rules
+
+  E :
+    Not(True()) -> <r-exit(
+                    | "E"
+                    , LocationInfo("32", "3", "33", "27")
+                    )> False()
+    where r-enter(
+          | "E"
+          , LocationInfo("32", "3", "33", "27")
+          )
+
+  E :
+    Not(False()) -> <r-exit(
+                     | "E"
+                     , LocationInfo("35", "3", "36", "27")
+                     )> True()
+    where r-enter(
+          | "E"
+          , LocationInfo("35", "3", "36", "27")
+          )
+
+  E :
+    And(True(), x) -> <r-exit(
+                       | "E"
+                       , LocationInfo("38", "3", "39", "24")
+                       )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("38", "3", "39", "24")
+          )
+
+  E :
+    And(x, True()) -> <r-exit(
+                       | "E"
+                       , LocationInfo("41", "3", "42", "24")
+                       )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("41", "3", "42", "24")
+          )
+
+  E :
+    And(False(), x) -> <r-exit(
+                        | "E"
+                        , LocationInfo("44", "3", "45", "31")
+                        )> False()
+    where r-enter(
+          | "E"
+          , LocationInfo("44", "3", "45", "31")
+          )
+
+  E :
+    And(x, False()) -> <r-exit(
+                        | "E"
+                        , LocationInfo("47", "3", "48", "31")
+                        )> False()
+    where r-enter(
+          | "E"
+          , LocationInfo("47", "3", "48", "31")
+          )
+
+  E :
+    Or(True(), x) -> <r-exit(
+                      | "E"
+                      , LocationInfo("50", "3", "51", "28")
+                      )> True()
+    where r-enter(
+          | "E"
+          , LocationInfo("50", "3", "51", "28")
+          )
+
+  E :
+    Or(x, True()) -> <r-exit(
+                      | "E"
+                      , LocationInfo("53", "3", "54", "28")
+                      )> True()
+    where r-enter(
+          | "E"
+          , LocationInfo("53", "3", "54", "28")
+          )
+
+  E :
+    Or(False(), x) -> <r-exit(
+                       | "E"
+                       , LocationInfo("56", "3", "57", "24")
+                       )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("56", "3", "57", "24")
+          )
+
+  E :
+    Or(x, False()) -> <r-exit(
+                       | "E"
+                       , LocationInfo("59", "3", "60", "24")
+                       )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("59", "3", "60", "24")
+          )
+
+  E :
+    Impl(True(), x) -> <r-exit(
+                        | "E"
+                        , LocationInfo("62", "3", "63", "25")
+                        )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("62", "3", "63", "25")
+          )
+
+  E :
+    Impl(x, True()) -> <r-exit(
+                        | "E"
+                        , LocationInfo("65", "3", "66", "30")
+                        )> True()
+    where r-enter(
+          | "E"
+          , LocationInfo("65", "3", "66", "30")
+          )
+
+  E :
+    Impl(False(), x) -> <r-exit(
+                         | "E"
+                         , LocationInfo("68", "3", "69", "31")
+                         )> True()
+    where r-enter(
+          | "E"
+          , LocationInfo("68", "3", "69", "31")
+          )
+
+  E :
+    Eq(False(), x) -> <r-exit(
+                       | "E"
+                       , LocationInfo("71", "3", "72", "29")
+                       )> Not(x)
+    where r-enter(
+          | "E"
+          , LocationInfo("71", "3", "72", "29")
+          )
+
+  E :
+    Eq(x, False()) -> <r-exit(
+                       | "E"
+                       , LocationInfo("74", "3", "75", "29")
+                       )> Not(x)
+    where r-enter(
+          | "E"
+          , LocationInfo("74", "3", "75", "29")
+          )
+
+  E :
+    Eq(True(), x) -> <r-exit(
+                      | "E"
+                      , LocationInfo("77", "3", "78", "23")
+                      )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("77", "3", "78", "23")
+          )
+
+  E :
+    Eq(x, True()) -> <r-exit(
+                      | "E"
+                      , LocationInfo("80", "3", "81", "23")
+                      )> x
+    where r-enter(
+          | "E"
+          , LocationInfo("80", "3", "81", "23")
+          )

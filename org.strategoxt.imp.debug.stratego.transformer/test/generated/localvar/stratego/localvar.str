@@ -1,0 +1,144 @@
+module localvar
+
+imports
+  strategodebuglib
+
+
+imports
+  libstrategolib
+
+
+signature
+  sorts
+    Prop
+
+  constructors
+    Var      : String -> Expression
+    Number   : Int -> Expression
+    Add      : Expression * Expression -> Expression
+    Sub      : Expression * Expression -> Expression
+    Print    : Expression -> Statement
+    Assign   : String * Expression -> Statement
+    Function : String * List(Statement) -> Definition
+    Comment  : String * String -> Definition
+    Program  : String * List(Definition) -> Program
+
+
+strategies
+  main =
+    s-enter(
+    | "main"
+    , LocationInfo("31", "3", "32", "21")
+    )
+    ; io-wrap(execute)
+    ; s-exit(
+      | "main"
+      , LocationInfo("31", "3", "32", "21")
+      )
+
+
+rules
+
+  execute :
+    input -> <r-exit(
+              | "execute"
+              , LocationInfo("37", "3", "40", "38")
+              )> output
+    where r-enter(
+          | "execute"
+          , LocationInfo("37", "3", "40", "38")
+          )
+    with output := <match-comments> input
+
+
+rules
+
+  match-comments :
+    Program(_, definitions*) -> <r-exit(
+                                 | "match-comments"
+                                 , LocationInfo("43", "2", "49", "37")
+                                 )> out
+    where r-enter(
+          | "match-comments"
+          , LocationInfo("43", "2", "49", "37")
+          )
+    with f* := <find-functions> definitions*
+         ; c* := <find-comments> definitions*
+         ; out := <match-f-and-c> (f*, c*)
+
+  find-functions :
+    definition* -> <r-exit(
+                    | "find-functions"
+                    , LocationInfo("52", "2", "55", "54")
+                    )> functions*
+    where r-enter(
+          | "find-functions"
+          , LocationInfo("52", "2", "55", "54")
+          )
+    with functions* := <filter(?Function(_, _))> definition*
+
+  find-comments :
+    definition* -> <r-exit(
+                    | "find-comments"
+                    , LocationInfo("57", "2", "60", "52")
+                    )> comments*
+    where r-enter(
+          | "find-comments"
+          , LocationInfo("57", "2", "60", "52")
+          )
+    with comments* := <filter(?Comment(_, _))> definition*
+
+  match-f-and-c :
+    (f*, c*) -> <r-exit(
+                 | "match-f-and-c"
+                 , LocationInfo("62", "2", "65", "49")
+                 )> matches*
+    where r-enter(
+          | "match-f-and-c"
+          , LocationInfo("62", "2", "65", "49")
+          )
+    with matches* := <map(find-comment-match(|c*))> f*
+
+  find-comment-match(|c*):
+    f -> <r-exit(
+          | "find-comment-match"
+          , LocationInfo("67", "2", "72", "43")
+          )> (f, c)
+    where r-enter(
+          | "find-comment-match"
+          , LocationInfo("67", "2", "72", "43")
+          )
+    with name := <get-function-name> f
+         ; c := <find-comment-by-name(|name)> c*
+
+  get-function-name :
+    Function(name, _) -> <r-exit(
+                          | "get-function-name"
+                          , LocationInfo("74", "2", "75", "28")
+                          )> name
+    where r-enter(
+          | "get-function-name"
+          , LocationInfo("74", "2", "75", "28")
+          )
+
+  find-comment-by-name(|name):
+    c* -> <r-exit(
+           | "find-comment-by-name"
+           , LocationInfo("77", "2", "81", "35")
+           )> comment
+    where r-enter(
+          | "find-comment-by-name"
+          , LocationInfo("77", "2", "81", "35")
+          )
+    with c-filtered* := <filter(?Comment(name, _))> c*
+         ; comment := <first> c-filtered*
+
+  first :
+    c-list* -> <r-exit(
+                | "first"
+                , LocationInfo("83", "2", "84", "28")
+                )> <last> c-list*
+    where r-enter(
+          | "first"
+          , LocationInfo("83", "2", "84", "28")
+          )

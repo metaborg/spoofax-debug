@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.strjdbg.eclipse.core.str.launching.StrategoLaunchDelegate"
+            id="org.strjdbg.eclipse.core.launchConfigurationType.str"
+            modes="run, debug"
+            name="Stratego"
+            sourceLocatorId="org.strjdbg.eclipse.core.sourceLookupDirector.str"
+            sourcePathComputerId="org.strjdbg.eclipse.core.sourcePathComputer.str">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="org.strjdbg.eclipse.core.str.launching.StrategoSourceLookupDirector"
+            id="org.strjdbg.eclipse.core.sourceLookupDirector.str"
+            name="Stratego Source Lookup Director">
+      </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.strjdbg.eclipse.core.str.launching.StrategoSourcePathComputerDelegate"
+            id="org.strjdbg.eclipse.core.sourcePathComputer.str">
+      </sourcePathComputer>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            class="org.strjdbg.eclipse.core.str.model.StrategoLineBreakpoint"
+            id="org.strjdbg.eclipse.core.str.lineBreakpoint"
+            markerType="org.strjdbg.eclipse.core.str.lineBreakpoint.marker">
+      </breakpoint>
+   </extension>
+   <extension
+         id="org.strjdbg.eclipse.core.str.lineBreakpoint.marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.debug.core.lineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+
+</plugin>

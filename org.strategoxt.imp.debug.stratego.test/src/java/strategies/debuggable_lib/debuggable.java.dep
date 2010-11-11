@@ -1,0 +1,5 @@
+../java/strategies/debuggable_lib/debuggable.java: \
+	/nix/store/vhrdwv6n5asnfdv4jz0cwgl0gx7ws95j-strategoxt-0.18pre20635/share/libstratego-lib.rtree \
+	/nix/store/vhrdwv6n5asnfdv4jz0cwgl0gx7ws95j-strategoxt-0.18pre20635/share/stratego-lib/libstrategolib.rtree \
+	/home/rlindeman/workspace/short-examples/src/s-libraries/stratego-debug-lib.str \
+	./debuggable.str

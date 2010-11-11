@@ -1,0 +1,98 @@
+module gen-debug-step
+
+// generate debug info used for stepping in rules and strategies
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  location-util
+
+rules
+// add step statements in with/where blocks in rules and in strategies
+
+	add-step-statements(|filename) = 
+		bottomup(try(add-step-in-r-def(|filename)))
+		; bottomup(try(add-step-in-s-def(|filename)))
+		
+// add step call to rules		
+	add-step-in-r-def(|filename):
+		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r'){a}
+		with r' := <add-step-in-r-clause(|filename, r-name)> r
+		//with r' := r
+	add-step-in-r-def(|filename):
+		RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r'){a}
+		with r' := <add-step-in-r-clause(|filename, r-name)> r		
+	add-step-in-r-def(|filename):
+		RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r'){a}
+		with r' := <add-step-in-r-clause(|filename, r-name)> r	
+	 
+	// rule has no WithClause or WhereClause
+    add-step-in-r-clause(|filename, r-name) :
+    	r@RuleNoCond(match-term, build-term){a*} -> r
+ 
+ 	// rule has a single clause or a list of clauses
+ 	add-step-in-r-clause(|filename, r-name):
+		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term, rule-cond'*){a}
+		where
+			// if rule-cond is a list, insert the r-exit at index 0
+			// if rule-cond is not a list, create a list
+            rule-cond'* := <add-step-in-rule-cond(|filename, r-name)> rule-cond
+
+    // current term can be a list with WhereClause and WithClause terms
+	// map each clause item
+	add-step-in-rule-cond(|filename, r-name) :
+		clause-list* -> clause-list'*
+		where <is-list> clause-list*
+		; clause-list'* := <map(add-step-to-clause(|filename, r-name))> clause-list*
+	
+// add step calls to strategies
+	add-step-in-s-def(|filename):
+		SDefNoArgs(s-name, s){a} -> SDefNoArgs(s-name, s'){a} // strategy with no args
+		with s' := <add-step-to-strategy(|filename, s-name)> s
+	add-step-in-s-def(|filename):
+		SDef(s-name, s-args, s){a} -> SDef(s-name, s-args, s'){a} // strategy with strategy-args
+		with s' := <add-step-to-strategy(|filename, s-name)> s
+	add-step-in-s-def(|filename):
+		SDefT(s-name, s-args, t-args, s){a} -> SDefT(s-name, s-args, t-args, s'){a} // strategy with strategy-args and term-args
+		with s' := <add-step-to-strategy(|filename, s-name)> s
+
+// add step calls to clauses
+
+	add-step-to-clause(|filename, name) :
+		WithClause(s){a} -> WithClause(s'){a}
+		with
+			s' := <add-step-to-strategy(|filename, name)> s
+			
+	add-step-to-clause(|filename, name) :
+		WhereClause(s){a} -> WhereClause(s'){a}
+		with
+			s' := <add-step-to-strategy(|filename, name)> s
+			
+	// current term is not a list of WhereClause or WithClause terms
+    // current term can be a Strategy
+	// create a list of size 2, with the first term a r-enter call and the second term the original Strategy
+	add-step-in-rule-cond(|filename, r-name) :
+		s{a} -> s'
+		where not(<is-list> s)
+		where s' := <add-step-to-strategy(|filename, r-name)> s
+
+	add-step-to-strategy(|filename, name): 
+		s@Seq(s1{a1}, s2{a2}) -> s'
+		//with debug(!"add-step-to-strategy SEQ") 
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := Seq(s1', s2')
+		  
+	add-step-to-strategy(|filename, name):
+		s{a1} -> s'
+		where not(?Seq(_,_))
+		//with debug(!"add-step-to-strategy not SEQ") 
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+strategies
+	create-step-call(|filename, name, a) = !CallT(SVar("s-step"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(name)), <location-to-term> a])
+	

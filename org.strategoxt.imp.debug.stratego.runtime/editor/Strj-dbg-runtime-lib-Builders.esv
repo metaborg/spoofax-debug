@@ -1,0 +1,23 @@
+
+module Strj-dbg-runtime-lib-Builders
+
+imports Strj-dbg-runtime-lib-Builders.generated
+
+builders
+                                                                      
+  // This file can be used for custom analysis and builder rules.     
+  //                                                                  
+  // See the imported file for a brief introduction and examples.     
+
+builders
+                                                                                                                               
+//  provider                  : include/strj_dbg_runtime_lib.ctree // use with build.main.xml target spoofaximp.default.ctree     
+  provider                  : include/strj_dbg_runtime_lib.jar //  use with build.main.xml target spoofaximp.default.jar                                                        
+  provider                  : include/strj_dbg_runtime_lib-java.jar                                                            
+ // no 'editor-analyze', 'generate-java' needed as this project only contains stratego library code                                                                                                                                 
+//  observer                  : editor-analyze                                                                                
+                                                                                                                               
+//  builder                   : "Generate Java code (for selection)"   = generate-java (openeditor) (realtime)               
+//  builder                   : "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)  
+                                                                                                                               
+  // on save: generate-java                                                                                                    

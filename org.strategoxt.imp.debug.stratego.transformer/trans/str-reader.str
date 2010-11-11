@@ -1,0 +1,91 @@
+module str-reader
+
+imports 
+  libstrc
+  libstratego-lib
+  libstratego-sglr // added
+  libstratego-xtc // added
+  libstratego-gpp
+  libstratego-aterm
+  trans-str
+strategies
+	// file is FILE
+	//test-str-parse =  parse-stratego-file //ps-parse-module-trm
+	//test-str-parse =  ps-parse-module-trm
+	//test-str-parse =  parse-stratego-trm(|["-i", <id>, "--preserve-positions"])
+
+rules
+	/*
+	// throws critical error
+	// [ Test | critical ] Old-style asfix position annotation not supported on this platform; use asfix-anno-location instead
+	test-str-parse:
+	f@FILE(filename) -> out
+	with
+		out := <ps-set-preserve-positions> "yes"; <ps-parse-module-trm> f 
+		*/
+		
+
+rules
+	
+	// current term is string
+	// writes the string to the absolute-location
+  write-stratego(|absolute-location)	:
+   source-code -> absolute-location
+   where
+   	write-to-file(|absolute-location, source-code)
+  
+  strategies
+
+  // accept a (filename, source-code)*
+  // filename is relative to the base-dir
+  write-files-relative(|base-dir):
+    transform-results* ->
+      writes*
+    //  <schrijf (|"kaas", x)>
+      with
+      	writes* := <map(write-to-file-relative(|base-dir))> transform-results*
+      	
+      	
+  // filename is relative to base-dir
+  // filename should correspond to the package structure
+  write-to-file-relative(|base-dir) :
+  	(filename, content) -> filename
+  	where
+  	<concat-strings> [base-dir, "/", filename] => absolutepath
+  	; <dirname> absolutepath => dir
+  	; check-dir
+  	; write-to-file(|absolutepath, content)
+	
+	
+	write-to-file(|filename, contents) = handle := <fopen> (filename, "w"); <fputs> (contents, handle); fclose
+	
+	check-dir =
+		//debug(!"check-dir")
+		(file-exists ; filemode ; isdir) <+ (debug(!"create dir: "); mkdir)
+		
+	
+  // current term should be a Stratego ast
+  // converts ast to a stratego program
+  pp-stratego-ast = 
+  	pp-stratego-string
+	
+  // ignore current term, just return the ast of a stratego program	
+  get-anno-ast(|file-path) = 
+      where(
+      	tbl-path := <get-tbl-path>;
+        <ReadFromFile> tbl-path; 
+        open-parse-table => tbl;
+        //<debug(!"filenam")> file-path;
+        <read-text-file> file-path => file
+      )
+    ; <parse-with-asfix-anno(|tbl)> file
+      
+  get-tbl-path = <concat-strings> [<get-project-dir>, "/", "include/Test.tbl"] 
+
+  // current term should be result of: <read-text-file> file-path
+  // with file-path the path to a text file    
+  parse-with-asfix-anno(|tbl) =
+    parse-string-pt(|tbl)
+    ; asfix-anno-location
+    ; implode-asfix
+	

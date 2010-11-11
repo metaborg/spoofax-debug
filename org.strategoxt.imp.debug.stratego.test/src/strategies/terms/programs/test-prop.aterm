@@ -1,0 +1,223 @@
+Module(
+  "test-prop"
+, [ Imports([Import("libstrategolib")])
+  , Signature(
+      [ Sorts([SortNoArgs("Prop")])
+      , Constructors(
+          [ OpDecl("False", ConstType(SortNoArgs("Prop")))
+          , OpDecl("True", ConstType(SortNoArgs("Prop")))
+          , OpDecl(
+              "Atom"
+            , FunType([ConstType(SortNoArgs("String"))], ConstType(SortNoArgs("Prop")))
+            )
+          , OpDecl(
+              "Not"
+            , FunType([ConstType(SortNoArgs("Prop"))], ConstType(SortNoArgs("Prop")))
+            )
+          , OpDecl(
+              "And"
+            , FunType(
+                [ConstType(SortNoArgs("Prop")), ConstType(SortNoArgs("Prop"))]
+              , ConstType(SortNoArgs("Prop"))
+              )
+            )
+          , OpDecl(
+              "Or"
+            , FunType(
+                [ConstType(SortNoArgs("Prop")), ConstType(SortNoArgs("Prop"))]
+              , ConstType(SortNoArgs("Prop"))
+              )
+            )
+          , OpDecl(
+              "Impl"
+            , FunType(
+                [ConstType(SortNoArgs("Prop")), ConstType(SortNoArgs("Prop"))]
+              , ConstType(SortNoArgs("Prop"))
+              )
+            )
+          , OpDecl(
+              "Eq"
+            , FunType(
+                [ConstType(SortNoArgs("Prop")), ConstType(SortNoArgs("Prop"))]
+              , ConstType(SortNoArgs("Prop"))
+              )
+            )
+          ]
+        )
+      ]
+    )
+  , Strategies(
+      [ SDefNoArgs(
+          "main"
+        , Call(SVar("io-wrap"), [CallNoArgs(SVar("eval"))])
+        )
+      , SDefNoArgs(
+          "eval"
+        , Call(SVar("innermost"), [CallNoArgs(SVar("E"))])
+        )
+      ]
+    )
+  , Rules(
+      [ RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Not", [Var("True")]))
+          , Var("False")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Not", [Var("False")]))
+          , Var("True")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("And", [Var("True"), Var("x")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("And", [Var("x"), Var("True")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("And", [Var("False"), Var("x")]))
+          , Var("False")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("And", [Var("x"), Var("False")]))
+          , Var("False")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Or", [Var("True"), Var("x")]))
+          , Var("True")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Or", [Var("x"), Var("True")]))
+          , Var("True")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Or", [Var("False"), Var("x")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Or", [Var("x"), Var("False")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Impl", [Var("True"), Var("x")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Impl", [Var("x"), Var("True")]))
+          , Var("True")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Impl", [Var("False"), Var("x")]))
+          , Var("True")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Eq", [Var("False"), Var("x")]))
+          , NoAnnoList(Op("Not", [Var("x")]))
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Eq", [Var("x"), Var("False")]))
+          , NoAnnoList(Op("Not", [Var("x")]))
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Eq", [Var("True"), Var("x")]))
+          , Var("x")
+          )
+        )
+      , RDefNoArgs(
+          "E"
+        , RuleNoCond(
+            NoAnnoList(Op("Eq", [Var("x"), Var("True")]))
+          , Var("x")
+          )
+        )
+      ]
+    )
+  , Signature(
+      [ Sorts(
+          [SortNoArgs("Or"), SortNoArgs("And"), SortNoArgs("NAtom"), SortNoArgs("Atom")]
+        )
+      , Constructors(
+          [ OpDecl(
+              "Or"
+            , FunType(
+                [ConstType(SortNoArgs("Or")), ConstType(SortNoArgs("Or"))]
+              , ConstType(SortNoArgs("Or"))
+              )
+            )
+          , OpDeclInj(
+              FunType([ConstType(SortNoArgs("And"))], ConstType(SortNoArgs("Or")))
+            )
+          , OpDecl(
+              "And"
+            , FunType(
+                [ConstType(SortNoArgs("And")), ConstType(SortNoArgs("And"))]
+              , ConstType(SortNoArgs("And"))
+              )
+            )
+          , OpDeclInj(
+              FunType([ConstType(SortNoArgs("NAtom"))], ConstType(SortNoArgs("And")))
+            )
+          , OpDecl(
+              "Not"
+            , FunType([ConstType(SortNoArgs("Atom"))], ConstType(SortNoArgs("NAtom")))
+            )
+          , OpDeclInj(
+              FunType([ConstType(SortNoArgs("Atom"))], ConstType(SortNoArgs("NAtom")))
+            )
+          , OpDecl(
+              "Atom"
+            , FunType([ConstType(SortNoArgs("String"))], ConstType(SortNoArgs("Atom")))
+            )
+          ]
+        )
+      ]
+    )
+  ]
+)

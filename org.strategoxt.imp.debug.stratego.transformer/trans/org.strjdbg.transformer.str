@@ -1,0 +1,24 @@
+module org.strjdbg.transformer
+
+imports
+  libstratego-lib
+  libstratego-gpp
+  libstratego-aterm
+  lib/editor-common.generated
+  trans-str
+
+rules // Main editor interface (defined by editor/Test-Builders and -References.esv)
+ 
+
+  
+  // Prints the abstract syntax ATerm of a selection.
+  generate-aterm:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path;
+      result   := selected // we just return the input term
+  
+
+      
+strategies
+	main = io-wrap(id)

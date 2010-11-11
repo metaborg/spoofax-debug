@@ -1,0 +1,42 @@
+module strj_dbg_runtime_lib
+
+imports
+  libstratego-lib
+  libstratego-gpp
+  libstratego-aterm
+  include/Strj-dbg-runtime-lib
+  lib/editor-common.generated
+
+  strategodebuglib
+
+
+rules // Main editor interface (defined by editor/Strj-debug-runtime-Builders and -References.esv)
+  
+  
+  // Prints the abstract syntax ATerm of a selection.
+  generate-aterm:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path;
+      result   := selected // we just return the input term
+  
+
+  test-call-s-enter :
+  	t -> result
+  	where(
+  		loc := LocationInfo("1","2","3","4")
+  		; result := <s-enter(|"filename", "test", loc)> "given"
+  		  )
+  		  
+  test-call-s-exit :
+  	t -> result
+  	where(
+  		loc := LocationInfo("1","2","3","4")
+  		; result := <s-exit(|"filename", "test", loc)> "given"
+  		  )
+	test-call-s-var :
+		t -> result
+		where(
+			loc := LocationInfo("1", "2", "3", "4")
+			; result := <s-var(|"filename", "test", "var-name", loc)> "given"
+		)

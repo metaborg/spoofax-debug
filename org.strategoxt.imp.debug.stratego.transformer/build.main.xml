@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Strj-dbg-transformer" default="all">
+
+	<!-- Key input modules -->
+	<property name="sdfmodule" value="Test" />
+	<property name="metasdfmodule" value="Stratego-Test" />
+	<property name="esvmodule" value="Test" />
+	<property name="strmodule" value="org.strjdbg.transformer" />
+
+	<!-- Project directories -->
+	<property name="trans" location="trans" />
+	<property name="src-gen" location="editor/java" />
+	<property name="syntax" location="syntax" />
+	<property name="include" location="include" />
+	<property name="lib" location="lib" />
+	<property name="build" location="bin" />
+	<property name="dist" location="dist" />
+
+	<!-- we want a custom package name for the jars, otherwise it will clash with other stratego jars -->
+	<!-- build java library name -->
+	<property name="build.stratego.library.name" value="org.strjdbg.transformer"/>
+	<property name="build.stratego.library.location" value="org/strjdbg/transformer"/>
+		
+	<!-- Imports -->
+	<property name="build.sdf.imports" value="" />
+	<property name="build.stratego.args" value="
+                        --library
+                        -I &quot;${trans}&quot;
+                        -I &quot;${basedir}&quot;
+                        -la stratego-lib -la stratego-sglr -la stratego-gpp -la stratego-xtc -la stratego-aterm -la strc" />
+
+	<!-- External .def and .jar locations -->
+	<property name="externaldef" location="syntax/Stratego-Sugar.def" />
+
+	<!--
+        <property name="externaljar" value="lib/debug_lib.jar"/>
+        <property name="externaljarflags" value="-la org.strategoxt.debug_lib"/>
+        -->
+
+	<!-- Environment configuration for command-line builds -->
+	<condition property="build.strategoxt.sdf" value="${eclipse.spoofaximp.nativeprefix}" else="">
+		<isset property="eclipse.spoofaximp.nativeprefix" />
+	</condition>
+	<property name="build.strategoxt.stratego" location="${user.home}/.nix-profile/bin" />
+
+    <!-- do not use the default generated file, this file is re-generated after each run -->
+	<!-- <import file="build.generated.xml"/> -->
+	<import file="build.generated.custom.xml"/>
+
+	<!-- Main target -->
+	<!--<target name="all" depends="spoofaximp.default.ctree"/>-->
+
+	<!--
+How can I compile my Stratego specification to a JAR file instead of an interpreted ctree?
+In your build.main.xml file, change this line:
+<target name="all" depends="spoofaximp.default"/>
+into
+<target name="all" depends="sdf2table,ppgen,pppack,stratego.aster,stratego.jar,sdf2imp,refresh"/>
+Then in your editor/YourLanguage-Builders.esv, 
+change the provider from 
+provider: include/yourlang.ctree 
+to 
+provider: include/yourlang.jar. 
+When you distribute your plugin, be sure you set the "unpack" option to "true" for your plugin.
+-->
+	<!-- original version -->
+	<!-- <target name="all" depends="sdf2table,ppgen,pppack,stratego.aster,stratego.jar,sdf2imp,refresh" /> -->
+	<!-- no eclipse refresh -->
+	<!--<target name="all" depends="sdf2table,ppgen,pppack,stratego.aster,stratego.jar"/>-->
+	
+	<!-- Main target -->
+	<!-- interpreted ctree -->
+	<!--<target name="all" depends="spoofaximp.default.ctree"/>-->
+	<!-- compile to jar -->
+	<target name="all" depends="spoofaximp.default.jar" />
+</project>

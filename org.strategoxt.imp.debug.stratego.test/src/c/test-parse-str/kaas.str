@@ -1,0 +1,6 @@
+module kaas
+
+imports libstratego-lib
+strategies
+  main =
+    io-wrap(id)

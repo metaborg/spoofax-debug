@@ -1,0 +1,25 @@
+// compile stratego to java
+// strj -i wrap-block-pp.str -la stratego-lib
+
+// compile the java
+// javac -cp ../../lib/strategoxt.jar wrap_block_pp.java
+
+// run the java
+// java -cp ../../lib/strategoxt.jar:. wrap_block_pp
+// java -cp ../../lib/strategoxt.jar:. wrap_block_pp -i Foo2.java
+// java -cp ../../lib/strategoxt.jar:. wrap_block_pp -i /home/rlindeman/workspace/short-examples/java-front1/java/Foo2.java -o /home/rlindeman/workspace/short-examples/str-output/output
+
+module wrap-block-pp
+imports libstratego-lib libjava-front
+strategies
+
+  main =
+    io-java2java-wrap(add-block)
+    
+  add-block = 
+    topdown(try(AddBlock))
+
+rules
+  
+  AddBlock:
+    If(c, stm) -> If(c, Block([stm]))

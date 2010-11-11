@@ -1,0 +1,19 @@
+// compile stratego to java
+// strj -i identity.str -la stratego-lib
+// parse-java -i Foo.java | ./identity | pp-java
+
+// compile the java
+// javac -cp ../../lib/strategoxt.jar identity.java
+
+
+// run the java
+// java -cp ../../lib/strategoxt.jar:. identity
+// parse-java -i Foo.java | java -cp ../../lib/strategoxt.jar:. identity | pp-java
+// java -cp ../../lib/strategoxt.jar:. identity -i foo.parsed | pp-java
+// java -cp ../../lib/strategoxt.jar:. identity -i /home/rlindeman/workspace/short-examples/java-front1/java/foo.parsed -o /home/rlindeman/workspace/short-examples/str-output/output
+
+module identity
+imports libstratego-lib
+strategies
+  main =
+    io-wrap(id)

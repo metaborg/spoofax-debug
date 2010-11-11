@@ -1,0 +1,5 @@
+../c/test-parse-str/test-parse-str: \
+	/nix/store/ff5x3wn4j9x737sy9xxqjqy6h9jdavsp-strategoxt-0.18pre20635/share/libstratego-lib.rtree \
+	/nix/store/ff5x3wn4j9x737sy9xxqjqy6h9jdavsp-strategoxt-0.18pre20635/share/libstratego-xtc.rtree \
+	/nix/store/ff5x3wn4j9x737sy9xxqjqy6h9jdavsp-strategoxt-0.18pre20635/share/libstrc.rtree \
+	./test-parse-str.str

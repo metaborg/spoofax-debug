@@ -1,0 +1,21 @@
+module location-util
+
+imports
+  libstratego-lib
+  include/Test
+  
+rules
+// ===============
+// arguments for r-enter/s-enter/r-exit/s-exit
+	// current term is Location(start-line-num, start-token-pos, end-line-num, end-token-pos)
+	location-to-term:
+		loc -> term
+		with
+			values := <get-arguments> loc
+			; args := <map(create-arg)> values
+			; term := NoAnnoList(Op("LocationInfo", args))
+		
+
+	create-arg:
+		a -> NoAnnoList(Str(a))
+// ===============	

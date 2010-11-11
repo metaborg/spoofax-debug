@@ -1,0 +1,26 @@
+CompilationUnit(
+  None()
+, []
+, [ ClassDec(
+      ClassDecHead([], Id("Foo2"), None(), None(), None())
+    , ClassBody(
+        [ StaticInit(
+            Block(
+              [ If(
+                  ExprName(Id("x"))
+                , ExprStm(Invoke(Method(MethodName(Id("foo"))), []))
+                )
+              , If(
+                  ExprName(Id("x"))
+                , Block(
+                    [ExprStm(Invoke(Method(MethodName(Id("foo"))), []))]
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    )
+  ]
+)

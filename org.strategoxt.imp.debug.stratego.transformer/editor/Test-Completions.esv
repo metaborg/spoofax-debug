@@ -1,0 +1,21 @@
+module Test-Completions
+
+imports Test-Completions.generated
+
+completions
+                                                                   
+  // This file is used to define content completion.               
+  //                                                               
+  // See the imported file for a brief introduction and examples.  
+                                                                   
+
+completions
+
+// no syntax completion needed, as we only have stratego files and do not need an editor                                     
+  // Syntax completion:                  
+//  completion template                  : "module " <m> (blank)
+//  completion template                  : "entity " <e> " {}" (blank)
+                                         
+  // Semantic (identifier) completion:   
+//  completion proposer                  : editor-complete
+//  completion trigger                   : ":"

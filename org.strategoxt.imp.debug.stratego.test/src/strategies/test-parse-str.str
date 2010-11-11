@@ -1,0 +1,13 @@
+module test-parse-str
+// test parsing a stratego program in stratego
+
+imports
+  libstrc
+  libstratego-xtc
+  libstratego-lib
+	
+strategies
+	main = do-parse
+	
+	do-parse =
+	<parse-stratego-file> "kaas"

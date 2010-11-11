@@ -1,0 +1,4 @@
+wrap-block-pp: \
+	/nix/store/ijalmmc692qkkrsyszfgqzqa33laipp3-java-front-0.9/share/java-front/libjava-front.rtree \
+	/nix/store/vhrdwv6n5asnfdv4jz0cwgl0gx7ws95j-strategoxt-0.18pre20635/share/libstratego-lib.rtree \
+	./wrap-block-pp.str

@@ -1,0 +1,38 @@
+Module(
+  "wrap-block"
+, [ Imports([Import("libstratego-lib"), Import("libjava-front")])
+  , Strategies(
+      [ SDefNoArgs(
+          "main"
+        , Call(SVar("io-wrap"), [CallNoArgs(SVar("add-block"))])
+        )
+      , SDefNoArgs(
+          "add-block"
+        , Call(
+            SVar("topdown")
+          , [Call(SVar("try"), [CallNoArgs(SVar("AddBlock"))])]
+          )
+        )
+      ]
+    )
+  , Rules(
+      [ RDefNoArgs(
+          "AddBlock"
+        , RuleNoCond(
+            NoAnnoList(Op("If", [Var("c"), Var("stm")]))
+          , NoAnnoList(
+              Op(
+                "If"
+              , [ Var("c")
+                , NoAnnoList(
+                    Op("Block", [NoAnnoList(List([Var("stm")]))])
+                  )
+                ]
+              )
+            )
+          )
+        )
+      ]
+    )
+  ]
+)

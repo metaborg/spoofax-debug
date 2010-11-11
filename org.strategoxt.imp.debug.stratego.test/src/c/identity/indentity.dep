@@ -1,0 +1,3 @@
+../c/identity/indentity: \
+	/nix/store/ff5x3wn4j9x737sy9xxqjqy6h9jdavsp-strategoxt-0.18pre20635/share/libstratego-lib.rtree \
+	./identity.str

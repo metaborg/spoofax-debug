@@ -1,0 +1,23 @@
+
+module Test-Builders
+
+imports Test-Builders.generated
+
+builders
+                                                                      
+  // This file can be used for custom analysis and builder rules.     
+  //                                                                  
+  // See the imported file for a brief introduction and examples.     
+
+builders
+                                                                                                                               
+  //provider                  : include/test.ctree     // c-based                                                                          
+  provider: include/org.strjdbg.transformer.jar // java-based
+                                          
+// we do not need an editor, as we only transform stratego files                                                                                                                               
+//  observer                  : editor-analyze                                                                                   
+                                                                                                                               
+//  builder                   : "Generate Java code (for selection)"   = generate-java (openeditor) (realtime)                   
+  builder                   : "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)  
+  builder                   : "Transform stratego" = generate-str (openeditor) (realtime)                                                                                                                 
+  // on save: generate-java                                                                                                    

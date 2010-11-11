@@ -1,0 +1,76 @@
+package org.strategoxt.debug.core.util.table;
+
+import java.util.List;
+
+import junit.framework.Assert;
+
+public class EventTableTest {
+	
+	public static void main(String[] args) {
+		runTestTable();
+	}
+
+	public static void runTestTable()
+	{
+		EventTableTest test = new EventTableTest();
+		test.testReadTable();
+	}
+	
+	public void testReadTable()
+	{
+		String location = "working/localvar/stratego/localvar.table";
+		EventTable eventTable = EventTable.readEventTable(location);
+		Assert.assertEquals(46, eventTable.size());
+		
+		// 31,1 // 0
+		List<EventEntry> entries = countEntries(eventTable, 31, 1, 0);
+		//System.out.println(entries.size());
+		
+		// 31,2 // 0
+		entries = countEntries(eventTable, 31, 2, 0);
+		
+		// 31,3 // 2 enter/exit
+		entries = countEntries(eventTable, 31, 3, 2);
+		
+		// 31,4 //  2 enter/exit
+		entries = countEntries(eventTable, 31, 4, 2);
+		
+		// 32,1 // 2 enter/exit
+		entries = countEntries(eventTable, 32, 1, 2);
+
+		// 32,2 // 2 enter/exit
+		entries = countEntries(eventTable, 32, 2, 2);
+
+		// 32,3 // 2 enter/exit
+		entries = countEntries(eventTable, 32, 3, 2);
+
+		// 32,4 // 2 enter/exit
+		entries = countEntries(eventTable, 32, 4, 2);
+
+		// 32,5 // 3 enter/exit/step
+		entries = countEntries(eventTable, 32, 5, 3);
+
+		// 43,2 // enter/exit
+		entries = countEntries(eventTable, 43, 2, 2);
+		
+		// 43, 4 // enter/exit
+		entries = countEntries(eventTable, 43, 4, 2);
+		// 47,4
+		entries = countEntries(eventTable, 47, 4, 3);
+		// 48,6
+		entries = countEntries(eventTable, 48, 6, 3);
+		// 49,6
+		entries = countEntries(eventTable, 49, 6, 3);
+		
+		// clear the list
+		entries.clear();
+	}
+	
+	private List<EventEntry> countEntries(EventTable eventTable, int linenumber, int token_position, int count)
+	{
+		List<EventEntry> entries = eventTable.getEventEntries(linenumber, token_position);
+		Assert.assertEquals(count, entries.size());
+		return entries;
+	}
+	
+}
