@@ -7,8 +7,8 @@
         <target name="spoofaximp.default.jar" depends="check-classpath,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,stratego.jar,  java.jar,sdf2imp,refresh"/>
     
         <!-- Initialization -->
-        <available file="${build}/strjdbgruntimelib/strategies/Main.class" property="java.jar.enabled"/>
-        <condition property="java.jar.import" value="-la strjdbgruntimelib.strategies" else="">
+        <available file="${build}/org/strategoxt/imp/debug/stratego/runtime/strategies/Main.class" property="java.jar.enabled"/>
+        <condition property="java.jar.import" value="-la org.strategoxt.imp.debug.stratego.runtime.strategies" else="">
             <isset property="java.jar.enabled"/>
         </condition>
         <condition property="java.jar.classpath" value=":${include}/${strmodule}-java.jar" else="">
