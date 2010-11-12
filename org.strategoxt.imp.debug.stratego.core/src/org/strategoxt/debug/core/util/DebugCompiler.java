@@ -190,7 +190,8 @@ public class DebugCompiler {
 		System.out.println(outputFilename);
 		
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
-		Context context = org.strjdbg.transformer.Main.init();
+		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		//Context context = org.strjdbg.transformer.Main.init();
 		// see trans-str.str#apply-debug-trans
 		// (sourceBasedir, inputfilePath, outputfilename)
 		// inputfilePath is relative to sourceBasedir.
@@ -205,7 +206,7 @@ public class DebugCompiler {
 		IStrategoTerm input = new BasicStrategoTuple(kids);
 		IStrategoTerm term; 
 		
-		term = org.strjdbg.transformer.apply_debug_trans_0_0.instance.invoke(context, input);
+		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_trans_0_0.instance.invoke(context, input);
 		//System.out.println(term);
 		String status = null; // will be SUCCES or FAIL
 		String result = null; // should be the same as outputFilename
@@ -253,11 +254,11 @@ public class DebugCompiler {
 	protected static void generateLookupTable(String strategoDebugFileName)
 	{
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
-		Context context = org.strjdbg.transformer.Main.init();
+		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
 		
 		IStrategoTerm input = new BasicStrategoString(strategoDebugFileName);
 		
-		org.strjdbg.transformer.create_table_0_0.instance.invoke(context, input);
+		org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_0.instance.invoke(context, input);
 	}
 	
 	/**

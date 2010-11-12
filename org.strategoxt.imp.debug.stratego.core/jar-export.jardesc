@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="org.strjdbg.eclipse.core/lib/strj-dbg-core.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/strj-dbg-core/jar-export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="org.strategoxt.imp.debug.core/lib/stratego-debug-core.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.strategoxt.imp.debug.stratego.core/jar-export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,9 +11,13 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <javaElement handleIdentifier="=strj-dbg-core/src"/>
-        <file path="/strj-dbg-core/.project"/>
-        <file path="/strj-dbg-core/.classpath"/>
-        <folder path="/strj-dbg-core/lib"/>
+        <file path="/org.strategoxt.imp.debug.stratego.core/writer.txt"/>
+        <folder path="/org.strategoxt.imp.debug.stratego.core/doc"/>
+        <file path="/org.strategoxt.imp.debug.stratego.core/jar-export.jardesc"/>
+        <file path="/org.strategoxt.imp.debug.stratego.core/.classpath"/>
+        <javaElement handleIdentifier="=org.strategoxt.imp.debug.stratego.core/src"/>
+        <file path="/org.strategoxt.imp.debug.stratego.core/thread-main.txt"/>
+        <folder path="/org.strategoxt.imp.debug.stratego.core/lib"/>
+        <file path="/org.strategoxt.imp.debug.stratego.core/.project"/>
     </selectedElements>
 </jardesc>
