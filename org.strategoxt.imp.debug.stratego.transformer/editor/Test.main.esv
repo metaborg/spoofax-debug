@@ -5,7 +5,7 @@ imports Test-Builders Test-Colorer Test-Completions Test-Folding Test-Outliner T
 language General properties
                   
   name          : Test
-  id            : test
+  id            : org.strategoxt.imp.debug.stratego.transformer
   extends       : Root
                   
   description   : "Spoofax/IMP-generated editor for the Test language"
