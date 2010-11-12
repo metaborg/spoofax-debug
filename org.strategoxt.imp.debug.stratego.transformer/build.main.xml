@@ -6,8 +6,9 @@
 	<property name="sdfmodule" value="Test" />
 	<property name="metasdfmodule" value="Stratego-Test" />
 	<property name="esvmodule" value="Test" />
-	<property name="strmodule" value="org.strjdbg.transformer" />
-
+	<!--<property name="strmodule" value="org.strjdbg.transformer" />-->
+	<property name="strmodule" value="stratego-transformer" />
+	
 	<!-- Project directories -->
 	<property name="trans" location="trans" />
 	<property name="src-gen" location="editor/java" />
@@ -19,9 +20,13 @@
 
 	<!-- we want a custom package name for the jars, otherwise it will clash with other stratego jars -->
 	<!-- build java library name -->
+	<!--
 	<property name="build.stratego.library.name" value="org.strjdbg.transformer"/>
 	<property name="build.stratego.library.location" value="org/strjdbg/transformer"/>
-		
+	-->
+	<property name="build.stratego.library.name" value="org.strategoxt.imp.debug.stratego.transformer.trans"/>
+	<property name="build.stratego.library.location" value="org/strategoxt/imp/debug/stratego/transformer/trans"/>
+
 	<!-- Imports -->
 	<property name="build.sdf.imports" value="" />
 	<property name="build.stratego.args" value="

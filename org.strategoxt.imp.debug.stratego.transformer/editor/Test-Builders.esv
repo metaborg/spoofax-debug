@@ -12,12 +12,13 @@ builders
 builders
                                                                                                                                
   //provider                  : include/test.ctree     // c-based                                                                          
-  provider: include/org.strjdbg.transformer.jar // java-based
+  //provider: include/org.strjdbg.transformer.jar // java-based // oldname
+  provider : include/stratego-transformer.jar
                                           
 // we do not need an editor, as we only transform stratego files                                                                                                                               
 //  observer                  : editor-analyze                                                                                   
                                                                                                                                
 //  builder                   : "Generate Java code (for selection)"   = generate-java (openeditor) (realtime)                   
   builder                   : "Show abstract syntax (for selection)" = generate-aterm (openeditor) (realtime) (meta) (source)  
-  builder                   : "Transform stratego" = generate-str (openeditor) (realtime)                                                                                                                 
+  builder                   : "Transform to Debug Stratego" = generate-str (openeditor) (realtime)                                                                                                                 
   // on save: generate-java                                                                                                    

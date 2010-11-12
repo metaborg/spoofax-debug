@@ -1,4 +1,4 @@
-module org.strjdbg.transformer
+module stratego-transformer
 
 imports
   libstratego-lib
