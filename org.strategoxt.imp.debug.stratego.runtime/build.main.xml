@@ -23,7 +23,7 @@
 	<property name="build.stratego.library.location" value="org/strategoxt/imp/debug/stratego/runtime/trans"/>
 	
 	<!-- the name of the package that contains the external defined strategies (implemented in java) -->
-	<property name="build.stratego.external.name" value="strjdbgruntimelib"/>
+	<property name="build.stratego.external.name" value="org/strategoxt/imp/debug/stratego/runtime/strategies"/> <!-- class file location -->
 	<property name="build.stratego.external.strategies.name" value="org.strategoxt.imp.debug.stratego.runtime.strategies"/> <!-- name of the library -->
 	<property name="build.stratego.external.strategies.location" value="org/strategoxt/imp/debug/stratego/runtime/strategies"/>
 	
