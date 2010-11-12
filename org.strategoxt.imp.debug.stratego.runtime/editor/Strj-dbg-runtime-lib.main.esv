@@ -6,7 +6,7 @@ imports Strj-dbg-runtime-lib-Builders Strj-dbg-runtime-lib-Colorer Strj-dbg-runt
 language General properties
                   
   name          : Strj-dbg-runtime-lib
-  id            : strjdbgruntimelib
+  id            : org.strategoxt.imp.debug.stratego.runtime
   extends       : Root
                   
   description   : "Spoofax/IMP-generated editor for the Strj-dbg-runtime-lib language"

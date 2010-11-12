@@ -6,7 +6,7 @@
 	<property name="sdfmodule" value="Strj-dbg-runtime-lib" />
 	<property name="metasdfmodule" value="Stratego-Strj-dbg-runtime-lib" />
 	<property name="esvmodule" value="Strj-dbg-runtime-lib" />
-	<property name="strmodule" value="strj_dbg_runtime_lib" />
+	<property name="strmodule" value="stratego-debug-runtime" />
 
 	<!-- Project directories -->
 	<property name="trans" location="trans" />
@@ -19,13 +19,13 @@
 
 	<!-- we want a custom package name for the jars, otherwise it will clash with other stratego jars -->
 	<!-- build java library name -->
-	<property name="build.stratego.library.name" value="org.strategoxt.libstrategodebuglib"/>
-	<property name="build.stratego.library.location" value="org/strategoxt/libstrategodebuglib"/>
+	<property name="build.stratego.library.name" value="org.strategoxt.imp.debug.stratego.runtime.trans"/>
+	<property name="build.stratego.library.location" value="org/strategoxt/imp/debug/stratego/runtime/trans"/>
 	
 	<!-- the name of the package that contains the external defined strategies (implemented in java) -->
 	<property name="build.stratego.external.name" value="strjdbgruntimelib"/>
-	<property name="build.stratego.external.strategies.name" value="strjdbgruntimelib.strategies"/>
-	<property name="build.stratego.external.strategies.location" value="strjdbgruntimelib/strategies"/>
+	<property name="build.stratego.external.strategies.name" value="org.strategoxt.imp.debug.stratego.runtime.strategies"/> <!-- name of the library -->
+	<property name="build.stratego.external.strategies.location" value="org/strategoxt/imp/debug/stratego/runtime/strategies"/>
 	
 	<!-- build external strategies defined in java -->
 	<!-- <available file="${build}/strjdebugruntime/strategies/Main.class" property="java.jar.enabled"/> -->
