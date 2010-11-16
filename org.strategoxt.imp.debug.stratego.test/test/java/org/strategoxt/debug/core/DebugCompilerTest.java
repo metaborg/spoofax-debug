@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.StrategoFileManager;
@@ -7,14 +8,25 @@ import org.strategoxt.debug.core.util.DebugCompiler;
 
 public class DebugCompilerTest {
 
-	public static final String WORKING_DIR = StrategoFileManager.BASE + "/working";
+	public static final String WORKING_DIR = "working";
+	
+	public static String getAbsoluteWorkingDirPath()
+	{
+		File f = new File(WORKING_DIR);
+		return f.getAbsolutePath();
+	}
 	
 	public static void main(String[] args) {
+		testDebugCompile();
+		
+	}
+	
+	public static void testDebugCompile() {
 		//String inputBase = StrategoFileManager.BASE;
 		String inputFilePath = "src/stratego/localvar/localvar.str";
 		//String strategoFilePath = inputBase + "/" + inputFilename;
 		String projectName = "localvar";
-		DebugCompiler debugCompiler = new DebugCompiler(WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler(getAbsoluteWorkingDirPath());
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class

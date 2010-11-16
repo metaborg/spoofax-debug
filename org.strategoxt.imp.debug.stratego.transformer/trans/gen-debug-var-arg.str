@@ -1,0 +1,103 @@
+module gen-debug-var-arg
+
+// creates a where clause containing s-var-calls for variables that are rule/strategy term-parameters
+// and for variables used in the match-term of a Rule
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  location-util
+  gen-debug-var
+  
+signature
+  sorts
+    BA
+  constructors
+
+	// Line is needed or eclipse editor will generate an error. But building the project will not throw an error if this line is missing..
+  	BA		: Strategy * Term -> BA 
+  	
+rules
+	
+	// current term is a Term
+	match-term-to-s-var-clause(|filename, name, a) :
+		match-term -> clause
+		//where <debug(!"match-term ")> match-term
+		where
+			// collect all Var in this term
+			vars* := <collect(?Var(_))> match-term
+			//; debug(!"collect vars ")
+			; s-vars* := <map(create-s-var-call-with-term(|filename, name, a))> vars*
+			; seq := <create-seqs> s-vars*
+			; clause := WhereClause(seq)
+	
+	// create a where clause containing s-var calls for each term that is used as argument
+	t-args-to-s-var-clause(|filename, name, a) :
+	t-args* -> clause
+	//where <debug(!"t-args-to-s-var: ")> name
+	where
+		s-vars* := <map(t-arg-to-s-var(|filename, name, a))> t-args*
+		//; debug(!"s-vars*: ")
+		// convert list to recursive Seq
+		; seq := <create-seqs> s-vars*
+		//; debug(!"seq ")
+		; clause := WhereClause(seq)
+		// create WhereClause
+			
+	// v can be a "var-name"
+	// v can be a ListVar("term2*")
+	t-arg-to-s-var(|filename, name, a):
+		DefaultVarDec(v) -> s-var-call
+		with 
+		  var := <create-var> v // create a Var(_)
+		  ; s-var-call := <create-s-var-call-with-term(|filename, name, a)> var
+		    
+	/*
+	// var should be a Var(_)
+	create-s-var-call-with-term(|filename, name, var, a) =
+		where(
+			var-name := <get-var-name> var
+		  ; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
+		  );
+		  !BA(s-var-call, var) // BA is needed because we want to apply it to a specific term, not the current term!		    
+	*/
+	
+	// var should be a Var(_)
+	create-s-var-call-with-term(|filename, name, a) :
+		var -> s-var
+		where
+			var-name := <get-var-name> var
+			; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
+			; s-var := BA(s-var-call, var)
+			  
+			  
+	create-var:
+		v -> Var(v)
+		
+		
+	create-seqs :
+		s* -> seq
+		where <geq> (<length> s*, 2) // length should be greater than or equal to 2  
+		//where debug(!"list size >= 2    ")
+		where
+			l-length := <length> s*
+			//; <debug(!"length: ")> l-length
+			; take-length := <subt>(l-length, 1)
+			//; debug(!"take length")
+			; sub-list := <take(|<subt>(l-length, 1))> s*
+			//; <debug(!"sublist")> sub-list
+			; s-last := <last> s*
+			//; <debug(!"s-last: ")> s-last 
+			; seq := <foldr(!s-last, create-seq)> sub-list
+
+	// list is size 1, just return the element
+	create-seqs:
+		s* -> s
+		where <eq> (<length> s*, 1)
+		//where debug(!"list size is 1    ")
+		where s := <last> s*
+	
+	
+strategies	
+	create-seq = ?(s1, s2); !Seq(s1, s2)

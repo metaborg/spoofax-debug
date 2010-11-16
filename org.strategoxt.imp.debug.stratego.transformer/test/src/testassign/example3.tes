@@ -1,0 +1,81 @@
+module localvar
+
+signature
+
+
+  constructors
+  	
+  	Var		: String -> Expression
+  	Number	: Int -> Expression
+  	Add		: Expression * Expression -> Expression
+  	Sub		: Expression * Expression -> Expression
+  	
+  	Print	: Expression -> Statement
+  	Assign	: String * Expression -> Statement
+  	
+  	Function : String * List(Statement) -> Definition
+  	
+  	Comment : String * String -> Definition
+  	
+  	Program : String * List(Definition) -> Program
+    
+    
+strategies
+  main =
+    io-wrap(execute)
+    
+rules
+  // show Comment and Function that have the same name
+	
+  execute:
+  	input -> output
+  	with
+  	  term := <create-term>
+  	  ; output := <match-comments(|term)> input    
+    
+strategies
+	create-term = Add(Number(2),Number(7))
+    
+rules
+
+
+	match-comments-name(|term1, term2*):
+		Program(_, _) -> out
+		where
+			out := <create-term>
+
+	match-comments-debug(|term1, term2*):
+		Program(name, definitions*) -> out
+		/*
+		where(
+			<s-var(|"filename", "r-name", "term1", LocationInfo("48", "6", "48", "40"))> term1
+			; <s-var(|"filename", "r-name", "term2*", LocationInfo("48", "6", "48", "40"))> term2*
+			; s-var(|"filename", "r-name", "term2", LocationInfo("48", "6", "48", "40")) 
+		)*/
+		with 
+			f* := <find-functions> definitions* // find functions
+			; c* := <find-comments> definitions* // find comments
+			; <debug> term1
+			; <debug> term2*
+			; out := name
+			  
+	match-comments(|term):
+		// match program
+		Program(name, definitions*) -> out
+		with
+			f* := <find-functions> definitions* // find functions
+			; c* := <find-comments> definitions* // find comments
+			; <debug> term
+			; out := name
+			  
+			  
+  	find-functions:
+		definition* -> functions*
+		with
+			functions* := <filter(?Function(_,_))> definition*
+			
+	find-comments:
+		definition* -> comments*
+		with
+			comments* := <filter(?Comment(_,_))> definition*
+		

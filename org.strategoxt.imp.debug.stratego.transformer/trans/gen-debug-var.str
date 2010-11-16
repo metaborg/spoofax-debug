@@ -9,6 +9,7 @@ imports
   include/Test
   assert
   location-util
+  gen-debug-var-arg
   
 rules
 	
@@ -19,50 +20,97 @@ rules
 		bottomup(try(add-var-in-r-def(|filename)))
 		; bottomup(try(add-var-in-s-def(|filename)))
 
-	// add s-var call to rules, first lookup the rule name		
+	// add s-var call to rules, first lookup the rule name	
+	// also emit the t-args as available local variables	
 	add-var-in-r-def(|filename):
 		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r'){a}
-		where r' := <var-wrap-r(|filename, r-name)> r
+		where r' := <var-wrap-r(|filename, r-name, [])> r
 	add-var-in-r-def(|filename):
 		d@RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r'){a}
-		where r' := <var-wrap-r(|filename, r-name)> r
+		where r' := <var-wrap-r(|filename, r-name, [])> r
+	// t-args is a list of 'Typedid'
+	// ID ":" Type -> Typedid {cons("VarDec")}
+	// ID -> Typedid {cons("DefaultVarDec")}
+	// DefaultVarDec("term-name")
 	add-var-in-r-def(|filename):
-		d@RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r'){a}
-		where r' := <var-wrap-r(|filename, r-name)> r
+		d@RDefT(r-name, s-args, t-args*, r){a} -> RDefT(r-name, s-args, t-args*, r'){a}
+		//where <debug(!"rdeft ")> r-name
+		where r' := <var-wrap-r(|filename, r-name, t-args*)> r
 	
 	
 	// add s-var calls to strategies, first lookup the strategy name
 	add-var-in-s-def(|filename):
 		SDefNoArgs(s-name, s){a} -> SDefNoArgs(s-name, s'){a} // strategy with no args
-		where s' := <var-wrap-s(|filename, s-name)> s
+		where s' := <var-wrap-s(|filename, s-name, [])> s
 	add-var-in-s-def(|filename):
 		SDef(s-name, s-args, s){a} -> SDef(s-name, s-args, s'){a} // strategy with strategy-args
-		where s' := <var-wrap-s(|filename, s-name)> s
+		where s' := <var-wrap-s(|filename, s-name, [])> s
 	add-var-in-s-def(|filename):
-		SDefT(s-name,s-args, t-args, s){a} -> SDefT(s-name, s-args, t-args, s'){a} // strategy with strategy-args and term-args
-		where s' := <var-wrap-s(|filename, s-name)> s
+		SDefT(s-name,s-args, t-args*, s){a} -> SDefT(s-name, s-args, t-args*, s'){a} // strategy with strategy-args and term-args
+		where s' := <var-wrap-s(|filename, s-name, t-args*)> s
 	
 	// current term is a Strategy
 	// change every Assign to a Seq(Assign, s-var)
-	var-wrap-s(|filename, name) = bottomup(try(match-assign-build-s-var(|filename, name)))
+	var-wrap-s(|filename, name, t-args*) = bottomup(try(match-assign-build-s-var(|filename, name)))
+	
+	var-wrap-s(|filename, name) = var-wrap-s(|filename, name, [])
 	
 	// Rule has no Rule Conditions, so it does have a strategy
-	// TODO: strategy can also be used in the build term
-    var-wrap-r(|filename, r-name) :
-    	RuleNoCond(match-term, build-term){a} -> RuleNoCond(match-term, build-term'){a}
+	// strategy can also be used in the build term
+    var-wrap-r(|filename, r-name, t-args*) :
+    	RuleNoCond(match-term, build-term){a} 
+    		//-> RuleNoCond(match-term, build-term'){a}
+    		-> Rule(match-term, build-term', clauses'*){a}
     	with
     		build-term' := <var-wrap-s(|filename, r-name)> build-term
+			; clauses* := <try-s-var-for-match(|filename, r-name, a, [])> match-term
+			; clauses'* := <try-s-var-for-t-args(|filename, r-name, a, clauses*)> t-args*
 	
 	// current Rule has rule conditions, so traverse each condition
-	// TODO: strategy can also be used in the build term
+	// 1. assign strategies can also be used in the build term, so traverse it to
+	// 2. the match-term can also define local variables.
+	// For example: get-program-name : Program(name, definitions*) -> name
+	// Both name and definitions* are local variables.
+	/*
 	var-wrap-r(|filename, r-name):
-		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term', rule-cond'){a}
+		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term', rule-cond'*){a}
 		where
-            rule-cond' := <add-var-to-rule-cond(|filename, r-name)> rule-cond
+            rule-cond'* := <add-var-to-rule-cond(|filename, r-name)> rule-cond
+    		; build-term' := <var-wrap-s(|filename, r-name)> build-term
+	*/
+	
+	var-wrap-r(|filename, r-name, t-args*):
+		Rule(match-term, build-term, rule-cond){a}
+		-> Rule(match-term, build-term', clauses'*){a}
+		where
+			// determine local variables in rule conditions
+            rule-cond'* := <add-var-to-rule-cond(|filename, r-name)> rule-cond
+            // insert a clause containing s-var calls for the named variables in the match term
+			; clauses* := <try-s-var-for-match(|filename, r-name, a, rule-cond'*)> match-term
+            // insert a clause containing s-var calls for the t-args
+            /*
+    		; clause := <t-args-to-s-var-clause(|filename, r-name, a)> t-args*
+    		; clauses'* := <insert> (0, clause, clauses*)
+    		  */
+    		; clauses'* := <try-s-var-for-t-args(|filename, r-name, a, clauses*)> t-args*
     		; build-term' := <var-wrap-s(|filename, r-name)> build-term
 
-
-
+	// current term should be the match-term of a Rule
+	try-s-var-for-match(|filename, r-name, a, clauses*) = 
+		(match-clause := <match-term-to-s-var-clause(|filename, r-name, a)>)
+    	< // if first strategy succeeds
+    	(<insert> (0, match-clause, clauses*))
+    	+ // if first strategy fails
+    	(!clauses*) // return original clauses
+    	
+    // current term should be a list of t-args*
+    try-s-var-for-t-args(|filename, r-name, a, clauses*) =
+    	( t-args-clause := <t-args-to-s-var-clause(|filename, r-name, a)>)
+    	< // if first strategy succeeds
+    	(<insert> (0, t-args-clause, clauses*))
+    	+ // if first strategy fails
+    	(!clauses*) // return original clauses
+    	 	
 	
     // current term can be a list with WhereClause and WithClause terms
     // the r-enter call should be inserted before all these clauses at position 0
@@ -74,9 +122,10 @@ rules
     // current term can be a Strategy
 	// traverse the strategies using var-wrap-s
 	add-var-to-rule-cond(|filename, r-name) :
-		s -> s'
+		s -> clause-list* // was s', but now both add-var-to-rule-cond rules return a list of clauses
 		where not(<is-list> s)
 		where s' := <var-wrap-s(|filename, r-name)>
+		; clause-list* := [WhereClause(s')]
 
 	// traverse the strategies in the WithClause
 	add-s-var-to-clause(|filename, r-name):
@@ -105,6 +154,9 @@ rules
 		) ;
 		!CallT(SVar("s-var"), [], t-args*)
 
+
+
+
 	
 	// create the arguments for the s-var call	  
 	create-args-array(|filename, name, var-name, a) =
@@ -117,6 +169,8 @@ rules
 	// return the name of the Var  
 	get-var-name:
 	  	Var(ListVar(name)) -> name
+	  	
+
 	
 	// convert the value to a string in the stratego AST format  	
 	to-string :
