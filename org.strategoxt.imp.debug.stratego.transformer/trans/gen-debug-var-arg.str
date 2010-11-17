@@ -21,13 +21,13 @@ signature
 rules
 	
 	// current term is a Term
+	// create a WhereClause containing all s-var call for each variable in the mtach term
 	match-term-to-s-var-clause(|filename, name) :
 		match-term -> clause
 		//where <debug(!"match-term ")> match-term
 		where
 			// collect all Var in this term
 			vars* := <collect(?Var(_))> match-term
-			//; debug(!"collect vars ")
 			; s-vars* := <map(create-s-var-call-with-term(|filename, name))> vars*
 			; seq := <create-seqs> s-vars*
 			; clause := WhereClause(seq)
@@ -35,26 +35,22 @@ rules
 	// create a where clause containing s-var calls for each term that is used as argument
 	t-args-to-s-var-where-clause(|filename, name) :
 	t-args* -> clause
-	//where <debug(!"t-args-to-s-var: ")> name
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
-		//; debug(!"s-vars*: ")
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
-		//; debug(!"seq ")
-		; clause := WhereClause(seq)
 		// create WhereClause
+		; clause := WhereClause(seq)
 		
+	// create a Where() strategy containing all s-var calls for each strategy term argument
 	t-args-to-s-var-where-strategy(|filename, name) :
 		t-args* -> where-s
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
-		//; debug(!"s-vars*: ")
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
-		//; debug(!"seq ")
-		; where-s := Where(seq)
 		// create WhereClause		
+		; where-s := Where(seq)
 			
 	// v can be a "var-name"
 	// v can be a ListVar("term2*")
@@ -63,17 +59,7 @@ rules
 		with 
 		  var := <create-var> v // create a Var(_)
 		  ; s-var-call := <create-s-var-call-with-term(|filename, name)> var
-		    
-	/*
-	// var should be a Var(_)
-	create-s-var-call-with-term(|filename, name, var, a) =
-		where(
-			var-name := <get-var-name> var
-		  ; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
-		  );
-		  !BA(s-var-call, var) // BA is needed because we want to apply it to a specific term, not the current term!		    
-	*/
-	
+		    	
 	// var should be a Var(_)
 	create-s-var-call-with-term(|filename, name) :
 		var{a} -> s-var
@@ -82,33 +68,30 @@ rules
 			; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
 			; s-var := BA(s-var-call, var)
 			  
-			  
+	// creates a Var(term) from the current term
+	// current term should be a string or a ListVar(var-name)
 	create-var:
 		v{a} -> Var(v){a}
 		
-		
+	// transform a list of strategies to a Seq
 	create-seqs :
 		s* -> seq
 		where <geq> (<length> s*, 2) // length should be greater than or equal to 2  
-		//where debug(!"list size >= 2    ")
 		where
 			l-length := <length> s*
-			//; <debug(!"length: ")> l-length
 			; take-length := <subt>(l-length, 1)
-			//; debug(!"take length")
 			; sub-list := <take(|<subt>(l-length, 1))> s*
-			//; <debug(!"sublist")> sub-list
 			; s-last := <last> s*
-			//; <debug(!"s-last: ")> s-last 
 			; seq := <foldr(!s-last, create-seq)> sub-list
 
 	// list is size 1, just return the element
 	create-seqs:
 		s* -> s
 		where <eq> (<length> s*, 1)
-		//where debug(!"list size is 1    ")
 		where s := <last> s*
 	
 	
-strategies	
+strategies
+	// current term should be a tuple containing two strategies (s1, s2)
+	// output is a Seq(s1, s2) term
 	create-seq = ?(s1, s2); !Seq(s1, s2)

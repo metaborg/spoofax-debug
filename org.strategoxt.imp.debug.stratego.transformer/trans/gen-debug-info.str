@@ -22,8 +22,10 @@ strategies
     //filter-location = bottomup(try(keep-location))
     
     // keep all Location annotations
+    // we may need the Location info when we need to implement new debugger features
     filter-location = id
     
+    /*
     keep-location =
       if should-keep-location then id else discard-location end
   
@@ -45,7 +47,8 @@ strategies
   	// drop the annotation	
   	discard-location:
   		e{a*} -> e{}    
-
+	*/
+	
 strategies
 	
 	// main rule for adding debug information
@@ -83,12 +86,19 @@ rules
 		
 	// current term s is a Strategy
 	// it is transformed to s-enter; s; s-exit
+	// s-enter ; s < s-exit + (s-exit; fail)
+	// if the strategy s fail, when can still call s-exit and throw a fail afterwards!
+	// TODO: when we want the debugger to catch 'fail' we should probably call a specific before re-throwing fail
 	wrap-s(|filename, s-name, a):
-		s -> Seq(s-enter, Seq(s, s-exit))
+		s -> out 
+			//Seq(s-enter, Seq(s, s-exit))
 		with
 			s-enter := <create-s-enter-call(|filename, s-name, a)>
 			; s-exit := <create-s-exit-call(|filename, s-name, a)>
-
+			; f := <create-fail>
+			; s-exit-fail := Seq(s-exit, f)
+			; body-exit := GuardedLChoice(s, s-exit, s-exit-fail) // s < s-exit + (s-exit; fail)
+			; out := Seq(s-enter, body-exit)
 
 //	
 // Add an r-entry and r-exit strategy call around each rule definition
@@ -235,4 +245,5 @@ strategies
     
     create-s-exit-call(|filename, s-name, a) = !CallT(SVar("s-exit"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(s-name)), <location-to-term> a])
     
+    create-fail = !Fail()
 	
