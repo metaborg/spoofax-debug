@@ -21,37 +21,48 @@ signature
 rules
 	
 	// current term is a Term
-	match-term-to-s-var-clause(|filename, name, a) :
+	match-term-to-s-var-clause(|filename, name) :
 		match-term -> clause
 		//where <debug(!"match-term ")> match-term
 		where
 			// collect all Var in this term
 			vars* := <collect(?Var(_))> match-term
 			//; debug(!"collect vars ")
-			; s-vars* := <map(create-s-var-call-with-term(|filename, name, a))> vars*
+			; s-vars* := <map(create-s-var-call-with-term(|filename, name))> vars*
 			; seq := <create-seqs> s-vars*
 			; clause := WhereClause(seq)
 	
 	// create a where clause containing s-var calls for each term that is used as argument
-	t-args-to-s-var-clause(|filename, name, a) :
+	t-args-to-s-var-where-clause(|filename, name) :
 	t-args* -> clause
 	//where <debug(!"t-args-to-s-var: ")> name
 	where
-		s-vars* := <map(t-arg-to-s-var(|filename, name, a))> t-args*
+		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
 		//; debug(!"s-vars*: ")
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
 		//; debug(!"seq ")
 		; clause := WhereClause(seq)
 		// create WhereClause
+		
+	t-args-to-s-var-where-strategy(|filename, name) :
+		t-args* -> where-s
+	where
+		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
+		//; debug(!"s-vars*: ")
+		// convert list to recursive Seq
+		; seq := <create-seqs> s-vars*
+		//; debug(!"seq ")
+		; where-s := Where(seq)
+		// create WhereClause		
 			
 	// v can be a "var-name"
 	// v can be a ListVar("term2*")
-	t-arg-to-s-var(|filename, name, a):
-		DefaultVarDec(v) -> s-var-call
+	t-arg-to-s-var(|filename, name):
+		DefaultVarDec(v){a} -> s-var-call
 		with 
 		  var := <create-var> v // create a Var(_)
-		  ; s-var-call := <create-s-var-call-with-term(|filename, name, a)> var
+		  ; s-var-call := <create-s-var-call-with-term(|filename, name)> var
 		    
 	/*
 	// var should be a Var(_)
@@ -64,8 +75,8 @@ rules
 	*/
 	
 	// var should be a Var(_)
-	create-s-var-call-with-term(|filename, name, a) :
-		var -> s-var
+	create-s-var-call-with-term(|filename, name) :
+		var{a} -> s-var
 		where
 			var-name := <get-var-name> var
 			; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
@@ -73,7 +84,7 @@ rules
 			  
 			  
 	create-var:
-		v -> Var(v)
+		v{a} -> Var(v){a}
 		
 		
 	create-seqs :

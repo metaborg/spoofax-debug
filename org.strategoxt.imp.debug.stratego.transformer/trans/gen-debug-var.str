@@ -51,7 +51,31 @@ rules
 	
 	// current term is a Strategy
 	// change every Assign to a Seq(Assign, s-var)
-	var-wrap-s(|filename, name, t-args*) = bottomup(try(match-assign-build-s-var(|filename, name)))
+	var-wrap-s(|filename, name, t-args*) = 
+	// TODO: build: Seq(s-var-t-args, s)
+	  	(s := <bottomup(try(match-assign-build-s-var(|filename, name)))>)
+	  	; debug(!"s-before ")
+	  	; 
+	  	  (
+	  	  	 (<t-args-to-s-var-where-strategy(|filename, name)> t-args*) // could fail if t-args* is empty list
+	  	  	 < // succeeds,current term is a WhereClause
+	  	  	 	(combine-s-and-clause(|s))
+	  	  	 +
+	  	  	 	(!s)
+	  	  )
+	  	; debug(!"after: ")
+	  	/*
+	  	; <try(
+	  		clause := <t-args-to-s-var-clause(|filename, name)> t-args* // could fail if t-args* is empty list
+	  	 	; !Seq(clause, s)
+	  	 )>
+	  	 */
+	  	 
+	 // current term is a clause
+	combine-s-and-clause(|s) : 
+		clause -> Seq(clause, s) 
+		where <debug(!"s: ")> clause
+		where <debug(!"clause:")> s
 	
 	var-wrap-s(|filename, name) = var-wrap-s(|filename, name, [])
 	
@@ -63,8 +87,8 @@ rules
     		-> Rule(match-term, build-term', clauses'*){a}
     	with
     		build-term' := <var-wrap-s(|filename, r-name)> build-term
-			; clauses* := <try-s-var-for-match(|filename, r-name, a, [])> match-term
-			; clauses'* := <try-s-var-for-t-args(|filename, r-name, a, clauses*)> t-args*
+			; clauses* := <try-s-var-for-match(|filename, r-name, [])> match-term
+			; clauses'* := <try-s-var-for-t-args(|filename, r-name, clauses*)> t-args*
 	
 	// current Rule has rule conditions, so traverse each condition
 	// 1. assign strategies can also be used in the build term, so traverse it to
@@ -86,26 +110,26 @@ rules
 			// determine local variables in rule conditions
             rule-cond'* := <add-var-to-rule-cond(|filename, r-name)> rule-cond
             // insert a clause containing s-var calls for the named variables in the match term
-			; clauses* := <try-s-var-for-match(|filename, r-name, a, rule-cond'*)> match-term
+			; clauses* := <try-s-var-for-match(|filename, r-name, rule-cond'*)> match-term
             // insert a clause containing s-var calls for the t-args
             /*
     		; clause := <t-args-to-s-var-clause(|filename, r-name, a)> t-args*
     		; clauses'* := <insert> (0, clause, clauses*)
     		  */
-    		; clauses'* := <try-s-var-for-t-args(|filename, r-name, a, clauses*)> t-args*
+    		; clauses'* := <try-s-var-for-t-args(|filename, r-name, clauses*)> t-args*
     		; build-term' := <var-wrap-s(|filename, r-name)> build-term
 
 	// current term should be the match-term of a Rule
-	try-s-var-for-match(|filename, r-name, a, clauses*) = 
-		(match-clause := <match-term-to-s-var-clause(|filename, r-name, a)>)
+	try-s-var-for-match(|filename, r-name, clauses*) = 
+		(match-clause := <match-term-to-s-var-clause(|filename, r-name)>)
     	< // if first strategy succeeds
     	(<insert> (0, match-clause, clauses*))
     	+ // if first strategy fails
     	(!clauses*) // return original clauses
     	
     // current term should be a list of t-args*
-    try-s-var-for-t-args(|filename, r-name, a, clauses*) =
-    	( t-args-clause := <t-args-to-s-var-clause(|filename, r-name, a)>)
+    try-s-var-for-t-args(|filename, r-name, clauses*) =
+    	( t-args-clause := <t-args-to-s-var-where-clause(|filename, r-name)>)
     	< // if first strategy succeeds
     	(<insert> (0, t-args-clause, clauses*))
     	+ // if first strategy fails

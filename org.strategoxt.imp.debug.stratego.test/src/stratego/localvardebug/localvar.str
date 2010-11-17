@@ -1,0 +1,103 @@
+module localvar
+// use local vars in rules and strategies to store temp result
+
+imports
+  libstrategolib
+
+
+signature
+  sorts
+    Prop
+
+  constructors
+  	
+  	Var		: String -> Expression
+  	Number	: Int -> Expression
+  	Add		: Expression * Expression -> Expression
+  	Sub		: Expression * Expression -> Expression
+  	
+  	Print	: Expression -> Statement
+  	Assign	: String * Expression -> Statement
+  	
+  	Function : String * List(Statement) -> Definition
+  	
+  	Comment : String * String -> Definition
+  	
+  	Program : String * List(Definition) -> Program
+  	
+
+    
+strategies
+  main =
+    io-wrap(execute)
+    
+rules
+  // show Comment and Function that have the same name
+	
+  execute:
+  	input -> output
+  	with
+  	  output := <match-comments> input
+
+rules
+	match-comments :
+		// match program
+		Program(_, definitions*) -> out
+		with
+			f* := <find-functions> definitions* // find functions
+			; c* := <find-comments> definitions* // find comments
+			; out := <match-f-and-c> (f*, c*)
+
+		
+	find-functions:
+		definition* -> functions*
+		with
+			functions* := <filter(?Function(_,_))> definition*
+			
+	find-comments:
+		definition* -> comments*
+		with
+			comments* := <filter(?Comment(_,_))> definition*
+			
+	match-f-and-c:
+		(f*, c*) -> matches*
+		with
+			//matches* := <map(find-comment-match(|c*))> f*
+			matches* := <map(try-find-comment-by-name(|c*))> f*
+		
+	try-find-comment-by-name(|c*) = debug(!"enter1");find-comment-match(|c*); debug(!"exit1") // <+ (debug(!"fail"); !"fail")	
+		
+	find-comment-match(|c*):
+		f -> (f, c)
+		// f should be a Function
+		where debug(!"enter2")
+		where
+			name := <get-function-name> f
+			; c := <find-comment-by-name(|name)> c*
+		where debug(!"exit2")
+			  
+	get-function-name:
+		Function(name, _) -> name
+			
+	find-comment-by-name(|name):
+		c* -> comment
+		where debug(!"enter3")
+		where 
+		c-filtered* := <filter(?Comment(name, _))> c*
+		; comment := (<debug(!"stuff:"); first> c-filtered*) //  <+ !Comment(name, "created!!")
+		//; comment := <first> c-filtered*
+		where debug(!"exit3")
+
+
+	old-first : c-list* -> out
+	where out := <last> c-list* <+ build-c
+	
+	is-empty = ?[] 
+	
+	
+	first = 
+		debug(!"first enter: ") ;
+		(is-empty < build-c + last)
+		; debug(!"first exit")
+		
+	build-c = !Comment("new", "created!!")

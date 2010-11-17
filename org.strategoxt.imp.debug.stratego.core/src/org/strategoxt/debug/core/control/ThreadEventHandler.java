@@ -212,7 +212,7 @@ public class ThreadEventHandler {
 		}
 		else if (EventHandler.S_EXIT.equals(eventType))
 		{
-			//h = new StrategyExitHandler(event);
+			h = new StrategyExitHandler(event);
 			this.exitStrategoStackFrame(h);
 		}
 	}

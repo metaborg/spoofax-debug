@@ -38,6 +38,49 @@ strategies
     
 rules
 
+/*
+  match-strategy(|term1, term2*) =
+    s-enter(
+    | "test/src/testassign/example3.tes"
+    , "match-strategy"
+    , LocationInfo("41", "2", "41", "46")
+    )
+    ; (where <s-var(
+              | "test/src/testassign/example3.tes"
+              , "match-strategy"
+              , "term1"
+              , LocationInfo("41", "18", "41", "23")
+              )> term1
+             ; <s-var(
+                | "test/src/testassign/example3.tes"
+                , "match-strategy"
+                , "term2*"
+                , LocationInfo("41", "25", "41", "31")
+                )> term2*
+       ; s-step(
+         | "test/src/testassign/example3.tes"
+         , "match-strategy"
+         , LocationInfo("41", "35", "41", "46")
+         )
+       ; create-term)
+    ; s-exit(
+      | "test/src/testassign/example3.tes"
+      , "match-strategy"
+      , LocationInfo("41", "2", "41", "46")
+      )
+*/
+
+	match-strategy(|term1, term2*) = create-term
+	
+	match-strategy-debug(|term1, term2*) =
+		/*
+		where (
+			<s-var(|"filename", "r-name", "term1", LocationInfo("48", "6", "48", "40"))> term1
+			; <s-var(|"filename", "r-name", "term2*", LocationInfo("48", "6", "48", "40"))> term2*
+		  )
+		  ;
+		   */
+		    create-term
 
 	match-comments-name(|term1, term2*):
 		Program(_, _) -> out

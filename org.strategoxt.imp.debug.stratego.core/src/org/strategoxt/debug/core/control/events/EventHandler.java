@@ -19,6 +19,7 @@ import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.MethodEntryEvent;
+import com.sun.jdi.event.MethodExitEvent;
 
 public abstract class EventHandler {
 	
@@ -63,14 +64,76 @@ public abstract class EventHandler {
 	public static String S_STEP = "s_step";
 	public static String S_VAR = "s_var";
 	
-	protected MethodEntryEvent event = null;
+	protected MethodEntryEvent entry_event = null;
+	protected MethodExitEvent exit_event = null;
 	
 	protected StrategoTermBuilder builder = new StrategoTermBuilder();
 	
+	public EventHandler(MethodExitEvent event)
+	{
+		this.exit_event = event;
+		this.initLocalVariables();
+	}
+	
 	public EventHandler(MethodEntryEvent event)
 	{
-		this.event = event;
+		this.entry_event = event;
 		this.initLocalVariables();
+	}
+	
+	private List<LocalVariable> getMethodArguments()
+	{
+		List<LocalVariable> args = new ArrayList<LocalVariable>();
+		if (this.entry_event != null)
+		{
+			try {
+				args = this.entry_event.method().arguments();
+			} catch (AbsentInformationException e) {
+				e.printStackTrace();
+			}
+		}
+		else if (exit_event != null)
+		{
+			try {
+				args = this.exit_event.method().arguments();
+			} catch (AbsentInformationException e) {
+				e.printStackTrace();
+			}
+		}
+		return args;
+	}
+	
+	private StackFrame stackFrame = null;
+	private StackFrame getStackFrame()
+	{
+		if (stackFrame == null)
+		{
+			if (this.entry_event != null)
+			{
+				ThreadReference thread = entry_event.thread();
+				
+				StackFrame fr = null;
+				try {
+					fr = thread.frame(0); // get current frame
+				} catch (IncompatibleThreadStateException e) {
+					e.printStackTrace(); // thread should be suspended
+				}
+				this.stackFrame = fr;
+			}
+			else if (exit_event != null)
+			{
+				ThreadReference thread = exit_event.thread();
+				
+				StackFrame fr = null;
+				try {
+					fr = thread.frame(0); // get current frame
+				} catch (IncompatibleThreadStateException e) {
+					e.printStackTrace(); // thread should be suspended
+				}
+				this.stackFrame = fr;
+			}
+		}
+		return stackFrame;
 	}
 	
 	private void initLocalVariables()
@@ -83,12 +146,8 @@ public abstract class EventHandler {
 		givenLV = null;
 		varnameLV = null;
 		// set arguments for easy reference	
-		List<LocalVariable> args = new ArrayList<LocalVariable>();
-		try {
-			args = this.event.method().arguments();
-		} catch (AbsentInformationException e) {
-			e.printStackTrace();
-		}
+		List<LocalVariable> args = getMethodArguments();
+
 		for(LocalVariable lv : args)
 		{
 			String lvName = lv.name();
@@ -131,14 +190,8 @@ public abstract class EventHandler {
 	 */
 	protected Value getGivenValue()
 	{
-		ThreadReference thread = event.thread();
-
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
+		StackFrame fr = getStackFrame();
+		
 		Value val = fr.getValue(this.givenLV);	
 		
 		return val;		
@@ -151,14 +204,8 @@ public abstract class EventHandler {
 	 */
 	protected Value getContextValue()
 	{
-		ThreadReference thread = event.thread();
-
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
+		StackFrame fr = getStackFrame();
+		
 		Value val = fr.getValue(this.contextLV);	
 		
 		return val;
@@ -171,14 +218,8 @@ public abstract class EventHandler {
 	 */
 	protected Value getLocationValue()
 	{
-		ThreadReference thread = event.thread();
-	
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
+		StackFrame fr = getStackFrame();
+		
 		Value val = fr.getValue(this.locationLV);	
 		
 		return val;
@@ -191,14 +232,8 @@ public abstract class EventHandler {
 	 */
 	protected Value getNameValue()
 	{
-		ThreadReference thread = event.thread();
-	
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
+		StackFrame fr = getStackFrame();
+		
 		Value nameValue = fr.getValue(this.nameLV); // StrategoString instance
 		
 		return nameValue;
@@ -211,14 +246,8 @@ public abstract class EventHandler {
 	 */
 	protected Value getFilenameValue()
 	{
-		ThreadReference thread = event.thread();
+		StackFrame fr = getStackFrame();
 		
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
 		Value filenameValue = fr.getValue(this.filenameLV); // StrategoString instance
 		
 		return filenameValue;
@@ -236,14 +265,7 @@ public abstract class EventHandler {
 			return null;
 		}
 		
-		ThreadReference thread = event.thread();
-		
-		StackFrame fr = null;
-		try {
-			fr = thread.frame(0); // get current frame
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace(); // thread should be suspended
-		}
+		StackFrame fr = getStackFrame();
 		
 		Value varnameValue = fr.getValue(this.varnameLV); // StrategoString instance
 

@@ -7,7 +7,6 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.strategoxt.debug.core.DebugCompilerTest;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.RuleEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
@@ -18,7 +17,6 @@ import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DebugSessionManagerTest {
-
 	
 	public static void main(String[] args) {
 		runLocalVar();
@@ -38,7 +36,7 @@ public class DebugSessionManagerTest {
 	public void testDSM1()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(DebugCompilerTest.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
@@ -71,7 +69,7 @@ public class DebugSessionManagerTest {
 	public void testDSM2()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(DebugCompilerTest.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
@@ -107,7 +105,7 @@ public class DebugSessionManagerTest {
 	public void testStepBreakPoint()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(DebugCompilerTest.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -175,7 +173,7 @@ public class DebugSessionManagerTest {
 	public void testStepVarBreakPoint()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(DebugCompilerTest.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -245,7 +243,7 @@ public class DebugSessionManagerTest {
 		String projectName = "localvar";
 		// TODO: project should be compiled with debug info!
 		
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(DebugCompilerTest.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
 		
