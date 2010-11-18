@@ -6,6 +6,7 @@ imports
   assert
   gen-debug-step // add step debug information
   gen-debug-var // add local var debug information
+  gen-debug-entry // add rule/strategy enter/exit debug information
   location-util
   
 //
@@ -67,6 +68,7 @@ strategies
 	// current term should be a module
 	 add-r-entry-and-exit-calls(|filename) =
 	 	bottomup(try(add-r-entry-and-exit-call(|filename)))
+	 	// TODO: also support lambda rules, LRule(Rule(match, build, s))
 
  	
 rules 

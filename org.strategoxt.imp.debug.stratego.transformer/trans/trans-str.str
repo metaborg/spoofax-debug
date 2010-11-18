@@ -2,7 +2,6 @@ module trans-str
 
 imports 
   str-reader
-  compile-str
   libstratego-lib
   gen-debug-info
   assert
@@ -179,26 +178,6 @@ strategies
   	// ; debug
   	; echo(|"End foo5")
   	  
-  // read str file with annotations, add debug statements, write debuggable file, compile debuggable file to java  
-  foo6 = 
-  	echo(|"Start foo6")
-  	; get-project-dir => project-dir
-  	; !"test/src" => input-base-dir
-  	; !"test/generated" => output-base-dir
-  	; !"example.tes" => sma-file
-  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
-  	; <concat-strings> [project-dir, "/", output-base-dir, "/", <guarantee-extension(|"str")> sma-file] => absolute-output-location
-  	; echo(|"reading ast from")
-  	; echo(|absolute-location)
-  	; get-anno-ast(|absolute-location)
-  	; assert-module
-  	; filter-location
-  	; add-debug-info(|absolute-location)
-  	; pp-stratego-ast
-  	; write-stratego(|absolute-output-location)
-  	; compile-str-to-java(|absolute-output-location)
-  	// ; debug
-  	; echo(|"End foo6")
   	
 rules  	  
 	// inputfilePath is relative to sourceBasedir.
@@ -214,7 +193,6 @@ rules
   	; add-debug-info(|inputfilePath)
   	; pp-stratego-ast
   	; write-stratego(|outputfilename)
-  	; compile-str-to-java(|outputfilename)
   	; status := "SUCCES"  		
   	)
   	

@@ -1,0 +1,10 @@
+module gen-debug-entry
+
+// generate debug info used to set a breakpoint on
+// a rule enter, rule exit, strategy enter or strategy exit
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  location-util

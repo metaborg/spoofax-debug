@@ -1,7 +1,0 @@
-module compile-str
-
-
-
-strategies
-	
-	compile-str-to-java(|absolute-output-location) = id
