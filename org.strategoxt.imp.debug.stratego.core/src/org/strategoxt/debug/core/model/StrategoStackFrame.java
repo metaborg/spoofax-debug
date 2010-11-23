@@ -124,6 +124,18 @@ public class StrategoStackFrame {
 		this.variables.put(varname, value);
 	}
 	
+	private String[] dynamicRuleNames = null;
+	
+	public void setDynamicRuleNames(String[] dynamicRuleNames) {
+		// TODO Auto-generated method stub
+		this.dynamicRuleNames = dynamicRuleNames;
+	}
+	
+	public String[] getDynamicRules()
+	{
+		return this.dynamicRuleNames;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -168,4 +180,5 @@ public class StrategoStackFrame {
 		
 		return result;
 	}
+
 }

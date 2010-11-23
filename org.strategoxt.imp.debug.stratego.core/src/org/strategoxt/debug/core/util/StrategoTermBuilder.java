@@ -13,6 +13,7 @@ import org.spoofax.interpreter.terms.IStrategoReal;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.IStrategoTuple;
+import org.strategoxt.lang.terms.StrategoList;
 import org.strategoxt.lang.terms.TermFactory;
 
 import com.sun.jdi.ArrayReference;
@@ -262,6 +263,7 @@ public class StrategoTermBuilder {
 		{
 			return buildStrategoAppl(value);
 		}
+		// org.spoofax.interpreter.library.ssl.StrategoHashMap
 		else
 		{
 			System.err.println("Missing type " + type);
@@ -288,6 +290,25 @@ public class StrategoTermBuilder {
 		
 		IStrategoConstructor strategoConstructor = f.makeConstructor(name, arity);
 		return strategoConstructor;
+	}
+	
+	public String[] convertToStringArray(IStrategoTerm term)
+	{
+		if (term instanceof org.strategoxt.lang.terms.StrategoList)
+		{
+			StrategoList list = (StrategoList) term;
+			int size = list.size();
+			String[] items = new String[size];
+			for(int i = 0; i < size; i++)
+			{
+				items[i] = list.get(i).toString();
+			}
+			return items;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 }

@@ -184,6 +184,8 @@ public class ThreadEventHandler {
 					StrategoTermBuilder builder = new StrategoTermBuilder();
 					IStrategoTerm term = builder.buildIStrategoTerm(output); // instance of org.strategoxt.lang.terms.StrategoList(id=1193)
 					System.out.println(term.toString());
+					String[] dynamicRuleNames = builder.convertToStringArray(term);
+					this.strategoState.currentFrame().setDynamicRuleNames(dynamicRuleNames);
 				}
 			} catch(Exception e)
 			{

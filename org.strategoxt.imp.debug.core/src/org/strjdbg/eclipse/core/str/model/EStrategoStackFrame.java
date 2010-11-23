@@ -9,8 +9,10 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.spoofax.interpreter.terms.BasicStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
+import org.strategoxt.lang.terms.StrategoString;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 
@@ -65,6 +67,16 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 			EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue(), entry.getKey());
 			v.setValueChanged(true);
 			vars.add(v);
+		}
+		// add dynamic rules
+		if (this.frameData.getDynamicRules() != null)
+		{
+			for(String dynamicRuleName : this.frameData.getDynamicRules())
+			{
+				EStrategoVariable v = new EStrategoVariable(this.fTarget, new BasicStrategoString("rule contents"), dynamicRuleName);
+				v.setValueChanged(true);
+				vars.add(v);
+			}
 		}
 		// TODO: use this.frameData to determine if the value was changed
 		fVariables = new IVariable[vars.size()];
