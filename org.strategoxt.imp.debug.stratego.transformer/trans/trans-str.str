@@ -40,7 +40,8 @@ rules
   // the foo rules can be used to debug the transformation process. Use example.sma
 strategies
 	
-	get-project-dir = !"/home/rlindeman/workspace/strj-dbg-transformer"	
+	//get-project-dir = !"/home/rlindeman/workspace/strj-dbg-transformer"	
+	get-project-dir = !"/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
 
   // show ast with complete location annotation
   foo1 = 
@@ -183,20 +184,33 @@ rules
 	// inputfilePath is relative to sourceBasedir.
 	// sourceBasedir should be treated as a project directory
 	// the generated file will be saved at outputfilename
-  apply-debug-trans :
+  apply-debug-trans = apply-debug-trans-internal <+ apply-debug-trans-error
+	
+
+  apply-debug-trans-internal :
   	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename)
   	where(
   	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
   	; get-anno-ast(|absPath)
+  	//; debug(!"get-anno-ast")
   	; assert-module
+  	//; debug(!"assert-module")
   	; filter-location
+  	//; debug(!"filter-location")
   	; add-debug-info(|inputfilePath)
+  	//; debug(!"add-debug-info(|inputfilePath)")
   	; pp-stratego-ast
+  	//; debug(!"pp-stratego-ast")
   	; write-stratego(|outputfilename)
   	; status := "SUCCES"  		
   	)
+  
+  apply-debug-trans-debug :
+  	input -> output
+  	where debug(!"transform (debug=true)")
+  	with output := input
   	
-  apply-debug-trans :
+  apply-debug-trans-error :
   	false-arguments -> (status, outputfilename)
   	where(
   		not(?(i_sourceBasedir, i_inputfilePath, i_outputfilename))
@@ -215,4 +229,5 @@ rules
   test-apply-debug-1 = !("asdf", "ddfg"); apply-debug-trans
   test-apply-debug-2 = !("asdf", "ddfg", "asfd"); apply-debug-trans
   test-apply-debug-3 = !"asdf"; apply-debug-trans
+
   	

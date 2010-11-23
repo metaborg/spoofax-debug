@@ -1,6 +1,6 @@
 module localvar
 // use local vars in rules and strategies to store temp result
-
+// This file is used as test input, do not modify!
 imports
   libstrategolib
 

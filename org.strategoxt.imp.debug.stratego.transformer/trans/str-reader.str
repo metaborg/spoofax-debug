@@ -72,11 +72,12 @@ rules
   // ignore current term, just return the ast of a stratego program	
   get-anno-ast(|file-path) = 
       where(
-      	tbl-path := <get-tbl-path>;
-        <ReadFromFile> tbl-path; 
-        open-parse-table => tbl;
-        //<debug(!"filenam")> file-path;
-        <read-text-file> file-path => file
+      	tbl-path := <get-tbl-path>
+        ; <ReadFromFile> tbl-path 
+        ; open-parse-table => tbl
+        //; <debug(!"file-path: ")> file-path
+        ; <read-text-file> file-path => file
+        //; <debug(!"read file from: ")> file-path
       )
     ; <parse-with-asfix-anno(|tbl)> file
       
@@ -85,7 +86,9 @@ rules
   // current term should be result of: <read-text-file> file-path
   // with file-path the path to a text file    
   parse-with-asfix-anno(|tbl) =
-    parse-string-pt(|tbl)
+    parse-string-pt(on-parse-error|tbl)
     ; asfix-anno-location
     ; implode-asfix
+      
+  on-parse-error = debug(!"Parse error: ")
 	

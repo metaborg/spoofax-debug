@@ -1,6 +1,7 @@
 package org.strategoxt.debug.core.util;
 
 import org.strategoxt.debug.core.control.events.EventHandler;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.*;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.ClassPrepareRequest;
@@ -15,13 +16,12 @@ public class DebugEventRequestInstaller {
 	/**
 	 * package name of the runtime library, should match the package in 'strj_dbg_runtime_lib-java.jar'
 	 */
-	private static final String STRJ_DBG_RUNTIME_PACKAGE = "strjdbgruntimelib.strategies";
-	private static final String STRJ_DBG_RUNTIME_LIB_S_ENTER = STRJ_DBG_RUNTIME_PACKAGE+ ".java_s_enter_0_4";
-	private static final String STRJ_DBG_RUNTIME_LIB_S_EXIT = STRJ_DBG_RUNTIME_PACKAGE+ ".java_s_exit_0_4";
-	private static final String STRJ_DBG_RUNTIME_LIB_R_ENTER = STRJ_DBG_RUNTIME_PACKAGE+ ".java_r_enter_0_4";
-	private static final String STRJ_DBG_RUNTIME_LIB_R_EXIT = STRJ_DBG_RUNTIME_PACKAGE+ ".java_r_exit_0_4";
-	private static final String STRJ_DBG_RUNTIME_LIB_S_STEP = STRJ_DBG_RUNTIME_PACKAGE+ ".java_s_step_0_4";
-	private static final String STRJ_DBG_RUNTIME_LIB_S_VAR = STRJ_DBG_RUNTIME_PACKAGE+ ".java_s_var_0_5";
+	private static final String STRJ_DBG_RUNTIME_LIB_S_ENTER = java_s_enter_0_4.getFullClassName();
+	private static final String STRJ_DBG_RUNTIME_LIB_S_EXIT = java_s_exit_0_4.getFullClassName();
+	private static final String STRJ_DBG_RUNTIME_LIB_R_ENTER = java_r_enter_0_4.getFullClassName();
+	private static final String STRJ_DBG_RUNTIME_LIB_R_EXIT = java_r_exit_0_4.getFullClassName();
+	private static final String STRJ_DBG_RUNTIME_LIB_S_STEP = java_s_step_0_4.getFullClassName();
+	private static final String STRJ_DBG_RUNTIME_LIB_S_VAR = java_s_var_0_5.getFullClassName();
 	
 	private static final String EVENT_TYPE = "event-type";
 	

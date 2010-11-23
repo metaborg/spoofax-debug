@@ -48,7 +48,7 @@ public class DebugSessionManagerTest {
 		String classpath = cp;
 		
 		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
-		DebugSessionManager dsm = this.setUp(debugSessionSettings, mainArgs, classpath, vmMonitor);
+		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		// which breakpoints will be hit?
@@ -61,7 +61,10 @@ public class DebugSessionManagerTest {
 		BreakPoint bp = null;
 		bp = new RuleEnterBreakPoint("find-comment-match", -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
+		
 		System.out.println("RUN");
+		// start the debug session
+		start(dsm, mainArgs, classpath);
 	}
 	
 	// stratego program should already be compiled
@@ -81,7 +84,7 @@ public class DebugSessionManagerTest {
 		String classpath = cp;
 		
 		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
-		DebugSessionManager dsm = this.setUp(debugSessionSettings, mainArgs, classpath, vmMonitor);
+		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		// which breakpoints will be hit?
@@ -99,6 +102,8 @@ public class DebugSessionManagerTest {
 		bp = new StrategyEnterBreakPoint("first", -1); // should hit two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
+		// start the debug session
+		start(dsm, mainArgs, classpath);
 	}
 	
 	@org.junit.Test
@@ -110,7 +115,7 @@ public class DebugSessionManagerTest {
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
 		
-		String input = StrategoFileManager.BASE + "/src/strategies/terms/test2.prog";
+		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
@@ -118,13 +123,13 @@ public class DebugSessionManagerTest {
 		String classpath = cp;
 		
 		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
-		DebugSessionManager dsm = this.setUp(debugSessionSettings, mainArgs, classpath, vmMonitor);
+		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(46, eventTable.size());
+		Assert.assertEquals(51, eventTable.size());
 		
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
@@ -167,6 +172,8 @@ public class DebugSessionManagerTest {
 		
 
 		System.out.println("RUN");
+		// start the debug session
+		start(dsm, mainArgs, classpath);
 	}
 	
 	@org.junit.Test
@@ -186,7 +193,7 @@ public class DebugSessionManagerTest {
 		String classpath = cp;
 		
 		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
-		DebugSessionManager dsm = this.setUp(debugSessionSettings, mainArgs, classpath, vmMonitor);
+		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
@@ -235,6 +242,8 @@ public class DebugSessionManagerTest {
 		
 
 		System.out.println("RUN");
+		// start the debug session
+		start(dsm, mainArgs, classpath);
 	}
 	
 	@org.junit.Test
@@ -255,7 +264,7 @@ public class DebugSessionManagerTest {
 		String classpath = cp;
 		
 		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
-		DebugSessionManager dsm = this.setUp(debugSessionSettings, mainArgs, classpath, vmMonitor);
+		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
@@ -288,6 +297,8 @@ public class DebugSessionManagerTest {
 		bp = new RuleEnterBreakPoint(rEnter.getStrategyName(), -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
+		// start the debug session
+		start(dsm, mainArgs, classpath);
 	}
 	
 	/**
@@ -295,16 +306,16 @@ public class DebugSessionManagerTest {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public DebugSessionManager setUp(DebugSessionSettings debugSessionSettings, String mainArgs, String classpath, VMMonitor vmMonitor)
+	public static DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
 	{
-		DebugSessionManager manager = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		manager.initVM(mainArgs, classpath);
 		//manager.initVM(mainArgs);
 		manager.setupEventListeners();
 		manager.redirectOutput();
+		manager.runVM();		
 		return manager;
-		//manager.runVM();		
 	}
+	
 
 	
 	class VMMonitorTestImpl1 implements VMMonitor {
@@ -317,7 +328,6 @@ public class DebugSessionManagerTest {
 		}
 		
 		public void setVMStateTester(VMStateTester vmStateTester) {
-			// TODO Auto-generated method stub
 			this.vmStateTester = vmStateTester;
 		}
 
@@ -327,7 +337,6 @@ public class DebugSessionManagerTest {
 		}
 		
 		public void stateChanged(StrategoState state) {
-			// TODO Auto-generated method stub
 			//System.out.println("state changed");
 			String name = state.currentFrame().getName();
 			boolean expected = vmStateTester.isNextHit(name);
@@ -344,8 +353,7 @@ public class DebugSessionManagerTest {
 		}
 
 		public void vmEvent(String event) {
-			// TODO Auto-generated method stub
-			//System.out.println("vmEvent: " + event);
+			System.out.println("vmEvent: " + event);
 			if ("VMDEATH".equals(event))
 			{
 				// vm terminated
@@ -357,4 +365,5 @@ public class DebugSessionManagerTest {
 		}
 		
 	}
+
 }

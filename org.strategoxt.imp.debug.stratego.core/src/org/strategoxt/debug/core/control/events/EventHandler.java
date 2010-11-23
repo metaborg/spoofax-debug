@@ -104,7 +104,11 @@ public abstract class EventHandler {
 	}
 	
 	private StackFrame stackFrame = null;
-	private StackFrame getStackFrame()
+	/**
+	 * Returns the current stack frame
+	 * @return
+	 */
+	public StackFrame getStackFrame()
 	{
 		if (stackFrame == null)
 		{
@@ -202,7 +206,7 @@ public abstract class EventHandler {
 	 * 
 	 * @return
 	 */
-	protected Value getContextValue()
+	public Value getContextValue()
 	{
 		StackFrame fr = getStackFrame();
 		

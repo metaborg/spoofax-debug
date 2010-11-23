@@ -162,6 +162,11 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		// set up vm arguments
 		String classToLaunch = projectName + "." + projectName;
+		
+		String strategoxtjar = DebugSessionSettings.strategoxtjar;
+		String libstrategodebuglib = DebugSessionSettings.libstrategodebuglib;
+		String strjdebugruntime = DebugSessionSettings.strjdebugruntime;
+		
 		String[] classPath = new String[] { binBase, strategoxtjar, libstrategodebuglib, strjdebugruntime};
 		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(classToLaunch, classPath);
 		
@@ -230,13 +235,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		}
 	}
 
-	
-	private static String strj_dbg_core = "/home/rlindeman/workspace/strj-dbg-core";
-
-	private static String strategoxtjar = strj_dbg_core + "/lib/strategoxt.jar";
-	private static String libstrategodebuglib = strj_dbg_core + "/lib/strj_dbg_runtime_lib.jar";
-	private static String strjdebugruntime = strj_dbg_core + "/lib/strj_dbg_runtime_lib-java.jar";
-	
 
 	
 	/*

@@ -8,3 +8,25 @@ imports
   include/Test
   assert
   location-util
+  
+  
+// Rule sort is used in:
+/*
+DynRuleId ":" Rule "depends" "on" Term 	-> DynRuleDef {cons("SetDynRuleDepends")}
+Id ":" Rule 							-> RuleDef {cons("RDefNoArgs")}
+Id "(" {Typedid ","}* ")" ":" Rule 		-> RuleDef {cons("RDef")}
+
+Id "(" {Typedid ","}* 
+       "|" {Typedid ","}* ")" ":" Rule 	-> RuleDef {cons("RDefT")}
+       
+Term "->" Term           	    		-> Rule {cons("RuleNoCond")} %% backward comp.
+Term "->" Term "where" Strategy 		-> Rule {cons("Rule")}       %% backward comp.
+Term "->" Term RuleCond+	    		-> Rule {cons("Rule"), avoid}
+
+"where" Strategy 						-> RuleCond {cons("WhereClause")}
+"with"  Strategy 						-> RuleCond {cons("WithClause")}
+    
+"\\" Rule "\\" 			 				-> Strategy {cons("LRule")}
+"(" Rule ")" 			  				-> Strategy {cons("SRule")}
+
+*/

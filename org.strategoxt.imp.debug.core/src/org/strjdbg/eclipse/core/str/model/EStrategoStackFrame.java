@@ -48,6 +48,12 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 		extractVariablesFromFrame();
 	}
 	
+	/**
+	 * Saves the variables that are active in the current frame in fVariables.
+	 * The local variables emitted by the s-var debugger calls are shown
+	 * as well as the current Term, with the label *current* 
+	 * but also the dynamic rules.
+	 */
 	private void extractVariablesFromFrame()
 	{		
 		List<EStrategoVariable> vars = new ArrayList<EStrategoVariable>();

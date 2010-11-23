@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar"/>
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/include/stratego-transformer.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/compiler-tools"/>
+	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime-java.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

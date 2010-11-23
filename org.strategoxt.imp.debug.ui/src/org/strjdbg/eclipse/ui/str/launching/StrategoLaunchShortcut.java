@@ -1,8 +1,10 @@
 package org.strjdbg.eclipse.ui.str.launching;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
 public class StrategoLaunchShortcut implements ILaunchShortcut {
@@ -19,6 +21,12 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
 	 */
 	public void launch(IEditorPart editor, String mode) {
 		System.out.println("Launch from editor");
+        IEditorInput input = editor.getEditorInput();
+        IFile file = (IFile) input.getAdapter(IFile.class);
+        if (file != null) {
+        	System.out.println("File: " + file.getFullPath());
+        	// /stratego-resources/src-str/test/localvar/localvar.str
+        }
 		/*
         IEditorInput input = editor.getEditorInput();
         IJavaElement javaElement = 
@@ -52,7 +60,8 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
             if (type != null) {
              launch(type, mode);
             }
-        }*/
+        }
+        */
     }
 
     protected void launch(/*IType type, */String mode) {

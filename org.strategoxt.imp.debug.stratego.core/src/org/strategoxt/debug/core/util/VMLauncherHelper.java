@@ -25,7 +25,7 @@ public class VMLauncherHelper {
     public final String defaultClasspath = "/home/rlindeman/workspace/short-examples/bin" +
     		":/home/rlindeman/workspace/strj-dbg-generated/bin";
 	
-    public final String defaultJars = DebugCompiler.strategoxtjar + ":" + DebugCompiler.libstrategodebuglib + ":" + DebugCompiler.strjdebugruntime;    
+    public final String defaultJars = DebugSessionSettings.strategoxtjar + ":" + DebugSessionSettings.libstrategodebuglib + ":" + DebugSessionSettings.strjdebugruntime;    
     
 	private VirtualMachineManager vmManager = null;
     

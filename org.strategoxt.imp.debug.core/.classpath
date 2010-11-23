@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/stratego-transformer.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/stratego-debug-core.jar"/>
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar"/>
-	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/include/stratego-transformer.jar"/>
+	<classpathentry kind="lib" path="lib/stratego-transformer.jar"/>
+	<classpathentry kind="lib" path="lib/stratego-debug-runtime-java.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/compiler-tools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

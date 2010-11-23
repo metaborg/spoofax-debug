@@ -3,7 +3,10 @@ package org.strategoxt.debug.core.control;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.control.events.RuleEnterHandler;
 import org.strategoxt.debug.core.control.events.RuleExitHandler;
@@ -15,9 +18,11 @@ import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
+import org.strategoxt.debug.core.util.StrategoTermBuilder;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.Method;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.ExceptionEvent;
@@ -159,6 +164,27 @@ public class ThreadEventHandler {
 				LocationInfo locationInfo = h.getLocationInfo();
 				//this.strategoState.setLocationInfo(locationInfo); // LocationInfo should be set on the current Frame
 				this.strategoState.currentFrame().setCurrentLocationInfo(locationInfo);
+				
+				// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended
+
+				Method method = null;
+				List<Value> arguments = new ArrayList<Value>();
+				// java method "getDRKeySet" calls a stratego strategy and returns a list of strings for each dynamic rule
+				List<Method> methods = h.getStackFrame().thisObject().referenceType().methodsByName("getDRKeySet");
+				// should be only one method!
+				method = methods.get(0);
+				arguments.add(h.getContextValue());
+
+				if (suspendThread)
+				{
+					System.out.println("suspend");
+					Value output = h.getStackFrame().thisObject().invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
+					//Value output = thread.invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
+					System.out.println(output.toString());
+					StrategoTermBuilder builder = new StrategoTermBuilder();
+					IStrategoTerm term = builder.buildIStrategoTerm(output); // instance of org.strategoxt.lang.terms.StrategoList(id=1193)
+					System.out.println(term.toString());
+				}
 			} catch(Exception e)
 			{
 				System.err.println("Event handle threw an Exception: " + e.getMessage());

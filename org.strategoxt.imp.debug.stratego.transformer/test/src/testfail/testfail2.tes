@@ -22,28 +22,39 @@ signature
 strategies
   main =
     io-wrap(execute)
-    
+
 rules
 	execute :
 		input -> output
 		where
-			i' := create-input
-			; output := test-i <+ test-i2
+			i' := <create-input>
+			; output := <test-i <+ test-i2 <+ test-i3>
+			; debug(!"output")
+			  
+	test-i = is-empty
+	
 			
 	test-i2:
 		input -> output
-		with
-			output := <fail>
+		where
+			bar := <create-term>
+			; output := <fail>
+	
+	test-ii2 = \ 
+			input -> output
+		where
+			bar := <create-term>
+			; output := <fail>
+	\
+	
+	test-i4 :
+		input -> <fail>
+		
+	test-ii4 =
+		\ input -> <fail> \
+	
+	test-i3:
+		input -> input
 			
-	test-ii2(s1, s2| t) =
-		\ input -> output with output := <fail> ; test := t \ < s1 + (s2; fail)
 strategies
 	create-input = !["fda"]
-	
-	is-empty = ?[]
-	
-	test-i = is-empty
-	
-	create-fail(s) = s; fail
-	
-	test-fail(s1, s2, s3) =  s1 < s2 + s3

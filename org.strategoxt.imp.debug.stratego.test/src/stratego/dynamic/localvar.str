@@ -3,7 +3,7 @@ module localvar
 
 imports
   libstrategolib
-  dynamic-rules
+
 
 signature
   sorts
@@ -83,12 +83,13 @@ rules
 	find-comment-by-name(|name):
 		c* -> comment
 		where <debug(!"find-comment-by-name ")> name
-		where debug(!"get-current-name ")
+		where c := <get-current-name>; <debug(!"get-current-name ")> c
 		with 
 		c-filtered* := <filter(?Comment(name, _))> c*
 		; comment := (<debug(!"stuff:"); first> c-filtered*) //  <+ !Comment(name, "created!!")
 		//; comment := <first> c-filtered*
-		; <debug(!"dr-rule-sets-hashtable: ")> dr-rule-sets-hashtable
+		; dr-rule-sets-hashtable
+		; debug(!"dr-rule-sets-hashtable: ")
 
 
 	old-first : c-list* -> out

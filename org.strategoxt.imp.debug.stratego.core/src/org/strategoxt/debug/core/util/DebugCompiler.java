@@ -23,15 +23,6 @@ public class DebugCompiler {
 	//public static final String WORKING_DIR = "/home/rlindeman/workspace/strj-dbg-app/working";
 	private String workingDir = null;
 	
-	// jars needed for compiling java to class
-	private static String strj_dbg_core = "/home/rlindeman/workspace/strj-dbg-core";
-
-	protected static String strategoxtjar = strj_dbg_core + "/lib/strategoxt.jar";
-	protected static String libstrategodebuglib = strj_dbg_core + "/lib/strj_dbg_runtime_lib.jar";
-	protected static String strjdebugruntime = strj_dbg_core + "/lib/strj_dbg_runtime_lib-java.jar";
-	
-	private static String strategodebuglib_rtree_dir = strj_dbg_core + "/lib";
-	
 	public DebugCompiler(String workingDir)
 	{
 		this.workingDir = workingDir;
@@ -268,11 +259,13 @@ public class DebugCompiler {
 	 * @param libraryName
 	 * @param compiledStrategoFilename
 	 */
-	protected static void compileStratego(String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
+	protected void compileStratego(String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
 	{
 		System.out.println("Generated file at " + inputStrategoFilename);
 		System.out.println("Compile str to java...");
 		// compile the stratego file at $outputFilename
+		String strategodebuglib_rtree_dir = DebugSessionSettings.strategodebuglib_rtree_dir;
+		String javaImportName = "org.strategoxt.imp.debug.stratego.runtime.trans"; // was: "org.strategoxt.libstrategodebuglib"
 		String[] strj_args = new String[] {
 			"-i", 	inputStrategoFilename
 			, "-o", compiledStrategoFilename // output will be java, so folders should match the library name
@@ -280,7 +273,7 @@ public class DebugCompiler {
 			, "-p", libraryName // will be the package name
 			//, "--silent"
 			, "--clean" // remove previous java
-			, "-la", "org.strategoxt.libstrategodebuglib" // used as java import
+			, "-la", javaImportName // used as java import
 		};
 		try {
 			org.strategoxt.strj.Main.mainNoExit(strj_args);
@@ -309,8 +302,12 @@ public class DebugCompiler {
 		// import org.strategoxt.stratego_lib.*;
 		// import org.strategoxt.libstrategodebuglib.*;
 		// import org.strategoxt.lang.*;
-		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
+		String strategoxtjar = DebugSessionSettings.strategoxtjar;
+		String libstrategodebuglib = DebugSessionSettings.libstrategodebuglib;
+		String strjdebugruntime = DebugSessionSettings.strjdebugruntime;
 		
+		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
+		System.out.println(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
 		String filename = sourceBasedir + "/" + mainSourceFileName;
 		String[] args = new String[] {

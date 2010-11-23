@@ -114,6 +114,11 @@ public class StrategoStackFrame {
 		this.currentLocationInfo = currentLocationInfo;
 	}
 	
+	/**
+	 * Call this method when a new variable was used in this frame. (We received a s-var call from the debugger)
+	 * @param varname
+	 * @param value
+	 */
 	public void addVariable(String varname, IStrategoTerm value)
 	{
 		this.variables.put(varname, value);
