@@ -441,7 +441,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		if (stepEvent != null)
 		{
 			//create a step breakpoint
-			bp = new StrategyStepBreakPoint(stepEvent.getStrategyName(), linenumber);
+			bp = new StrategyStepBreakPoint(stepEvent.getStrategyName(), stepEvent.getLocationInfo().getStart_line_num(), stepEvent.getLocationInfo().getStart_token_pos());
 		}
 		else
 		{
@@ -455,11 +455,11 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 			{
 				if ("s-enter".equals(enterEvent.getEventType()))
 				{
-					bp = new StrategyEnterBreakPoint(enterEvent.getStrategyName(), linenumber);
+					bp = new StrategyEnterBreakPoint(enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
 				}
 				else if ("r-enter".equals(enterEvent.getEventType()))
 				{
-					bp = new RuleEnterBreakPoint(enterEvent.getStrategyName(), linenumber);
+					bp = new RuleEnterBreakPoint(enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
 				}
 				else
 				{

@@ -12,7 +12,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.spoofax.interpreter.terms.BasicStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
-import org.strategoxt.lang.terms.StrategoString;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 
