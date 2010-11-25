@@ -17,7 +17,7 @@ public class RuleExitHandler extends EventHandler {
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the rule
 		LocationInfo locationInfo = getLocationInfo();
-		RuleExitBreakPoint b = new RuleExitBreakPoint(name, locationInfo.getStart_line_num());
+		RuleExitBreakPoint b = new RuleExitBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

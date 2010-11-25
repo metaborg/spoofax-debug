@@ -84,12 +84,16 @@ rules
 		c* -> comment
 		where <debug(!"find-comment-by-name ")> name
 		where c := <get-current-name>; <debug(!"get-current-name ")> c
+		// add dynamic rule, will this one also show up in find-comment-match? Yes! but only if we hit that strategy again
+		where rules (
+			baz-rule : input -> "output"
+		)
 		with 
 		c-filtered* := <filter(?Comment(name, _))> c*
 		; comment := (<debug(!"stuff:"); first> c-filtered*) //  <+ !Comment(name, "created!!")
 		//; comment := <first> c-filtered*
-		; dr-rule-sets-hashtable
-		; debug(!"dr-rule-sets-hashtable: ")
+		//; dr-rule-sets-hashtable
+		//; debug(!"dr-rule-sets-hashtable: ")
 
 
 	old-first : c-list* -> out

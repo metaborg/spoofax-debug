@@ -19,7 +19,7 @@ public class StrategyEnterHandler extends EventHandler {
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the strategy
 		LocationInfo locationInfo = getLocationInfo();
-		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(name, locationInfo.getStart_line_num());
+		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

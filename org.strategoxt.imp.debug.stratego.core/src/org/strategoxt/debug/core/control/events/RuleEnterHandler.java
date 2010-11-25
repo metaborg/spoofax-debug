@@ -19,7 +19,7 @@ public class RuleEnterHandler extends EventHandler {
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the rule
 		LocationInfo locationInfo = getLocationInfo();
-		RuleEnterBreakPoint b = new RuleEnterBreakPoint(name, locationInfo.getStart_line_num());
+		RuleEnterBreakPoint b = new RuleEnterBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

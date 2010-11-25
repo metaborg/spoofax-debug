@@ -1,20 +1,16 @@
 package org.strategoxt.debug.core.control;
 
-import java.util.List;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.strategoxt.debug.core.eventspec.BreakPoint;
-import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
-public class DSMTestDynamic {
+public class DSMTestDynamic extends AbstractDSMTest {
 
 	public static void main(String[] args) {
 		DSMTestDynamic test = new DSMTestDynamic();
@@ -44,31 +40,29 @@ public class DSMTestDynamic {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(57, eventTable.size());
+		Assert.assertEquals(56, eventTable.size());
 		
 		// 78, 8
 		// ; c := <find-comment-by-name(|name)> c*
 		// right after a definition of a local rule
 		// in rule "find-comment-match"
-		List<EventEntry> entries = eventTable.getEventEntries(78, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
+		// only the dynamic rule "get-current-name" should be available at the first suspend
+		// at the second suspend, also "baz-rule" will be available
+		int lineNumber = 78;
+		int startTokenPosition = 8;
+		String eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 		
-		BreakPoint bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 78);
-		dsm.getEventSpecManager().add(bp);
-
-		
-		// 89, 6
+		// 93, 6
 		// ; comment := (<debug(!"stuff:"); first> c-filtered*) //  <+ !Comment(name, "created!!")
 		// current active rule calls a dynamic strategy
 		// in rule "find-comment-by-name"
-		entries = eventTable.getEventEntries(89, 6, "s-step");
-		Assert.assertEquals(1, entries.size());
+		// will show 2 dynamic rules: "get-current-name" and "baz-rule"
+		lineNumber = 93;
+		startTokenPosition = 6;
+		eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 		
-		bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 89);
-		dsm.getEventSpecManager().add(bp);
-
 		// TODO: test set breakpoint on dynamic rule
 		/*
 		// 49, 8

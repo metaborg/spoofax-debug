@@ -3,8 +3,8 @@ package org.strategoxt.debug.core.eventspec;
 
 public class StrategyStepBreakPoint extends BreakPoint {
 
-	public StrategyStepBreakPoint(String name, int lineNumber) {
-		super(name, lineNumber);
+	public StrategyStepBreakPoint(String name, int lineNumber, int startTokenPosition) {
+		super(name, lineNumber, startTokenPosition);
 	}
 
 	@Override
@@ -12,6 +12,7 @@ public class StrategyStepBreakPoint extends BreakPoint {
 		final int prime = 47;
 		int result = 1;
 		result = prime * result + getLineNumber();
+		result = prime * result + getStartTokenPosition();
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
 		return result;
@@ -37,6 +38,8 @@ public class StrategyStepBreakPoint extends BreakPoint {
 			return true; // -1 means match on any strategy with the same name
 		}
 		if (getLineNumber() != other.getLineNumber())
+			return false;
+		if (getStartTokenPosition() != other.getStartTokenPosition())
 			return false;
 		return true;
 	}

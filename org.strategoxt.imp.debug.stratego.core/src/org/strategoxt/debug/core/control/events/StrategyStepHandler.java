@@ -17,7 +17,7 @@ public class StrategyStepHandler extends EventHandler {
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the strategy
 		LocationInfo locationInfo = getLocationInfo();
-		StrategyStepBreakPoint b = new StrategyStepBreakPoint(name, locationInfo.getStart_line_num());
+		StrategyStepBreakPoint b = new StrategyStepBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

@@ -1,9 +1,9 @@
 package org.strategoxt.debug.core.eventspec;
 
 public class StrategyExitBreakPoint extends BreakPoint {
-
-	public StrategyExitBreakPoint(String name, int lineNumber) {
-		super(name, lineNumber);
+	
+	public StrategyExitBreakPoint(String name, int lineNumber, int startTokenPosition) {
+		super(name, lineNumber, startTokenPosition);
 	}
 
 	@Override

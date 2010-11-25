@@ -10,13 +10,12 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.RuleEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
-import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
-public class DebugSessionManagerTest {
+public class DebugSessionManagerTest extends AbstractDSMTest {
 	
 	public static void main(String[] args) {
 		runLocalVar();
@@ -59,7 +58,7 @@ public class DebugSessionManagerTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint("find-comment-match", -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint("find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
 		
 		System.out.println("RUN");
@@ -97,9 +96,9 @@ public class DebugSessionManagerTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint("find-comment-match", -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint("find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
-		bp = new StrategyEnterBreakPoint("first", -1); // should hit two times
+		bp = new StrategyEnterBreakPoint("first", -1, -1); // should hit two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session
@@ -134,34 +133,26 @@ public class DebugSessionManagerTest {
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
 		// in rule "match-comments"
-		List<EventEntry> entries = eventTable.getEventEntries(47, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		BreakPoint bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 47);
-		dsm.getEventSpecManager().add(bp);
+		int lineNumber = 47;
+		int startTokenPosition = 8;
+		String eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 
 		
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
-		entries = eventTable.getEventEntries(48, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 48);
-		dsm.getEventSpecManager().add(bp);
-
+		lineNumber = 48;
+		startTokenPosition = 8;
+		eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 		
 		// 49, 8
 		// out := <match-f-and-c> (f*, c*)
-		entries = eventTable.getEventEntries(49, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 49);
-		dsm.getEventSpecManager().add(bp);
-
-		
+		lineNumber = 49;
+		startTokenPosition = 8;
+		eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+	
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester();
@@ -204,32 +195,26 @@ public class DebugSessionManagerTest {
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
 		// in rule "match-comments"
-		List<EventEntry> entries = eventTable.getEventEntries(47, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		BreakPoint bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 47);
-		dsm.getEventSpecManager().add(bp);
+		int lineNumber = 47;
+		int startTokenPosition = 8;
+		String eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 
 		
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
-		entries = eventTable.getEventEntries(48, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 48);
-		dsm.getEventSpecManager().add(bp);
+		lineNumber = 48;
+		startTokenPosition = 8;
+		eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 
 		
 		// 49, 8
 		// out := <match-f-and-c> (f*, c*)
-		entries = eventTable.getEventEntries(49, 8, "s-step");
-		Assert.assertEquals(1, entries.size());
-		
-		bp = null;
-		bp = new StrategyStepBreakPoint(entries.get(0).getStrategyName(), 49);
-		dsm.getEventSpecManager().add(bp);
+		lineNumber = 49;
+		startTokenPosition = 8;
+		eventType = "s-step";
+		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
 
 		
 		
@@ -294,7 +279,7 @@ public class DebugSessionManagerTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint(rEnter.getStrategyName(), -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint(rEnter.getStrategyName(), -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session

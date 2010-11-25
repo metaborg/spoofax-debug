@@ -2,8 +2,8 @@ package org.strategoxt.debug.core.eventspec;
 
 public class RuleEnterBreakPoint extends BreakPoint {
 	
-	public RuleEnterBreakPoint(String name, int lineNumber) {
-		super(name, lineNumber);
+	public RuleEnterBreakPoint(String name, int lineNumber, int startTokenPosition) {
+		super(name, lineNumber, startTokenPosition);
 	}
 
 	@Override
