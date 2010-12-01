@@ -1,4 +1,4 @@
-package org.strategoxt.debug.core;
+package org.strategoxt.debug.core.util.dctests;
 
 import java.io.IOException;
 

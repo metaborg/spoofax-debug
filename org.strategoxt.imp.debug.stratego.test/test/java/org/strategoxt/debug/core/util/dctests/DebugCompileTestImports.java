@@ -1,4 +1,4 @@
-package org.strategoxt.debug.core;
+package org.strategoxt.debug.core.util.dctests;
 
 import java.io.IOException;
 
@@ -6,21 +6,18 @@ import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 
-public class DebugCompileLocalVar {
+public class DebugCompileTestImports {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		testDebugCompileLocalVar();
-
+		testDebugCompileTestImports();
 	}
-	
-	public static void testDebugCompileLocalVar() {
+
+	public static void testDebugCompileTestImports()
+	{
 		//String inputBase = StrategoFileManager.BASE;
-		String inputFilePath = "src/stratego/localvar/localvar.str";
+		String inputFilePath = "src/stratego/testimports/localvar.str";
 		//String strategoFilePath = inputBase + "/" + inputFilename;
-		String projectName = "localvar";
+		String projectName = "testimports";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
@@ -40,9 +37,9 @@ public class DebugCompileLocalVar {
 		// run .class
 		if (runjava && compileSucces)
 		{
-			String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
+			String input = StrategoFileManager.BASE + "/src/stratego/dynamic/run.input";
 			String argsForMainClass = "-i " + input;
-			String mainClass = "localvar.localvar";
+			String mainClass = "dynamic.dynamic";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
 			String strategoxtjar = DebugSessionSettings.strategoxtjar;
@@ -54,5 +51,4 @@ public class DebugCompileLocalVar {
 			org.strategoxt.debug.core.util.Runner.run(projectName, mainArgs, classpath);
 		}
 	}
-
 }
