@@ -4,14 +4,21 @@ imports
 	include/Test
 	str-reader
 	assert
+	trans-str
 	  
-// parse the given stratego file and create a lookup file containing all debug-call and their linenumbers
+// parse the given stratego file and create a lookup file containing all debug-calls and their linenumbers
 rules
-	create-table: inputfilename -> contents
+	// table-filename is the location of the output table
+	// current term should be a list of inputfilenames each pointing to a stratego file
+	// output is the location of the table
+	create-table(|table-filename): inputfilenames* -> table-filename
 	where(debug(!"create-table"))
 	where(
-//	  	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
-//  	; get-anno-ast(|absPath)
+		table-file-handle := <get-file-handle(|table-filename)>
+		; <map(create-table-for-input(|table-file-handle))> inputfilenames* // writes the table contents of each inputfilename to table-file-handle
+		; close-file-handle(|table-file-handle)
+	)
+	/*
 	get-anno-ast(|inputfilename)
   	; assert-module
   	; collect-debug-calls
@@ -19,8 +26,22 @@ rules
   	; contents := $[[lines*]]
   	; filename := <guarantee-extension(|"table")> inputfilename
   	; write-to-file(|filename, contents)
-  	  )
+  	  )*/
   	  
+  	// parse the inputfile, create table entries and add them to the table-file-handle
+  	create-table-for-input(|table-file-handle) :
+  		inputfilename -> contents
+  		where
+			get-anno-ast(|inputfilename)
+		  	; assert-module // check if it properly parsed!
+		  	; collect-debug-calls
+		  	; lines* :=  <create-table-entries>
+		  	; contents := $[[lines*]]
+		  	; write-contents-to-handle(|table-file-handle, contents) // also flushes
+		  	    
+		  	//; filename := <guarantee-extension(|"table")> inputfilename
+		  	//; write-to-file(|filename, contents)
+  	    			
 // strategy to collect all strago debug calls
 	collect-debug-calls =
     	collect-all(is-debug-call)
@@ -55,5 +76,30 @@ rules
     convert-to-line :
   (debug-event, filename, name, a, b, c, d) -> 
     $[[debug-event]	[filename]	[name]	[a]	[b]	[c]	[d]
-     ]
-	test-create-table = <create-table> "/home/rlindeman/workspace/strj-dbg-test/working/localvar/stratego/localvar.str"
+     ]// should be real tabs between the variables
+
+strategies
+	
+	test-create-table-1 =
+		echo(|"test-create-table-1")
+  		; get-project-dir => project-dir
+  		; !"test/generated/localvar/stratego" => stratego-files-base-dir
+  		; !"localvar.str" => main-stratego-file
+  		; <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", main-stratego-file]	=> file1
+  		; stratego-files := [file1] // all files should be stratego files with debug information
+  		; table-filename := <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", main-stratego-file, ".table"]
+  		; <create-table(|table-filename)> stratego-files
+  		       
+	test-create-table-2 = 
+		echo(|"test-create-table-2")
+  		; get-project-dir => project-dir
+  		; !"test/generated/testimports" => stratego-files-base-dir
+  		; !"localvar.str" => rel-f1
+  		; !"localmod/syntax/varsyntax.str" => rel-f2
+  		; !"localmod/util/utils.str" => rel-f3
+		; <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", rel-f1]	=> file1
+		; <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", rel-f2]	=> file2
+		; <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", rel-f3]	=> file3
+		; stratego-files := [file1, file2, file3] // all files should be stratego files with debug information
+		; table-filename := <concat-strings> [project-dir, "/", stratego-files-base-dir, "/", rel-f1, ".table"]
+		; <create-table(|table-filename)> stratego-files

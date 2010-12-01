@@ -21,4 +21,27 @@ rules // Main editor interface (defined by editor/Test-Builders and -References.
 
       
 strategies
-	main = io-wrap(id)
+	main = io-wrap(create-options, create-usage, default-system-about, execute)
+	
+	execute = id
+	
+	create-options =
+ 		Option("--option1"
+ 			, <set-config> ("--option1", ())
+ 			, !"--option1        This is a an example option"
+		)
+		+ ArgOption("--arg1"
+			, <set-config> ("--arg1", <id>)
+ 			, !"--arg1           This is an example arg option"
+		)
+  
+ create-usage =
+ default-system-usage(
+ 	!"Usage: option-demo [options]"
+  , !
+"   This is a test program to demonstrate use of
+    parse-options and  generation of usage info
+    from option and switch specificatios. These
+    now contain usage info as additional third 
+    argument."
+     )

@@ -7,6 +7,8 @@ imports
   libstratego-xtc 
   libstratego-rtg
   
+  trans-str
+  
 strategies
 	// current term should be a string pointing to a stratego file
 	list-imports(|args) =
@@ -15,65 +17,67 @@ strategies
 		//; pack-stratego-trm(|args)
 	; where(id
       ; incl := <get-config <+ ![]> "-I"
-      ; debug(!"incl: ")
+      //; debug(!"incl: ")
       //; <set-config> ("-I", [])
       //; debug(!"set: ")
       //; incl2 := <get-config <+ ![]> "-I"
       //; debug(!"incl2: ")
-      ; <parse-options(pack-stratego-options <+ input-options, system-usage, id)> 
-          [<whoami <+ !"strc"> | args]
+      ; <parse-options(pack-stratego-options <+ input-options, system-usage, id)> [<whoami <+ !"strc"> | args]
     )
-    ; debug(!"where: ")
+    //; debug(!"where: ")
     ; pack-process-options
     ; pack-report-options
-    ; debug(!"config:")
-    ; where(!"-I"; get-config; debug(!"IIII: "))
+    ; where(pack-include-path; debug(!"pack-include-path: ") )
+    //; debug(!"config:")
+    //; where(!"-I"; get-config; debug(!"IIII: "))
       // current is FILE
     ; pack-stratego(|<pack-include-path>) => (files, spec)
-    /*
-    ; <pack-maybe-create-depfile> files
-    ; !spec
-    ; where(<set-config>("-I", incl))
-	*/
-	
-	/*
-	  pack-strategoXX(|mkpt) =
-	  	?g; debug(!"g"); 
-      \ FILE(s) -> IncludePathName(s) \
-      ;debug(!"File: ")
-    ; !(<id>, mkpt, [])
-    ; graph-nodes-undef(
-        { file:
-          pack-stratego-parse-stratego => (file,_)
-        ; rules( FileDependencies :+= file )
-        ; if <get-config> "--dump-aterms" then
-            where({fn, trm: 
-                ?(fn, trm)
-                ; if <string-ends-with(|".str")> fn then
-                    rules ( StrAsts :+= (fn, trm) )
-                  end
-                })
-          end
-        }
-      , pack-get-stratego-imports 
-        ; map(IncludePathName(id) <+ !IncludeFromPath(<id>))
-      , \ (n,x,xs) -> [x|xs] \
-      )
-    ; (uniq,id)
-    ; debug(!"uniq: ")
-    ; if ?(_, []) then
-       Fst
-       ; unzip
-       ; (id, pack-flatten-stratego)
-      else
-        if not(<get-config>"--slack") then
-          Snd 
-          ; map(pack-report-module-not-found)
-          ; <xtc-exit> 1
-        else 
-          Fst
-        ; unzip
-        ; (id, pack-flatten-stratego)
-        end
-      end
-*/
+
+  // directories is a list of strings, each element is a directory used by "-I"
+  get-internal-files(|directories) :
+  	(basepath, stratego-file) -> real-files
+  	where
+  		absolute-location := 	<concat-strings> [basepath, "/", stratego-file]
+  		; basic-args := [ "--slack" // skip errors
+  			, "-i", absolute-location]
+  		//; basic-ext-args := ["-I", "."]  // "." = basepath. Look for imports only in the current dir
+  		; ext-args := <map(create-I); concat> directories
+  		//	, "-I", "."
+  		; <set-config> ("-I", directories)
+  		; args := <concat> [basic-args, ext-args]
+  		; debug(!"ARGS: ")
+  	  	; <list-imports(|args)> absolute-location
+  		; ?(files, _)
+  		; real-files := <filter(not(?""))> files
+  		  
+  create-I:
+  	directory -> ["-I", directory]
+  	
+  	// if real-file start with base-path
+  	// strip the basepath from real-file => inputfilePath
+  	// call apply-debug-trans
+  	// sourceBasedir = base-path
+  	// outputfilename = output-base-path + inputfilePath
+  	// (sourceBasedir, inputfilePath, outputfilename)
+  handle-file(|base-path, output-base-path) = 
+  	?absolute-stratego-file
+  	; split-path(|base-path) => (parent, rel-path)
+  	; sourceBasedir := base-path
+  	; inputfilePath := rel-path
+  	; outputfilename := <concat-strings> [output-base-path, "/", rel-path]
+  	; args := (sourceBasedir, inputfilePath, outputfilename)
+  	; debug(!"apply-debug-trans: ")
+  	; <apply-debug-trans> args
+  	//; debug(!"DONE apply: ")  	
+  	
+  // splits the path in two paths, first is base-path, second is the path-part after the base-path (trim leading "/")
+  split-path(|base-path) :
+  	path -> (parent-path, child-path)
+  	where <string-starts-with(|base-path)> path // path should start with the base-path
+  	where
+  		sub-string-length := <string-length> base-path
+  		; full-string-length := <string-length> path
+  		; string-list := <explode-string> path
+  		; <split-at(|sub-string-length)> string-list => (p0, p1)
+  		; parent-path := <implode-string> p0
+  		; child-path := <implode-string; ltrim-chars(?'/')> p1

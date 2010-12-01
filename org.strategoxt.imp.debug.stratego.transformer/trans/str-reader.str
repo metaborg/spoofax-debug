@@ -29,10 +29,14 @@ rules
 	
 	// current term is string
 	// writes the string to the absolute-location
-  write-stratego(|absolute-location)	:
+  write-stratego(|absolute-location) :
    source-code -> absolute-location
+   //where <debug(!"write-stratego to ")> absolute-location
    where
-   	write-to-file(|absolute-location, source-code)
+   	<dirname> absolute-location => dir
+   	//; debug(!"dirname: ")
+   	; check-dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
+   	; write-to-file(|absolute-location, source-code)
   
   strategies
 
@@ -56,13 +60,49 @@ rules
   	; check-dir
   	; write-to-file(|absolutepath, content)
 	
-	
-	write-to-file(|filename, contents) = handle := <fopen> (filename, "w"); <fputs> (contents, handle); fclose
-	
-	check-dir =
-		//debug(!"check-dir")
-		(file-exists ; filemode ; isdir) <+ (debug(!"create dir: "); mkdir)
+	// assume the directory exists
+	// current term is ignored
+	write-to-file(|filename, contents) = 
+		handle := <fopen> (filename, "w")
+		; <fputs> (contents, handle)
+		; fclose
+
+
+	// assume directory exists
+	// current term is ignored
+	// returns the result of <fopen> (Stream)
+	// howto write to the file:
+	// <fputs> (contents, handle)
+	get-file-handle(|filename) =
+		handle := <fopen> (filename, "w")
 		
+	// writes contents to the file-handle and flush
+	// returns the Stream
+	write-contents-to-handle(|file-handle, contents) = 	<fputs> (contents, file-handle); fflush
+	
+	// closes the file-handle Stream
+	close-file-handle(|file-handle) = <fclose> file-handle
+		
+	// check if the current term is a directory and it exists
+	// if not, create the full path
+	check-dir =
+		?directory
+		//; debug(!"check-dir: ")
+		; parent-dir := <dirname> directory
+		; !directory
+		; (file-exists ; filemode ; isdir) // if isdir fails, mkdir
+		  <+ (create-dir)
+	
+	// current term should be a directory path
+	// creates the full directory path	  
+	create-dir =
+		?directory
+		//; debug(!"create dir: ")
+		; parent-dir := <dirname> directory
+		; <check-dir> parent-dir
+		// check if the parent dir exists
+		; try(!directory; mkdir//; debug(!"mkdir succes")
+		  )
 	
   // current term should be a Stratego ast
   // converts ast to a stratego program
