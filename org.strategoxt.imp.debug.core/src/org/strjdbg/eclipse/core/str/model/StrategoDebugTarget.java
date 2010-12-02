@@ -329,7 +329,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 					if (marker != null) {
 						IPath programPath = new Path(program);
 						File parent = programPath.toFile().getParentFile();
-						IPath breakPointPath = marker.getResource().getFullPath();
+						IPath breakPointPath = marker.getResource().getFullPath(); // path to the file in which the breakpoint was set
 						IPath subProjectPath = new Path(parent.getAbsolutePath()); // the dir in which the program is
 						System.out.println("subProjectPath: " + subProjectPath.toOSString());
 						System.out.println("breakPointPath: " + breakPointPath.toOSString());
@@ -337,6 +337,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 						return isPrefix;
 					}
 				}
+				// TODO: implement -I directories
 			} catch (CoreException e) {
 			}			
 		}
@@ -421,12 +422,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 					// only add the breakpoint to the Stratego debugger when the breakpoint is enabled
 					int linenumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 					IResource r = breakpoint.getMarker().getResource();
-					//String fullpath = r.getFullPath().toOSString();
-					//System.out.println("Fullpath: " + fullpath);
-					//String location = r.getLocation().toOSString();
-					//System.out.println("Location: " + location);
 					String pRel = r.getProjectRelativePath().toOSString();
-					//System.out.println("ProRel: " + pRel);
 					String filename = pRel;
 					if (linenumber > 0)
 					{
@@ -512,7 +508,6 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		if (supportsBreakpoint(breakpoint)) {
 
 			// convert IBreakpoint to Stratego Breakpoint
-
 			int linenumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 			IResource r = breakpoint.getMarker().getResource();
 			String pRel = r.getProjectRelativePath().toOSString();
