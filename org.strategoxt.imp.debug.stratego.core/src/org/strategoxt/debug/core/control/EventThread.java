@@ -78,8 +78,6 @@ public class EventThread extends Thread {
 	private final VirtualMachine vm; // Running VM
 	private final String[] excludes; // Packages to exclude
 
-	static String nextBaseIndent = ""; // Starting indent for next thread
-
 	private boolean connected = false; // Connected to VM
 	private boolean vmDied = false; // VMDeath occurred
 

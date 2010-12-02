@@ -19,16 +19,29 @@ public class EventTable {
 		this.eventEntries = new ArrayList<EventEntry>();
 	}
 	
+	/**
+	 * Add an EventEntry to the EventTable.
+	 * @param eventEntry
+	 */
 	public void add(EventEntry eventEntry)
 	{
 		this.eventEntries.add(eventEntry);
 	}
 		
+	/**
+	 * Returns the number of items in the EventTable.
+	 * @return
+	 */
 	public int size()
 	{
 		return this.eventEntries.size();
 	}
 	
+	/**
+	 * Read the table from the given location and return a EventTable
+	 * @param location
+	 * @return
+	 */
 	public static EventTable readEventTable(String location)
 	{
 		EventTable eventTable = null; // return value
@@ -80,7 +93,14 @@ public class EventTable {
 		return eventTable;
 	}
 	
-	public List<EventEntry> getEventEntries(int linenumber)
+	/**
+	 * Gets the EventEntries that match the given filename and the given linenumber.
+	 * Multiple EventEntries can be at the same linenumber.
+	 * @param filename
+	 * @param linenumber
+	 * @return
+	 */
+	public List<EventEntry> getEventEntries(String filename, int linenumber)
 	{
 		List<EventEntry> matches = new ArrayList<EventEntry>();
 		
@@ -94,9 +114,16 @@ public class EventTable {
 		return matches;
 	}
 	
-	public List<EventEntry> getEventEntries(int linenumber, String eventType)
+	/**
+	 * Gets the EventEntries that match the given filename, the given linenumber and the given eventType.
+	 * @param filename
+	 * @param linenumber
+	 * @param eventType
+	 * @return
+	 */
+	public List<EventEntry> getEventEntries(String filename, int linenumber, String eventType)
 	{
-		List<EventEntry> matches = this.getEventEntries(linenumber);
+		List<EventEntry> matches = this.getEventEntries(filename, linenumber);
 		List<EventEntry> typeMatches = new ArrayList<EventEntry>();
 		for(EventEntry eventEntry : matches)
 		{
@@ -108,13 +135,21 @@ public class EventTable {
 		return typeMatches;
 	}
 	
-	public List<EventEntry> getEventEntries(int linenumber, int token_position)
+	/**
+	 * Gets the EventEntries that match the given filename and the EventEntry should surround the linenumber and token_position.
+	 * 
+	 * @param filename
+	 * @param linenumber
+	 * @param token_position
+	 * @return
+	 */
+	public List<EventEntry> getEventEntries(String filename, int linenumber, int token_position)
 	{
 		List<EventEntry> matches = new ArrayList<EventEntry>();
 		
 		for(EventEntry eventEntry : this.eventEntries)
 		{
-			if (eventEntry.getLocationInfo().surrounds(linenumber, token_position))
+			if (eventEntry.getLocationInfo().surrounds(linenumber, token_position) && eventEntry.getStrategoFilename().equals(filename))
 			{
 				matches.add(eventEntry);
 			}
@@ -122,9 +157,18 @@ public class EventTable {
 		return matches;
 	}
 	
-	public List<EventEntry> getEventEntries(int linenumber, int token_position, String eventType)
+	/**
+	 * Gets the EventEntries that match the given filename, the given eventType and the EventEntry should surround the linenumber and token_position.
+	 * 
+	 * @param filename
+	 * @param linenumber
+	 * @param token_position
+	 * @param eventType
+	 * @return
+	 */
+	public List<EventEntry> getEventEntries(String filename, int linenumber, int token_position, String eventType)
 	{
-		List<EventEntry> matches = this.getEventEntries(linenumber, token_position);
+		List<EventEntry> matches = this.getEventEntries(filename, linenumber, token_position);
 		List<EventEntry> typeMatches = new ArrayList<EventEntry>();
 		for(EventEntry eventEntry : matches)
 		{
@@ -136,6 +180,11 @@ public class EventTable {
 		return typeMatches;
 	}
 	
+	/**
+	 * Returns the first EventEntry that is a s-step event from the given list.
+	 * @param entries
+	 * @return
+	 */
 	public static EventEntry getFirstStepEventEntry(List<EventEntry> entries)
 	{
 		for(EventEntry eventEntry: entries)
@@ -148,6 +197,11 @@ public class EventTable {
 		return null;
 	}
 	
+	/**
+	 * Returns the first EventEntry that is a s-enter or a r-enter event from the given list.
+	 * @param entries
+	 * @return
+	 */
 	public static EventEntry getFirstEnterEventEntry(List<EventEntry> entries)
 	{
 		for(EventEntry eventEntry: entries)

@@ -14,9 +14,9 @@ public class DebugCompileDynamic {
 	}
 	
 	public static void testDebugCompileDynamic() {
-		//String inputBase = StrategoFileManager.BASE;
-		String inputFilePath = "src/stratego/dynamic/localvar.str";
-		//String strategoFilePath = inputBase + "/" + inputFilename;
+		String baseInputPath = "src/stratego/dynamic";
+		String strategoFile = "localvar.str";
+
 		String projectName = "dynamic";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
 		// mkdir localvar/stratego in workingdir
@@ -25,7 +25,8 @@ public class DebugCompileDynamic {
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
-			binBase = debugCompiler.debugCompile(StrategoFileManager.BASE, inputFilePath, projectName);
+			String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+			binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFile, projectName);
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();

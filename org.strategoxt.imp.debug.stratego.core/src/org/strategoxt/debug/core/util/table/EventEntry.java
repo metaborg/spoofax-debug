@@ -37,4 +37,10 @@ public class EventEntry {
 		return locationInfo;
 	}
 	
+	@Override
+	public String toString() {
+		String s = String.format("EventEntry type=%s strategyName=%s file=%s locationInfo=%s", eventType, strategyName, strategoFilename, locationInfo.toString());
+		return s;
+	}
+	
 }

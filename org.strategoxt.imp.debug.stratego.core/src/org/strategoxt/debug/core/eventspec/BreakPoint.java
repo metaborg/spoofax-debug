@@ -2,6 +2,7 @@ package org.strategoxt.debug.core.eventspec;
 
 public abstract class BreakPoint {
 
+	private String filename;
 	private String name;
 	private int lineNumber;
 	private int startTokenPosition;
@@ -13,10 +14,21 @@ public abstract class BreakPoint {
 	 * @param lineNumber
 	 * @param startTokenPosition
 	 */
-	public BreakPoint(String name, int lineNumber, int startTokenPosition) {
+	public BreakPoint(String filename, String name, int lineNumber, int startTokenPosition) {
+		this.filename = filename;
 		this.name = name;
 		this.lineNumber = lineNumber;
 		this.startTokenPosition = startTokenPosition;
+	}
+	
+	public String getFilename()
+	{
+		return filename;
+	}
+	
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
 	}
 
 	public String getName() {

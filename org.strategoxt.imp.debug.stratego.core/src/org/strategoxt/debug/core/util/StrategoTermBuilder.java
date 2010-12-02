@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.spoofax.interpreter.terms.BasicStrategoString;
 import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoConstructor;
 import org.spoofax.interpreter.terms.IStrategoInt;
@@ -292,6 +293,11 @@ public class StrategoTermBuilder {
 		return strategoConstructor;
 	}
 	
+	/**
+	 * The given IStrategoTerm should be a list, all items in the list are converted to a String[].
+	 * @param term
+	 * @return
+	 */
 	public String[] convertToStringArray(IStrategoTerm term)
 	{
 		if (term instanceof org.strategoxt.lang.terms.StrategoList)
@@ -309,6 +315,23 @@ public class StrategoTermBuilder {
 		{
 			return null;
 		}
+	}
+	
+	/**
+	 * Converts a Collection<String> to a IStrategoList containing BasicStrategoString's.
+	 * @param collection
+	 * @return
+	 */
+	public IStrategoList convertToIStrategoList(Collection<String> collection)
+	{
+		Collection<IStrategoTerm> terms = new ArrayList<IStrategoTerm>();
+		for(String item : collection)
+		{
+			IStrategoTerm t = new BasicStrategoString(item);
+			terms.add(t);
+		}
+		IStrategoList list = f.makeList(terms);
+		return list;
 	}
 
 }

@@ -16,8 +16,9 @@ public class RuleExitHandler extends EventHandler {
 	@Override
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the rule
+		String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
 		LocationInfo locationInfo = getLocationInfo();
-		RuleExitBreakPoint b = new RuleExitBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		RuleExitBreakPoint b = new RuleExitBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

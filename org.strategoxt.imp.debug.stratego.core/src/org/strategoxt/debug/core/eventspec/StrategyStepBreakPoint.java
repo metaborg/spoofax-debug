@@ -3,8 +3,8 @@ package org.strategoxt.debug.core.eventspec;
 
 public class StrategyStepBreakPoint extends BreakPoint {
 
-	public StrategyStepBreakPoint(String name, int lineNumber, int startTokenPosition) {
-		super(name, lineNumber, startTokenPosition);
+	public StrategyStepBreakPoint(String filename, String name, int lineNumber, int startTokenPosition) {
+		super(filename, name, lineNumber, startTokenPosition);
 	}
 
 	@Override
@@ -15,6 +15,7 @@ public class StrategyStepBreakPoint extends BreakPoint {
 		result = prime * result + getStartTokenPosition();
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + ((getFilename() == null) ? 0 : getFilename().hashCode());
 		return result;
 	}
 
@@ -27,6 +28,11 @@ public class StrategyStepBreakPoint extends BreakPoint {
 		if (!(obj instanceof StrategyStepBreakPoint))
 			return false;
 		StrategyStepBreakPoint other = (StrategyStepBreakPoint) obj;
+		if (getFilename() == null || other.getFilename() == null) {
+			return false;
+		} else if (!getFilename().equals(other.getFilename())) {
+			return false;
+		}
 		if (getName() == null || other.getName() == null) {
 			return false; // one of the names is null
 		} else if (!getName().equals(other.getName())) {

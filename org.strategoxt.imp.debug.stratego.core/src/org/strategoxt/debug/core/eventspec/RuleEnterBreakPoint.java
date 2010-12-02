@@ -2,8 +2,8 @@ package org.strategoxt.debug.core.eventspec;
 
 public class RuleEnterBreakPoint extends BreakPoint {
 	
-	public RuleEnterBreakPoint(String name, int lineNumber, int startTokenPosition) {
-		super(name, lineNumber, startTokenPosition);
+	public RuleEnterBreakPoint(String filename, String name, int lineNumber, int startTokenPosition) {
+		super(filename, name, lineNumber, startTokenPosition);
 	}
 
 	@Override
@@ -13,6 +13,7 @@ public class RuleEnterBreakPoint extends BreakPoint {
 		result = prime * result + getLineNumber();
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + ((getFilename() == null) ? 0 : getFilename().hashCode());
 		return result;
 	}
 
@@ -25,6 +26,11 @@ public class RuleEnterBreakPoint extends BreakPoint {
 		if (!(obj instanceof RuleEnterBreakPoint))
 			return false;
 		RuleEnterBreakPoint other = (RuleEnterBreakPoint) obj;
+		if (getFilename() == null || other.getFilename() == null) {
+			return false;
+		} else if (!getFilename().equals(other.getFilename())) {
+			return false;
+		}
 		if (getName() == null || other.getName() == null) {
 			return false;
 		} else if (!getName().equals(other.getName())) {

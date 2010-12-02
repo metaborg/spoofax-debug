@@ -4,16 +4,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.compiler.CompilationProgress;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.spoofax.interpreter.terms.BasicStrategoString;
 import org.spoofax.interpreter.terms.BasicStrategoTuple;
+import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.spoofax.interpreter.terms.IStrategoTuple;
 import org.strategoxt.lang.Context;
 
 
@@ -64,13 +67,14 @@ public class DebugCompiler {
 	 * @return returns the basedir of the binary files
 	 * @throws IOException
 	 */
-	public String runCompile(String strategoFilePath, String projectName) throws IOException
+	public String runCompile(String strategoSourceBasedir, String strategoFilePath, String projectName) throws IOException
 	{
 		// throw exception if completeInputPath does not exist
-		File f = new File(strategoFilePath);
-		if (!f.exists())
+		File absFilePath = new File(strategoSourceBasedir, strategoFilePath);
+		//File f = new File(strategoFilePath);
+		if (!absFilePath.exists())
 		{
-			throw new FileNotFoundException("Input file '" + strategoFilePath + "' does not exists!");
+			throw new FileNotFoundException("Input file '" + absFilePath.getAbsolutePath() + "' does not exists!");
 		}
 		
 		cleanDirectories(projectName); // create directory structure in the working dir
@@ -115,35 +119,37 @@ public class DebugCompiler {
 		}
 		
 		cleanDirectories(projectName); // create directory structure in the working dir
-		// projectName should be the stratego filename without the dir and the extension
-		
-		File strategoFilePathFile = new File(strategoFilePath);
-		String strFilename = strategoFilePathFile.getName(); // just the filename, no directory
+		// projectName should be unique, let the caller of this method decide what the name of the project is.
 
 
+		Collection<String> libraryPaths = new ArrayList<String>();
+		libraryPaths.add("."); // the "-I" arguments
 		
 		String projectDir = this.workingDir + "/" + projectName;
 		String projectStrategoDir = projectDir + "/stratego";
 		String projectJavaDir = projectDir + "/java";
 		String projectClassDir = projectDir + "/class";
 
-		String strOutputFilename = projectStrategoDir + "/" + strFilename;
-		// outputFilename should stay the same
-		strOutputFilename = generateStratego(strategoSourceBasedir, strategoFilePath, strOutputFilename); // str to str (with debug info) 
-		// TODO check if file is actually created!
-		if (strOutputFilename == null)
+		String strOutputBasedir = projectStrategoDir; // + "/" + strFilename;
+		// strategoSourceBasedir + strategoFilePath is the input stratego file (without debug information)
+		// strOutputBasedir + strategoFilePath should be the output stratego file (with debug information)
+		List<String> generatedFiles = generateStratego(strategoSourceBasedir, strategoFilePath, strOutputBasedir, libraryPaths); // str to str (with debug info) 
+		// TODO check if files are actually created!
+		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
 			throw new Exception("Failed to compile stratego program with debug information");
 		}
 		
 		// create lookup table
-		generateLookupTable(strOutputFilename);
+		String tableFilename = projectStrategoDir + "/" + projectName + ".table"; // location of the table
+		// the table contains all debug lookup information for all files in the project
+		generateLookupTable(tableFilename, generatedFiles);
 		
 		String libraryName = projectName; // will be the packageName
 		String className = projectName;
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
-		String inputStrategoFilename = strOutputFilename; // the output of str to str is used as input
+		String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
 		compileStratego(inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
 		
 		String sourceBasedir = projectJavaDir;
@@ -154,14 +160,16 @@ public class DebugCompiler {
 	}
 	
 	/**
-	 * Add stratego debug information to the given strategofile at inputFilename, the output will be saved at outputFilename.
+	 * Add stratego debug information to the given strategofile at sourceBasedir/inputFilename
+	 * The output will be saved in the strOutputBasedir.
 	 * The inputFilePath should be relative to the sourceBasedir. 
+	 * libraryPaths contains all "-I" paths
 	 * 
 	 * The inputFilePath will be saved in the debug information instead
 	 * of the complete absolute path so it points to a relative file containing the original stratego source.
 	 * The debugger needs to figure out what the actual absolute path is.
 	 * 
-	 * Method returns null when the generation failed.
+	 * Method returns a list of all generated files.
 	 * 
 	 * @param sourceBasedir
 	 * @param inputFilePath
@@ -169,87 +177,113 @@ public class DebugCompiler {
 	 * @return
 	 * @throws Exception 
 	 */
-	protected static String generateStratego(String sourceBasedir, String inputFilePath, String outputFilename) throws Exception
+	protected List<String> generateStratego(String sourceBasedir, String inputFilePath, String strOutputBasedir, Collection<String> libraryPaths) throws Exception
 	{
 		// assume f is a valid file
-		File f = new File(sourceBasedir, inputFilePath);
-		System.out.println("Adding debug information to " + f.getAbsolutePath());
+		File absInput = new File(sourceBasedir, inputFilePath);
+		System.out.println("Adding debug information to " + absInput.getAbsolutePath());
 		System.out.println("Please wait...");
 		
 		System.out.println(sourceBasedir);
 		System.out.println(inputFilePath);
-		System.out.println(outputFilename);
+		//System.out.println(outputFilename);
 		
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
 		//Context context = org.strjdbg.transformer.Main.init();
-		// see trans-str.str#apply-debug-trans
-		// (sourceBasedir, inputfilePath, outputfilename)
-		// inputfilePath is relative to sourceBasedir.
-		// sourceBasedir should be treated as a project directory
-		// the generated file will be saved at outputfilename
+		// see trans-str.str#apply-debug-project
+		// (base-path, output-base-path, stratego-file)
 		BasicStrategoString[] kids = new BasicStrategoString[]
            {
-				new BasicStrategoString(sourceBasedir) , // sourceBasedir
-				new BasicStrategoString(inputFilePath) , // inputfilePath
-				new BasicStrategoString(outputFilename) // outputfilename
+				new BasicStrategoString(sourceBasedir) , // base-path
+				new BasicStrategoString(strOutputBasedir) , // output-base-path
+				new BasicStrategoString(inputFilePath) // stratego-file
            };
 		IStrategoTerm input = new BasicStrategoTuple(kids);
-		IStrategoTerm term; 
 		
-		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_trans_0_0.instance.invoke(context, input);
-		//System.out.println(term);
-		String status = null; // will be SUCCES or FAIL
-		String result = null; // should be the same as outputFilename
+		// termArguments should be a list of Strings, each is a path for the "-I" parameter
+		StrategoTermBuilder b = new StrategoTermBuilder();
+		IStrategoList termArguments = b.convertToIStrategoList(libraryPaths);
+		
+		IStrategoTerm term; 
+		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
+
+		
+		boolean hasFailed = false;
+		List<String> generatedFiles = new ArrayList<String>();
 		if (term == null)
 		{
 			System.out.println("Adding debug information failed!");
 			return null;
 		}
-		else if (term.getTermType() == IStrategoTerm.STRING)
+		else if (term.getTermType() == IStrategoTerm.LIST)
 		{
-			IStrategoString sterm = (IStrategoString) term;
-			outputFilename = sterm.stringValue();
-		}
-		else if (term.getTermType() == IStrategoTerm.TUPLE)
-		{
-			IStrategoTuple tterm = (IStrategoTuple) term;
-			int subtermCount = tterm.getSubtermCount();
-			if (subtermCount != 2)
+			IStrategoList listTerm = (IStrategoList) term;
+			IStrategoTerm[] subterms = listTerm.getAllSubterms();
+			for(IStrategoTerm subterm : subterms)
 			{
-				// wrong number of arguments
+				if (subterm.getTermType() == IStrategoTerm.TUPLE)
+				{
+					// should be a tuple: (status, filename)
+					IStrategoTerm[] tupleTerms = subterm.getAllSubterms();
+					if (tupleTerms.length != 2)
+					{
+						// tuple should have two items
+					}
+					else
+					{
+						IStrategoString ss = (IStrategoString) tupleTerms[0];
+						String status = ss.stringValue();
+						IStrategoString sf = (IStrategoString) tupleTerms[1];
+						String filename = sf.stringValue();
+						System.out.println(status + " " + filename);
+						if (!"SUCCES".equals(status))
+						{
+							hasFailed = true;
+							System.out.println(status + " : Failed at " + filename);
+						}
+						else
+						{
+							generatedFiles.add(filename);
+						}
+					}
+				}
+				
 			}
-			else
-			{
-				// first argument is SUCCES or FAIL
-				status = ((IStrategoString) tterm.get(0)).stringValue();
-				// second argument is the outputfilename
-				result = ((IStrategoString) tterm.get(1)).stringValue();
-			}
-		}
-		//TODO: outputFilename should be the same as result
-		
-		
-		if ("SUCCES".equals(status))
-		{
-			System.out.println("Adding debug information finished");	
 		}
 		else
+		{
+			// incorrect return type
+		}
+
+
+		if (hasFailed)
 		{
 			System.out.println("Adding debug information failed!");
 			throw new Exception("Adding debug information failed!");
 		}
-		return result;
+		return generatedFiles;
 	}
 	
-	protected static void generateLookupTable(String strategoDebugFileName)
+	protected static void generateLookupTable(String tableFilenameString, List<String> strategoDebugFileNames)
 	{
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		StrategoTermBuilder builder = new StrategoTermBuilder();
+		IStrategoList inputfilenames = builder.convertToIStrategoList(strategoDebugFileNames);
+		//IStrategoTerm input = new BasicStrategoString(strategoDebugFileName);
 		
-		IStrategoTerm input = new BasicStrategoString(strategoDebugFileName);
-		
-		org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_0.instance.invoke(context, input);
+		// table-filename is the location of the output table
+		// current term should be a list of inputfilenames each pointing to a stratego file
+		// output is the location of the table
+		// STRATEGO: create-table(|table-filename): inputfilenames* -> table-filename
+		IStrategoTerm current = inputfilenames;
+		IStrategoTerm tableFilename = new BasicStrategoString(tableFilenameString); 
+		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
+		if (output == null || !output.toString().equals(tableFilenameString))
+		{
+			// output should match tableFilenameString
+		}
 	}
 	
 	/**

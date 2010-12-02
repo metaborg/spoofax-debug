@@ -1,12 +1,8 @@
 package org.strategoxt.debug.core.control;
 
-import java.util.Map.Entry;
-
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
-import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.table.EventTable;
 
@@ -21,6 +17,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 	public void testStepBreakPoint()
 	{
 		String projectName = "dynamic";
+		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
@@ -33,7 +30,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl1 vmMonitor = new VMMonitorTestImpl1();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -51,7 +48,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		int lineNumber = 78;
 		int startTokenPosition = 8;
 		String eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 		
 		// 93, 6
 		// ; comment := (<debug(!"stuff:"); first> c-filtered*) //  <+ !Comment(name, "created!!")
@@ -61,7 +58,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		lineNumber = 93;
 		startTokenPosition = 6;
 		eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 		
 		// TODO: test set breakpoint on dynamic rule
 		/*
@@ -90,69 +87,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		start(dsm, mainArgs, classpath);
 	}
 	
-	/**
-	 * classPath contains the binary files of the compiled strj program
-	 * @param mainArgs
-	 * @param classpath
-	 */
-	public static DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
-	{
-		manager.initVM(mainArgs, classpath);
-		//manager.initVM(mainArgs);
-		manager.setupEventListeners();
-		manager.redirectOutput();
-		manager.runVM();		
-		return manager;
-	}
-	
-	
-	class VMMonitorTestImpl1 implements VMMonitor {
 
-		private DebugSessionManager debugSessionManager;
-		private VMStateTester vmStateTester;
-		
-		public VMMonitorTestImpl1() {
-
-		}
-		
-		public void setVMStateTester(VMStateTester vmStateTester) {
-			this.vmStateTester = vmStateTester;
-		}
-
-		public void setDSM(DebugSessionManager dsm)
-		{
-			this.debugSessionManager = dsm;
-		}
-		
-		public void stateChanged(StrategoState state) {
-			//System.out.println("state changed");
-			String name = state.currentFrame().getName();
-			boolean expected = vmStateTester.isNextHit(name);
-			System.out.println("expected: " + expected);
-			String message = "Hit " + name + ", but expected to hit " + vmStateTester.currentHit();
-			Assert.assertTrue(message, expected);
-			String termString = state.currentFrame().getCurrentTerm().toString();
-			System.out.println("current: " + termString);
-			for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
-			{
-				System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
-			}
-			this.debugSessionManager.resumeVM();
-		}
-
-		public void vmEvent(String event) {
-			System.out.println("vmEvent: " + event);
-			if ("VMDEATH".equals(event))
-			{
-				// vm terminated
-				if (this.vmStateTester.hasNextHit())
-				{
-					Assert.fail("VM has terminated but there are still some expected hits left...");
-				}
-			}
-		}
-		
-	}
 
 
 }

@@ -14,9 +14,9 @@ public class DebugCompileTestImports {
 
 	public static void testDebugCompileTestImports()
 	{
-		//String inputBase = StrategoFileManager.BASE;
-		String inputFilePath = "src/stratego/testimports/localvar.str";
-		//String strategoFilePath = inputBase + "/" + inputFilename;
+		String baseInputPath = "src/stratego/testimports";
+		String strategoFile = "localvar.str";
+
 		String projectName = "testimports";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
 		// mkdir localvar/stratego in workingdir
@@ -25,7 +25,8 @@ public class DebugCompileTestImports {
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
-			binBase = debugCompiler.debugCompile(StrategoFileManager.BASE, inputFilePath, projectName);
+			String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+			binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFile, projectName);
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -37,9 +38,9 @@ public class DebugCompileTestImports {
 		// run .class
 		if (runjava && compileSucces)
 		{
-			String input = StrategoFileManager.BASE + "/src/stratego/dynamic/run.input";
+			String input = StrategoFileManager.BASE + "/src/stratego/testimports/run.input";
 			String argsForMainClass = "-i " + input;
-			String mainClass = "dynamic.dynamic";
+			String mainClass = "testimports.testimports";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
 			String strategoxtjar = DebugSessionSettings.strategoxtjar;

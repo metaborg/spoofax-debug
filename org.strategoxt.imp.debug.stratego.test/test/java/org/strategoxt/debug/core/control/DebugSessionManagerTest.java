@@ -58,7 +58,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint("find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint("localvar.str", "find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
 		
 		System.out.println("RUN");
@@ -96,9 +96,9 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint("find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint("localvar.str", "find-comment-match", -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
-		bp = new StrategyEnterBreakPoint("first", -1, -1); // should hit two times
+		bp = new StrategyEnterBreakPoint("localvar.str", "first", -1, -1); // should hit two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session
@@ -109,6 +109,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 	public void testStepBreakPoint()
 	{
 		String projectName = "localvar";
+		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
@@ -136,7 +137,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		int lineNumber = 47;
 		int startTokenPosition = 8;
 		String eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 
 		
 		// 48, 8
@@ -144,14 +145,14 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		lineNumber = 48;
 		startTokenPosition = 8;
 		eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 		
 		// 49, 8
 		// out := <match-f-and-c> (f*, c*)
 		lineNumber = 49;
 		startTokenPosition = 8;
 		eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 	
 		
 		// which breakpoints will be hit?
@@ -171,6 +172,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 	public void testStepVarBreakPoint()
 	{
 		String projectName = "localvar";
+		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
@@ -198,7 +200,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		int lineNumber = 47;
 		int startTokenPosition = 8;
 		String eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 
 		
 		// 48, 8
@@ -206,7 +208,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		lineNumber = 48;
 		startTokenPosition = 8;
 		eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 
 		
 		// 49, 8
@@ -214,7 +216,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		lineNumber = 49;
 		startTokenPosition = 8;
 		eventType = "s-step";
-		this.addBP(dsm, lineNumber, startTokenPosition, eventType);
+		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 
 		
 		
@@ -235,6 +237,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 	public void testBreakpointLookup()
 	{
 		String projectName = "localvar";
+		String strategoFilename = "localvar.str";
 		// TODO: project should be compiled with debug info!
 		
 		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
@@ -258,7 +261,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		Assert.assertEquals(46, eventTable.size());
 		
 		// find-comment-match s-enter is at 71,7
-		List<EventEntry> entries = eventTable.getEventEntries(71, 7);
+		List<EventEntry> entries = eventTable.getEventEntries(strategoFilename, 71, 7);
 		Assert.assertEquals(2, entries.size()); // r-enter/r-exit
 		EventEntry rEnter = null; // only use the r-enter
 		for(EventEntry e : entries)
@@ -279,7 +282,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		
 		// create a breakpoint
 		BreakPoint bp = null;
-		bp = new RuleEnterBreakPoint(rEnter.getStrategyName(), -1, -1); // should hit "find-comment-by-name" two times
+		bp = new RuleEnterBreakPoint("localvar.str", rEnter.getStrategyName(), -1, -1); // should hit "find-comment-by-name" two times
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session

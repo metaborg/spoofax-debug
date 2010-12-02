@@ -1,8 +1,5 @@
 package org.strategoxt.debug.core.control;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +17,6 @@ import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
 
-import com.sun.jdi.Field;
-import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
@@ -41,10 +36,6 @@ public class ThreadEventHandler {
 	 */
 
 	final ThreadReference thread;
-	final String baseIndent = "";
-	StringBuffer indent;
-	
-	private PrintWriter writer;
 
 	// share stratego state across threads
 	private StrategoState strategoState = null;
@@ -52,31 +43,6 @@ public class ThreadEventHandler {
 	public ThreadEventHandler(ThreadReference thread, StrategoState strategoState) {
 		this.thread = thread;
 		this.strategoState = strategoState;
-		indent = new StringBuffer(baseIndent);
-		initWriter();
-		
-		println("====== " + thread.name() + " ======");
-		
-	}
-	
-	private void initWriter()
-	{
-		String filename = "thread-"+thread.name()+".txt";
-		try {
-			writer = new PrintWriter(new File(filename));
-			writer.println("Start thread");
-			writer.flush();
-			System.out.println("Created: " + filename);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
-
-	private void println(String str) {
-		writer.print(indent);
-		writer.println(str);
-		writer.flush();
 	}
 
 	/*
@@ -111,18 +77,12 @@ public class ThreadEventHandler {
 		//System.out.println(eventType);
 		
 		String methodName = event.method().name();
-		String declaringType = event.method().declaringType().name();
-
 		
 		if ("<clinit>".equals(methodName) || "<init>".equals(methodName))
 		{
 			// ignore these...
 			return suspendThread;
 		}
-		
-		//System.out.println(methodName + "  --------------------  " + declaringType);
-		println(methodName + "  --  " + declaringType);
-
 		
 		EventHandler h = null;
 		if (EventHandler.R_ENTER.equals(eventType))
@@ -246,14 +206,13 @@ public class ThreadEventHandler {
 	}
 
 	void fieldWatchEvent(ModificationWatchpointEvent event) {
-		Field field = event.field();
-		Value value = event.valueToBe();
-		println("    " + field.name() + " = " + value);
+		//Field field = event.field();
+		//Value value = event.valueToBe();
+		// field changed value
 	}
 
 	void exceptionEvent(ExceptionEvent event) {
-		println("Exception: " + event.exception() + " catch: "
-				+ event.catchLocation());
+		// event.exception() at event.catchLocation()
 
 		// Step to the catch
 		EventRequestManager mgr = event.virtualMachine().eventRequestManager();
@@ -266,24 +225,12 @@ public class ThreadEventHandler {
 
 	// Step to exception catch
 	void stepEvent(StepEvent event) {
-		// Adjust call depth
-		int cnt = 0;
-		indent = new StringBuffer(baseIndent);
-		try {
-			cnt = thread.frameCount();
-		} catch (IncompatibleThreadStateException exc) {
-		}
-		while (cnt-- > 0) {
-			indent.append("| ");
-		}
-
 		EventRequestManager mgr = event.virtualMachine().eventRequestManager();
 		mgr.deleteEventRequest(event.request());
 	}
 
 	void threadDeathEvent(ThreadDeathEvent event) {
-		indent = new StringBuffer(baseIndent);
-		println("====== " + thread.name() + " end ======");
+		// thread death event
 	}
 
 }

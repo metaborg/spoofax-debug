@@ -18,8 +18,9 @@ public class StrategyEnterHandler extends EventHandler {
 	@Override
 	protected BreakPoint createBreakPoint() {
 		String name = this.getName(); // the name of the strategy
+		String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
 		LocationInfo locationInfo = getLocationInfo();
-		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
 

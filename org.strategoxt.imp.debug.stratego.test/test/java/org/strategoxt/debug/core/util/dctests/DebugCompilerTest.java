@@ -15,9 +15,9 @@ public class DebugCompilerTest {
 
 	
 	public static void testDebugCompileLocalVarDebug() {
-		//String inputBase = StrategoFileManager.BASE;
-		String inputFilePath = "src/stratego/localvardebug/localvar.str";
-		//String strategoFilePath = inputBase + "/" + inputFilename;
+		String baseInputPath = "src/stratego/localvardebug";
+		String strategoFile = "localvar.str";
+
 		String projectName = "localvardebug";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
 		// mkdir localvar/stratego in workingdir
@@ -26,7 +26,8 @@ public class DebugCompilerTest {
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
-			binBase = debugCompiler.debugCompile(StrategoFileManager.BASE, inputFilePath, projectName);
+			String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+			binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFile, projectName);
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();
