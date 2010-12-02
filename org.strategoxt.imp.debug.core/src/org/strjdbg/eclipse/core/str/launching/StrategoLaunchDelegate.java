@@ -139,7 +139,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			else if (mode.equals(ILaunchManager.RUN_MODE))
 			{
 				try {
-					binBase = debugCompiler.runCompile(strategoFilePath, projectName);
+					binBase = debugCompiler.runCompile(strategoSourceBasedir, strategoFilePath, projectName);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

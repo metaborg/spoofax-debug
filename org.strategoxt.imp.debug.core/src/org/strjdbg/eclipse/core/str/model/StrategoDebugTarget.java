@@ -1,11 +1,13 @@
 package org.strjdbg.eclipse.core.str.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -319,11 +321,20 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		if (breakpoint.getModelIdentifier().equals(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL)) {
 			try {
 				String program = getLaunch().getLaunchConfiguration().getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
+				// program-dir = get the dir of the program
+				// library-dirs = get the "-I" paths
+				// the given breakpoint should be a resource in a subdir of program-dir or one of the library-dirs
 				if (program != null) {
 					IMarker marker = breakpoint.getMarker();
 					if (marker != null) {
-						IPath p = new Path(program);
-						return marker.getResource().getFullPath().equals(p);
+						IPath programPath = new Path(program);
+						File parent = programPath.toFile().getParentFile();
+						IPath breakPointPath = marker.getResource().getFullPath();
+						IPath subProjectPath = new Path(parent.getAbsolutePath()); // the dir in which the program is
+						System.out.println("subProjectPath: " + subProjectPath.toOSString());
+						System.out.println("breakPointPath: " + breakPointPath.toOSString());
+						boolean isPrefix = subProjectPath.isPrefixOf(breakPointPath);
+						return isPrefix;
 					}
 				}
 			} catch (CoreException e) {
@@ -409,11 +420,18 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 				{
 					// only add the breakpoint to the Stratego debugger when the breakpoint is enabled
 					int linenumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
-					
+					IResource r = breakpoint.getMarker().getResource();
+					//String fullpath = r.getFullPath().toOSString();
+					//System.out.println("Fullpath: " + fullpath);
+					//String location = r.getLocation().toOSString();
+					//System.out.println("Location: " + location);
+					String pRel = r.getProjectRelativePath().toOSString();
+					//System.out.println("ProRel: " + pRel);
+					String filename = pRel;
 					if (linenumber > 0)
 					{
 						// only linenumbers greater than 0 are valid as linenumber is 1-based
-						BreakPoint bp = createBreakpoint(linenumber);
+						BreakPoint bp = createBreakpoint(filename, linenumber);
 						if (bp != null)
 						{
 							this.manager.getEventSpecManager().add(bp);
@@ -428,20 +446,20 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		
 	}
 	
-	private BreakPoint createBreakpoint(int linenumber)
+	private BreakPoint createBreakpoint(String filename, int linenumber)
 	{
 		BreakPoint bp = null;
 		
 		// returns the type of events (s-step/r-enter/s-enter/s-exit/r-exit) can occur at the given linenumber
 		// the event type determines the breakpoint type
-		List<EventEntry> entries = this.manager.getEventSpecManager().getEventTable().getEventEntries(linenumber);
+		List<EventEntry> entries = this.manager.getEventSpecManager().getEventTable().getEventEntries(filename, linenumber);
 
 		// prefer s-step over enter/exit breakpoints
 		EventEntry stepEvent = EventTable.getFirstStepEventEntry(entries);
 		if (stepEvent != null)
 		{
 			//create a step breakpoint
-			bp = new StrategyStepBreakPoint(stepEvent.getStrategyName(), stepEvent.getLocationInfo().getStart_line_num(), stepEvent.getLocationInfo().getStart_token_pos());
+			bp = new StrategyStepBreakPoint(filename, stepEvent.getStrategyName(), stepEvent.getLocationInfo().getStart_line_num(), stepEvent.getLocationInfo().getStart_token_pos());
 		}
 		else
 		{
@@ -455,11 +473,11 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 			{
 				if ("s-enter".equals(enterEvent.getEventType()))
 				{
-					bp = new StrategyEnterBreakPoint(enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
+					bp = new StrategyEnterBreakPoint(filename, enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
 				}
 				else if ("r-enter".equals(enterEvent.getEventType()))
 				{
-					bp = new RuleEnterBreakPoint(enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
+					bp = new RuleEnterBreakPoint(filename, enterEvent.getStrategyName(), enterEvent.getLocationInfo().getStart_line_num(), enterEvent.getLocationInfo().getStart_token_pos());
 				}
 				else
 				{
@@ -496,11 +514,13 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 			// convert IBreakpoint to Stratego Breakpoint
 
 			int linenumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
-			
+			IResource r = breakpoint.getMarker().getResource();
+			String pRel = r.getProjectRelativePath().toOSString();
+			String filename = pRel;
 			if (linenumber > 0)
 			{
 				// only linenumbers greater than 0 are valid as linenumber is 1-based
-				BreakPoint bp = createBreakpoint(linenumber);
+				BreakPoint bp = createBreakpoint(filename, linenumber);
 				if (bp != null)
 				{
 					this.manager.getEventSpecManager().remove(bp);
@@ -619,6 +639,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		// determine which breakpoint was hit, and set the thread's breakpoint
 		//int lineNumber = state.getLocationInfo().getStart_line_num(); // 1-based index // Use the currentFrame
 		int lineNumber = state.currentFrame().getCurrentLocationInfo().getStart_line_num(); // 1-based index
+		String strategoFilename = state.currentFrame().getFilename();
 		
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL);
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -628,8 +649,9 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 					ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
 					
 					try {
-						
-						if (lineBreakpoint.getLineNumber() == lineNumber) {
+						IResource r = breakpoint.getMarker().getResource();
+						String breakpointPath = r.getProjectRelativePath().toOSString();
+						if (lineBreakpoint.getLineNumber() == lineNumber && strategoFilename.equals(breakpointPath)) {
 							fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
 							break;
 						}
