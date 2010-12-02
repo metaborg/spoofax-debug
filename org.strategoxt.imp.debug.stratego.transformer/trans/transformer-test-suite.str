@@ -307,9 +307,20 @@ strategies // test get-internal-files
   	; <debug(!"missing: ")> ""
   	; <map(debug)> missing
   	; real-files := <filter(is-abspath)> files
-  	; map(handle-file(|base-path, output-base-path))
+  	; map(handle-file(|base-path, output-base-path)) // do apply-debug-trans for each file
   	//; echo(|"end test-list-imports-7")
 
+	test-list-imports-8 =
+		echo(|"test-list-imports-8")
+	  	; get-project-dir => project-dir
+	  	; !"test/src/testimports" => input-base-dir
+	  	; !"test/generated/testimports" => output-base-dir
+	  	; !"localvar.str" => main-str-file
+  		; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  		; <concat-strings> [project-dir, "/", output-base-dir] => output-base-path	  	  
+  	  	; !(base-path, output-base-path, main-str-file)
+  	  	; apply-debug-project(|["."])
+  	  	  	
 strategies // test split-path
 	  	
   create-s = !"/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports/localvar.str"

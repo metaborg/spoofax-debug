@@ -37,10 +37,7 @@ rules
 		  	; collect-debug-calls
 		  	; lines* :=  <create-table-entries>
 		  	; contents := $[[lines*]]
-		  	; write-contents-to-handle(|table-file-handle, contents) // also flushes
-		  	    
-		  	//; filename := <guarantee-extension(|"table")> inputfilename
-		  	//; write-to-file(|filename, contents)
+		  	; write-contents-to-handle(|table-file-handle, contents)
   	    			
 // strategy to collect all strago debug calls
 	collect-debug-calls =

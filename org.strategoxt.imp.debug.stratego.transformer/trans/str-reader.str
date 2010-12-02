@@ -76,9 +76,10 @@ rules
 	get-file-handle(|filename) =
 		handle := <fopen> (filename, "w")
 		
-	// writes contents to the file-handle and flush
+	// writes contents to the file-handle
 	// returns the Stream
-	write-contents-to-handle(|file-handle, contents) = 	<fputs> (contents, file-handle); fflush
+	// cannot call fflush Primitive not defined: SSL_fflush when using java
+	write-contents-to-handle(|file-handle, contents) = 	<fputs> (contents, file-handle) //; fflush
 	
 	// closes the file-handle Stream
 	close-file-handle(|file-handle) = <fclose> file-handle

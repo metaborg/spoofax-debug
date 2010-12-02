@@ -70,12 +70,12 @@ rules
   	; add-debug-info(|inputfilePath)
   	//; debug(!"add-debug-info(|inputfilePath)")
   	; pp-stratego-ast
-  	; debug(!"pp-stratego-ast")
+  	//; debug(!"pp-stratego-ast")
   	; write-stratego(|outputfilename)
-  	; debug(!"write-stratego")
+  	//; debug(!"write-stratego")
   	; status := "SUCCES"  		
   	)
-  	; <debug(!"exit-apply")> ""
+  	//; <debug(!"exit-apply")> ""
   
   apply-debug-trans-debug :
   	input -> output
@@ -91,3 +91,18 @@ rules
   		; status := "FAIL"
   	)
   	
+  	apply-debug-project = apply-debug-project(|["."])
+  	
+  	// base-path = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+  	// output-base-path = "/tmp/testimports"
+  	// stratego-file = "localvar.str"
+  	// library-paths = [".", "<dir>"]
+	apply-debug-project(|library-paths) :
+		(base-path, output-base-path, stratego-file) -> results
+		where
+			!(base-path, stratego-file)
+  			; files := <get-internal-files(|library-paths)>
+  			; missing := <filter(is-relpath)> files // files that still have a relative path are not found on the "-I" paths
+  			; real-files := <filter(is-abspath)> files // only add debug information to the files that can be found on the "-I" paths
+  			; results := <map(handle-file(|base-path, output-base-path))> // do apply-debug-trans for each file, store the result in the output-base-path
+  			// results = [(status, filename), (status, filename)]

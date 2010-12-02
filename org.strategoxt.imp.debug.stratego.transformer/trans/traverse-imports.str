@@ -27,7 +27,7 @@ strategies
     //; debug(!"where: ")
     ; pack-process-options
     ; pack-report-options
-    ; where(pack-include-path; debug(!"pack-include-path: ") )
+    ; where(pack-include-path /*; debug(!"pack-include-path: ")*/ )
     //; debug(!"config:")
     //; where(!"-I"; get-config; debug(!"IIII: "))
       // current is FILE
@@ -45,7 +45,7 @@ strategies
   		//	, "-I", "."
   		; <set-config> ("-I", directories)
   		; args := <concat> [basic-args, ext-args]
-  		; debug(!"ARGS: ")
+  		//; debug(!"ARGS: ")
   	  	; <list-imports(|args)> absolute-location
   		; ?(files, _)
   		; real-files := <filter(not(?""))> files
@@ -66,7 +66,7 @@ strategies
   	; inputfilePath := rel-path
   	; outputfilename := <concat-strings> [output-base-path, "/", rel-path]
   	; args := (sourceBasedir, inputfilePath, outputfilename)
-  	; debug(!"apply-debug-trans: ")
+  	//; debug(!"apply-debug-trans: ")
   	; <apply-debug-trans> args
   	//; debug(!"DONE apply: ")  	
   	
