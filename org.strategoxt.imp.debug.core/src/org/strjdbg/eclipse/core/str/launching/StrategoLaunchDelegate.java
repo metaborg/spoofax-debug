@@ -28,6 +28,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strjdbg.eclipse.core.str.model.StrategoDebugTarget;
@@ -116,40 +117,39 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		DebugCompiler debugCompiler = new DebugCompiler("/tmp");
 		String projectName = DebugCompiler.createProjectName(new File(program));
-		
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
+		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
+		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
-		String binBase = "/tmp/"+projectName+"/class";
+		String binBase = debugSessionSettings.getClassDirectory(); // default
 		if (rebuildBinary)
 		{
-			monitor.subTask("Compiling stratego program");
-			if (mode.equals(ILaunchManager.DEBUG_MODE)) 
-			{
-				
-				try {
-					binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFilePath, projectName);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			else if (mode.equals(ILaunchManager.RUN_MODE))
-			{
-				try {
-					binBase = debugCompiler.runCompile(strategoSourceBasedir, strategoFilePath, projectName);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			monitor.worked(3);
+			binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
 		}
 		else
 		{
 			// TODO: check if all the necessary files exist in the working dir...
+			// check if binBase contains javafiles
+			IPath binBasePath = new Path(binBase);
+			File binBaseFile = binBasePath.toFile();
+			if (!binBaseFile.exists())
+			{
+				// did not compile to class files
+				// try to compile it
+				System.out.println("Class files not found, compile...");
+				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+			}
+			else
+			{
+				// check if dir is empty
+				String[] files = binBaseFile.list();
+				if (files == null || files.length == 0)
+				{
+					System.out.println("Class files not found, compile...");
+					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+				}
+			}
+			
 		}
 		
 		monitor.subTask("Starting Stratego VM");
@@ -190,7 +190,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		}
 		
 
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
+		
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
 			StrategoDebugTarget target = new StrategoDebugTarget(debugSessionSettings, launch, port);
@@ -207,6 +207,52 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		monitor.worked(1);
 		
 		monitor.done();
+	}
+	
+	private String compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	{
+		monitor.subTask("Compiling stratego program");
+		String binBase = null;
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
+		{
+			binBase = debugCompile(debugCompiler, debugSessionSettings);
+
+		}
+		else if (mode.equals(ILaunchManager.RUN_MODE))
+		{
+			binBase = runCompile(debugCompiler, debugSessionSettings);
+		}
+		monitor.worked(3);
+		return binBase;
+	}
+	
+	private String debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	{
+		// compile for a debug
+		String binBase = null;
+		try {
+			binBase = debugCompiler.debugCompile(debugSessionSettings);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DebugCompileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return binBase;
+	}
+	
+	private String runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	{
+		// compile for a run
+		String binBase = null;
+		try {
+			binBase = debugCompiler.runCompile(debugSessionSettings);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return binBase;
 	}
 	
 	public static void showDebugInfo(IVMInstall defaultInstall, VMRunnerConfiguration vmRunnerConfiguration)

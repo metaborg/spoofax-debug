@@ -51,6 +51,33 @@ public class DebugSessionSettings {
 		return javaDirectory;
 	}
 	
+	public String getProjectName()
+	{
+		return this.projectName;
+	}
+	
+	private String strategoSourceBasedir = null;
+	private String strategoFilePath = null;
+	
+	
+	
+	
+	public String getStrategoSourceBasedir() {
+		return strategoSourceBasedir;
+	}
+
+	public void setStrategoSourceBasedir(String strategoSourceBasedir) {
+		this.strategoSourceBasedir = strategoSourceBasedir;
+	}
+
+	public String getStrategoFilePath() {
+		return strategoFilePath;
+	}
+
+	public void setStrategoFilePath(String strategoFilePath) {
+		this.strategoFilePath = strategoFilePath;
+	}
+
 	private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
 	public static String strategoxtjar = root+"/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar";
 	public static String libstrategodebuglib = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime.jar";

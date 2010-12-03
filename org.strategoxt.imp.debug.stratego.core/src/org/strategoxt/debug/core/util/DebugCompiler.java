@@ -31,6 +31,11 @@ public class DebugCompiler {
 		this.workingDir = workingDir;
 	}
 	
+	public String getWorkingDir()
+	{
+		return this.workingDir;
+	}
+	
 	/**
 	 * Clear the contents of the given project directory.
 	 * 
@@ -57,6 +62,11 @@ public class DebugCompiler {
 		dir = new File(projectClassDir);
 		dir.mkdirs();
 		
+	}
+	
+	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException
+	{
+		return this.runCompile(debugSessionSettings.getStrategoSourceBasedir(), debugSessionSettings.getStrategoFilePath(), debugSessionSettings.getProjectName());
 	}
 	
 	/**
@@ -88,7 +98,7 @@ public class DebugCompiler {
 		String className = projectName;
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
-		String inputStrategoFilename = strategoFilePath;
+		String inputStrategoFilename = strategoSourceBasedir +"/" + strategoFilePath;
 		compileStratego(inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
 		
 		String sourceBasedir = projectJavaDir;
@@ -98,7 +108,10 @@ public class DebugCompiler {
 		return binBase;	
 	}
 	
-
+	public String debugCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
+	{
+		return this.debugCompile(debugSessionSettings.getStrategoSourceBasedir(), debugSessionSettings.getStrategoFilePath(), debugSessionSettings.getProjectName());
+	}
 
 	/**
 	 * Compile a stratego program with debug information to java classes.
@@ -106,9 +119,10 @@ public class DebugCompiler {
 	 * @param strategoFilePath strategoFilePath should point to the stratego file
 	 * @param projectName projectName is the name of the project, used to create temp folders
 	 * @return returns the basedir of the binary files
-	 * @throws Exception 
+	 * @throws FileNotFoundException 
+	 * @throws DebugCompileException 
 	 */
-	public String debugCompile(String strategoSourceBasedir, String strategoFilePath, String projectName) throws Exception
+	public String debugCompile(String strategoSourceBasedir, String strategoFilePath, String projectName) throws FileNotFoundException, DebugCompileException
 	{
 		// throw exception if completeInputPath does not exist
 		File absFilePath = new File(strategoSourceBasedir, strategoFilePath);
@@ -137,7 +151,7 @@ public class DebugCompiler {
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
-			throw new Exception("Failed to compile stratego program with debug information");
+			throw new DebugCompileException("Failed to compile stratego program with debug information");
 		}
 		
 		// create lookup table
@@ -175,9 +189,9 @@ public class DebugCompiler {
 	 * @param inputFilePath
 	 * @param outputFilename
 	 * @return
-	 * @throws Exception 
+	 * @throws DebugCompileException 
 	 */
-	protected List<String> generateStratego(String sourceBasedir, String inputFilePath, String strOutputBasedir, Collection<String> libraryPaths) throws Exception
+	protected List<String> generateStratego(String sourceBasedir, String inputFilePath, String strOutputBasedir, Collection<String> libraryPaths) throws DebugCompileException
 	{
 		// assume f is a valid file
 		File absInput = new File(sourceBasedir, inputFilePath);
@@ -260,7 +274,7 @@ public class DebugCompiler {
 		if (hasFailed)
 		{
 			System.out.println("Adding debug information failed!");
-			throw new Exception("Adding debug information failed!");
+			throw new DebugCompileException("Adding debug information failed!");
 		}
 		return generatedFiles;
 	}

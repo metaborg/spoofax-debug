@@ -35,7 +35,7 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
         if (file != null) {
         	System.out.println("File: " + file.getFullPath());
         	// /stratego-resources/src-str/test/localvar/localvar.str
-        	List<ILaunchConfiguration> launchConfigs = searchStrategoLaunchConfigs(file.getFullPath().toOSString(), mode);
+        	List<ILaunchConfiguration> launchConfigs = searchStrategoLaunchConfigs(file, mode);
         	if (launchConfigs != null && !launchConfigs.isEmpty())
         	{
         		ILaunchConfiguration config = launchConfigs.get(0); // get the first
@@ -103,7 +103,7 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
      * 
      * @param strategoProgramPath strategoProgramPath points to a stratego program, the path should start with "/{project-name}"
      */
-    private List<ILaunchConfiguration> searchStrategoLaunchConfigs(String strategoProgramPath, String mode)
+    private List<ILaunchConfiguration> searchStrategoLaunchConfigs(IFile strategoProgramPath, String mode)
     {
     	ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 
@@ -118,7 +118,7 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
 				{
 					String program = config.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, "");
 					// TODO: should we equal on IPath objects instead of Strings?
-					if (program.equals(strategoProgramPath)) 
+					if (program.equals(strategoProgramPath.getFullPath().toOSString())) 
 					{
 						System.out.println(config.getModes());
 						launchConfigs.add(config);
