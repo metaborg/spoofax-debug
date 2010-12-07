@@ -23,7 +23,7 @@ public class RuleExitHandler extends EventHandler {
 	}
 
 	@Override
-	protected String getEventType() {
+	public String getEventType() {
 		return EventHandler.R_EXIT;
 	}
 

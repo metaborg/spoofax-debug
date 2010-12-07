@@ -25,7 +25,7 @@ public class RuleEnterHandler extends EventHandler {
 	}
 
 	@Override
-	protected String getEventType() {
+	public String getEventType() {
 		return EventHandler.R_ENTER;
 	}
 

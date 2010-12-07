@@ -47,6 +47,16 @@ public class StrategoState {
 		return stack.peek();
 	}
 	
+	public int size()
+	{
+		return this.stack.size();
+	}
+	
+	public StrategoStackFrame get(int index)
+	{
+		return this.stack.get(index);
+	}
+	
 	/**
 	 * Returns a list of strings, each item represents a stratego state
 	 * @return

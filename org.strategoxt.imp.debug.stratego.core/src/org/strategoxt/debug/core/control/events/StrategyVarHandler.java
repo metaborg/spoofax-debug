@@ -18,7 +18,7 @@ public class StrategyVarHandler extends EventHandler {
 	}
 	
 	@Override
-	protected String getEventType() {
+	public String getEventType() {
 		return EventHandler.S_VAR;
 	}
 

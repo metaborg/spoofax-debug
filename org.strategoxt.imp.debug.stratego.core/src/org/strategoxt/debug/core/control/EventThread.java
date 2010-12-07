@@ -370,16 +370,4 @@ public class EventThread extends Thread {
 		}
 	}
 
-	public void getSuspendedThread() {
-		// TODO Auto-generated method stub
-		System.out.println("threads:");
-		for(ThreadReference ref: this.traceMap.keySet())
-		{
-			System.out.println("ThreadRef Name " + ref.name());
-			//ThreadEventHandler handler = this.traceMap.get(ref);
-			boolean isSuspended = ref.isSuspended();
-			System.out.println("isSuspended: " + isSuspended);
-		}
-	}
-
 }

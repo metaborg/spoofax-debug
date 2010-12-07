@@ -111,6 +111,16 @@ public class LocationInfo {
 				+ "]";
 	}
 	
+	/**
+	 * Returns a short version of the toString()
+	 * Example: "(48,8,48,30)"
+	 * @return
+	 */
+	public String toShortString()
+	{
+		return "("+start_line_num+","+start_token_pos+","+end_line_num+","+end_token_pos+")";
+	}
+	
 	public boolean surrounds(int linenumber, int token_position)
 	{
 		// check if the start_line_num <= linenumber <= end_line_num

@@ -35,6 +35,11 @@ public class StrategoStackFrame {
 	private HashMap<String, IStrategoTerm> variables = null;
 	
 	/**
+	 * The event that is associated with the currentLocationInfo.
+	 */
+	private String eventType = null;
+	
+	/**
 	 * 
 	 * @param filename The filename in which the current rule or strategy is defined.
 	 * @param name The name of the current rule or strategy.
@@ -55,7 +60,7 @@ public class StrategoStackFrame {
 		String val = "Frame @ " + this.name + "[" + this.filename + "]";
 		if (currentLocationInfo != null) // specific location
 		{
-			val += "@("+currentLocationInfo.getStart_line_num()+","+currentLocationInfo.getStart_token_pos()+")";
+			val += "@"+currentLocationInfo.toShortString();
 		}
 		/*
 		if (locationInfo != null) // location of the rule or strategy
@@ -118,14 +123,24 @@ public class StrategoStackFrame {
 		return this.variables;
 	}
 	
+	/**
+	 * Gets the eventType that was fired at the current LocationInfo.
+	 * @return
+	 */
+	public String getEventType()
+	{
+		return this.eventType;
+	}
+	
 	public void setCurrentTerm(IStrategoTerm term)
 	{
 		this.current = term;
 	}
 	
-	public void setCurrentLocationInfo(LocationInfo currentLocationInfo)
+	public void setCurrentLocationInfo(LocationInfo currentLocationInfo, String eventType)
 	{
 		this.currentLocationInfo = currentLocationInfo;
+		this.eventType = eventType;
 	}
 	
 	/**

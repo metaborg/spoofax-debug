@@ -51,6 +51,11 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 				System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
 			}
 		}
+		else
+		{
+			String message = "State changed but we did not except anymore state changes...";
+			Assert.fail(message);
+		}
 		
 		nextAction();
 	}
@@ -59,7 +64,7 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		System.out.println("vmEvent: " + event);
 		if ("VMDEATH".equals(event))
 		{
-			// vm terminated
+			// vm terminated, TODO: last state should be a StrategoExitedState
 			if (this.vmStateTester.hasNext())
 			{
 				Assert.fail("VM has terminated but there are still some expected hits left...");

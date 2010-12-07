@@ -25,7 +25,7 @@ public class StrategyEnterHandler extends EventHandler {
 	}
 
 	@Override
-	protected String getEventType() {
+	public String getEventType() {
 		// TODO Auto-generated method stub
 		return EventHandler.S_ENTER;
 	}

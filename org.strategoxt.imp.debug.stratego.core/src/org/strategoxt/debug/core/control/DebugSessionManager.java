@@ -202,6 +202,9 @@ public class DebugSessionManager {
 	{
 		// stop at the first possible s-enter/r-enter event
 		// if the current statement is not a call to another method, we can only step over
+		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
+		this.eventSpecManager.setStepInto(handler.getStrategoState());
+		this.resumeVM();
 	}
 	
 	public void stepOver()

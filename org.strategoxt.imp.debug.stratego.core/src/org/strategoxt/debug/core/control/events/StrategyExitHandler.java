@@ -28,7 +28,7 @@ public class StrategyExitHandler extends EventHandler {
 	}
 
 	@Override
-	protected String getEventType() {
+	public String getEventType() {
 		return EventHandler.S_EXIT;
 	}
 

@@ -457,8 +457,35 @@ public abstract class EventHandler {
 					// S_VAR we can ignore
 					// S_ENTER/R_ENTER should never happen is the same StackFrame
 					// S_EXIT/R_EXIT can happen
+					else if (this.getEventType().equals(EventHandler.S_EXIT) || this.getEventType().equals(EventHandler.R_EXIT))
+					{
+						// we have hit the s-exit/r-exit of the frame in which the step occured.
+						shouldSuspend = true;
+						eventSpecManager.resetStep(); // reset step
+					}
 				}
 			}
+			// what if the current stackframe level is smaller that the stepFrameLevel? We must have missed an r-exit/s-exit
+		} else if (eventSpecManager.isStepIntoActive())
+		{
+			// an new debug event was fired, this should be an s-enter or r-enter as we can only step into strategies or rules that are debuggable
+			// if the event is s-step we just did a normal step over, cancel the stepinto event and just resume
+			
+			// level of the current stackframe should equal (stepFrameLevel+1)
+			// an we should have stopped at a s-enter/r-enter
+			int stepIntoFrameLevel = eventSpecManager.getStepFrameLevel() + 1;
+			if (stepIntoFrameLevel == currentState.getStackFrames().length - 1 && 
+					(this.getEventType().equals(EventHandler.S_ENTER)
+					|| this.getEventType().equals(EventHandler.R_ENTER))
+					)
+			{
+				shouldSuspend = true;
+			}
+			else
+			{
+				// could not do a s-enter
+			}
+			eventSpecManager.resetStep(); // reset step
 		}
 		
         return shouldSuspend; // if break point exists suspend thread
@@ -474,7 +501,7 @@ public abstract class EventHandler {
 	
 	protected abstract BreakPoint createBreakPoint();
 
-	protected abstract String getEventType();
+	public abstract String getEventType();
 
 	public abstract boolean isEnter();
 }

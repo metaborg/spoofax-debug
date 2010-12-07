@@ -122,7 +122,7 @@ public class ThreadEventHandler {
 				
 				// update the current location
 				LocationInfo locationInfo = h.getLocationInfo();
-				this.strategoState.currentFrame().setCurrentLocationInfo(locationInfo);
+				this.strategoState.currentFrame().setCurrentLocationInfo(locationInfo, h.getEventType());
 				
 				suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
 				// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended

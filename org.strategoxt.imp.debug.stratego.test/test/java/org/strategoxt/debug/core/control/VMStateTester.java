@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 
@@ -117,5 +119,30 @@ public class VMStateTester {
 	public void addStrategoState(StrategoState state)
 	{
 		this.willHitStates.add(state);
+	}
+	
+	/**
+	 * Filename points to the stratego file name.
+	 * Name points to the strategy or rule name.
+	 * The four integers, startLineNum, startTokenPos, endLineNum, endTokenPos are used to create a LocationInfo object that points
+	 * to the current active statement.
+	 * @param filename
+	 * @param name
+	 * @param startLineNum
+	 * @param startTokenPos
+	 * @param endLineNum
+	 * @param endTokenPos
+	 * @return
+	 */
+	public static StrategoState createState(String filename, String name, String eventType, int startLineNum, int startTokenPos, int endLineNum,
+			int endTokenPos)
+	{
+		StrategoState state = new StrategoState();
+		LocationInfo currentLocationInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
+		IStrategoTerm current = null;
+		StrategoStackFrame frame = new StrategoStackFrame(filename, name, null, current);
+		frame.setCurrentLocationInfo(currentLocationInfo, eventType);
+		state.pushFrame(frame);
+		return state;
 	}
 }

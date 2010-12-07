@@ -2,6 +2,7 @@ package org.strategoxt.debug.core.eventspec;
 
 import java.util.List;
 
+import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -115,17 +116,44 @@ public class EventSpecManager {
 	
 	public void setStepOver(StrategoState state)
 	{
-		stepFrame = state.currentFrame();
-		stepFrameLevel = state.getStackFrames().length - 1;
-		isStepOverActive = true;
+		if (state.currentFrame().getEventType().equals(EventHandler.S_EXIT)
+				|| state.currentFrame().getEventType().equals(EventHandler.R_EXIT))
+		{
+			// can we step over an s-exit or r-exit?
+			// we should suspend at the next s-step in the parent Frame of the current Frame
+			int parentIndex = state.size() - 2;
+			if (parentIndex < 0)
+			{
+				// no parent index
+				// we are at the exit of the main strategy!
+				return;
+			}
+			stepFrame = state.get(parentIndex);
+			stepFrameLevel = parentIndex;
+			isStepOverActive = true;
+		}
+		else
+		{
+			stepFrame = state.currentFrame();
+			stepFrameLevel = state.size() - 1;
+			isStepOverActive = true;
+		}
 	}
 	
 	
 	public void setStepInto(StrategoState state)
 	{
-		stepFrame = state.currentFrame();
-		stepFrameLevel = state.getStackFrames().length - 1;
-		isStepIntoActive = true;
+		if (state.currentFrame().getEventType().equals(EventHandler.S_STEP))
+		{
+			// we can only step into a strategy or rule
+			stepFrame = state.currentFrame();
+			stepFrameLevel = state.getStackFrames().length - 1;
+			isStepIntoActive = true;
+		}
+		else
+		{
+			// current stackframe is suspend at a s-exit/r-exit/s-enter/r-enter
+		}
 	}
 	
 	public void setStepReturn(StrategoState state)
