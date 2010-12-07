@@ -406,7 +406,7 @@ public abstract class EventHandler {
 	 * Returns false if the thread should resume
 	 * @return
 	 */
-	public boolean shouldSuspend(EventSpecManager eventSpecManager){
+	public boolean shouldSuspend(StrategoState currentState, EventSpecManager eventSpecManager){
 		// sysout debug info
 		/*
 		String name = this.getName(); // the name of the rule
@@ -422,9 +422,46 @@ public abstract class EventHandler {
         //System.out.println();
         */
         // end debug info
-        
-        boolean isBreakPoint = eventSpecManager.match(createBreakPoint());
-        return isBreakPoint; // if break point exists suspend thread
+		boolean isBreakPointHit = eventSpecManager.match(createBreakPoint());
+		
+        // if we should step
+		// stop at the first s-step that is in the same StackFrame
+		boolean shouldSuspend = false;
+		if (isBreakPointHit){
+			// we hit a break point
+			// if stepping is active it should be cancelled
+			if (eventSpecManager.isStepOverActive())
+			{
+				eventSpecManager.resetStep();
+			}
+			shouldSuspend = true;
+		}
+		else if (eventSpecManager.isStepOverActive())
+		{
+			// if level is the same
+			if (eventSpecManager.getStepFrameLevel() == currentState.getStackFrames().length - 1)
+			{
+				// rule/strategy location are the same
+				boolean sameLocation = eventSpecManager.getStepFrame().getLocationInfo().equals(currentState.currentFrame().getLocationInfo());
+				boolean sameFilename = eventSpecManager.getStepFrame().getFilename().equals(currentState.currentFrame().getFilename());
+				boolean sameName = eventSpecManager.getStepFrame().getName().equals(currentState.currentFrame().getName());
+				if (sameLocation && sameFilename && sameName)
+				{
+					// we hit the next debug event
+					if (this.getEventType().equals(EventHandler.S_STEP))
+					{
+						// we hit the next s-step
+						shouldSuspend = true;
+						eventSpecManager.resetStep(); // reset step
+					}
+					// S_VAR we can ignore
+					// S_ENTER/R_ENTER should never happen is the same StackFrame
+					// S_EXIT/R_EXIT can happen
+				}
+			}
+		}
+		
+        return shouldSuspend; // if break point exists suspend thread
 	}
 	
 	/**

@@ -2,6 +2,8 @@ package org.strategoxt.debug.core.eventspec;
 
 import java.util.List;
 
+import org.strategoxt.debug.core.model.StrategoStackFrame;
+import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.debug.core.util.table.EventTable;
@@ -72,6 +74,74 @@ public class EventSpecManager {
 	public void setStepNextEnter() {
 		this.stepNextEnter = true;
 		
+	}
+	
+	// StackFrame in which the step was started
+	private StrategoStackFrame stepFrame = null;
+	
+	// what was the level of the StrategoStackFrame when the step command was issued
+	// 0-based
+	private int stepFrameLevel = -1;
+	
+	// true if stepOver is active
+	private boolean isStepOverActive = false;
+	private boolean isStepReturnActive = false;
+	private boolean isStepIntoActive = false;
+
+	public StrategoStackFrame getStepFrame()
+	{
+		return this.stepFrame;
+	}
+	
+	public int getStepFrameLevel()
+	{
+		return this.stepFrameLevel;
+	}
+	
+	public boolean isStepReturnActive()
+	{
+		return this.isStepReturnActive;
+	}
+
+	public boolean isStepOverActive()
+	{
+		return this.isStepOverActive;
+	}
+	
+	public boolean isStepIntoActive()
+	{
+		return this.isStepIntoActive;
+	}
+	
+	public void setStepOver(StrategoState state)
+	{
+		stepFrame = state.currentFrame();
+		stepFrameLevel = state.getStackFrames().length - 1;
+		isStepOverActive = true;
+	}
+	
+	
+	public void setStepInto(StrategoState state)
+	{
+		stepFrame = state.currentFrame();
+		stepFrameLevel = state.getStackFrames().length - 1;
+		isStepIntoActive = true;
+	}
+	
+	public void setStepReturn(StrategoState state)
+	{
+		stepFrame = state.currentFrame();
+		stepFrameLevel = state.getStackFrames().length - 1;
+		isStepReturnActive = true;
+	}
+
+	public void resetStep()
+	{
+		this.stepFrame = null;
+		this.stepFrameLevel = -1;
+		this.isStepOverActive = false;
+		this.isStepIntoActive = false;
+		this.isStepReturnActive = false;
 	}
 	
 	public EventTable getEventTable()

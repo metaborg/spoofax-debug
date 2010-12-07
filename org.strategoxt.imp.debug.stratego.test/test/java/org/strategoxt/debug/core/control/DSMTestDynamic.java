@@ -74,11 +74,12 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		
 		
 		// which breakpoints will be hit?
-		VMStateTester vmStateTester = new VMStateTester();
-		vmStateTester.addName("find-comment-match");
-		vmStateTester.addName("find-comment-by-name");
-		vmStateTester.addName("find-comment-match");
-		vmStateTester.addName("find-comment-by-name");
+		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
+		vmStateTester.addStrategoState("find-comment-match");
+		vmStateTester.addStrategoState("find-comment-by-name");
+		vmStateTester.addStrategoState("find-comment-match");
+		vmStateTester.addStrategoState("find-comment-by-name");
+		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 

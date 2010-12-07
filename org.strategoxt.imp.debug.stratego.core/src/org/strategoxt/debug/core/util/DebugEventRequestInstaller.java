@@ -1,7 +1,12 @@
 package org.strategoxt.debug.core.util;
 
 import org.strategoxt.debug.core.control.events.EventHandler;
-import org.strategoxt.imp.debug.stratego.runtime.strategies.*;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_enter_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_exit_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_enter_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_exit_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_step_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_var_0_5;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.ClassPrepareRequest;
@@ -28,7 +33,6 @@ public class DebugEventRequestInstaller {
 	public static void installDebugEventRequests(VirtualMachine vm, boolean watchFields, String[] excludes)
 	{
 		EventRequestManager mgr = vm.eventRequestManager();
-		
 		// want all exceptions 
 		/*
 		ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 

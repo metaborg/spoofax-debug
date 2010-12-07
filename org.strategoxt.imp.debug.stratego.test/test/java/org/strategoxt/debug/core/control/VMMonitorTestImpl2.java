@@ -1,5 +1,7 @@
 package org.strategoxt.debug.core.control;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
@@ -9,8 +11,18 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class VMMonitorTestImpl2 implements VMMonitor {
 	
+	public final static String STEP_INTO = "STEP_INTO";
+	public final static String STEP_OVER = "STEP_OVER";
+	public final static String STEP_RETURN = "STEP_RETURN";
+	public final static String RESUME = "RESUME";
+	
 	private DebugSessionManager debugSessionManager;
 	private VMStateTester vmStateTester;
+	
+	// list contains String encoded actions: e.g. RESUME, STEP
+	// This action should be performed after a state change, if no actions are in the list left, do a RESUME
+	private List<String> afterStateChangeActions = null;
+	private int actionIndex = -1;
 	
 	public VMMonitorTestImpl2() {
 
@@ -26,19 +38,21 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 	}
 	
 	public void stateChanged(StrategoState state) {
-		//System.out.println("state changed");
-		String name = state.currentFrame().getName();
-		boolean expected = vmStateTester.isNextHit(name);
-		System.out.println("expected: " + expected);
-		String message = "Hit " + name + ", but expected to hit " + vmStateTester.currentHit();
-		Assert.assertTrue(message, expected);
-		String termString = state.currentFrame().getCurrentTerm().toString();
-		System.out.println("current: " + termString);
-		for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+		System.out.println("state changed");
+		if (vmStateTester.hasNext())
 		{
-			System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+			vmStateTester.next();
+			boolean expected = vmStateTester.compareState(state);
+			String message = "Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
+			Assert.assertTrue(message, expected);
+			System.out.println("current: " + state.currentFrame().getCurrentTerm());
+			for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+			{
+				System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+			}
 		}
-		this.debugSessionManager.resumeVM();
+		
+		nextAction();
 	}
 
 	public void vmEvent(String event) {
@@ -46,10 +60,54 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		if ("VMDEATH".equals(event))
 		{
 			// vm terminated
-			if (this.vmStateTester.hasNextHit())
+			if (this.vmStateTester.hasNext())
 			{
 				Assert.fail("VM has terminated but there are still some expected hits left...");
 			}
+		}
+	}
+	
+	public void addAction(String action)
+	{
+		if (this.afterStateChangeActions == null)
+		{
+			this.afterStateChangeActions = new ArrayList<String>();
+		}
+		this.afterStateChangeActions.add(action);
+	}
+	
+	private void nextAction()
+	{
+		actionIndex++;
+		if (afterStateChangeActions != null && actionIndex < afterStateChangeActions.size())
+		{
+			String action = afterStateChangeActions.get(actionIndex);
+			if (RESUME.equals(action))
+			{
+				this.debugSessionManager.resumeVM();
+			}
+			else if (STEP_INTO.equals(action))
+			{
+				this.debugSessionManager.stepInto();
+			}
+			else if (STEP_OVER.equals(action))
+			{
+				this.debugSessionManager.stepOver();
+			}
+			else if (STEP_RETURN.equals(action))
+			{
+				this.debugSessionManager.stepReturn();
+			}
+			else
+			{
+				// action unknown, just do a resume
+				this.debugSessionManager.resumeVM();
+			}
+		}
+		else
+		{
+			// no actions left, just do a resume
+			this.debugSessionManager.resumeVM();
 		}
 	}
 }

@@ -119,12 +119,12 @@ public class ThreadEventHandler {
 			}
 			try {
 				h.processDebugEvent(this.strategoState);
-				suspendThread = h.shouldSuspend(eventSpecManager);
 				
+				// update the current location
 				LocationInfo locationInfo = h.getLocationInfo();
-				//this.strategoState.setLocationInfo(locationInfo); // LocationInfo should be set on the current Frame
 				this.strategoState.currentFrame().setCurrentLocationInfo(locationInfo);
 				
+				suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
 				// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended
 
 				Method method = null;
@@ -231,6 +231,11 @@ public class ThreadEventHandler {
 
 	void threadDeathEvent(ThreadDeathEvent event) {
 		// thread death event
+	}
+	
+	public StrategoState getStrategoState()
+	{
+		return this.strategoState;
 	}
 
 }

@@ -19,7 +19,7 @@ public class StrategyVarHandler extends EventHandler {
 	
 	@Override
 	protected String getEventType() {
-		return "Strategy Var";
+		return EventHandler.S_VAR;
 	}
 
 	@Override

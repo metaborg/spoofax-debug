@@ -24,7 +24,7 @@ public class StrategyStepHandler extends EventHandler {
 
 	@Override
 	protected String getEventType() {
-		return "Strategy Step";
+		return EventHandler.S_STEP;
 	}
 
 	@Override

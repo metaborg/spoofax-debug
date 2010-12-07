@@ -53,10 +53,10 @@ public class DSMTestImports extends AbstractDSMTest {
 		this.addBP(dsm, utilsFilename, lineNumber, startTokenPosition, eventType);
 		
 		// which breakpoints will be hit?
-		VMStateTester vmStateTester = new VMStateTester();
-		vmStateTester.addName("match-comments");
-		vmStateTester.addName("first");
-		vmStateTester.addName("first");
+		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
+		vmStateTester.addStrategoState("match-comments");
+		vmStateTester.addStrategoState("first");
+		vmStateTester.addStrategoState("first");
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 		System.out.println("RUN");

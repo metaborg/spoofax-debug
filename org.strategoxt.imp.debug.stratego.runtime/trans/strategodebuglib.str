@@ -79,5 +79,5 @@ rules
 strategies // strategies to collect the active dynamic rules
 	
 	// returns a list of strings
-	dr-get-key-set = prim("SSL_hashtable_keys",  <dr-rule-sets-hashtable>); debug(!"dr-get-key-set:")
+	dr-get-key-set = prim("SSL_hashtable_keys",  <dr-rule-sets-hashtable>) //; debug(!"dr-get-key-set:")
 	

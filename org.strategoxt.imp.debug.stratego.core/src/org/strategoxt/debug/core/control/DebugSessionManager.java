@@ -198,6 +198,28 @@ public class DebugSessionManager {
 		vm.suspend();
 	}
 	
+	public void stepInto()
+	{
+		// stop at the first possible s-enter/r-enter event
+		// if the current statement is not a call to another method, we can only step over
+	}
+	
+	public void stepOver()
+	{
+		// get the thread that is suspended, stratego programs are single threaded, so we always know which thread we need.
+		// just save the step info in the EventSpecManager, if stratego becomes multi-threaded, step info needs to be saved per Thread
+		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
+		this.eventSpecManager.setStepOver(handler.getStrategoState());
+		// stop at the next s-step that is in the same stackframe as the current one
+		// if the current StackFrame exists (s-exit or r-exit) continue at the returning stackframe
+		this.resumeVM();
+	}
+	
+	public void stepReturn()
+	{
+		
+	}
+	
 	/**
 	 * Terminate the Stratego VM.
 	 */

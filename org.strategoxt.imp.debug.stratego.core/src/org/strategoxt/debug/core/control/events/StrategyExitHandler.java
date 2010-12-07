@@ -29,7 +29,7 @@ public class StrategyExitHandler extends EventHandler {
 
 	@Override
 	protected String getEventType() {
-		return "Strategy Exit";
+		return EventHandler.S_EXIT;
 	}
 
 	@Override

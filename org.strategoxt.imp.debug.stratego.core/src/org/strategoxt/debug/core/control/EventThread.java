@@ -192,6 +192,24 @@ public class EventThread extends Thread {
 		}
 		return handler;
 	}
+	
+	/**
+	 * Stratego programs runs single threaded so there should only be one ThreadEventHandler.
+	 * @return
+	 */
+	protected ThreadEventHandler getMainThreadHandler()
+	{
+		if (this.traceMap.keySet().size() > 1)
+		{
+			// TODO: more than one stratego thread
+			return null;
+		}
+		else
+		{
+			ThreadReference mainRef = this.traceMap.keySet().iterator().next(); // get the first ThreadReference
+			return this.getThreadEventHandler(mainRef);
+		}
+	}
 
 	/**
 	 * Dispatch incoming events
@@ -349,6 +367,18 @@ public class EventThread extends Thread {
 		if (vmMonitor != null)
 		{
 			vmMonitor.vmEvent(event);
+		}
+	}
+
+	public void getSuspendedThread() {
+		// TODO Auto-generated method stub
+		System.out.println("threads:");
+		for(ThreadReference ref: this.traceMap.keySet())
+		{
+			System.out.println("ThreadRef Name " + ref.name());
+			//ThreadEventHandler handler = this.traceMap.get(ref);
+			boolean isSuspended = ref.isSuspended();
+			System.out.println("isSuspended: " + isSuspended);
 		}
 	}
 

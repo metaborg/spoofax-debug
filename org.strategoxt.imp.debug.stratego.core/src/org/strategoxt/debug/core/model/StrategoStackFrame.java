@@ -22,7 +22,8 @@ public class StrategoStackFrame {
 	private LocationInfo locationInfo;
 	
 	/**
-	 * The current LocationInfo, currentLocationInfo should be surrounded by this.locationInfo
+	 * The current LocationInfo, currentLocationInfo should be surrounded by this.locationInfo.
+	 * The currentLocationInfo points to the current active statement with a rule or strategy
 	 */
 	private LocationInfo currentLocationInfo = null;
 	
@@ -52,7 +53,15 @@ public class StrategoStackFrame {
 	public String toString()
 	{
 		String val = "Frame @ " + this.name + "[" + this.filename + "]";
-		val += ":" + locationInfo.getStart_line_num();
+		if (currentLocationInfo != null) // specific location
+		{
+			val += "@("+currentLocationInfo.getStart_line_num()+","+currentLocationInfo.getStart_token_pos()+")";
+		}
+		/*
+		if (locationInfo != null) // location of the rule or strategy
+		{
+			val += ":" + locationInfo.getStart_line_num();
+		}*/
 		return val;
 	}
 	
@@ -77,6 +86,7 @@ public class StrategoStackFrame {
 	
 	/**
 	 * Returns LocationInfo about the current rule or strategy.
+	 * The LocationInfo does not point to a specific statement in the rule or strategy.
 	 * @return
 	 */
 	public LocationInfo getLocationInfo()
@@ -94,6 +104,10 @@ public class StrategoStackFrame {
 		return this.current;
 	}
 	
+	/**
+	 * Returns the LocationInfo of the current active statement with a rule or strategy.
+	 * @return
+	 */
 	public LocationInfo getCurrentLocationInfo()
 	{
 		return this.currentLocationInfo;
