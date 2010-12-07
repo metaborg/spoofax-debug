@@ -220,7 +220,11 @@ public class DebugSessionManager {
 	
 	public void stepReturn()
 	{
-		
+		// continue until the current stackframe fires an s-exit or r-exit event.
+		// we should stop at the next s-step in the parent stackframe.
+		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
+		this.eventSpecManager.setStepReturn(handler.getStrategoState());
+		this.resumeVM();
 	}
 	
 	/**

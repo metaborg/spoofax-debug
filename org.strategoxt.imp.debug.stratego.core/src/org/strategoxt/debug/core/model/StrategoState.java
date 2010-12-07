@@ -71,6 +71,11 @@ public class StrategoState {
 		return l;
 	}
 	
+	public int getCurrentFrameLevel()
+	{
+		return this.stack.size() - 1;
+	}
+	
 	public StrategoStackFrame[] getStackFrames()
 	{
 		StrategoStackFrame[] a = new StrategoStackFrame[this.stack.size()];

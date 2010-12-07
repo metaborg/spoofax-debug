@@ -147,7 +147,7 @@ public class EventSpecManager {
 		{
 			// we can only step into a strategy or rule
 			stepFrame = state.currentFrame();
-			stepFrameLevel = state.getStackFrames().length - 1;
+			stepFrameLevel = state.getCurrentFrameLevel();
 			isStepIntoActive = true;
 		}
 		else
@@ -158,8 +158,13 @@ public class EventSpecManager {
 	
 	public void setStepReturn(StrategoState state)
 	{
+		if (state.getCurrentFrameLevel() == 0)
+		{
+			// we are at the main strategy, cannot step return
+			return;
+		}
 		stepFrame = state.currentFrame();
-		stepFrameLevel = state.getStackFrames().length - 1;
+		stepFrameLevel = state.getCurrentFrameLevel();
 		isStepReturnActive = true;
 	}
 

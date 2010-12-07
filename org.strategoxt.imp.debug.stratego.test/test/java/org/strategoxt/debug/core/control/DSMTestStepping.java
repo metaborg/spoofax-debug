@@ -222,7 +222,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
 		// in rule "match-comments"
-		// but we placed a breakpoint in find-functions. VM will suspend in 
+		// but we placed a breakpoint in find-functions. VM will suspend at 55,4
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54)); // match-comments[localvar.str]@(48,6) 48,40
 		
 

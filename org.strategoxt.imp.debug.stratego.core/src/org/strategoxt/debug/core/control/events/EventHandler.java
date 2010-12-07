@@ -430,7 +430,7 @@ public abstract class EventHandler {
 		if (isBreakPointHit){
 			// we hit a break point
 			// if stepping is active it should be cancelled
-			if (eventSpecManager.isStepOverActive())
+			if (eventSpecManager.isStepOverActive() || eventSpecManager.isStepIntoActive() || eventSpecManager.isStepReturnActive())
 			{
 				eventSpecManager.resetStep();
 			}
@@ -439,7 +439,7 @@ public abstract class EventHandler {
 		else if (eventSpecManager.isStepOverActive())
 		{
 			// if level is the same
-			if (eventSpecManager.getStepFrameLevel() == currentState.getStackFrames().length - 1)
+			if (eventSpecManager.getStepFrameLevel() == currentState.getCurrentFrameLevel())
 			{
 				// rule/strategy location are the same
 				boolean sameLocation = eventSpecManager.getStepFrame().getLocationInfo().equals(currentState.currentFrame().getLocationInfo());
@@ -474,7 +474,7 @@ public abstract class EventHandler {
 			// level of the current stackframe should equal (stepFrameLevel+1)
 			// an we should have stopped at a s-enter/r-enter
 			int stepIntoFrameLevel = eventSpecManager.getStepFrameLevel() + 1;
-			if (stepIntoFrameLevel == currentState.getStackFrames().length - 1 && 
+			if (stepIntoFrameLevel == currentState.getCurrentFrameLevel() && 
 					(this.getEventType().equals(EventHandler.S_ENTER)
 					|| this.getEventType().equals(EventHandler.R_ENTER))
 					)
@@ -486,6 +486,18 @@ public abstract class EventHandler {
 				// could not do a s-enter
 			}
 			eventSpecManager.resetStep(); // reset step
+		}
+		else if (eventSpecManager.isStepReturnActive())
+		{
+			// suspend if we get an event of the parent StackFrame of getStepFrame
+			// stepIntoFrameLevel - 1 = getCurrentFrameLevel()
+			int parentFrameLevel = eventSpecManager.getStepFrameLevel() - 1;
+			if (parentFrameLevel == currentState.getCurrentFrameLevel())
+			{
+				// it does not matter what the eventType is of the fired debug event
+				shouldSuspend = true;
+				eventSpecManager.resetStep(); // reset step
+			}
 		}
 		
         return shouldSuspend; // if break point exists suspend thread
