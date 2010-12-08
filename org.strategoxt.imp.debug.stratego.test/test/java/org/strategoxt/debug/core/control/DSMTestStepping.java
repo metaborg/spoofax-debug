@@ -15,6 +15,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		dsm.testStepping3();
 	}
 	
+	@org.junit.Test
 	public void testStepping1()
 	{
 		String projectName = "localvar";
@@ -31,7 +32,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -86,6 +87,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		System.out.println("EXIT");
 	}
 	
+	@org.junit.Test
 	public void testStepping2()
 	{
 		// step over at the last statement in a rule or strategy
@@ -103,7 +105,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -166,6 +168,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		System.out.println("EXIT");
 	}
 	
+	@org.junit.Test
 	public void testStepping3()
 	{
 		// step over a statement in a rule, but hit a breakpoint while stepping
@@ -185,7 +188,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		

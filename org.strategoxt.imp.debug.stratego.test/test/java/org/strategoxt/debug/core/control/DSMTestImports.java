@@ -29,7 +29,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		

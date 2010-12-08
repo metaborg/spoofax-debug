@@ -228,11 +228,11 @@ public class DebugSessionManager {
 	}
 	
 	/**
-	 * Terminate the Stratego VM.
+	 * Terminate the Stratego VM. Exits with exitcode 1, abnormal termination.
 	 */
 	public void terminateVM()
 	{
-		// TODO: Implement
+		vm.exit(1);
 	}
 	
 	public EventSpecManager getEventSpecManager()

@@ -29,6 +29,7 @@ public class VMStateTester {
 	private Iterator<StrategoState> iter = null;
 	
 	private StrategoState current;
+	private int index = -1;
 	
 	// if fullcompare is true compare the toplevel StackFrame
 	// if fullCompare is false only compare the strategy name
@@ -41,7 +42,8 @@ public class VMStateTester {
 	
 	public void initialize()
 	{
-		this.iter =  getIterator();
+		this.iter = getIterator();
+		this.index = -1;
 	}
 	
 	private Iterator<StrategoState> getIterator()
@@ -61,6 +63,7 @@ public class VMStateTester {
 	public StrategoState next()
 	{
 		this.current = getIterator().next();
+		this.index++;
 		return this.current;
 	}
 	
@@ -69,7 +72,10 @@ public class VMStateTester {
 		return this.current;
 	}
 	
-	
+	public int getIndex()
+	{
+		return this.index;
+	}
 	
 	/**
 	 * Compare the given StrategoState with the current StrategoState.

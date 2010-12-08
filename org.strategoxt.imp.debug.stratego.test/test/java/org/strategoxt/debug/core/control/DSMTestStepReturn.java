@@ -15,6 +15,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		//dsm.testStepping3();
 	}
 	
+	@org.junit.Test
 	public void testStepping1()
 	{
 		String projectName = "localvar";
@@ -31,7 +32,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -75,7 +76,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		System.out.println("EXIT");
 	}
 	
-	
+	@org.junit.Test
 	public void testStepping2()
 	{
 		// suspend at breakpoint, do a STEP_RETURN but hit another breakpoint before the active strategy could exit
@@ -94,7 +95,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		

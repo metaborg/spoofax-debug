@@ -12,21 +12,8 @@ import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
-public class DebugSessionManagerTest extends AbstractDSMTest {
-	
-	public static void main(String[] args) {
-		runLocalVar();
-	}
-	
-	public static void runLocalVar()
-	{
-		DebugSessionManagerTest dsmt = new DebugSessionManagerTest();
-		//dsmt.testDSM1();
-		//dsmt.testDSM2();
-		//dsmt.testBreakpointLookup();
-		dsmt.testStepBreakPoint();
-	}
-	
+public class DSMTestBasic extends AbstractDSMTest {
+
 	// stratego program should already be compiled
 	@org.junit.Test
 	public void testDSM1()
@@ -36,14 +23,14 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
-		String input = StrategoFileManager.BASE + "/src/strategies/terms/test2.prog";
+		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -72,14 +59,14 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
-		String input = StrategoFileManager.BASE + "/src/strategies/terms/test2.prog";
+		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -103,7 +90,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 	}
 	
 	@org.junit.Test
-	public void testStepBreakPoint()
+	public void testBreakPointAtS_Step()
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
@@ -119,7 +106,7 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
@@ -175,21 +162,21 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
 		
-		String input = StrategoFileManager.BASE + "/src/strategies/terms/test2.prog";
+		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(46, eventTable.size());
+		Assert.assertEquals(51, eventTable.size());
 		
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
@@ -241,21 +228,21 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
 		
-		String input = StrategoFileManager.BASE + "/src/strategies/terms/test2.prog";
+		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
 		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2();
+		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
 		vmMonitor.setDSM(dsm);
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(46, eventTable.size());
+		Assert.assertEquals(51, eventTable.size());
 		
 		// find-comment-match s-enter is at 71,7
 		List<EventEntry> entries = eventTable.getEventEntries(strategoFilename, 71, 7);
@@ -285,20 +272,4 @@ public class DebugSessionManagerTest extends AbstractDSMTest {
 		// start the debug session
 		start(dsm, mainArgs, classpath);
 	}
-	
-	/**
-	 * classPath contains the binary files of the compiled strj program
-	 * @param mainArgs
-	 * @param classpath
-	 */
-	public static DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
-	{
-		manager.initVM(mainArgs, classpath);
-		//manager.initVM(mainArgs);
-		manager.setupEventListeners();
-		manager.redirectOutput();
-		manager.runVM();		
-		return manager;
-	}
-
 }

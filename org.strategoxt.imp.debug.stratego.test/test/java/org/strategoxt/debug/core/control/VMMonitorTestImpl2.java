@@ -15,17 +15,20 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 	public final static String STEP_OVER = "STEP_OVER";
 	public final static String STEP_RETURN = "STEP_RETURN";
 	public final static String RESUME = "RESUME";
+	public final static String TERMINATE = "TERMINATE";
 	
 	private DebugSessionManager debugSessionManager;
 	private VMStateTester vmStateTester;
+	
+	private AbstractDSMTest callback = null;
 	
 	// list contains String encoded actions: e.g. RESUME, STEP
 	// This action should be performed after a state change, if no actions are in the list left, do a RESUME
 	private List<String> afterStateChangeActions = null;
 	private int actionIndex = -1;
 	
-	public VMMonitorTestImpl2() {
-
+	public VMMonitorTestImpl2(AbstractDSMTest callback) {
+		this.callback = callback;
 	}
 	
 	public void setVMStateTester(VMStateTester vmStateTester) {
@@ -37,27 +40,56 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		this.debugSessionManager = dsm;
 	}
 	
+	private void caughtThrowable(Throwable e)
+	{
+		if (this.callback != null)
+		{
+			callback.caughtThrowableInThread(e);
+		}
+	}
+	
 	public void stateChanged(StrategoState state) {
 		System.out.println("state changed");
-		if (vmStateTester.hasNext())
+		// catch any exception
+		boolean stateMismatch = false; // true if the current state does not match the expected state
+		try
 		{
-			vmStateTester.next();
-			boolean expected = vmStateTester.compareState(state);
-			String message = "Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
-			Assert.assertTrue(message, expected);
-			System.out.println("current: " + state.currentFrame().getCurrentTerm());
-			for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+			if (vmStateTester.hasNext())
 			{
-				System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+				vmStateTester.next();
+				boolean expected = vmStateTester.compareState(state);
+				String message = "State #" + vmStateTester.getIndex()+ ": Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
+				Assert.assertTrue(message, expected);
+				System.out.println("current: " + state.currentFrame().getCurrentTerm());
+				for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+				{
+					System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+				}
 			}
+			else
+			{
+				String message = "State changed but we did not except anymore state changes...";
+				Assert.fail(message);
+			}
+			
+		} catch(Exception e)
+		{
+			caughtThrowable(e);
+			stateMismatch = true;
+		} catch (AssertionError e)
+		{
+			caughtThrowable(e);
+			stateMismatch = true;
+		}
+		if (!stateMismatch)
+		{
+			nextAction();
 		}
 		else
 		{
-			String message = "State changed but we did not except anymore state changes...";
-			Assert.fail(message);
+			// test failed, stop VM
+			performAction(TERMINATE);
 		}
-		
-		nextAction();
 	}
 
 	public void vmEvent(String event) {
@@ -81,33 +113,49 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		this.afterStateChangeActions.add(action);
 	}
 	
+	/**
+	 * Performs the given action on the Stratego VM.
+	 * @param action
+	 */
+	private void performAction(String action)
+	{
+		if (RESUME.equals(action))
+		{
+			this.debugSessionManager.resumeVM();
+		}
+		else if (STEP_INTO.equals(action))
+		{
+			this.debugSessionManager.stepInto();
+		}
+		else if (STEP_OVER.equals(action))
+		{
+			this.debugSessionManager.stepOver();
+		}
+		else if (STEP_RETURN.equals(action))
+		{
+			this.debugSessionManager.stepReturn();
+		}
+		else if (TERMINATE.equals(action))
+		{
+			this.debugSessionManager.terminateVM();
+		}
+		else
+		{
+			// action unknown, just do a resume
+			this.debugSessionManager.resumeVM();
+		}
+	}
+	
+	/**
+	 * Determines the next action in the list and performs the action.
+	 */
 	private void nextAction()
 	{
 		actionIndex++;
 		if (afterStateChangeActions != null && actionIndex < afterStateChangeActions.size())
 		{
 			String action = afterStateChangeActions.get(actionIndex);
-			if (RESUME.equals(action))
-			{
-				this.debugSessionManager.resumeVM();
-			}
-			else if (STEP_INTO.equals(action))
-			{
-				this.debugSessionManager.stepInto();
-			}
-			else if (STEP_OVER.equals(action))
-			{
-				this.debugSessionManager.stepOver();
-			}
-			else if (STEP_RETURN.equals(action))
-			{
-				this.debugSessionManager.stepReturn();
-			}
-			else
-			{
-				// action unknown, just do a resume
-				this.debugSessionManager.resumeVM();
-			}
+			performAction(action);
 		}
 		else
 		{

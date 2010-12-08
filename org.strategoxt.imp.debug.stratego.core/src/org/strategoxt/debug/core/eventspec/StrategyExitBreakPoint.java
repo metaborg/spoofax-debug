@@ -23,9 +23,9 @@ public class StrategyExitBreakPoint extends BreakPoint {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof StrategyEnterBreakPoint))
+		if (!(obj instanceof StrategyExitBreakPoint))
 			return false;
-		StrategyEnterBreakPoint other = (StrategyEnterBreakPoint) obj;
+		StrategyExitBreakPoint other = (StrategyExitBreakPoint) obj;
 		if (getFilename() == null || other.getFilename() == null) {
 			return false;
 		} else if (!getFilename().equals(other.getFilename())) {

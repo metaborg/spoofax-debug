@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.control;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -32,13 +33,33 @@ public abstract class AbstractDSMTest {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public static DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
+	public DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
 	{
 		manager.initVM(mainArgs, classpath);
-		//manager.initVM(mainArgs);
 		manager.setupEventListeners();
 		manager.redirectOutput();
-		manager.runVM();		
+		manager.runVM();
+		// runVM waits for the threads to end
+		// check if any Exceptions were thrown
+		checkThreadFailures();
 		return manager;
+	}
+	
+	private List<Throwable> exceptions = new ArrayList<Throwable>();
+	
+	public void caughtThrowableInThread(Throwable e)
+	{
+		System.out.println("Caught Throwable in thread:");
+		e.printStackTrace();
+		//Assert.fail("Caught Throwable in thread");
+		exceptions.add(e);
+	}
+	
+	private void checkThreadFailures()
+	{
+		if (this.exceptions != null && this.exceptions.size() > 0)
+		{
+			Assert.fail("One of the treads threw an Exception...");
+		}
 	}
 }
