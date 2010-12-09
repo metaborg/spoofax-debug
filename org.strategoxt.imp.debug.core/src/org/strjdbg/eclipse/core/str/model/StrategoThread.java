@@ -3,6 +3,7 @@ package org.strjdbg.eclipse.core.str.model;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.core.model.IThread;
 
 public class StrategoThread extends StrategoDebugElement implements IThread {
@@ -99,19 +100,46 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 		getDebugTarget().suspend();
 	}
 
+	/**
+	 * @see IStep#canStepInto()
+	 */
 	public boolean canStepInto() {
-		// TODO Auto-generated method stub
-		return false;
+		return canStep();
 	}
 
+	/**
+	 * @see IStep#canStepOver()
+	 */
 	public boolean canStepOver() {
-		// TODO Auto-generated method stub
-		return false;
+		return canStep();
 	}
 
+	/**
+	 * @see IStep#canStepReturn()
+	 */
 	public boolean canStepReturn() {
-		// TODO Auto-generated method stub
-		return false;
+		return canStep();
+	}
+	
+	/**
+	 * Returns whether this thread is in a valid state to
+	 * step.
+	 * 
+	 * @return whether this thread is in a valid state to
+	 * step
+	 */
+	protected boolean canStep() {
+		try {
+			return isSuspended()
+				// && (!isPerformingEvaluation() || isInvokingMethod()) // TODO: implement "perform evaluation"
+				// && !isSuspendVoteInProgress() // TODO:  (conditional breakpoints, etc.).
+				&& !isStepping()
+				&& getTopStackFrame() != null
+				// && !getJavaDebugTarget().isPerformingHotCodeReplace() // TODO: implement hot code replace
+				;
+		} catch (DebugException e) {
+			return false;
+		}
 	}
 
 	public boolean isStepping() {
@@ -119,19 +147,52 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 		return this.fStepping;
 	}
 
+	/**
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
+	 * @see IStep#stepInto()
+	 */
 	public void stepInto() throws DebugException {
-		// TODO Auto-generated method stub
-		
+		synchronized (this) {
+			if (!canStepInto()) {
+				return;
+			}
+		}
+		// TODO: the jdi eclipse plugin uses scheduling and such
+		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepInto();
 	}
 
+	/** 
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
+	 * @see IStep#stepOver()
+	 */
 	public void stepOver() throws DebugException {
-		// TODO Auto-generated method stub
-		
+		synchronized (this) {
+			if (!canStepOver()) {
+				return;
+			}
+		}
+		// TODO: the jdi eclipse plugin uses scheduling and such
+		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepOver();
 	}
 
+	/**
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
+	 * @see IStep#stepReturn()
+	 */
 	public void stepReturn() throws DebugException {
-		// TODO Auto-generated method stub
-		
+		synchronized (this) {
+			if (!canStepReturn()) {
+				return;
+			}
+		}
+		// TODO: the jdi eclipse plugin uses scheduling and such
+		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepReturn();
 	}
 
 	public boolean canTerminate() {
@@ -154,4 +215,6 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 	protected void setStepping(boolean stepping) {
 		fStepping = stepping;
 	}
+	
+
 }

@@ -54,6 +54,9 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 	
 	// threads
 	private StrategoThread fThread;
+	/**
+	 * the array only contains the single StrategoThread (referenced by fThread) because a stratego program is single threaded.
+	 */
 	private IThread[] fThreads;
 	
 	// event dispatch job
@@ -664,6 +667,11 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		// TODO Auto-generated method stub
 		return fEventDispatch;
 	}	
+	
+	public DebugSessionManager getDebugSessionManager()
+	{
+		return this.manager;
+	}
 	
 	private void updateState(StrategoState state)
 	{
