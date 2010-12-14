@@ -57,6 +57,9 @@ public abstract class StrategoDebugElement extends PlatformObject implements IDe
 		{
 			return this.getLaunch();
 		}
+        //Platform.getAdapterManager().getAdapter(this, adapter);
+        AdapterDebug.printDontKnow(this, adapter);
+        // ongoing, I do not fully understand all the interfaces they'd like me to support
 		return super.getAdapter(adapter);
 	}
 	

@@ -159,7 +159,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		this.fLaunch = launch;
 		// running threads
 		fThread = new StrategoThread(this);
-		fThreads = new IThread[] {fThread};
+		fThreads = new IThread[] {fThread}; // stratego is single threaded
 		
 		// handle events fired by the VM
 		fEventDispatch = new EventDispatchJob();

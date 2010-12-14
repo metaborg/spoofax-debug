@@ -49,37 +49,41 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 		extractVariablesFromFrame();
 	}
 	
+	private Object lock = new Object();
+	
 	/**
 	 * Saves the variables that are active in the current frame in fVariables.
 	 * The local variables emitted by the s-var debugger calls are shown
 	 * as well as the current Term, with the label *current* 
 	 * but also the dynamic rules.
 	 */
-	private void extractVariablesFromFrame()
+	private synchronized void extractVariablesFromFrame()
 	{		
-		List<EStrategoVariable> vars = new ArrayList<EStrategoVariable>();
-		EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm(), "*current*");
-		currentVar.setValueChanged(true);
-		vars.add(currentVar);
-		for(Map.Entry<String, IStrategoTerm> entry : this.frameData.getVariables().entrySet())
-		{
-			EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue(), entry.getKey());
-			v.setValueChanged(true);
-			vars.add(v);
-		}
-		// add dynamic rules
-		if (this.frameData.getDynamicRules() != null)
-		{
-			for(String dynamicRuleName : this.frameData.getDynamicRules())
+		synchronized(lock){
+			List<EStrategoVariable> vars = new ArrayList<EStrategoVariable>();
+			EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm(), "*current*");
+			currentVar.setValueChanged(true);
+			vars.add(currentVar);
+			for(Map.Entry<String, IStrategoTerm> entry : this.frameData.getVariables().entrySet())
 			{
-				EStrategoVariable v = new EStrategoVariable(this.fTarget, new BasicStrategoString("rule contents"), dynamicRuleName);
+				EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue(), entry.getKey());
 				v.setValueChanged(true);
 				vars.add(v);
 			}
+			// add dynamic rules
+			if (this.frameData.getDynamicRules() != null)
+			{
+				for(String dynamicRuleName : this.frameData.getDynamicRules())
+				{
+					EStrategoVariable v = new EStrategoVariable(this.fTarget, new BasicStrategoString("rule contents"), dynamicRuleName);
+					v.setValueChanged(true);
+					vars.add(v);
+				}
+			}
+			// TODO: use this.frameData to determine if the value was changed
+			fVariables = new IVariable[vars.size()];
+			fVariables = vars.toArray(fVariables);
 		}
-		// TODO: use this.frameData to determine if the value was changed
-		fVariables = new IVariable[vars.size()];
-		fVariables = vars.toArray(fVariables);
 		
 	}
 
@@ -294,6 +298,17 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 			result += this.frameData.hashCode();
 		}
 		return result;
+	}
+	
+	public String toString()
+	{
+		String s = "EStrategoStackFrame ";
+		if (this.getFrameData() != null)
+		{
+			// name of the file
+			s += this.getFrameData().toString();
+		}
+		return s;
 	}
 
 }

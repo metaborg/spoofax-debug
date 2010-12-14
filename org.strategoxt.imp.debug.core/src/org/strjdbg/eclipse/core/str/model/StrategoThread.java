@@ -6,6 +6,11 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.core.model.IThread;
 
+/**
+ * As long as Stratego is single threaded this StrategoThread can directly access the single thread in the StrategoDebugTarget
+ * @author rlindeman
+ *
+ */
 public class StrategoThread extends StrategoDebugElement implements IThread {
 
 	/**
@@ -159,6 +164,7 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
+		System.out.println("ECLIPSE STEP INTO");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepInto();
 	}
@@ -175,6 +181,7 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
+		System.out.println("ECLIPSE STEP OVER");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepOver();
 	}
@@ -191,6 +198,7 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
+		System.out.println("ECLIPSE STEP RETURN");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepReturn();
 	}
@@ -214,6 +222,13 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 	 */
 	protected void setStepping(boolean stepping) {
 		fStepping = stepping;
+	}
+	
+	public String toString()
+	{
+		String s = "StrategoThread";
+		
+		return s;
 	}
 	
 
