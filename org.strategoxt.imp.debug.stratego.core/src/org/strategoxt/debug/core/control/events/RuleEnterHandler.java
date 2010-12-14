@@ -36,10 +36,12 @@ public class RuleEnterHandler extends EventHandler {
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
-		super.processDebugEvent(strategoState);
 		// current event is an enter event, push a new StackFrame on the stack
-		StrategoStackFrame frame = new StrategoStackFrame(this.getFilename(), this.getName(), this.getLocationInfo(), this.getGiven());
+		int level = strategoState.getCurrentFrameLevel() + 1;
+		StrategoStackFrame frame = new StrategoStackFrame(level, this.getFilename(), this.getName(), this.getLocationInfo(), this.getGiven());
 		strategoState.pushFrame(frame);
+
+		super.processDebugEvent(strategoState); // update current location info
 	}
 
 }

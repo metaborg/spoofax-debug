@@ -69,6 +69,11 @@ public abstract class EventHandler {
 	
 	protected StrategoTermBuilder builder = new StrategoTermBuilder();
 	
+	/**
+	 * The current com.sun.jdi.StackFrame.
+	 */
+	private StackFrame stackFrame = null;
+	
 	public EventHandler(MethodExitEvent event)
 	{
 		this.exit_event = event;
@@ -81,6 +86,10 @@ public abstract class EventHandler {
 		this.initLocalVariables();
 	}
 	
+	/**
+	 * Extract the method arguments. 
+	 * @return Returns a list of LocalVariables each represents a method argument.
+	 */
 	private List<LocalVariable> getMethodArguments()
 	{
 		List<LocalVariable> args = new ArrayList<LocalVariable>();
@@ -103,9 +112,10 @@ public abstract class EventHandler {
 		return args;
 	}
 	
-	private StackFrame stackFrame = null;
+	
+	
 	/**
-	 * Returns the current stack frame
+	 * Returns the current com.sun.jdi.StackFrame
 	 * @return
 	 */
 	public StackFrame getStackFrame()
@@ -561,10 +571,14 @@ public abstract class EventHandler {
 	
 	/**
 	 * Override this method when some stuff needs to be done if this DebugEvent occurs.
+	 * Always call super to update the location info..
 	 * @param strategoState 
 	 */
 	public void processDebugEvent(StrategoState strategoState) 
 	{
+		// update the current location
+		LocationInfo locationInfo = this.getLocationInfo();
+		strategoState.currentFrame().setCurrentLocationInfo(locationInfo, this.getEventType());
 	}
 	
 	protected abstract BreakPoint createBreakPoint();

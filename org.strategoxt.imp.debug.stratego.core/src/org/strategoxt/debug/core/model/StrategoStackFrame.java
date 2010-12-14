@@ -7,6 +7,11 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 public class StrategoStackFrame {
 	
 	/**
+	 * Level represents the depth of the StackFrame.
+	 */
+	private int level;
+	
+	/**
 	 * The name of the current rule or strategy.
 	 */
 	private String name;
@@ -41,13 +46,15 @@ public class StrategoStackFrame {
 	
 	/**
 	 * 
+	 * @param level The level of the frame. The top stackframe has level 0. 
 	 * @param filename The filename in which the current rule or strategy is defined.
 	 * @param name The name of the current rule or strategy.
 	 * @param locationInfo Location info about the current rule or strategy.
 	 * @param current The current stratego term.
 	 */
-	public StrategoStackFrame(String filename, String name, LocationInfo locationInfo,
+	public StrategoStackFrame(int level, String filename, String name, LocationInfo locationInfo,
 			IStrategoTerm current) {
+		this.level = level;
 		this.name = name;
 		this.filename = filename;
 		this.locationInfo = locationInfo;
@@ -57,7 +64,7 @@ public class StrategoStackFrame {
 	
 	public String toString()
 	{
-		String val = "Frame @ " + this.name + "[" + this.filename + "]";
+		String val = "Frame "+this.level+" @ " + this.name + "[" + this.filename + "]";
 		if (currentLocationInfo != null) // specific location
 		{
 			val += "@"+currentLocationInfo.toShortString();
@@ -68,6 +75,11 @@ public class StrategoStackFrame {
 			val += ":" + locationInfo.getStart_line_num();
 		}*/
 		return val;
+	}
+	
+	public int getLevel()
+	{
+		return this.level;
 	}
 	
 	/**
@@ -165,6 +177,9 @@ public class StrategoStackFrame {
 		return this.dynamicRuleNames;
 	}
 	
+	/**
+	 * Does not compare the current Term, the current LocationInfo and the eventType as these will change within a StackFrame during execution. 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -176,33 +191,38 @@ public class StrategoStackFrame {
 		StrategoStackFrame other = (StrategoStackFrame) obj;
 		if (this.name == null || other.name == null)
 			return false;
-		if (this.current == null || other.current == null)
-			return false;
-		if (this.currentLocationInfo == null || other.currentLocationInfo == null)
-			return false;
+		//if (this.current == null || other.current == null)
+		//	return false;
+		//if (this.currentLocationInfo == null || other.currentLocationInfo == null)
+		//	return false;
 		if (this.filename == null || other.filename == null)
 			return false;
 		if (this.locationInfo == null || other.locationInfo == null)
 			return false;
 		
+		boolean c0 = this.level == other.level;
 		boolean c1 = this.name.equals(other.name);
 		//boolean c2 = this.current.equals(other.current); // TODO: do not equals on this.current, we should treat it as a variable
-		boolean c3 = this.currentLocationInfo.equals(other.currentLocationInfo);
+		//boolean c3 = this.currentLocationInfo.equals(other.currentLocationInfo);
 		boolean c4 = this.filename.equals(other.filename);
 		boolean c5 = this.locationInfo.equals(other.locationInfo); // TODO: use this one?
 		
-		if (c1 /*&& c2*/ && c3 && c4 && c5)
+		if (c0 && c1 /*&& c2 && c3*/ && c4 && c5)
 			return true;
 		return false;
 	}
 	
+	/**
+	 * Does not compare the current Term, the current LocationInfo and the eventType as these will change within a StackFrame during execution. 
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 61;
 		
 		int result = 1;
+		result = prime * result + this.level;
 		//result = prime * result + this.current.hashCode();
-		result = prime * result + this.currentLocationInfo.hashCode();
+		//result = prime * result + this.currentLocationInfo.hashCode();
 		result = prime * result + this.filename.hashCode();
 		result = prime * result + this.locationInfo.hashCode(); // TODO: ise this one?
 		result = prime * result + this.name.hashCode();

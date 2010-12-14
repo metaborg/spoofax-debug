@@ -12,7 +12,6 @@ import org.strategoxt.debug.core.control.events.StrategyExitHandler;
 import org.strategoxt.debug.core.control.events.StrategyStepHandler;
 import org.strategoxt.debug.core.control.events.StrategyVarHandler;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
-import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
@@ -52,10 +51,14 @@ public class ThreadEventHandler {
 	}
 	*/
 
+	/**
+	 * Remove the current StrategoStackFrame
+	 */
 	private void exitStrategoStackFrame(EventHandler h) {
 		if (h != null)
 		{
-			StrategoStackFrame frame = new StrategoStackFrame(h.getFilename(), h.getName(), h.getLocationInfo(), h.getGiven());
+			int level = this.strategoState.getCurrentFrameLevel();
+			StrategoStackFrame frame = new StrategoStackFrame(level, h.getFilename(), h.getName(), h.getLocationInfo(), h.getGiven());
 			this.strategoState.popFrame(frame);
 		}
 		else
@@ -120,9 +123,7 @@ public class ThreadEventHandler {
 			try {
 				h.processDebugEvent(this.strategoState);
 				
-				// update the current location
-				LocationInfo locationInfo = h.getLocationInfo();
-				this.strategoState.currentFrame().setCurrentLocationInfo(locationInfo, h.getEventType());
+
 				
 				suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
 				// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended

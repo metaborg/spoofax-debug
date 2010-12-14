@@ -29,11 +29,11 @@ public class StrategyVarHandler extends EventHandler {
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
-		super.processDebugEvent(strategoState);
 		
 		String varname = this.getVarname();
 		//System.out.println("localvar: " + varname);
 		// add the variable assignment to the currentStackFrame
 		strategoState.currentFrame().addVariable(varname, this.getGiven());
+		super.processDebugEvent(strategoState); // update current location info
 	}
 }

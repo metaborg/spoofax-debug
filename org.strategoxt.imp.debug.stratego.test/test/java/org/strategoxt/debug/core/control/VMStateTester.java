@@ -116,7 +116,7 @@ public class VMStateTester {
 			// TODO: throw error
 		}
 		StrategoState state = new StrategoState();
-		StrategoStackFrame frame = new StrategoStackFrame(null, name, null, null);
+		StrategoStackFrame frame = new StrategoStackFrame(-1, null, name, null, null);
 		state.pushFrame(frame);
 		
 		this.willHitStates.add(state);
@@ -146,7 +146,8 @@ public class VMStateTester {
 		StrategoState state = new StrategoState();
 		LocationInfo currentLocationInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
 		IStrategoTerm current = null;
-		StrategoStackFrame frame = new StrategoStackFrame(filename, name, null, current);
+		// TODO: add stackframedepth
+		StrategoStackFrame frame = new StrategoStackFrame(-1, filename, name, null, current);
 		frame.setCurrentLocationInfo(currentLocationInfo, eventType);
 		state.pushFrame(frame);
 		return state;

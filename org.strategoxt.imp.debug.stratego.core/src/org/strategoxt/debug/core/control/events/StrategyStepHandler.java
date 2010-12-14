@@ -36,7 +36,6 @@ public class StrategyStepHandler extends EventHandler {
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
-		super.processDebugEvent(strategoState);
 		// the current term on the frame should now be
 		//h.getGiven();
 		
@@ -55,6 +54,7 @@ public class StrategyStepHandler extends EventHandler {
 		{
 			strategoState.currentFrame().setCurrentTerm(this.getGiven());
 		}
+		super.processDebugEvent(strategoState); // update current location info
 	}
 	
 }

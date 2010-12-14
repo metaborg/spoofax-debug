@@ -185,6 +185,7 @@ public class EventSpecManager {
 		this.isStepOverActive = false;
 		this.isStepIntoActive = false;
 		this.isStepReturnActive = false;
+		state.setStepping(false);
 	}
 	
 	public EventTable getEventTable()

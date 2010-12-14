@@ -35,7 +35,6 @@ public class RuleExitHandler extends EventHandler {
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
-		super.processDebugEvent(strategoState);
 		// do not pop the current stack frame here
 		// an exit breakpoint could also set the vm in the suspended state and then we will still need to access the current stack.
 		// Pop the frame in the method exit event, because no one can need it after the method has exited
@@ -45,6 +44,8 @@ public class RuleExitHandler extends EventHandler {
 		// the current term on the frame should now be
 		//h.getGiven();
 		strategoState.currentFrame().setCurrentTerm(this.getGiven());
+
+		super.processDebugEvent(strategoState); // update current location info
 	}
 	
 
