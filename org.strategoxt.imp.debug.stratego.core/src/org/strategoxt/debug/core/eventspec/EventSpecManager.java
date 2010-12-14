@@ -126,6 +126,7 @@ public class EventSpecManager {
 			{
 				// no parent index
 				// we are at the exit of the main strategy!
+				System.out.println("At exit of top level strategy, just continue..");
 				return;
 			}
 			stepFrame = state.get(parentIndex);
@@ -138,6 +139,8 @@ public class EventSpecManager {
 			stepFrameLevel = state.size() - 1;
 			isStepOverActive = true;
 		}
+		
+		state.setStepping(true);
 	}
 	
 	
@@ -153,7 +156,11 @@ public class EventSpecManager {
 		else
 		{
 			// current stackframe is suspend at a s-exit/r-exit/s-enter/r-enter
+			// just treat it as an step over
+			System.out.println("Cannot step into " + state.currentFrame().getEventType() + ", just do a step over...");
+			setStepOver(state);
 		}
+		state.setStepping(true);
 	}
 	
 	public void setStepReturn(StrategoState state)
@@ -161,14 +168,17 @@ public class EventSpecManager {
 		if (state.getCurrentFrameLevel() == 0)
 		{
 			// we are at the main strategy, cannot step return
+			System.out.println("Cannot step return in top level strategy, just continue...");
 			return;
 		}
 		stepFrame = state.currentFrame();
 		stepFrameLevel = state.getCurrentFrameLevel();
 		isStepReturnActive = true;
+		
+		state.setStepping(true);
 	}
 
-	public void resetStep()
+	public void resetStep(StrategoState state)
 	{
 		this.stepFrame = null;
 		this.stepFrameLevel = -1;

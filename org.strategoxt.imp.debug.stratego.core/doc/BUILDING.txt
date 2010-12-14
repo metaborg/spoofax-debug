@@ -23,4 +23,10 @@ external libraries
  * strategoxt.jar: the strategoxt java runtime
  * tools.jar: sun implementation of the java debug interface
  
- 
+
+
+eclipse settings:
+eclipse 3.6 has changed the meaning @SuppressWarnings("unchecked"). In Eclipse 3.5 unchecked was used to suppress the unchecked and raw types warnings.
+It has to be changed to @SuppressWarnings({"unchecked", "rawtypes"}). However if the project will still be edited in eclipse 3.5 the "rawtypes" is not supported. Add the -DsuppressRawWhenUnchecked=true argument to the -vmargs list in eclipse.ini to preserve the eclipse 3.5 behavior in eclipse 3.6.
+
+http://wiki.event-b.org/index.php/Migration_to_Eclipse_3.6#.40SuppressWarnings.28.22unchecked.22.29_does_not_ignore_raw_types_warnings_anymore

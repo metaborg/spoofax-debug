@@ -137,6 +137,7 @@ public class ThreadEventHandler {
 
 				if (suspendThread)
 				{
+					// the stratego program is suspended
 					System.out.println("suspend");
 					Value output = h.getStackFrame().thisObject().invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
 					//Value output = thread.invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
@@ -146,6 +147,8 @@ public class ThreadEventHandler {
 					System.out.println(term.toString());
 					String[] dynamicRuleNames = builder.convertToStringArray(term);
 					this.strategoState.currentFrame().setDynamicRuleNames(dynamicRuleNames);
+					
+					this.strategoState.setSuspended(true);
 				}
 			} catch(Exception e)
 			{
@@ -229,8 +232,21 @@ public class ThreadEventHandler {
 		mgr.deleteEventRequest(event.request());
 	}
 
+	/**
+	 * Death occurs before termination
+	 * @param event
+	 */
 	void threadDeathEvent(ThreadDeathEvent event) {
 		// thread death event
+		if (this.strategoState != null && this.strategoState.getCurrentFrameLevel() > -1)
+		{
+			System.out.println("A thread death occured, but the StrategoState has some StackFrame left...");
+		}
+		else
+		{
+			System.out.println("Thread death...");
+		}
+
 	}
 	
 	public StrategoState getStrategoState()

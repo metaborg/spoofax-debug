@@ -161,7 +161,7 @@ public class EventThread extends Thread {
 		}
 	}
 
-	private StrategoState getStrategoState() {
+	protected StrategoState getStrategoState() {
 		return this.strategoState;
 	}
 
@@ -187,7 +187,7 @@ public class EventThread extends Thread {
 	private ThreadEventHandler getThreadEventHandler(ThreadReference thread) {
 		ThreadEventHandler handler = (ThreadEventHandler) traceMap.get(thread);
 		if (handler == null) {
-			handler = new ThreadEventHandler(thread, this.strategoState);
+			handler = new ThreadEventHandler(thread, this.strategoState); // share the state across threads because we only have one Stratego Program Thread
 			traceMap.put(thread, handler);
 		}
 		return handler;

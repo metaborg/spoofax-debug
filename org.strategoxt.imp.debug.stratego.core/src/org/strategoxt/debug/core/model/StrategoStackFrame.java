@@ -186,12 +186,12 @@ public class StrategoStackFrame {
 			return false;
 		
 		boolean c1 = this.name.equals(other.name);
-		boolean c2 = this.current.equals(other.current);
+		//boolean c2 = this.current.equals(other.current); // TODO: do not equals on this.current, we should treat it as a variable
 		boolean c3 = this.currentLocationInfo.equals(other.currentLocationInfo);
 		boolean c4 = this.filename.equals(other.filename);
 		boolean c5 = this.locationInfo.equals(other.locationInfo); // TODO: use this one?
 		
-		if (c1 && c2 && c3 && c4 && c5)
+		if (c1 /*&& c2*/ && c3 && c4 && c5)
 			return true;
 		return false;
 	}
@@ -201,7 +201,7 @@ public class StrategoStackFrame {
 		final int prime = 61;
 		
 		int result = 1;
-		result = prime * result + this.current.hashCode();
+		//result = prime * result + this.current.hashCode();
 		result = prime * result + this.currentLocationInfo.hashCode();
 		result = prime * result + this.filename.hashCode();
 		result = prime * result + this.locationInfo.hashCode(); // TODO: ise this one?

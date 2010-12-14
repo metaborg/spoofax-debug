@@ -404,6 +404,17 @@ public abstract class EventHandler {
 	/**
 	 * Returns true if the thread should stay suspended.
 	 * Returns false if the thread should resume
+	 * 
+	 * If we hit a breakpoint we should always suspend and cancel all stepping.
+	 * If we are doing a step over we suspend 
+	 * 		at the next s-step,s-exit,r-exit that is in the same StackFrame
+	 * 		or in the first s-step,s-exit,r-exit in a parent StackFrame (we stepped over the last statement)
+	 * If we are doing a step into we should suspend
+	 * 		at the first s-enter or s-exit that is in a child StackFrame 
+	 * 		or at the first s-step,s-exit,r-exit that is in the current StackFrame (current statement cannot be stepping into) 
+	 * 		or at the first s-step,s-exit,r-exit that is in the parent StackFrame (doing a step into at an s-exit,r-exit)
+	 * If we are doing a step return we should suspend
+	 * 		at the first s-step,s-exit,r-exit in the parent StackFrame
 	 * @return
 	 */
 	public boolean shouldSuspend(StrategoState currentState, EventSpecManager eventSpecManager){
@@ -432,7 +443,7 @@ public abstract class EventHandler {
 			// if stepping is active it should be cancelled
 			if (eventSpecManager.isStepOverActive() || eventSpecManager.isStepIntoActive() || eventSpecManager.isStepReturnActive())
 			{
-				eventSpecManager.resetStep();
+				eventSpecManager.resetStep(currentState);
 			}
 			shouldSuspend = true;
 		}
@@ -452,7 +463,7 @@ public abstract class EventHandler {
 					{
 						// we hit the next s-step
 						shouldSuspend = true;
-						eventSpecManager.resetStep(); // reset step
+						eventSpecManager.resetStep(currentState); // reset step
 					}
 					// S_VAR we can ignore
 					// S_ENTER/R_ENTER should never happen is the same StackFrame
@@ -461,31 +472,54 @@ public abstract class EventHandler {
 					{
 						// we have hit the s-exit/r-exit of the frame in which the step occured.
 						shouldSuspend = true;
-						eventSpecManager.resetStep(); // reset step
+						eventSpecManager.resetStep(currentState); // reset step
 					}
 				}
 			}
-			// what if the current stackframe level is smaller that the stepFrameLevel? We must have missed an r-exit/s-exit
+			else if (eventSpecManager.getStepFrameLevel() > currentState.getCurrentFrameLevel()
+					&& (this.getEventType().equals(EventHandler.S_EXIT)
+							|| this.getEventType().equals(EventHandler.R_EXIT)
+							|| this.getEventType().equals(EventHandler.S_ENTER)
+							|| this.getEventType().equals(EventHandler.R_ENTER)
+							|| this.getEventType().equals(EventHandler.S_STEP)))
+			{
+				// what if the current stackframe level is smaller that the stepFrameLevel? We must have missed an r-exit/s-exit
+				// stop at the first s-step, s-exit, s-enter, r-exit, r-enter (s-var is ingnored)
+				System.out.println("Missed step over curLevel="+currentState.getCurrentFrameLevel() + " stepOverInLevel="+eventSpecManager.getStepFrameLevel());
+				shouldSuspend = true;
+				eventSpecManager.resetStep(currentState); // reset step
+				
+			}
 		} else if (eventSpecManager.isStepIntoActive())
 		{
 			// an new debug event was fired, this should be an s-enter or r-enter as we can only step into strategies or rules that are debuggable
 			// if the event is s-step we just did a normal step over, cancel the stepinto event and just resume
 			
 			// level of the current stackframe should equal (stepFrameLevel+1)
-			// an we should have stopped at a s-enter/r-enter
-			int stepIntoFrameLevel = eventSpecManager.getStepFrameLevel() + 1;
+			// and we should have stopped at a s-enter/r-enter
+			int stepIntoFrameLevel = eventSpecManager.getStepFrameLevel() + 1; 
+			// TODO: does the stacklevel really matter, or is it suffice to say currentState.getCurrentFrameLevel() > eventSpecManager.getStepFrameLevel()
+			// maybe the step into strategy has no debug information but it calls another strategy which does have step into information....?
 			if (stepIntoFrameLevel == currentState.getCurrentFrameLevel() && 
 					(this.getEventType().equals(EventHandler.S_ENTER)
 					|| this.getEventType().equals(EventHandler.R_ENTER))
 					)
 			{
 				shouldSuspend = true;
+				eventSpecManager.resetStep(currentState); // reset step
 			}
-			else
+			else if (this.getEventType().equals(EventHandler.S_ENTER)
+					||  this.getEventType().equals(EventHandler.R_ENTER)
+					||  this.getEventType().equals(EventHandler.R_EXIT)
+					|| this.getEventType().equals(EventHandler.S_EXIT)
+					|| this.getEventType().equals(EventHandler.S_STEP))
 			{
-				// could not do a s-enter
+
+				// could not do a s-enter, we just did an s-exit/r-exit or s-step
+				// just treat it as an s-step
+				shouldSuspend = true;
+				eventSpecManager.resetStep(currentState); // reset step
 			}
-			eventSpecManager.resetStep(); // reset step
 		}
 		else if (eventSpecManager.isStepReturnActive())
 		{
@@ -494,10 +528,32 @@ public abstract class EventHandler {
 			int parentFrameLevel = eventSpecManager.getStepFrameLevel() - 1;
 			if (parentFrameLevel == currentState.getCurrentFrameLevel())
 			{
-				// it does not matter what the eventType is of the fired debug event
-				shouldSuspend = true;
-				eventSpecManager.resetStep(); // reset step
+				// it does not matter what the eventType is of the fired debug event as long as it isn't an s-var
+				if (!this.getEventType().equals(EventHandler.S_VAR))
+				{
+					shouldSuspend = true;
+					eventSpecManager.resetStep(currentState); // reset step
+				}
 			}
+			else if (currentState.getCurrentFrameLevel() < parentFrameLevel)
+			{
+				// the direct parent frame did not have any debug information, but stop at the first
+				// debug event in one of the parent frames (ignore s-var events)
+				if (!this.getEventType().equals(EventHandler.S_VAR))
+				{
+					shouldSuspend = true;
+					eventSpecManager.resetStep(currentState); // reset step
+				}
+			}
+		}
+		
+		// TODO assert
+		if (shouldSuspend && currentState.isStepping())
+		{
+			// the program suspends but we are still stepping
+			// TODO: this should never occur...
+			System.out.println("The program suspended but we are still stepping!");
+			
 		}
 		
         return shouldSuspend; // if break point exists suspend thread

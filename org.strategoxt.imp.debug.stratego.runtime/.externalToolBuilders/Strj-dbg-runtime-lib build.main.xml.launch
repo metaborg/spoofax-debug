@@ -3,7 +3,7 @@
 <stringAttribute key="bad_container_name" value=".externalToolBuilders"/>
 <booleanAttribute key="org.eclipse.ant.ui.DEFAULT_VM_INSTALL" value="false"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/strj-dbg-runtime-lib/build.main.xml"/>
+<listEntry value="/org.strategoxt.imp.debug.stratego.runtime/build.main.xml"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>

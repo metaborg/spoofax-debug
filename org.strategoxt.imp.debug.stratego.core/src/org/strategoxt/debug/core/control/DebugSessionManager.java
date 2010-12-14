@@ -1,6 +1,7 @@
 package org.strategoxt.debug.core.control;
 
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
+import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.StreamRedirectThread;
 import org.strategoxt.debug.core.util.VMLauncherHelper;
@@ -15,6 +16,11 @@ public class DebugSessionManager {
 	private VirtualMachine vm = null;
 
 	public boolean running = false;
+	
+	/**
+	 * Will be true when terminateVM() is called.
+	 */
+	private boolean isTerminated = false;
 	
 	// Thread transferring remote error stream to our error stream
 	private StreamRedirectThread errThread = null;
@@ -54,10 +60,7 @@ public class DebugSessionManager {
 		this.vmMonitor = vmMonitor;
 	}
 	
-	public DebugSessionSettings getDebugSessionSettings()
-	{
-		return this.debugSessionSettings;
-	}
+
 	
 	/**
 	 * Initialize a new VM using the given VirtualMachineManager.
@@ -155,7 +158,7 @@ public class DebugSessionManager {
 		}
 	}
 
-
+	// next block of methods can be used to control the VM
 
 	public void runVM() {
 		System.out.println("runVM start");
@@ -179,6 +182,7 @@ public class DebugSessionManager {
 	 */
 	public void resumeVM()
 	{
+		System.out.println("RESUME");
 		if (this.eventThread.getVMDied())
 		{
 			// cannot resume a VM that has died
@@ -186,6 +190,7 @@ public class DebugSessionManager {
 		}
 		else
 		{
+			this.getStrategoState().setSuspended(false);
 			vm.resume();
 		}
 	}
@@ -200,31 +205,40 @@ public class DebugSessionManager {
 	
 	public void stepInto()
 	{
-		// stop at the first possible s-enter/r-enter event
-		// if the current statement is not a call to another method, we can only step over
-		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
-		this.eventSpecManager.setStepInto(handler.getStrategoState());
-		this.resumeVM();
+		if (canStepInto())
+		{
+			System.out.println("STEP INTO");
+			// stop at the first possible s-enter/r-enter event
+			// if the current statement is not a call to another method, we can only step over
+			this.eventSpecManager.setStepInto(this.getStrategoState());
+			this.resumeVM();
+		}
 	}
 	
 	public void stepOver()
 	{
-		// get the thread that is suspended, stratego programs are single threaded, so we always know which thread we need.
-		// just save the step info in the EventSpecManager, if stratego becomes multi-threaded, step info needs to be saved per Thread
-		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
-		this.eventSpecManager.setStepOver(handler.getStrategoState());
-		// stop at the next s-step that is in the same stackframe as the current one
-		// if the current StackFrame exists (s-exit or r-exit) continue at the returning stackframe
-		this.resumeVM();
+		if (this.canStepOver())
+		{
+			System.out.println("STEP OVER");
+			// get the thread that is suspended, stratego programs are single threaded, so we always know which thread we need.
+			// just save the step info in the EventSpecManager, if stratego becomes multi-threaded, step info needs to be saved per Thread
+			this.eventSpecManager.setStepOver(this.getStrategoState());
+			// stop at the next s-step that is in the same stackframe as the current one
+			// if the current StackFrame exists (s-exit or r-exit) continue at the returning stackframe
+			this.resumeVM();
+		}
 	}
 	
 	public void stepReturn()
 	{
-		// continue until the current stackframe fires an s-exit or r-exit event.
-		// we should stop at the next s-step in the parent stackframe.
-		ThreadEventHandler handler = this.eventThread.getMainThreadHandler();
-		this.eventSpecManager.setStepReturn(handler.getStrategoState());
-		this.resumeVM();
+		if (this.canStepReturn())
+		{
+			System.out.println("STEP RETURN");
+			// continue until the current stackframe fires an s-exit or r-exit event.
+			// we should stop at the next s-step in the parent stackframe.
+			this.eventSpecManager.setStepReturn(this.getStrategoState());
+			this.resumeVM();
+		}
 	}
 	
 	/**
@@ -232,17 +246,92 @@ public class DebugSessionManager {
 	 */
 	public void terminateVM()
 	{
-		vm.exit(1);
+		if (this.vm != null)
+		{
+			this.isTerminated = true;
+			vm.exit(1);
+		}
+		else
+		{
+			System.out.println("No VM!");
+		}
 	}
+	
+	// next block of methods can be used to ask the VM if we can perform the action
+	
+	public boolean canResume() {
+		return !isTerminated() && isSuspended();
+	}
+
+	public boolean canSuspend() {
+		return !isTerminated() && !isSuspended();
+	}
+	
+	public boolean canStepInto() {
+		return canStep();
+	}
+
+	public boolean canStepOver() {
+		return canStep();
+	}
+
+	public boolean canStepReturn() {
+		return canStep();
+	}
+	
+	/**
+	 * Returns whether this thread is in a valid state to
+	 * step.
+	 * 
+	 * @return whether this thread is in a valid state to
+	 * step
+	 */
+	protected boolean canStep() {
+		return isSuspended()
+			// && (!isPerformingEvaluation() || isInvokingMethod()) // TODO: implement "perform evaluation"
+			// && !isSuspendVoteInProgress() // TODO:  (conditional breakpoints, etc.).
+			&& !isStepping()
+			//&& getTopStackFrame() != null // just use the frame level
+			&& this.getStrategoState().getCurrentFrameLevel() > -1
+			// && !getJavaDebugTarget().isPerformingHotCodeReplace() // TODO: implement hot code replace
+			;
+	}
+	
+	
+	// next block of methods ask for the state of the VM
+	
+	public boolean isTerminated() {
+		return this.isTerminated;
+	}
+	
+	public boolean isSuspended() {
+		return this.getStrategoState().isSuspended();
+	}
+	
+	public boolean isStepping()
+	{
+		return this.getStrategoState().isStepping();
+	}
+	// get methods
 	
 	public EventSpecManager getEventSpecManager()
 	{
 		return this.eventSpecManager;
 	}
 
-	public void setStepExit() {
-		// TODO Auto-generated method stub
-		
+	public DebugSessionSettings getDebugSessionSettings()
+	{
+		return this.debugSessionSettings;
+	}
+	
+	/**
+	 * Returns the StrategoState of Stratego program. 
+	 * As long as Stratego programs remain single threaded we can just return the state of the single man thread.
+	 * @return
+	 */
+	private StrategoState getStrategoState()
+	{
+		return this.eventThread.getStrategoState();
 	}
 	
 	/**

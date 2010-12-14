@@ -8,6 +8,10 @@ public class StrategoState {
 
 	//private LocationInfo locationInfo = null;
 	
+	private boolean isSuspended = false;
+	private boolean isStepping = false;
+	private boolean hasDied = false;
+	
 	private Stack<StrategoStackFrame> stack = new Stack<StrategoStackFrame>();
 	
 	/*
@@ -80,6 +84,44 @@ public class StrategoState {
 	{
 		StrategoStackFrame[] a = new StrategoStackFrame[this.stack.size()];
 		return this.stack.toArray(a);
+	}
+	
+	/**
+	 * Returns true if the Stratego Program is suspended.
+	 * @return
+	 */
+	public boolean isSuspended()
+	{
+		return this.isSuspended;
+	}
+	
+	public void setSuspended(boolean isSuspended)
+	{
+		this.isSuspended = isSuspended;
+	}
+	
+	/**
+	 * Returns true if the client issued a stepping command.
+	 * @return
+	 */
+	public boolean isStepping()
+	{
+		return this.isStepping;
+	}
+	
+	public void setStepping(boolean isStepping)
+	{
+		this.isStepping = isStepping;
+	}
+	
+	public boolean hasDied()
+	{
+		return this.hasDied;
+	}
+	
+	public void setDeath(boolean hasDied)
+	{
+		this.hasDied = hasDied;
 	}
 
 }

@@ -18,7 +18,7 @@
 	</condition>
 	<available file="${trans}/${strmodule}.str" property="build.stratego.enabled" />
 	<dirname property="externaldefdir" file="${externaldef}" />
-	<condition property="externaldefimport" value="-I ${externaldefdir}" else="">
+	<condition property="externaldefimport" value="-I &quot;${externaldefdir}&quot;" else="">
 		<isset property="externaldef" />
 	</condition>
 	<condition property="externaljarimport" value=":${externaljar}" else="">
