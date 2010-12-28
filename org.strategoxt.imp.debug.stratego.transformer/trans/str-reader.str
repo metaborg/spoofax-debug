@@ -110,6 +110,18 @@ rules
   pp-stratego-ast = 
   	pp-stratego-string
 	
+	
+strategies // parsing stratego
+	
+  // ignore current term
+  // returns aterm
+  parse-stratego-with-locations(|file-path) =
+	!FILE(file-path) 
+	; parse-stratego-trm(| [ "-i", file-path
+	  , "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source
+	    ]
+	    )
+	 
   // ignore current term, just return the ast of a stratego program	
   get-anno-ast(|file-path) = 
       where(
@@ -132,4 +144,40 @@ rules
     ; implode-asfix
       
   on-parse-error = debug(!"Parse error: ")
+  
+strategies // directory walking
+	
+		// fails if the current path does not have the ".str"-extension or when it is a directory
+	is-stratego-file = has-extension(|"str"); file-exists; filemode; not(isdir)
+	
+	// returns a list of paths, for which the strategy s holds.
+	// Strategy s should make the distinction between files and directories if needed,
+	// as s is applied to all elements in a directory (the elements returned by <readdir>)
+	//
+	// current term should be a String pointing to a directory name
+	walk-dir(s) = 
+		?base-dir
+		; readdir //
+		; fullpaths* := <map(prefix-with(|base-dir))> // prefix the file name with the base-dir
+		//; debug(!"list-dirs: ")
+		; has-str* := <filter(s)>
+		//; debug(!"list str: ")
+		; dirs-only* := <filter-dirs> fullpaths* // keep directories
+		; str-in-subdirs* := <map(walk-dir(s)) ; flatten-list> dirs-only*
+		//; debug(!"str-in-subdirs* ")
+		; <flatten-list> [str-in-subdirs*, has-str*]
+		// walk over the directories
+	
+	// prefix the current file name with a path prefix
+	prefix-with(|prefix) :
+		filename -> path
+		with
+			path := <concat-strings> [prefix, "/", filename]
+	
+	// in the list of paths, only keep the ones that are directories
+	filter-dirs :
+		paths* -> dirs*
+		with
+		 dirs* := <filter(file-exists ; filemode ; isdir)> paths*
+		 //< list-dirs-in-dir + ![]
 	

@@ -2,10 +2,9 @@ module localmod/util/utils
 
 imports 
 	localmod/syntax/varsyntax
+	localmod/util/subdir/test-empty
 	
 strategies
-	
-	is-empty = ?[] 
 	
 	
 	first = 

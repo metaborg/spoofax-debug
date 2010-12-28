@@ -1,0 +1,89 @@
+module tests/parsing-test
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports // show all files used as import
+  trans-str
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+  
+strategies
+
+  // show ast with complete location annotation
+  foo1 = 
+  	echo(|"Start foo1")
+  	; get-project-dir => project-dir
+  	; !"test/src" => input-base-dir
+  	; !"test/generated" => output-base-dir
+  	; !"example.tes" => sma-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	; get-anno-ast(|absolute-location)
+  	; assert-module
+  	// ; debug
+  	; echo(|"End foo1")
+	
+	  // show ast with complete location annotation
+  bar1 = 
+  	echo(|"Start bar1")
+  	; get-project-dir => project-dir
+  	; !"test/src" => input-base-dir
+  	; !"test/generated" => output-base-dir
+  	; !"localvar.tes" => sma-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	; get-anno-ast(|absolute-location)
+  	; assert-module
+  	// ; debug
+  	; echo(|"End bar1")
+  	  
+  	  
+strategies
+	// test util methods
+	test-test-parse-stratego = 
+		debug(!"start")
+		//; f := "test/src/testimports/localvar.str"
+		; f := "test/src/localvar/localvar.str"
+		; abspath
+		; debug(!"abspath")
+		//; p := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
+		//; file := <concat-strings> [p, "/", f]
+		//; <get-config <+ ![]> "-I"; debug(!"get-config: ")
+		//; !FILE(file) // absolute location
+		; !FILE(f) // relative
+	    ; parse-stratego-trm(
+    		| [ "-i", f
+    		//, "--preserve-positions"
+    		, "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source
+    		//, "--asfix"
+      		//, "--default-syntax", "Stratego-Sugar"
+      		//, "-I", <stratego-sugar-table-path>
+      		//, "-I", <stratego-attributes-table-path>
+      		//, "-I", <stratego-attributes-in-stratego-table-path>
+      		//, "-I", <aster-runtime-path>
+      		//	| <get-config <+ ![]> "-I"
+      		]
+    	)
+		/*
+    xtc-ensure-file => FILE(file);
+    parse-stratego-trm(
+    | [ "-i", file
+      , "--default-syntax", "Stratego-Attributes"
+      , "-I", <stratego-attributes-table-path>
+      , "-I", <stratego-attributes-in-stratego-table-path>
+      , "-I", <aster-runtime-path>
+      | <get-config <+ ![]> "-I"
+      ]
+    )
+
+    )*/

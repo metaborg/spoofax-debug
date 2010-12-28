@@ -10,6 +10,8 @@ imports
   trans-str
   
 strategies
+	// Calls pack-stratego to determine which files are imported by the given stratego file.
+	// pack-stratego is recursive as it also finds the files the imported files import.
 	// current term should be a string pointing to a stratego file
 	list-imports(|args) =
 		?ffile
@@ -33,7 +35,11 @@ strategies
       // current is FILE
     ; pack-stratego(|<pack-include-path>) => (files, spec)
 
+  // Returns a list of all files that are used as imports (or used by other imports) for the given stratego-file.
+  // 
+  //
   // directories is a list of strings, each element is a directory used by "-I"
+  // current term should a tuple with the basepath and the stratego-file which is relative to the basepath.
   get-internal-files(|directories) :
   	(basepath, stratego-file) -> real-files
   	where
@@ -53,7 +59,8 @@ strategies
   create-I:
   	directory -> ["-I", directory]
   	
-  	// if real-file start with base-path
+  	// current term should be an absolute path to a stratego file
+  	// and it should start with base-path
   	// strip the basepath from real-file => inputfilePath
   	// call apply-debug-trans
   	// sourceBasedir = base-path
@@ -61,6 +68,7 @@ strategies
   	// (sourceBasedir, inputfilePath, outputfilename)
   handle-file(|base-path, output-base-path) = 
   	?absolute-stratego-file
+  	; where(<debug(!"file: ")> absolute-stratego-file)
   	; split-path(|base-path) => (parent, rel-path)
   	; sourceBasedir := base-path
   	; inputfilePath := rel-path

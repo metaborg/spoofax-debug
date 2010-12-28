@@ -10,6 +10,7 @@ imports
   assert
   location-util
   gen-debug-var-arg
+  str-reader
   
 rules
 	
@@ -120,6 +121,8 @@ rules
     		; build-term' := <var-wrap-s(|filename, r-name)> build-term
 
 	// current term should be the match-term of a Rule
+	// the current term is a Term which can contain multiple free vars,
+	// create a s-var for each variable and return the clauses
 	try-s-var-for-match(|filename, r-name, clauses*) = 
 		(match-clause := <match-term-to-s-var-clause(|filename, r-name)>)
     	< // if first strategy succeeds
@@ -164,12 +167,22 @@ rules
 	// match againt Assign(Var("local_var"), term)
 	// and create a Seq(assign, s-var)
 	// s-var will emit debug info
+	//
+	// Assign grammar: 
+	//   Term ":=" Term -> Strategy {cons("Assign")}
+	// Assign is desugared as: 
+	//   |[ t1 := t2 ]| -> |[ !t2; ?t1 ]|
 	match-assign-build-s-var(|filename, name):
-		 d@Assign(lhs, rhs){a} -> Seq(d, s-var-call)
+		 d@Assign(lhs, rhs){a} -> Seq(d, s-var-calls-seq)
 	with
-		var-name := <get-var-name> lhs
+		s-var-calls-seq := <create-s-var-calls-for-Term(|filename, name)> lhs
+		<+ (pp-stratego-ast; debug(!" with clause failed unexpectedly in rule 'match-assign-build-s-var'"))
+		/*
+		var-name := <get-var-name +> debug(!"get-var-name failed: ")> lhs 
 		; s-var-call := <create-s-var-call(|filename, name, var-name, a)>
-
+		*/
+		
+	//NoAnnoList(Op("Stream",[Var("pointer")]))
 	
 	// create a s-var strategy call
 	create-s-var-call(|filename, name, var-name, a) =

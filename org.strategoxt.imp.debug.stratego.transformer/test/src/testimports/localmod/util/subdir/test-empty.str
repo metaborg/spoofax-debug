@@ -1,0 +1,5 @@
+module localmod/util/subdir/test-empty
+
+strategies
+	
+	is-empty = ?[] 

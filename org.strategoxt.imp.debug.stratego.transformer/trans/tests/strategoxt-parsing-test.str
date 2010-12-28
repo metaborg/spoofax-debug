@@ -1,0 +1,70 @@
+module tests/strategoxt-parsing-test
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports // show all files used as import
+  trans-str
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+  
+strategies
+	
+	// list all stratego (.str) files in the strategoxt source directory
+	test-walk-strategoxt-source = 
+		echo(|"test-walk-strategoxt-source")
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; str-files* := <walk-dir(is-stratego-file)>
+		; size := <length> str-files*
+		; <debug(!"str files count: ")> size
+		; <map(debug)> str-files*
+	
+	// walk over al stratego files in the strategoxt source and add debug information.
+	// output will be placed in test/generated/teststrxt
+	test-apply-debug-strategoxt-full = 
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; get-project-dir => project-dir
+		; !"test/generated/teststrxt" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		; str-files* := <walk-dir(is-stratego-file)> base-path
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+		 
+	test-apply-debug-strategoxt-1 = 
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; get-project-dir => project-dir
+		; !"test/generated/teststrxt" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		//; str-files* := <walk-dir(is-stratego-file)> base-path
+		; str-files* := ["/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/lib/tests/dynamic-rules/dr-propconst-tests-1.str"]
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+		; run-time
+		  
+		  	// the file /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/lib/tests/dynamic-rules/dr-propconst-tests-1.str
+	// failed because of a java memory error.
+	
+	
+	
+		// list of files in the given directory and its sub directories...
+	test-walk-dir = 
+		echo(|"test-walk-dir")
+	  	; get-project-dir => project-dir
+	  	; !"test/src/testimports" => input-base-dir
+	  	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+		//; base-path := ""
+		; str-files* := <walk-dir(is-stratego-file)>
+		; size := <length> str-files*
+		; <debug(!"str files count: ")> size
+		; <map(debug)> str-files*

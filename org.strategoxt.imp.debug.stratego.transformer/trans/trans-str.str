@@ -43,7 +43,7 @@ rules
 strategies
 	
 	//get-project-dir = !"/home/rlindeman/workspace/strj-dbg-transformer"	
-	get-project-dir = !"/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
+	get-project-dir = !"/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
 
 
   	  
