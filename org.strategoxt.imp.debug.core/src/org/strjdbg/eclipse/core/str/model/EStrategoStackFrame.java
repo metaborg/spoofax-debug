@@ -75,6 +75,7 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 			{
 				for(String dynamicRuleName : this.frameData.getDynamicRules())
 				{
+					TODO: Use an (I)TermFactory to create terms; invoking string term constructors like this breaks all kinds of things! (LK)
 					EStrategoVariable v = new EStrategoVariable(this.fTarget, new BasicStrategoString("rule contents"), dynamicRuleName);
 					v.setValueChanged(true);
 					vars.add(v);
