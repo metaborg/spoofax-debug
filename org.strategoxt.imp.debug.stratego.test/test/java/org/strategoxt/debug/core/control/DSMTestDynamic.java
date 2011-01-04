@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestDynamic extends AbstractDSMTest {
@@ -18,7 +19,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 	{
 		String projectName = "dynamic";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";

@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestStepInto extends AbstractDSMTest {
@@ -20,7 +21,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -80,7 +81,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		// perform a step_into when the current statement cannot be stepped into
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -115,8 +116,9 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54)); // find-functions[localvar.str]@(55,4,55,54)
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
-		// perform a STEP_INTO, but current statement cannot be stepped into
-		
+		// perform a STEP_INTO, but current statement cannot be stepped into. a STEP_OVER will occur
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 52, 2, 55, 54)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
+		vmMonitor.addAction(VMMonitorTestImpl2.RESUME);
 		
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);

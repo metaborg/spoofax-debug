@@ -54,12 +54,33 @@ public abstract class AbstractDSMTest {
 		//Assert.fail("Caught Throwable in thread");
 		exceptions.add(e);
 	}
-	
+		
 	private void checkThreadFailures()
 	{
 		if (this.exceptions != null && this.exceptions.size() > 0)
 		{
+			for(Throwable e : this.exceptions)
+			{
+				System.out.println(e.getMessage());
+			}
 			Assert.fail("One of the treads threw an Exception...");
 		}
+		
+		if (this.failMessages != null && this.failMessages.size() > 0)
+		{
+			for(String message : this.failMessages)
+			{
+				System.out.println("FAILED: " + message);
+			}
+			Assert.fail("Assertion failed!");
+		}
+	}
+
+	private List<String> failMessages = new ArrayList<String>();
+	
+	public void reportAssertFailure(String message)
+	{
+		//Assert.fail(message);
+		this.failMessages.add(message);
 	}
 }

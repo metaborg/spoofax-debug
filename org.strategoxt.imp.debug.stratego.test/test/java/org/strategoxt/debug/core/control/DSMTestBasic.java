@@ -9,6 +9,7 @@ import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.RuleEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
@@ -19,8 +20,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 	public void testDSM1()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
-		
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
@@ -55,7 +55,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 	public void testDSM2()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		
@@ -94,7 +94,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -156,7 +156,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -223,7 +223,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String strategoFilename = "localvar.str";
 		// TODO: project should be compiled with debug info!
 		
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
 		

@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
 public class DebugCompileLocalVar {
 
@@ -23,7 +24,7 @@ public class DebugCompileLocalVar {
 
 		String projectName = "localvar";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// mkdir localvar/stratego in workingdir

@@ -78,6 +78,19 @@ public class DebugSessionSettings {
 		this.strategoFilePath = strategoFilePath;
 	}
 
+	public void setJarLibraryDirectory(String directory)
+	{
+		String strategoxt_jar = directory + "/strategoxt.jar";
+		String stratego_debug_runtime_jar = directory + "/stratego-debug-runtime.jar";
+		String stratego_debug_runtime_java_jar = directory + "/stratego-debug-runtime-java.jar";
+		
+		this.strategoxtJar = strategoxt_jar;
+		this.strategoDebugRuntimeJar = stratego_debug_runtime_jar;
+		this.strategoDebugRuntimeJavaJar = stratego_debug_runtime_java_jar;
+
+		this.strategoDebugLibraryDirectory = directory; // rtree
+	}
+	
 	//private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
 	//public static String strategoxtjar = root+"/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar";
 	//public static String libstrategodebuglib = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime.jar";
@@ -132,9 +145,4 @@ public class DebugSessionSettings {
 		return this.strategoDebugRuntimeJavaJar;
 	}
 	
-	public static DebugSessionSettings create(String workingDirectory, String projectName)
-	{
-		DebugSessionSettings settings = new DebugSessionSettings(workingDirectory, projectName);
-		return settings;
-	}
 }

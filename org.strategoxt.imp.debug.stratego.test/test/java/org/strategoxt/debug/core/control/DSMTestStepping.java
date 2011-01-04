@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestStepping extends AbstractDSMTest {
@@ -20,7 +21,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -93,7 +94,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		// step over at the last statement in a rule or strategy
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -176,7 +177,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
