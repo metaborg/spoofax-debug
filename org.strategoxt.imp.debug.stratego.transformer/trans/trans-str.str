@@ -17,10 +17,10 @@ rules
 	    	complete-path := <concat-strings> [project-path, "/", path]
 	    	//; <debug(!" complete-path: ")> complete-path
 	      	; show-output-filename := <guarantee-extension(|"show")> path
-	      	; output-filename := <guarantee-extension(|"out")> path
+	      	; output-filename := <guarantee-extension(|"out")> complete-path
 	        ; r := <apply-debug-trans> (project-path, path, output-filename)
 	        //; <debug(!"apply-debug-trans result")> r
-	        ; result := ("see", output-filename) // or None()
+	        ; result := ("see", output-filename, r) // or None()
 	        //; str-ast := <get-anno-ast(|complete-path)> // get the stratego AST
 	        //; result := <pp-stratego-ast> str-ast // pretty print stratego AST
 	          
@@ -61,7 +61,7 @@ rules
   	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename)
   	where(
   	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
-  	; get-anno-ast(|absPath)
+  	; parse-stratego-with-locations(|absPath)
   	//; debug(!"get-anno-ast")
   	; assert-module
   	//; debug(!"assert-module")
@@ -69,10 +69,8 @@ rules
   	//; debug(!"filter-location")
   	; add-debug-info(|inputfilePath)
   	//; debug(!"add-debug-info(|inputfilePath)")
-  	; pp-stratego-ast
-  	//; debug(!"pp-stratego-ast")
   	; write-stratego(|outputfilename)
-  	//; debug(!"write-stratego")
+  	//; debug(!"write-stratego-str")
   	; status := "SUCCES"  		
   	)
   	//; <debug(!"exit-apply")> ""
@@ -100,9 +98,15 @@ rules
 	apply-debug-project(|library-paths) :
 		(base-path, output-base-path, stratego-file) -> results
 		where
-			!(base-path, stratego-file)
+			<concat-strings> [base-path, "/", stratego-file] // absolute path to the main stratego file
   			; files := <get-internal-files(|library-paths)>
   			; missing := <filter(is-relpath)> files // files that still have a relative path are not found on the "-I" paths
   			; real-files := <filter(is-abspath)> files // only add debug information to the files that can be found on the "-I" paths
-  			; results := <map(handle-file(|base-path, output-base-path))> // do apply-debug-trans for each file, store the result in the output-base-path
+  			; results := <map(handle-file(|base-path, output-base-path))> real-files // do apply-debug-trans for each file, store the result in the output-base-path
   			// results = [(status, filename), (status, filename)]
+
+	prefer-rtree =
+		<set-config> ("output-rtree", "on")
+		
+	prefer-str =
+		<rm-config> "output-rtree"

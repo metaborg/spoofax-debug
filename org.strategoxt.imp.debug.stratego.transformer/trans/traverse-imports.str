@@ -37,14 +37,13 @@ strategies
 
   // Returns a list of all files that are used as imports (or used by other imports) for the given stratego-file.
   // 
-  //
-  // directories is a list of strings, each element is a directory used by "-I"
-  // current term should a tuple with the basepath and the stratego-file which is relative to the basepath.
+  // The directories term argument is a list of strings, each element is a directory used by "-I". The list should at least contain "."
+  // The current term should be a path to the main stratego file.
   get-internal-files(|directories) :
-  	(basepath, stratego-file) -> real-files
+  	//(basepath, stratego-file) -> real-files
+  	absolute-location -> real-files
   	where
-  		absolute-location := 	<concat-strings> [basepath, "/", stratego-file]
-  		; basic-args := [ "--slack" // skip errors
+  		basic-args := [ "--slack" // skip errors
   			, "-i", absolute-location]
   		//; basic-ext-args := ["-I", "."]  // "." = basepath. Look for imports only in the current dir
   		; ext-args := <map(create-I); concat> directories

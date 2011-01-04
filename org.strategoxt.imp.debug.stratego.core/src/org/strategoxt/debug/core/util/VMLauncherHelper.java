@@ -20,12 +20,14 @@ public class VMLauncherHelper {
 	//  Do we want to watch assignments to fields
     private boolean watchFields = false;
     
-    public String classpath = "";
+    //public String classpath = "";
     
+    /*
     public final String defaultClasspath = "/home/rlindeman/workspace/short-examples/bin" +
     		":/home/rlindeman/workspace/strj-dbg-generated/bin";
 	
     public final String defaultJars = DebugSessionSettings.strategoxtjar + ":" + DebugSessionSettings.libstrategodebuglib + ":" + DebugSessionSettings.strjdebugruntime;    
+    */
     
 	private VirtualMachineManager vmManager = null;
     
@@ -98,6 +100,7 @@ public class VMLauncherHelper {
 		
 		//System.out.println("CP:" + classpath);
 		Connector.Argument opts = (Connector.Argument) arguments.get("options");
+		String classpath = this.getDebugProgramClasspath();
 		opts.setValue("-classpath " + classpath);
 		
 		Connector.Argument susp = (Connector.Argument) arguments.get("suspend");
@@ -142,15 +145,43 @@ public class VMLauncherHelper {
 	}
 
 
-
+	/*
 	public void setDefaultClasspath() {
 		String cp = this.defaultClasspath + ":" + this.defaultJars;
 		this.classpath = cp;
 	}
+	*/
+	
+	private List<String> debugJars;
+	
+	public void setDebugJars(List<String> debugJars)
+	{
+		this.debugJars = debugJars;
+	}
 
 
-
-	public void setClasspath(String cp) {
-		this.classpath = cp + ":" + this.defaultJars;
+	private String mainClasspath = null;
+	
+	/**
+	 * Set the classpath needed for the main java program (set the debug jars using the setJars() method)
+	 * @param cp
+	 */
+	public void setMainClasspath(String mainClasspath) {
+		this.mainClasspath = mainClasspath;
+	}
+	
+	/**
+	 * Returns the classpath that contains the main java application plus the additional jars needed for debugging.
+	 * @return
+	 */
+	public String getDebugProgramClasspath()
+	{
+		String cp = this.mainClasspath; // should not end with a ':'
+		for(String path : this.debugJars)
+		{
+			cp += ":" + path;
+		}
+		System.out.println("CP: " + cp);
+		return cp;
 	}
 }

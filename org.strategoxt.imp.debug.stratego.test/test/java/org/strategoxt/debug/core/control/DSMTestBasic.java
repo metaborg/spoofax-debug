@@ -102,9 +102,8 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
-		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
-		String classpath = cp;
+		String mainArgs = mainClass + " " + argsForMainClass; // Arguments when program is run
+		String mainClasspath = debugSessionSettings.getClassDirectory(); // classpath when program is run
 		
 		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
@@ -149,7 +148,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs, mainClasspath);
 	}
 	
 	@org.junit.Test

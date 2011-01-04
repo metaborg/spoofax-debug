@@ -30,6 +30,7 @@
 	<!-- Imports -->
 	<property name="build.sdf.imports" value="" />
 	<property name="build.stratego.args" value="
+		                -m main
                         --library
                         -I &quot;${trans}&quot;
                         -I &quot;${basedir}&quot;

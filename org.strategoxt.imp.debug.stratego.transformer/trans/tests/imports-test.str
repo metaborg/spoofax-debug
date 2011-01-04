@@ -120,8 +120,8 @@ strategies // test get-internal-files
   	; !"trans" => input-base-dir
   	; !"stratego-transformer.str" => main-str-file
   	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
-  	; !(base-path, main-str-file)
-  	; files := <get-internal-files(|["."])>//; map(try-dbg); debug
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
+  	; files := <get-internal-files(|["."])> absolute-file
   	//; debug(!"not-empty: ")
   	//; existing-files := <map(try-dbg)>
   	//; abs-files := <filter(is-abspath)>
@@ -142,11 +142,11 @@ strategies // test get-internal-files
   	; !"trans" => input-base-dir
   	; !"stratego-transformer.str" => main-str-file
   	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
   	//; lib-dir := <concat-strings> [project-dir, "/", "lib"] 
   	//; syntax-dir := <concat-strings> [project-dir, "/", "syntax"]
-  	; !(base-path, main-str-file)
   	// also include "./include/Test.str" and "./lib/editor-common.generated.str"
-  	; files := <get-internal-files(|[project-dir])> //; map(try-dbg); debug
+  	; files := <get-internal-files(|[project-dir])> absolute-file
   	; <debug(!"files: ")> ""
   	; <map(debug)> files
   	; missing := <filter(is-relpath)> files
@@ -165,8 +165,8 @@ strategies // test get-internal-files
   	; !"localvar.str" => main-str-file
   	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
   	; <concat-strings> [project-dir, "/", output-base-dir] => output-base-path
-  	; !(base-path, main-str-file)
-  	; files := <get-internal-files(|["."])> //; map(try-dbg); debug
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
+  	; files := <get-internal-files(|["."])> absolute-file
   	; <debug(!"files: ")> ""
   	; <map(debug)> files
   	; missing := <filter(is-relpath)> files

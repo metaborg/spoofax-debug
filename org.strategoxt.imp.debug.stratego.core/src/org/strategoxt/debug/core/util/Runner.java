@@ -6,6 +6,7 @@ import org.strategoxt.debug.core.control.DebugSessionManager;
 public class Runner {
 	// http://java.sys-con.com/node/36221
 	
+	/*
 	public static void main(String[] args) {
 		
 		String mainArgs = "main.Test_propRunner";
@@ -20,6 +21,7 @@ public class Runner {
 		manager.runVM();
 		System.out.println("Done");
 	}
+	*/
 	
 	/**
 	 * classPath contains the binary files of the compiled strj program
@@ -30,7 +32,7 @@ public class Runner {
 	{
 		DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
 		DebugSessionManager manager = new DebugSessionManager(debugSessionSettings, null);
-		manager.initVM(mainArgs, classpath);
+		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath);
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		System.out.println("RUN");

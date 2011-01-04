@@ -15,18 +15,21 @@ public class DebugCompileTestImports {
 	public static void testDebugCompileTestImports()
 	{
 		String baseInputPath = "src/stratego/testimports";
-		String strategoFile = "localvar.str";
+		String strategoFilePath = "localvar.str";
+		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
 
 		String projectName = "testimports";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
+		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
-			String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
-			binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFile, projectName);
+			binBase = debugCompiler.debugCompile(debugSessionSettings);
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -43,9 +46,9 @@ public class DebugCompileTestImports {
 			String mainClass = "testimports.testimports";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = DebugSessionSettings.strategoxtjar;
-			String libstrategodebuglib = DebugSessionSettings.libstrategodebuglib;
-			String strjdebugruntime = DebugSessionSettings.strjdebugruntime;
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;

@@ -14,41 +14,70 @@ imports
   libstratego-sglr
   libstratego-xtc
   libstrc
-  
-strategies
 
-  // show ast with complete location annotation
-  foo1 = 
-  	echo(|"Start foo1")
-  	; get-project-dir => project-dir
-  	; !"test/src" => input-base-dir
-  	; !"test/generated" => output-base-dir
-  	; !"example.tes" => sma-file
-  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
-  	; echo(|"reading ast from: ")
-  	; echo(|absolute-location)
-  	; get-anno-ast(|absolute-location)
-  	; assert-module
-  	// ; debug
-  	; echo(|"End foo1")
-	
-	  // show ast with complete location annotation
-  bar1 = 
-  	echo(|"Start bar1")
-  	; get-project-dir => project-dir
-  	; !"test/src" => input-base-dir
-  	; !"test/generated" => output-base-dir
-  	; !"localvar.tes" => sma-file
-  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
-  	; echo(|"reading ast from: ")
-  	; echo(|absolute-location)
-  	; get-anno-ast(|absolute-location)
-  	; assert-module
-  	// ; debug
-  	; echo(|"End bar1")
+strategies
   	  
+  // show ast with complete location annotation
+  test-parse-localvar-1 = 
+  	echo(|"test-parse-localvar-1")
+  	; get-project-dir => project-dir
+  	; !"test/src/localvar" => input-base-dir
+  	; !"test/generated/localvar" => output-base-dir
+  	; !"localvar.str" => sma-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	; parse-stratego-with-locations(|absolute-location)
+  	; assert-module
+  	// ; debug
+  	; echo(|"test-parse-localvar-1")
+  	  
+	  // show ast with complete location annotation
+  test-parse-test-prop-1 = 
+  	echo(|"test-parse-test-prop-1")
+  	; get-project-dir => project-dir
+  	; !"test/src/test-prop" => input-base-dir
+  	; !"test/generated/test-prop" => output-base-dir
+  	; !"test-prop.str" => sma-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	; parse-stratego-with-locations(|absolute-location)
+  	; assert-module
+  	// ; debug
+  	; echo(|"test-parse-test-prop-1")
   	  
 strategies
+	test-prefer-rtree =
+		debug(!"test-prefer-rtree")
+		; prefer-str ;
+		where(
+		<get-config> "output-rtree" 
+		  <
+		<debug(!"prefer rtree")> ""// success
+		  +
+		<debug(!"prefer str")> ""// fail
+		)
+		; prefer-rtree ;
+		where(
+		<get-config> "output-rtree" 
+		  <
+		<debug(!"prefer rtree")> ""// success
+		  +
+		<debug(!"prefer str")> ""// fail
+		)	
+		    
+
+strategies
+	
+	test-output-parse-stratego = 
+		f := "test/src/localvar/localvar.rtree"
+		; p := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
+		; file := <concat-strings> [p, "/", f]
+		; test-test-parse-stratego
+		; <WriteToBinaryFile> (file, <id>) // write current term to file
+		; debug(!"end test-output-parse-stratego")
+	
 	// test util methods
 	test-test-parse-stratego = 
 		debug(!"start")
@@ -56,13 +85,14 @@ strategies
 		; f := "test/src/localvar/localvar.str"
 		; abspath
 		; debug(!"abspath")
-		//; p := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
-		//; file := <concat-strings> [p, "/", f]
+		; p := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer"
+		; file := <concat-strings> [p, "/", f]
+		; parse-file := file // absolute
+		// ;parse-file := f // relative
 		//; <get-config <+ ![]> "-I"; debug(!"get-config: ")
-		//; !FILE(file) // absolute location
-		; !FILE(f) // relative
+		; !FILE(parse-file)
 	    ; parse-stratego-trm(
-    		| [ "-i", f
+    		| [ "-i", parse-file
     		//, "--preserve-positions"
     		, "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source
     		//, "--asfix"

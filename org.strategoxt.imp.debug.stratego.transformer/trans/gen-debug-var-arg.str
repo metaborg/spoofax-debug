@@ -39,6 +39,7 @@ rules
 			// collect all Var in this term
 			vars* := <collect(?Var(_))> term
 			; s-vars* := <map(create-s-var-call-with-term(|filename, name))> vars*
+			; not(?[]) // succeed if current term is not empty list
 			; seq := <create-seqs> s-vars*
 
 			
@@ -48,6 +49,7 @@ rules
 	t-args* -> clause
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
+		; not(?[]) // succeed if current term is not empty list
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
 		// create WhereClause
@@ -58,9 +60,10 @@ rules
 		t-args* -> where-s
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
+		; not(?[]) // succeed if current term is not empty list
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
-		// create WhereClause		
+		// create Where Strategy
 		; where-s := Where(seq)
 			
 	// v can be a "var-name"

@@ -35,7 +35,7 @@ public abstract class AbstractDSMTest {
 	 */
 	public DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
 	{
-		manager.initVM(mainArgs, classpath);
+		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath);
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		manager.runVM();

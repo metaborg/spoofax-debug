@@ -78,11 +78,63 @@ public class DebugSessionSettings {
 		this.strategoFilePath = strategoFilePath;
 	}
 
-	private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
-	public static String strategoxtjar = root+"/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar";
-	public static String libstrategodebuglib = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime.jar";
-	public static String strjdebugruntime = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime-java.jar";
-	//public static String strategodebuglib_rtree_dir = root + "/org.strategoxt.imp.debug.stratego.runtime/str-lib/strategodebuglib.rtree";
+	//private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
+	//public static String strategoxtjar = root+"/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar";
+	//public static String libstrategodebuglib = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime.jar";
+	//public static String strjdebugruntime = root + "/org.strategoxt.imp.debug.stratego.runtime/include/stratego-debug-runtime-java.jar";
+	//public static String strategodebuglib_rtree_file = root + "/org.strategoxt.imp.debug.stratego.runtime/str-lib/strategodebuglib.rtree";
 	
-	public static String strategodebuglib_rtree_dir = root + "/org.strategoxt.imp.debug.stratego.runtime/str-lib";
+	//public static String strategodebuglib_rtree_dir = root + "/org.strategoxt.imp.debug.stratego.runtime/str-lib";
+	
+	private String strategoDebugLibraryDirectory = null;
+	
+	/**
+	 * returns a path to the directory that contains strategodebuglib.rtree.
+	 * 
+	 * See /org.strategoxt.imp.debug.stratego.runtime/str-lib how to generate this file.
+	 * @return
+	 */
+	public String getStrategoDebugLibraryDirectory()
+	{
+		return this.strategoDebugLibraryDirectory;
+	}
+	
+	private String strategoxtJar = null;
+	
+	/**
+	 * Returns a path to the strategoxt.jar
+	 * @return
+	 */
+	public String getStrategoxtJar()
+	{
+		return this.strategoxtJar;
+	}
+	
+	private String strategoDebugRuntimeJar = null;
+	
+	/**
+	 * Returns a path to stratego-debug-runtime.jar
+	 * @return
+	 */
+	public String getStrategoDebugRuntimeJar()
+	{
+		return this.strategoDebugRuntimeJar;
+	}
+	
+	private String strategoDebugRuntimeJavaJar = null;
+	
+	/**
+	 * Returns a path to stratego-debug-runtime-java.jar
+	 * @return
+	 */
+	public String getStrategoDebugRuntimeJavaJar()
+	{
+		return this.strategoDebugRuntimeJavaJar;
+	}
+	
+	public static DebugSessionSettings create(String workingDirectory, String projectName)
+	{
+		DebugSessionSettings settings = new DebugSessionSettings(workingDirectory, projectName);
+		return settings;
+	}
 }
