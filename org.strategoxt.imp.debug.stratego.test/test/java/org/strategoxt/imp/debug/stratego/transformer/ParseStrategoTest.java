@@ -1,12 +1,5 @@
 package org.strategoxt.imp.debug.stratego.transformer;
 
-import org.spoofax.interpreter.terms.BasicStrategoString;
-import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.strategoxt.imp.debug.stratego.transformer.trans.test_apply_debug_strategoxt_full_0_0;
-import org.strategoxt.imp.debug.stratego.transformer.trans.test_output_parse_stratego_0_0;
-import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_localvar_1_0_0;
-import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_test_prop_1_0_0;
-import org.strategoxt.lang.Context;
 
 public class ParseStrategoTest {
 
@@ -21,14 +14,16 @@ public class ParseStrategoTest {
 	public static void m1() {
 		System.out.println("test-parse-localvar-2");
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
-		IStrategoTerm currentTerm = new BasicStrategoString("");
+		TermFactory factory = new TermFactory();
+		IStrategoTerm currentTerm = factory.makeString("");
 		test_parse_localvar_1_0_0.instance.invoke(context, currentTerm);
 	}
 
 	public static void m2() {
 		System.out.println("test-parse-localvar-2");
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
-		IStrategoTerm currentTerm = new BasicStrategoString("");
+		TermFactory factory = new TermFactory();
+		IStrategoTerm currentTerm = factory.makeString("");
 		test_parse_test_prop_1_0_0.instance.invoke(context, currentTerm);
 
 	}

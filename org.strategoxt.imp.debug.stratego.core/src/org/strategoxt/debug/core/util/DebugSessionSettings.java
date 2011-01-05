@@ -80,6 +80,10 @@ public class DebugSessionSettings {
 
 	public void setJarLibraryDirectory(String directory)
 	{
+		if (directory.endsWith("/"))
+		{
+			directory = directory.substring(0, directory.length()-1);
+		}
 		String strategoxt_jar = directory + "/strategoxt.jar";
 		String stratego_debug_runtime_jar = directory + "/stratego-debug-runtime.jar";
 		String stratego_debug_runtime_java_jar = directory + "/stratego-debug-runtime-java.jar";

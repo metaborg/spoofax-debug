@@ -2,22 +2,19 @@ package org.strategoxt.debug.core.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.compiler.CompilationProgress;
-import org.eclipse.jdt.internal.compiler.batch.Main;
-import org.spoofax.interpreter.terms.BasicStrategoString;
-import org.spoofax.interpreter.terms.BasicStrategoTuple;
 import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.terms.TermFactory;
 
 
 public class DebugCompiler {
@@ -204,13 +201,15 @@ public class DebugCompiler {
 		//Context context = org.strjdbg.transformer.Main.init();
 		// see trans-str.str#apply-debug-project
 		// (base-path, output-base-path, stratego-file)
-		BasicStrategoString[] kids = new BasicStrategoString[]
+		TermFactory factory = new TermFactory();
+
+		IStrategoString[] kids = new IStrategoString[]
            {
-				new BasicStrategoString(sourceBasedir) , // base-path
-				new BasicStrategoString(strOutputBasedir) , // output-base-path
-				new BasicStrategoString(inputFilePath) // stratego-file
+				factory.makeString(sourceBasedir) , // base-path
+				factory.makeString(strOutputBasedir) , // output-base-path
+				factory.makeString(inputFilePath) // stratego-file
            };
-		IStrategoTerm input = new BasicStrategoTuple(kids);
+		IStrategoTerm input = factory.makeTuple(kids);
 		
 		// termArguments should be a list of Strings, each is a path for the "-I" parameter
 		StrategoTermBuilder b = new StrategoTermBuilder();
@@ -289,7 +288,9 @@ public class DebugCompiler {
 		// output is the location of the table
 		// STRATEGO: create-table(|table-filename): inputfilenames* -> table-filename
 		IStrategoTerm current = inputfilenames;
-		IStrategoTerm tableFilename = new BasicStrategoString(tableFilenameString); 
+		TermFactory factory = new TermFactory();
+		IStrategoTerm tableFilename = factory.makeString(tableFilenameString); 
+		
 		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
 		if (output == null || !output.toString().equals(tableFilenameString))
 		{
@@ -361,11 +362,40 @@ public class DebugCompiler {
 		         "-cp", classPath,
 		         "-source", "1.5"
 		    };
+		FileOutputStream outStream = null;
+		FileOutputStream errorStream = null;
+		try {
+			File outFile = new File("out.log");
+			File errorFile = new File("error.log");
+			outStream = new FileOutputStream(outFile, false);
+			errorStream = new FileOutputStream(errorFile, false);
+			
+			System.out.println("Logfile: " + outFile.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PrintWriter outWriter = null;
+		PrintWriter errWriter = null;
 		
-		PrintWriter outWriter = new PrintWriter(System.out);
-		PrintWriter errWriter = new PrintWriter(System.err);
-		boolean systemExitWhenFinished = false;
-		Map customDefaultOptions = new HashMap();
+		if (outStream != null)
+		{
+			outWriter = new PrintWriter(outStream);
+		} else
+		{
+			outWriter = new PrintWriter(System.out);
+		}
+		if (errorStream != null)
+		{
+			errWriter = new PrintWriter(errorStream);
+		}
+		else
+		{
+			errWriter = new PrintWriter(System.err);
+		}
+		
+		//boolean systemExitWhenFinished = false;
+		//Map customDefaultOptions = new HashMap();
 		CompilationProgress compilationProgress = new CompilationProgress() {
 			
 			@Override
@@ -398,8 +428,9 @@ public class DebugCompiler {
 				//System.out.println("BEGIN: " + remainingWork);
 			}
 		};
-		org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
-		boolean result = main.compile(args);
+		//org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
+		//boolean result = main.compile(args);
+		boolean result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(args, outWriter, errWriter, compilationProgress);
 		System.out.println("Compile result: " + result);
 		//org.eclipse.jdt.internal.compiler.batch.Main.main(args);
 		

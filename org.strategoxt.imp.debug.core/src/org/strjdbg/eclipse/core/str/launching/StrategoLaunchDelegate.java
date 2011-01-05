@@ -3,6 +3,7 @@ package org.strjdbg.eclipse.core.str.launching;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,9 +30,12 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.osgi.framework.Bundle;
 import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
+import org.strjdbg.eclipse.core.Activator;
 import org.strjdbg.eclipse.core.str.model.StrategoDebugTarget;
 
 /**
@@ -117,7 +122,24 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		DebugCompiler debugCompiler = new DebugCompiler("/tmp");
 		String projectName = DebugCompiler.createProjectName(new File(program));
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create("/tmp", projectName);
+		Bundle b = Activator.getDefault().getBundle();
+		URL e = b.getEntry("/lib");
+		
+		IPath path = new Path("/lib");
+		Map override = null;
+		URL url = FileLocator.find(b, path, override);
+		URL fileURL = null;
+		try {
+			fileURL = FileLocator.toFileURL(url);
+			System.out.println("FILE URL:" + fileURL);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("URL: " + fileURL);
+		String directory = fileURL.getPath();
+		debugSessionSettings.setJarLibraryDirectory(directory);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
@@ -150,6 +172,21 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 				}
 			}
 			
+			// TODO: check if table file exists
+			IPath strBasePath = new Path(debugSessionSettings.getStrategoDirectory());
+			if (!strBasePath.toFile().exists())
+			{
+				System.out.println("Stratego program does not have debug info, compile...");
+				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+			} else {
+				String[] files = strBasePath.toFile().list();
+				if (files == null || files.length == 0)
+				{
+					System.out.println("Stratego program does not have debug info, compile...");
+					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+				}
+			}
+			
 		}
 		
 		monitor.subTask("Starting Stratego VM");
@@ -163,11 +200,11 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		// set up vm arguments
 		String classToLaunch = projectName + "." + projectName;
 		
-		String strategoxtjar = DebugSessionSettings.strategoxtjar;
-		String libstrategodebuglib = DebugSessionSettings.libstrategodebuglib;
-		String strjdebugruntime = DebugSessionSettings.strjdebugruntime;
+		String strategoxtjar = debugSessionSettings.getStrategoxtJar();
+		String debugRuntime = debugSessionSettings.getStrategoDebugRuntimeJar();
+		String debugRuntimeJava = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 		
-		String[] classPath = new String[] { binBase, strategoxtjar, libstrategodebuglib, strjdebugruntime};
+		String[] classPath = new String[] { binBase, strategoxtjar, debugRuntime, debugRuntimeJava};
 		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(classToLaunch, classPath);
 		
 		// setup program arguments
