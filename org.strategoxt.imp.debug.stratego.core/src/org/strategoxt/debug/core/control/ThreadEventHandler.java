@@ -217,7 +217,7 @@ public class ThreadEventHandler {
 
 	void exceptionEvent(ExceptionEvent event) {
 		// event.exception() at event.catchLocation()
-
+		//System.out.println(event.exception());
 		// Step to the catch
 		EventRequestManager mgr = event.virtualMachine().eventRequestManager();
 		StepRequest req = mgr.createStepRequest(thread, StepRequest.STEP_MIN,

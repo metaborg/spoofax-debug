@@ -21,20 +21,46 @@ rules // Main editor interface (defined by editor/Test-Builders and -References.
 
       
 strategies
-	main = io-wrap(create-options, create-usage, default-system-about, execute)
+	main = option-wrap(create-options, create-usage, default-system-about, execute)
 	
-	execute = id
-	
+	execute = 
+		library-paths* := <get-config-I> // ; debug(!"-I: ")
+		; stratego-input-path := <get-config> "-i" // ; debug(!"-i: ")
+		; output-base-path := <get-config> "-o" // ; debug(!"-o: ")
+		; base-path := <dirname> stratego-input-path
+		; stratego-file := <base-filename> stratego-input-path
+		  <
+		  	 !(base-path, output-base-path, stratego-file) ; apply-debug-project(|library-paths*)
+		  + 
+		  	debug(!"failed")
+/*		  
+		; !(base-path, output-base-path, stratego-file)
+		; apply-debug-project(|library-paths)
+*/	
 	create-options =
  		Option("--option1"
  			, <set-config> ("--option1", ())
  			, !"--option1        This is a an example option"
 		)
-		+ ArgOption("--arg1"
-			, <set-config> ("--arg1", <id>)
- 			, !"--arg1           This is an example arg option"
+		+ Option("--output-rtree"
+			, <set-config> ("--output-rtree", ())
+			, !"--output-rtree	Output rtree-files instead of str-files"
 		)
-  
+		+ ArgOption("-i"
+			, <set-config> ("-i", <id>)
+ 			, !"-i file          Main stratego program"
+		)
+		+ ArgOption("-o"
+			, <set-config> ("-o", <id>)
+ 			, !"-o               Output base directory"
+		)
+		+ ArgOption("-I"
+			, where(<extend-config> ("-I", [<id>]))
+ 			, !"-I directory     Stratego files in this external directory will also be debug-transformed when they are used as imports by the main stratego program."
+		)
+  get-config-I =
+    <get-config> "-I" <+ ![]
+      
  create-usage =
  default-system-usage(
  	!"Usage: option-demo [options]"

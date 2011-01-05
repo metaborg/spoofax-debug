@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="org.strategoxt.imp.debug.stratego.core" default="copy-libraries">
+
+	<property name="project.debug.runtime" value="org.strategoxt.imp.debug.stratego.runtime" />
+	<property name="project.debug.transformer" value="org.strategoxt.imp.debug.stratego.transformer" />
+	<property name="project.debug.test" value="org.strategoxt.imp.debug.stratego.test" />
+
+<!-- copy all required jars and other files to the lib folder -->
+	<target name="copy-libraries">
+		<copy todir="${basedir}/lib" flatten="true">
+			<resources>
+				<file file="../${project.debug.transformer}/include/stratego-transformer.jar" />
+				<file file="../${project.debug.runtime}/include/stratego-debug-runtime.jar" />
+				<file file="../${project.debug.runtime}/include/stratego-debug-runtime-java.jar" />
+				<!-- TODO: use strategoxt-debug.jar (the jars contains the stratego libs compiled with debug info)-->
+				<file file="../${project.debug.transformer}/utils/strategoxt.jar" />
+				<file file="../${project.debug.runtime}/str-lib/strategodebuglib.rtree" />
+			</resources>
+		</copy>
+		<eclipse.refreshLocal resource="${basedir}/lib" depth="infinite" />
+		
+	</target>
+	
+</project>

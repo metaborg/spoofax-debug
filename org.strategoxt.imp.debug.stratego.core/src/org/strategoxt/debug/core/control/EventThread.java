@@ -169,8 +169,6 @@ public class EventThread extends Thread {
 	 * Create the desired event requests, and enable them so that we will get
 	 * events.
 	 * 
-	 * @param excludes
-	 *            Class patterns for which we don't want events
 	 * @param watchFields
 	 *            Do we want to watch assignments to fields
 	 */
@@ -330,6 +328,7 @@ public class EventThread extends Thread {
 	}
 
 	private boolean exceptionEvent(ExceptionEvent event) {
+		//System.out.println("EXCEPTION: " + event.exception().toString());
 		ThreadEventHandler trace = (ThreadEventHandler) traceMap.get(event.thread());
 		if (trace != null) { // only want threads we care about
 			trace.exceptionEvent(event); // Forward event

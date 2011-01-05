@@ -21,22 +21,35 @@ signature
 rules
 	
 	// current term is a Term
-	// create a WhereClause containing all s-var call for each variable in the mtach term
+	// create a WhereClause containing all s-var call for each variable in the match term
 	match-term-to-s-var-clause(|filename, name) :
 		match-term -> clause
 		//where <debug(!"match-term ")> match-term
 		where
-			// collect all Var in this term
-			vars* := <collect(?Var(_))> match-term
-			; s-vars* := <map(create-s-var-call-with-term(|filename, name))> vars*
-			; seq := <create-seqs> s-vars*
+			// collect all Var in this term and create a Seq containing a s-var calls for each variable
+			seq := <create-s-var-calls-for-Term(|filename, name)> match-term
 			; clause := WhereClause(seq)
+	
+	
+	// current term should be a stratego Term.
+	// for each variable create a s-var call and join them using Seq()
+	create-s-var-calls-for-Term(|filename, name):
+		term -> seq
+		where
+			// collect all Var in this term
+			vars* := <collect(?Var(_))> term
+			; s-vars* := <map(create-s-var-call-with-term(|filename, name))> vars*
+			; not(?[]) // succeed if current term is not empty list
+			; seq := <create-seqs> s-vars*
+
+			
 	
 	// create a where clause containing s-var calls for each term that is used as argument
 	t-args-to-s-var-where-clause(|filename, name) :
 	t-args* -> clause
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
+		; not(?[]) // succeed if current term is not empty list
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
 		// create WhereClause
@@ -47,9 +60,10 @@ rules
 		t-args* -> where-s
 	where
 		s-vars* := <map(t-arg-to-s-var(|filename, name))> t-args*
+		; not(?[]) // succeed if current term is not empty list
 		// convert list to recursive Seq
 		; seq := <create-seqs> s-vars*
-		// create WhereClause		
+		// create Where Strategy
 		; where-s := Where(seq)
 			
 	// v can be a "var-name"
@@ -89,6 +103,11 @@ rules
 		s* -> s
 		where <eq> (<length> s*, 1)
 		where s := <last> s*
+		
+	// list is size 0, just return the empty list
+	create-seqs:
+		s* -> s*
+		where <eq> (<length> s*, 0)
 	
 	
 strategies

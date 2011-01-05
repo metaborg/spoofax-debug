@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
 public class DebugCompileDynamic {
 
@@ -15,18 +16,21 @@ public class DebugCompileDynamic {
 	
 	public static void testDebugCompileDynamic() {
 		String baseInputPath = "src/stratego/dynamic";
-		String strategoFile = "localvar.str";
+		String strategoFilePath = "localvar.str";
+		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
 
 		String projectName = "dynamic";
 		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
+		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
+		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
-			String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
-			binBase = debugCompiler.debugCompile(strategoSourceBasedir, strategoFile, projectName);
+			binBase = debugCompiler.debugCompile(debugSessionSettings);
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -43,9 +47,9 @@ public class DebugCompileDynamic {
 			String mainClass = "dynamic.dynamic";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = DebugSessionSettings.strategoxtjar;
-			String libstrategodebuglib = DebugSessionSettings.libstrategodebuglib;
-			String strjdebugruntime = DebugSessionSettings.strjdebugruntime;
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;

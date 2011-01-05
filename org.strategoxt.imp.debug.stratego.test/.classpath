@@ -11,6 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.strategoxt.imp.debug.stratego.core"/>
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar"/>
-	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/include/stratego-transformer.jar"/>
+	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.transformer/include/stratego-transformer.jar" sourcepath="/org.strategoxt.imp.debug.stratego.transformer/editor/java/"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

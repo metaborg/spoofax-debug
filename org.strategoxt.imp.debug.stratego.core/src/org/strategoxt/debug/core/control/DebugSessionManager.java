@@ -1,5 +1,8 @@
 package org.strategoxt.debug.core.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -69,9 +72,14 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(VirtualMachineManager vmManager, String mainArgs, String classpath) {
+	public void initVM(VirtualMachineManager vmManager, DebugSessionSettings settings, String mainArgs, String classpath) {
 		VMLauncherHelper helper = new VMLauncherHelper(vmManager);
-		helper.setClasspath(classpath);
+		helper.setMainClasspath(classpath);
+		List<String> jars = new ArrayList<String>();
+		jars.add(settings.getStrategoxtJar());
+		jars.add(settings.getStrategoDebugRuntimeJar());
+		jars.add(settings.getStrategoDebugRuntimeJavaJar());
+		helper.setDebugJars(jars);
 		this.vm = helper.getTargetVM(mainArgs);
 	}
 	
@@ -83,9 +91,10 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(String mainArgs, String classpath) {
+	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath) {
+		this.log("Use Sun VM");
 		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
-		this.initVM(vmManager, mainArgs, classpath);
+		this.initVM(vmManager, settings, mainArgs, classpath);
 	}
 	
 	/**
@@ -94,11 +103,12 @@ public class DebugSessionManager {
 	 * @param vmManager
 	 * @param mainArgs
 	 */
-	public void initVM(VirtualMachineManager vmManager, String mainArgs) {
+	/*
+	private void initVM(VirtualMachineManager vmManager, String mainArgs) {
 		VMLauncherHelper helper = new VMLauncherHelper(vmManager);
-		helper.setDefaultClasspath();
+		//helper.setDefaultClasspath();
 		this.vm = helper.getTargetVM(mainArgs);
-	}
+	}*/
 	
 	/**
 	 * Initialize a new VM. The VM is found using Bootstrap.virtualMachineManager(), in tools.jar (Sun's implementation).
@@ -106,12 +116,12 @@ public class DebugSessionManager {
 	 * However if jdi.jar is used (The eclipse implementation) then Bootstrap.virtualMachineManager() returns null.
 	 * In this case we need to get our VM elsewhere...
 	 * @param mainArgs
-	 * @param classpath
 	 */
-	public void initVM(String mainArgs) {
+	/*
+	private void initVM(String mainArgs) {
 		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
 		this.initVM(vmManager, mainArgs);
-	}
+	}*/
 	
 	/**
 	 * If initVM cannot be used, use this method to explicity set Virtual Machine.
@@ -345,4 +355,8 @@ public class DebugSessionManager {
 		return vmm;
 	}
 
+	private void log(String s)
+	{
+		System.out.println(s);
+	}
 }

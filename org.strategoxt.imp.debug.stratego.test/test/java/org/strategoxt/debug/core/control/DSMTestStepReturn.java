@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestStepReturn extends AbstractDSMTest {
@@ -20,7 +21,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
@@ -61,7 +62,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		//	  	input -> output
 		//	  	with
 		//	  	  output := <match-comments> input
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "execute", "s-var", 40, 6, 40, 38));
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "execute", "s-var", 37, 3, 40, 38));
 		
 		
 		
@@ -83,7 +84,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		// the step should be cancelled
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
 		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";

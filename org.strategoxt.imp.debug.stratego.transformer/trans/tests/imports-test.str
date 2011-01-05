@@ -1,0 +1,188 @@
+module tests/imports-test
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports // show all files used as import
+  trans-str
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+
+strategies // test get-internal-files
+	
+	
+  
+  test-list-imports-1 = 
+  	echo(|"test-list-imports-1")
+  	; get-project-dir => project-dir
+  	; !"test/src" => input-base-dir
+  	; !"testimports/localvar.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	//; !["-i",  absolute-location, "-I", "."]
+  	; args := ["-i", absolute-location]
+  	; <list-imports(|args)> absolute-location
+  	; ?(files, _)
+  	; <debug(!"files: ")> files
+  	  
+  test-list-imports-2 = 
+  	echo(|"test-list-imports-2")
+  	; get-project-dir => project-dir
+  	; !"test/src" => input-base-dir
+  	; !"testogetarts/ogetarts.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	//; !["-i",  absolute-location, "-I", "."]
+  	; args := ["-i", absolute-location]
+  	; <list-imports(|args)> absolute-location
+  	; ?(files, _)
+  	; <debug(!"files: ")> files
+  	  
+  // list the imports of this project
+  // project dir
+  test-list-imports-3 = 
+  	echo(|"test-list-imports-3")
+  	; get-project-dir => project-dir
+  	; !"trans" => input-base-dir
+  	; !"stratego-transformer.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	//; !["-i",  absolute-location, "-I", "."]
+  	; include-dir := <concat-strings> [project-dir, "/", "include"]
+  	; lib-dir := <concat-strings> [project-dir, "/", "lib"] 
+  	; syntax-dir := <concat-strings> [project-dir, "/", "syntax"]
+  	; args := [/*"pack-stratego-io", */"--slack"/*, "--imports"*/
+  	  , "-i", absolute-location
+  	    //, "-I", include-dir // not needed!, will contain output
+  	      //, "-I", lib-dir
+  	        //, "-I", syntax-dir
+  	          , "-I", project-dir
+  	            //, "-I", "."
+  	            ]
+  	; debug(!"arguments: ")
+  	; incl := [ //include-dir, // not needed, include dir only contains generated output
+  	  lib-dir, syntax-dir, project-dir]
+  	; <set-config> ("-I", incl)  
+  	//; <set-config> ("-i", absolute-location)
+  	; <list-imports(|args)> absolute-location
+  	; ?(files, _)
+  	; <debug(!"files: ")> ""
+  	; <map(debug)> files
+
+  // list the imports of this project
+  // only ".", missing syntax and lib
+  test-list-imports-4 = 
+  	echo(|"test-list-imports-4")
+  	; get-project-dir => project-dir
+  	; !"trans" => input-base-dir
+  	; !"stratego-transformer.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location
+  	; echo(|"reading ast from: ")
+  	; echo(|absolute-location)
+  	//; !["-i",  absolute-location, "-I", "."]
+  	; include-dir := <concat-strings> [project-dir, "/", "include"]
+  	; lib-dir := <concat-strings> [project-dir, "/", "lib"] 
+  	; syntax-dir := <concat-strings> [project-dir, "/", "syntax"]
+  	; args := [/*"pack-stratego-io", */"--slack"/*, "--imports"*/
+  	  , "-i", absolute-location
+  	    //, "-I", include-dir // not needed!, will contain output
+  	      //, "-I", lib-dir
+  	        //, "-I", syntax-dir
+  	          , "-I", "."
+  	            ]
+  	; debug(!"arguments: ")
+  	; incl := [
+  	  	//include-dir, lib-dir, syntax-dir, project-dir
+  	  	"." ]
+  	; <set-config> ("-I", incl)  
+  	//; <set-config> ("-i", absolute-location)
+  	; <list-imports(|args)> absolute-location
+  	; ?(files, _)
+  	; <debug(!"files: ")> ""
+  	; <map(debug)> files
+  	  
+  // list the imports of this project	  
+  // only ".", missing syntax and lib
+  // current term: (basepath, stratego-file)
+  test-list-imports-5 = 
+  	echo(|"test-list-imports-5")
+  	; get-project-dir => project-dir
+  	; !"trans" => input-base-dir
+  	; !"stratego-transformer.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
+  	; files := <get-internal-files(|["."])> absolute-file
+  	//; debug(!"not-empty: ")
+  	//; existing-files := <map(try-dbg)>
+  	//; abs-files := <filter(is-abspath)>
+  	; <debug(!"files: ")> ""
+  	; <map(debug)> files
+  	; missing := <filter(is-relpath)> files
+  	; <debug(!"missing: ")> ""
+  	; <map(debug)> missing
+  	; echo(|"end test-list-imports-5")
+  
+  // list the imports of this project	  
+  // current term: (basepath, stratego-file)
+  // "-I" project-dir
+  // all imports
+  test-list-imports-6 = 
+  	echo(|"test-list-imports-6")
+  	; get-project-dir => project-dir
+  	; !"trans" => input-base-dir
+  	; !"stratego-transformer.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
+  	//; lib-dir := <concat-strings> [project-dir, "/", "lib"] 
+  	//; syntax-dir := <concat-strings> [project-dir, "/", "syntax"]
+  	// also include "./include/Test.str" and "./lib/editor-common.generated.str"
+  	; files := <get-internal-files(|[project-dir])> absolute-file
+  	; <debug(!"files: ")> ""
+  	; <map(debug)> files
+  	; missing := <filter(is-relpath)> files
+  	; <debug(!"missing: ")> ""
+  	; <map(debug)> missing
+  	; echo(|"end test-list-imports-6")
+
+  // list the imports of the testimports sample stratego file
+  // "." contains all imports
+  // current term: (basepath, stratego-file)
+  test-list-imports-7 = 
+  	echo(|"test-list-imports-7")
+  	; get-project-dir => project-dir
+  	; !"test/src/testimports" => input-base-dir
+  	; !"test/generated/testimports" => output-base-dir
+  	; !"localvar.str" => main-str-file
+  	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  	; <concat-strings> [project-dir, "/", output-base-dir] => output-base-path
+  	; <concat-strings> [base-path, "/", main-str-file] => absolute-file
+  	; files := <get-internal-files(|["."])> absolute-file
+  	; <debug(!"files: ")> ""
+  	; <map(debug)> files
+  	; missing := <filter(is-relpath)> files
+  	; <debug(!"missing: ")> ""
+  	; <map(debug)> missing
+  	; real-files := <filter(is-abspath)> files
+  	; map(handle-file(|base-path, output-base-path)) // do apply-debug-trans for each file
+  	//; echo(|"end test-list-imports-7")
+
+	test-list-imports-8 =
+		echo(|"test-list-imports-8")
+	  	; get-project-dir => project-dir
+	  	; !"test/src/testimports" => input-base-dir
+	  	; !"test/generated/testimports" => output-base-dir
+	  	; !"localvar.str" => main-str-file
+  		; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+  		; <concat-strings> [project-dir, "/", output-base-dir] => output-base-path	  	  
+  	  	; !(base-path, output-base-path, main-str-file)
+  	  	; apply-debug-project(|["."])

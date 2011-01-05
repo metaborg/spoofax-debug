@@ -27,18 +27,37 @@ rules
 
 rules
 	
-	// current term is string
-	// writes the string to the absolute-location
-  write-stratego(|absolute-location) :
-   source-code -> absolute-location
-   //where <debug(!"write-stratego to ")> absolute-location
-   where
-   	<dirname> absolute-location => dir
-   	//; debug(!"dirname: ")
-   	; check-dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
-   	; write-to-file(|absolute-location, source-code)
+  write-stratego(|absolute-location) =
+  	<get-config> "output-rtree" 
+  	<
+  	write-stratego-rtree(|<guarantee-extension(|"rtree")> absolute-location) // success, make rtree
+  	+
+  	write-stratego-str(|<guarantee-extension(|"str")> absolute-location) //fail, make str
+	
+  // current term is an ast
+  // writes the ast in binary form (rtree) to absolute-location
+  write-stratego-rtree(|absolute-location) = 
+  	where(<debug(!"Writing rtree...")> absolute-location) ;
+  	?ast
+  	; <dirname> absolute-location => dir
+   	; <check-dir> dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
+  	; <WriteToBinaryFile> (absolute-location, ast) // write current term to file
   
-  strategies
+	// current term is an ast
+	// writes the string to the absolute-location
+  write-stratego-str(|absolute-location) :
+   ast -> absolute-location
+   where(<debug(!"Writing str...")> absolute-location)
+   where
+   	source-code := <pp-stratego-ast> ast
+   	; <dirname> absolute-location => dir
+   	//; debug(!"dirname: ")
+   	; <check-dir> dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
+   	; write-to-file(|absolute-location, source-code)
+
+	get-config-output-rtree = 
+	  <get-config> "-r" <+ ![]
+strategies
 
   // accept a (filename, source-code)*
   // filename is relative to the base-dir
@@ -110,6 +129,129 @@ rules
   pp-stratego-ast = 
   	pp-stratego-string
 	
+	
+strategies // parsing stratego
+	
+  // ignore current term
+  // returns aterm
+  parse-stratego-with-locations(|file-path) =
+	!FILE(file-path) 
+	; parse-stratego-trm(| [ "-i", file-path
+	  , "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source
+	  , "-I", <stratego-box-path>
+	  , "-I", <stratego-sdf2-path>
+	  , "-I", <stratego-stratego-path>
+	  , "-I", <stratego-c-path>
+	  , "-I", <stratego-xml-path>
+	  , "-I", <stratego-rtg-path>
+	  , "-I", <stratego-propstratego-path>
+	    ]
+	    )
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/gpp/tests/abox2text-tests.str -I /nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/gpp/Stratego-Box.def
+locate Stratego-Box.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/gpp/Stratego-Box.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/gpp/syn/box/Stratego-Box.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/gpp/syn/box/Stratego-Box.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/gpp/Stratego-Box.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/gpp/Stratego-Box.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/gpp/Stratego-Box.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/gpp/Stratego-Box.def <=== linked in .nix-profile
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/gpp/Stratego-Box.def
+*/
+  stratego-box-path = !"/home/rlindeman/.nix-profile/share/sdf/gpp/"	 
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/gen-sdf-mix.str -I /nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/sdf-front/
+
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/gen-sdf-mix.str -I /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/syntax/
+locate Stratego-Sdf2.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/sdf-front/Stratego-Sdf2.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/sdf-front/syn/Stratego-Sdf2.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-front/syn/Stratego-Sdf2.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/sdf-front/Stratego-Sdf2.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/sdf-front/Stratego-Sdf2.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/sdf-front/Stratego-Sdf2.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/sdf-front/Stratego-Sdf2.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/sdf-front/Stratego-Sdf2.def
+*/
+  stratego-sdf2-path = !"/home/rlindeman/.nix-profile/share/sdf/sdf-front/"
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/sdf2parenthesize.str -I /nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/stratego-front/
+locate StrategoStratego.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/stratego-front/StrategoStratego.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/stratego-front/syn/StrategoStratego.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/syn/StrategoStratego.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/stratego-front/StrategoStratego.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/stratego-front/StrategoStratego.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/stratego-front/StrategoStratego.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/stratego-front/StrategoStratego.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/stratego-front/StrategoStratego.def
+*/
+  stratego-stratego-path = !"/home/rlindeman/.nix-profile/share/sdf/stratego-front/"
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/gpp/tools3/pp2c-box-to-c.str -I /home/rlindeman/.nix-profile/share/sdf/c-tools
+locate Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/c-tools/Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/c-tools/Stratego-Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/c-tools/syn/Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/c-tools/syn/Stratego-Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/c-tools/syn/Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/c-tools/syn/Stratego-Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/c-tools/Stratego-C.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/c-tools/Stratego-Stratego-C.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/c-tools/Stratego-C.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/c-tools/Stratego-Stratego-C.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/c-tools/Stratego-C.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/c-tools/Stratego-Stratego-C.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/c-tools/Stratego-C.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/c-tools/Stratego-Stratego-C.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/c-tools/Stratego-C.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/c-tools/Stratego-Stratego-C.def
+
+*/
+  stratego-c-path = !"/home/rlindeman/.nix-profile/share/sdf/c-tools"
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/interpret/core-format-check-to-xhtml.str -I /home/rlindeman/.nix-profile/share/sdf/xml-front
+locate Stratego-xml.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/xml-front/Stratego-xml.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/xml-front/syn/xml/Stratego-xml.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/xml-front/syn/xml/Stratego-xml.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/xml-front/Stratego-xml.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/xml-front/Stratego-xml.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/xml-front/Stratego-xml.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/xml-front/Stratego-xml.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/xml-front/Stratego-xml.def
+*/
+  stratego-xml-path = !"/home/rlindeman/.nix-profile/share/sdf/xml-front"
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/sdf2rtg/core-sdf-grammar2rtg.str -I /home/rlindeman/.nix-profile/share/sdf/stratego-regular
+locate Stratego-rtg.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/install/share/sdf/stratego-regular/Stratego-rtg.def
+/home/rlindeman/Documents/TU/strategoxt/baseline/strategoxt-0.17M3pre17522/stratego-regular/syn/Stratego-rtg.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/syn/Stratego-rtg.def
+/home/rlindeman/Documents/TU/strategoxt/strategoxt-install/share/sdf/stratego-regular/Stratego-rtg.def
+/nix/store/1w88n0va2jzn0h60dza5qiia6mfxpdg3-strategoxt-0.18pre21134/share/sdf/stratego-regular/Stratego-rtg.def
+/nix/store/7x62ba10iw11jd1a0a2p5snwhmj60m62-strategoxt-1.8pre21513/share/sdf/stratego-regular/Stratego-rtg.def
+/nix/store/dk913kdyv8747yq5d1pz1cy2w1y1s8q8-strategoxt-1.8pre21513/share/sdf/stratego-regular/Stratego-rtg.def
+/nix/store/vv9sh1kd0jgr8q1m68fbcnp8irngmgm7-strategoxt-0.18pre21134/share/sdf/stratego-regular/Stratego-rtg.def
+
+*/
+  stratego-rtg-path = !"/home/rlindeman/.nix-profile/share/sdf/stratego-regular"
+
+/*
+parse-stratego -i /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/prop1.str
+
+no def is available, there is a Makefile in the test dir, but "make" does not create a PropStratego.def from PropStratego.sdf
+TODO: exclude the test dir
+*/
+  stratego-propstratego-path = !"/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test" // TODO: def used in testcase
+/*	 
   // ignore current term, just return the ast of a stratego program	
   get-anno-ast(|file-path) = 
       where(
@@ -132,4 +274,41 @@ rules
     ; implode-asfix
       
   on-parse-error = debug(!"Parse error: ")
+*/  
+strategies // directory walking
+	
+		// fails if the current path does not have the ".str"-extension or when it is a directory
+	is-stratego-file = has-extension(|"str"); file-exists; filemode; not(isdir)
+	
+	// returns a list of paths, for which the strategy s holds.
+	// Strategy s should make the distinction between files and directories if needed,
+	// as s is applied to all elements in a directory (the elements returned by <readdir>).
+	// When s is called the current term is a complete path.
+	//
+	// current term should be a String pointing to a directory name
+	walk-dir(s) = 
+		?base-dir
+		; readdir //
+		; fullpaths* := <map(prefix-with(|base-dir))> // prefix the file name with the base-dir
+		//; debug(!"list-dirs: ")
+		; has-str* := <filter(s)>
+		//; debug(!"list str: ")
+		; dirs-only* := <filter-dirs> fullpaths* // keep directories
+		; str-in-subdirs* := <map(walk-dir(s)) ; flatten-list> dirs-only*
+		//; debug(!"str-in-subdirs* ")
+		; <flatten-list> [str-in-subdirs*, has-str*]
+		// walk over the directories
+	
+	// prefix the current file name with a path prefix
+	prefix-with(|prefix) :
+		filename -> path
+		with
+			path := <concat-strings> [prefix, "/", filename]
+	
+	// in the list of paths, only keep the ones that are directories
+	filter-dirs :
+		paths* -> dirs*
+		with
+		 dirs* := <filter(file-exists ; filemode ; isdir)> paths*
+		 //< list-dirs-in-dir + ![]
 	

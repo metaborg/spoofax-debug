@@ -32,7 +32,7 @@ rules
   	create-table-for-input(|table-file-handle) :
   		inputfilename -> contents
   		where
-			get-anno-ast(|inputfilename)
+			parse-stratego-with-locations(|inputfilename)
 		  	; assert-module // check if it properly parsed!
 		  	; collect-debug-calls
 		  	; lines* :=  <create-table-entries>

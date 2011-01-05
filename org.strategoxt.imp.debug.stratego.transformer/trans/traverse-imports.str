@@ -10,6 +10,8 @@ imports
   trans-str
   
 strategies
+	// Calls pack-stratego to determine which files are imported by the given stratego file.
+	// pack-stratego is recursive as it also finds the files the imported files import.
 	// current term should be a string pointing to a stratego file
 	list-imports(|args) =
 		?ffile
@@ -33,12 +35,15 @@ strategies
       // current is FILE
     ; pack-stratego(|<pack-include-path>) => (files, spec)
 
-  // directories is a list of strings, each element is a directory used by "-I"
+  // Returns a list of all files that are used as imports (or used by other imports) for the given stratego-file.
+  // 
+  // The directories term argument is a list of strings, each element is a directory used by "-I". The list should at least contain "."
+  // The current term should be a path to the main stratego file.
   get-internal-files(|directories) :
-  	(basepath, stratego-file) -> real-files
+  	//(basepath, stratego-file) -> real-files
+  	absolute-location -> real-files
   	where
-  		absolute-location := 	<concat-strings> [basepath, "/", stratego-file]
-  		; basic-args := [ "--slack" // skip errors
+  		basic-args := [ "--slack" // skip errors
   			, "-i", absolute-location]
   		//; basic-ext-args := ["-I", "."]  // "." = basepath. Look for imports only in the current dir
   		; ext-args := <map(create-I); concat> directories
@@ -53,7 +58,8 @@ strategies
   create-I:
   	directory -> ["-I", directory]
   	
-  	// if real-file start with base-path
+  	// current term should be an absolute path to a stratego file
+  	// and it should start with base-path
   	// strip the basepath from real-file => inputfilePath
   	// call apply-debug-trans
   	// sourceBasedir = base-path
@@ -61,6 +67,7 @@ strategies
   	// (sourceBasedir, inputfilePath, outputfilename)
   handle-file(|base-path, output-base-path) = 
   	?absolute-stratego-file
+  	; where(<debug(!"file: ")> absolute-stratego-file)
   	; split-path(|base-path) => (parent, rel-path)
   	; sourceBasedir := base-path
   	; inputfilePath := rel-path

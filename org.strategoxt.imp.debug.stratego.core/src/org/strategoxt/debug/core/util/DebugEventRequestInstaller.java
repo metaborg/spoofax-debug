@@ -81,6 +81,15 @@ public class DebugEventRequestInstaller {
 			cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 			cpr.enable();
 		}
+		
+		/*
+		// exception request
+		ReferenceType refType = null; // report all exceptions
+		boolean notifyCaught = true;
+		boolean notifyUncaught = true;
+		ExceptionRequest er = mgr.createExceptionRequest(refType, notifyCaught, notifyUncaught);
+		er.enable();
+		*/
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
+import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestImports extends AbstractDSMTest {
@@ -20,7 +21,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		String localvarFilename = "localvar.str";
 		String utilsFilename = "localmod/util/utils.str";
 		
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings(StrategoFileManager.WORKING_DIR, projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/testimports/run.input";
 		String argsForMainClass = "-i " + input;

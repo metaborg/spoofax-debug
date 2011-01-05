@@ -48,6 +48,14 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		}
 	}
 	
+	private void reportAssertFailure(String message)
+	{
+		if (this.callback != null)
+		{
+			callback.reportAssertFailure(message);
+		}
+	}
+	
 	public void stateChanged(StrategoState state) {
 		System.out.println("state changed");
 		// catch any exception
@@ -99,7 +107,9 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 			// vm terminated, TODO: last state should be a StrategoExitedState
 			if (this.vmStateTester.hasNext())
 			{
-				Assert.fail("VM has terminated but there are still some expected hits left...");
+				String message = "VM has terminated but there are still some expected hits left..."; 
+				//Assert.fail(message);
+				this.reportAssertFailure(message);
 			}
 		}
 	}

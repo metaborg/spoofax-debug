@@ -1,0 +1,132 @@
+module tests/strategoxt-parsing-test
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports // show all files used as import
+  trans-str
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+  
+strategies
+	
+	// list all stratego (.str) files in the strategoxt source directory
+	test-walk-strategoxt-source = 
+		echo(|"test-walk-strategoxt-source")
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; str-files* := <walk-dir(is-stratego-file)>
+		; size := <length> str-files*
+		; <debug(!"str files count: ")> size
+		; <map(debug)> str-files*
+	
+	// walks over all stratego files (.str) and add debug information
+	// output will be placed in test/generated/walktestimports
+	// we will walk over ALL .str files, this is a file based walk instead of a import-based walk.
+	test-apply-debug-testimports-full-str =
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+		; get-project-dir => project-dir
+		; !"test/generated/walktestimports" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		; str-files* := <walk-dir(is-stratego-file)> base-path
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+
+	// walks over all stratego files (.str) and add debug information
+	// output will be placed in test/generated/walktestimports
+	// we will walk over ALL .str files, this is a file based walk instead of a import-based walk.
+	test-apply-debug-testimports-full-rtree =
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+		; get-project-dir => project-dir
+		; !"test/generated/walktestimports" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		; str-files* := <walk-dir(is-stratego-file)> base-path
+		; <set-config> ("output-rtree", "on")
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+
+	
+	// walk over al stratego files in the strategoxt source and add debug information.
+	// output will be placed in test/generated/teststrxt
+	// we will walk over ALL .str files, this is a file based walk instead of a import-based walk.
+	test-apply-debug-strategoxt-full = 
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; get-project-dir => project-dir
+		; !"test/generated/teststrxt" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		; str-files* := <walk-dir(is-strategoxt-source-file)> base-path
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+		 
+    // we should ignore some file when walking over strategoxt source
+    // if path starts with "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test" the strategy should fail
+    // <string-starts-with(|"foo")> "foobar"
+    is-strategoxt-source-file = is-stratego-file; ?path; excludes
+    	; filter(is-prefix-of(|path)) // if list is not empty, the path matches one of the excluded and we should fail
+    	; size := <length>
+    	; <eq> (size, 0) // succeed if list is empty
+    	; !path
+    
+    // current term is the prefix
+    // fails if the current term is not a prefix of string
+    is-prefix-of(|string) = ?prefix ; !string; string-starts-with(|prefix)
+    
+    excludes = ![
+    	"/home/rlindeman/Documents/TU/strategoxt/strategoxt/strc-core/tests"
+    	, "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test"
+    ]
+    
+    test-exclude = 
+    	// !"/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/prop1.str"
+    	!"/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/pp/dynrule-intersection.str"
+    	; (is-strategoxt-source-file < debug(!"suc") + debug(!"fail"))
+		 
+	test-apply-debug-strategoxt-1 = 
+		echo(|"test-apply-debug-strategoxt-1")
+		// get the stratego files
+		// source s in the base-path
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; get-project-dir => project-dir
+		; !"test/generated/teststrxt" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		//; str-files* := <walk-dir(is-stratego-file)> base-path
+		; f1 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/gpp/tests/abox2text-tests.str" // cannot find the parse table for syntax "Stratego-Box" in the include path
+		; f2 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/lib/tests/dynamic-rules/dr-propconst-tests-1.str" // large file
+		; f3 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/gen-sdf-mix.str" // cannot find the parse table for syntax "Stratego-Sdf2" in the include path
+		; f4 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/sdf2parenthesize.str" // cannot find the parse table for syntax "StrategoStratego" in the include path
+		; f5 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/gpp/tools3/pp2c-box-to-c.str" // cannot find the parse table for syntax "Stratego-C" in the include path
+		; f6 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/interpret/core-format-check-to-xhtml.str" // cannot find the parse table for syntax "Stratego-xml" in the include path
+		; f7 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/sdf2rtg/core-sdf-grammar2rtg.str" // cannot find the parse table for syntax "Stratego-rtg" in the include path
+		; f8 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/prop1.str" // cannot find the parse table for syntax "PropStratego" in the include path // TODO: used in testcase
+		; str-files* := [f5]
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+		; run-time
+		  
+		  	// the file /home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/lib/tests/dynamic-rules/dr-propconst-tests-1.str
+	// failed because of a java memory error.
+	
+	
+	
+		// list of files in the given directory and its sub directories...
+	test-walk-dir = 
+		echo(|"test-walk-dir")
+	  	; get-project-dir => project-dir
+	  	; !"test/src/testimports" => input-base-dir
+	  	; <concat-strings> [project-dir, "/", input-base-dir] => base-path
+		//; base-path := ""
+		; str-files* := <walk-dir(is-stratego-file)>
+		; size := <length> str-files*
+		; <debug(!"str files count: ")> size
+		; <map(debug)> str-files*
