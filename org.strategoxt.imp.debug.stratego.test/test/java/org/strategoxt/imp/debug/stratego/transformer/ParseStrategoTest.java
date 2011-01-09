@@ -1,5 +1,14 @@
 package org.strategoxt.imp.debug.stratego.transformer;
 
+import org.spoofax.interpreter.terms.BasicStrategoString;
+import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.strategoxt.imp.debug.stratego.transformer.trans.test_apply_debug_strategoxt_full_0_0;
+import org.strategoxt.imp.debug.stratego.transformer.trans.test_output_parse_stratego_0_0;
+import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_localvar_1_0_0;
+import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_test_prop_1_0_0;
+import org.strategoxt.lang.Context;
+import org.strategoxt.lang.terms.TermFactory;
+
 
 public class ParseStrategoTest {
 

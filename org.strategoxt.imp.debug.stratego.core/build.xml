@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<project name="org.strategoxt.imp.debug.stratego.core" default="copy-libraries">
+<project name="org.strategoxt.imp.debug.stratego.core" default="deploy-to-eclipse-plugin">
 
 	<!-- basedir should point to org.strategoxt.imp.debug.stratego.core -->
 	

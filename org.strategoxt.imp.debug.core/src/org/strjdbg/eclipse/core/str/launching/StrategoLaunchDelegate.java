@@ -21,9 +21,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -75,17 +77,20 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
         if (project == null)
         {
         	abort("Eclipse project unspecified.", null);
+        	return;
         }
         
 		// program name
 		String program = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
 		if (program == null) {
 			abort("Stratego program unspecified.", null);
+			return;
 		}
 		
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
 		if (!file.exists()) {
 			abort(MessageFormat.format("Stratego program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
+			return;
 		}
 		
 		// program arguments
@@ -94,11 +99,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			//abort("Stratego program unspecified.", null);
 			programArguments = new ArrayList<String>();
 		}
-		
-		// program recompile
-		boolean rebuildBinary = false;
-		rebuildBinary = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, true);
-		
+				
 		// the started wm will wait for a debugger to connect to this port
 		String port = ""+findFreePort();
 		
@@ -124,7 +125,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		String projectName = DebugCompiler.createProjectName(new File(program));
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create("/tmp", projectName);
 		Bundle b = Activator.getDefault().getBundle();
-		URL e = b.getEntry("/lib");
+		//URL e = b.getEntry("/lib");
 		
 		IPath path = new Path("/lib");
 		Map override = null;
@@ -143,50 +144,17 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
-		String binBase = debugSessionSettings.getClassDirectory(); // default
-		if (rebuildBinary)
-		{
-			binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-		}
-		else
-		{
-			// TODO: check if all the necessary files exist in the working dir...
-			// check if binBase contains javafiles
-			IPath binBasePath = new Path(binBase);
-			File binBaseFile = binBasePath.toFile();
-			if (!binBaseFile.exists())
-			{
-				// did not compile to class files
-				// try to compile it
-				System.out.println("Class files not found, compile...");
-				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-			}
-			else
-			{
-				// check if dir is empty
-				String[] files = binBaseFile.list();
-				if (files == null || files.length == 0)
-				{
-					System.out.println("Class files not found, compile...");
-					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-				}
-			}
-			
-			// TODO: check if table file exists
-			IPath strBasePath = new Path(debugSessionSettings.getStrategoDirectory());
-			if (!strBasePath.toFile().exists())
-			{
-				System.out.println("Stratego program does not have debug info, compile...");
-				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-			} else {
-				String[] files = strBasePath.toFile().list();
-				if (files == null || files.length == 0)
-				{
-					System.out.println("Stratego program does not have debug info, compile...");
-					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-				}
-			}
-			
+		//String binBase = debugSessionSettings.getClassDirectory(); // default
+		String binBase = null;
+		try {
+			binBase = prepareProgram(configuration, monitor, mode, debugCompiler, debugSessionSettings);
+		} catch (DebugCompileException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			// TODO: could not compile program: Show error message
+			String message = MessageFormat.format("Could not launch Stratego program {0}. Failed to compile the program.", new Object[] { program });
+			this.abort(message, e);
+			return;
 		}
 		
 		monitor.subTask("Starting Stratego VM");
@@ -246,7 +214,61 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		monitor.done();
 	}
 	
-	private String compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	private String prepareProgram(ILaunchConfiguration configuration, IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException, CoreException {
+		// program recompile
+		boolean rebuildBinary = false;
+		rebuildBinary = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, true);
+		
+		String binBase = debugSessionSettings.getClassDirectory(); // default
+
+		if (rebuildBinary)
+		{
+			binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+		}
+		else
+		{
+			// TODO: check if all the necessary files exist in the working dir...
+			// check if binBase contains javafiles
+			IPath binBasePath = new Path(binBase);
+			File binBaseFile = binBasePath.toFile();
+			if (!binBaseFile.exists())
+			{
+				// did not compile to class files
+				// try to compile it
+				System.out.println("Class files not found, compile...");
+				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+			}
+			else
+			{
+				// check if dir is empty
+				String[] files = binBaseFile.list();
+				if (files == null || files.length == 0)
+				{
+					System.out.println("Class files not found, compile...");
+					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+				}
+			}
+			
+			// TODO: check if table file exists
+			IPath strBasePath = new Path(debugSessionSettings.getStrategoDirectory());
+			if (!strBasePath.toFile().exists())
+			{
+				System.out.println("Stratego program does not have debug info, compile...");
+				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+			} else {
+				String[] files = strBasePath.toFile().list();
+				if (files == null || files.length == 0)
+				{
+					System.out.println("Stratego program does not have debug info, compile...");
+					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
+				}
+			}
+			
+		}
+		return binBase;
+	}
+
+	private String compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		monitor.subTask("Compiling stratego program");
 		String binBase = null;
@@ -263,7 +285,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		return binBase;
 	}
 	
-	private String debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	private String debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		// compile for a debug
 		String binBase = null;
@@ -272,14 +294,17 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (DebugCompileException e) {
+		} 
+		/*
+		catch (DebugCompileException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//e.printStackTrace();
+			abort("Could not compile stratego program.", e);
+		}*/
 		return binBase;
 	}
 	
-	private String runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings)
+	private String runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		// compile for a run
 		String binBase = null;
@@ -288,7 +313,13 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
+		/*
+		catch (DebugCompileException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			abort("Could not compile stratego program.", e);
+		}*/
 		return binBase;
 	}
 	
@@ -352,7 +383,15 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
 		// TODO: the plug-in code should be the example plug-in, not Stratego debug model id
-		throw new CoreException(new Status(IStatus.ERROR, IStrategoConstants.ID_STRATEGO_DEBUG_MODEL, 0, message, e));
+		IStatus status = new Status(IStatus.ERROR, IStrategoConstants.ID_STRATEGO_DEBUG_MODEL, 0, message, e);
+		//throw new CoreException(status);
+		
+		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+		
+		if (handler != null) {
+			Object result = handler.handleStatus(status, null);
+			System.out.println(result);
+		}
 	}
 	
 	/**
@@ -376,5 +415,5 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		}
 		return -1;		
 	}
-
+	
 }

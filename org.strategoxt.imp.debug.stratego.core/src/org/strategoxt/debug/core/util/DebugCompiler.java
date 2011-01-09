@@ -14,6 +14,7 @@ import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.StrategoExit;
 import org.strategoxt.lang.terms.TermFactory;
 
 
@@ -68,8 +69,9 @@ public class DebugCompiler {
 	 * @param projectName projectName is the name of the project, used to create temp folders
 	 * @return returns the basedir of the binary files
 	 * @throws IOException
+	 * @throws DebugCompileException 
 	 */
-	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException
+	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
 	{
 		// TODO: Use debugsettings
 		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
@@ -95,7 +97,12 @@ public class DebugCompiler {
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
 		String inputStrategoFilename = strategoSourceBasedir +"/" + strategoFilePath;
-		compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		if (!succes)
+		{
+			// TODO: what to do when compile fails... Throw an Exception?
+			throw new DebugCompileException("Failed to compile stratego program to java.");
+		}
 		
 		String sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
@@ -145,7 +152,7 @@ public class DebugCompiler {
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
-			throw new DebugCompileException("Failed to compile stratego program with debug information");
+			throw new DebugCompileException("Failed to compile stratego program with debug information.");
 		}
 		
 		// create lookup table
@@ -158,8 +165,12 @@ public class DebugCompiler {
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
 		String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
-		compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
-		
+		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		if (!succes)
+		{
+			// TODO: what to do when compile fails... Throw an Exception?
+			throw new DebugCompileException("Failed to compile stratego program to java.");
+		}
 		String sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
 		String binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
@@ -305,7 +316,7 @@ public class DebugCompiler {
 	 * @param libraryName
 	 * @param compiledStrategoFilename
 	 */
-	protected void compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
+	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
 	{
 		System.out.println("Generated file at " + inputStrategoFilename);
 		System.out.println("Compile str to java...");
@@ -321,8 +332,24 @@ public class DebugCompiler {
 			, "--clean" // remove previous java
 			, "-la", javaImportName // used as java import
 		};
+		boolean succes = false;
 		try {
+			// TODO: can we forward the error log messages?
+			//Context c = org.strategoxt.strj.Main.init();
+			//IOAgent ioAgent = null;
+			//c.setIOAgent(ioAgent);
 			org.strategoxt.strj.Main.mainNoExit(strj_args);
+		}
+		catch(StrategoExit e)
+		{
+			if (e.getValue() == StrategoExit.SUCCESS)
+			{
+				succes = true;
+			}
+			else
+			{
+				System.out.println("Exception: " + e.getMessage());
+			}
 		}
 		catch(Exception e)
 		{
@@ -330,7 +357,8 @@ public class DebugCompiler {
 			
 		}
 		
-		System.out.println("Strj compiler finished");		
+		System.out.println("Strj compiler finished.");
+		return succes;
 	}
 	
 	/**
@@ -340,7 +368,6 @@ public class DebugCompiler {
 	 * @param binBasedir
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	protected String compileJava(DebugSessionSettings debugSessionSettings, String sourceBasedir, String mainSourceFileName, String binBasedir)
 	{
 		System.out.println("Compiling " + mainSourceFileName);

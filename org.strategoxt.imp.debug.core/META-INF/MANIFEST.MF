@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: stratego debugger core
+Bundle-Name: org.strategoxt.imp.debug.core
 Bundle-SymbolicName: org.strategoxt.imp.debug.core;singleton:=true
 Bundle-Version: 0.1.0.0
 Bundle-Activator: org.strjdbg.eclipse.core.Activator
