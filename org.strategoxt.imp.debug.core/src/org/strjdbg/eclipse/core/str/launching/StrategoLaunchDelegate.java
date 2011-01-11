@@ -392,6 +392,8 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			Object result = handler.handleStatus(status, null);
 			System.out.println(result);
 		}
+		// write to the error log
+		Activator.getDefault().getLog().log(status);
 	}
 	
 	/**

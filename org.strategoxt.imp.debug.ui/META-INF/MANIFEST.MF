@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.core
 Bundle-SymbolicName: org.strategoxt.imp.debug.ui;singleton:=true
-Bundle-Version: 0.1.0.0
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.strjdbg.eclipse.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.eclipse.jface.text
+Bundle-Vendor: Spoofax.org
