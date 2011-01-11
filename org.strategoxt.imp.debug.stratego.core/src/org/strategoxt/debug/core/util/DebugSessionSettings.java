@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.util;
 
+
 public class DebugSessionSettings {
 
 	private String projectName;
@@ -147,6 +148,21 @@ public class DebugSessionSettings {
 	public String getStrategoDebugRuntimeJavaJar()
 	{
 		return this.strategoDebugRuntimeJavaJar;
+	}
+	
+	
+	private String[] compileTimeExtraArguments = null;
+	
+	/**
+	 * Returns a list of paths that each should be used as "-I" argument when compiling the Stratego program to Java.
+	 * @return
+	 */
+	public String[] getCompileTimeExtraArguments() {
+		return compileTimeExtraArguments;
+	}
+	
+	public void setCompileTimeExtraArguments(String[] compileTimeExtraArguments) {
+		this.compileTimeExtraArguments = compileTimeExtraArguments;
 	}
 	
 }

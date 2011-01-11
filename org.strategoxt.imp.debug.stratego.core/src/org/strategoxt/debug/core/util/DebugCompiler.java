@@ -326,7 +326,13 @@ public class DebugCompiler {
 		// compile the stratego file at $outputFilename
 		String strategodebuglib_rtree_dir = debugSessionSettings.getStrategoDebugLibraryDirectory();
 		String javaImportName = "org.strategoxt.imp.debug.stratego.runtime.trans"; // was: "org.strategoxt.libstrategodebuglib"
-		String[] strj_args = new String[] {
+		// TODO: when compiling we may need extra arguments
+		String[] extra_args = debugSessionSettings.getCompileTimeExtraArguments();
+		
+
+		//		"-I", "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/"
+
+		String[] basic_strj_args = new String[] {
 			"-i", 	inputStrategoFilename
 			, "-o", compiledStrategoFilename // output will be java, so folders should match the library name
 			, "-I", strategodebuglib_rtree_dir // location of rtree files
@@ -335,6 +341,8 @@ public class DebugCompiler {
 			, "--clean" // remove previous java
 			, "-la", javaImportName // used as java import
 		};
+		// Combine the basic_strj_args and the extra_I_args
+		String[] strj_args = StringUtil.concat(basic_strj_args, extra_args);
 		boolean succes = false;
 		Context c = org.strategoxt.strj.Main.init();
 		CustomIOAgent ioAgent = new CustomIOAgent();
