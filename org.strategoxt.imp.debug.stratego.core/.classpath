@@ -6,6 +6,6 @@
 	<classpathentry kind="lib" path="lib/stratego-debug-runtime-java.jar"/>
 	<classpathentry kind="lib" path="lib/stratego-debug-runtime.jar"/>
 	<classpathentry kind="lib" path="lib/stratego-transformer.jar"/>
-	<classpathentry kind="lib" path="lib/strategoxt.jar" sourcepath="/org.strategoxt.strj/java"/>
+	<classpathentry kind="lib" path="lib/strategoxt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
