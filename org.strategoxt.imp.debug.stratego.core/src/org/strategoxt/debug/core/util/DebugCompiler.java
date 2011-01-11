@@ -209,6 +209,7 @@ public class DebugCompiler {
 		
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		// TODO: set CustomIOAgent to forward error messages
 		//Context context = org.strjdbg.transformer.Main.init();
 		// see trans-str.str#apply-debug-project
 		// (base-path, output-base-path, stratego-file)
@@ -290,6 +291,7 @@ public class DebugCompiler {
 	{
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		// TODO: Use CustomIOAgent to forward output
 		StrategoTermBuilder builder = new StrategoTermBuilder();
 		IStrategoList inputfilenames = builder.convertToIStrategoList(strategoDebugFileNames);
 		//IStrategoTerm input = new BasicStrategoString(strategoDebugFileName);
@@ -315,8 +317,9 @@ public class DebugCompiler {
 	 * @param inputStrategoFilename
 	 * @param libraryName
 	 * @param compiledStrategoFilename
+	 * @throws DebugCompileException 
 	 */
-	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
+	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename) throws DebugCompileException
 	{
 		System.out.println("Generated file at " + inputStrategoFilename);
 		System.out.println("Compile str to java...");
@@ -333,12 +336,12 @@ public class DebugCompiler {
 			, "-la", javaImportName // used as java import
 		};
 		boolean succes = false;
+		Context c = org.strategoxt.strj.Main.init();
+		CustomIOAgent ioAgent = new CustomIOAgent();
+		c.setIOAgent(ioAgent);
 		try {
 			// TODO: can we forward the error log messages?
-			//Context c = org.strategoxt.strj.Main.init();
-			//IOAgent ioAgent = null;
-			//c.setIOAgent(ioAgent);
-			org.strategoxt.strj.Main.mainNoExit(strj_args);
+			org.strategoxt.strj.Main.mainNoExit(c, strj_args);
 		}
 		catch(StrategoExit e)
 		{
@@ -349,15 +352,32 @@ public class DebugCompiler {
 			else
 			{
 				System.out.println("Exception: " + e.getMessage());
+				String message = "Failed to compile stratego program to java. \n" + ioAgent.getStderr().trim();
+				DebugCompileException de = new DebugCompileException(message, e);
+				de.setStdErrContents(ioAgent.getStderr());
+				throw de;
 			}
 		}
 		catch(Exception e)
 		{
 			System.out.println("Exception: " + e.getMessage());
+			String message = "Failed to compile stratego program to java. \n" + ioAgent.getStderr().trim();
+			DebugCompileException de = new DebugCompileException(message, e);
+			de.setStdErrContents(ioAgent.getStderr());
+			throw de;
 			
 		}
 		
+		/*
 		System.out.println("Strj compiler finished.");
+		String s = ioAgent.getStderr();
+		System.out.println("ERR:");
+		System.out.println(s);
+		
+		String s2 = ioAgent.getStdout();
+		System.out.println("OUT:");
+		System.out.println(s2);
+		*/
 		return succes;
 	}
 	

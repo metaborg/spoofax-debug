@@ -14,7 +14,7 @@ public class StrategoStatusHandler implements IStatusHandler {
 		Shell parent = Activator.getActiveWorkbenchShell();
 		// TODO Auto-generated method stub
 		String title = "Stratego program error";
-		String message = "Stratego program error";
+		String message = "Cannot launch stratego program.";
 		ErrorDialog.openError(parent , title, message, status);
 		return null;
 	}

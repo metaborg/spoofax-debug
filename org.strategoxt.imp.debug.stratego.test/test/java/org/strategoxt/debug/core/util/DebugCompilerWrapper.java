@@ -15,7 +15,7 @@ public class DebugCompilerWrapper extends DebugCompiler {
 		return super.generateStratego(sourceBasedir, inputFilePath, strOutputBasedir, libraryPaths);
 	}
 
-	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
+	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename) throws DebugCompileException
 	{
 		return super.compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename);
 	}
