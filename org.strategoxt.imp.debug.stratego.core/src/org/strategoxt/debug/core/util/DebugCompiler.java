@@ -24,9 +24,12 @@ public class DebugCompiler {
 	//public static final String WORKING_DIR = "/home/rlindeman/workspace/strj-dbg-app/working";
 	private String workingDir = null;
 	
+	private DebugCompileProgress debugCompileProgress = null;
+	
 	public DebugCompiler(String workingDir)
 	{
 		this.workingDir = workingDir;
+		this.debugCompileProgress = new DebugCompileProgress();
 	}
 	
 	public String getWorkingDir()
@@ -227,9 +230,12 @@ public class DebugCompiler {
 		StrategoTermBuilder b = new StrategoTermBuilder();
 		IStrategoList termArguments = b.convertToIStrategoList(libraryPaths);
 		
+		long startTime = System.currentTimeMillis();
 		IStrategoTerm term; 
 		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
-
+		long finishTime = System.currentTimeMillis();
+		long duration = finishTime - startTime;
+		this.debugCompileProgress.setGenerateStrategoDuration(duration);
 		
 		boolean hasFailed = false;
 		List<String> generatedFiles = new ArrayList<String>();
@@ -287,7 +293,7 @@ public class DebugCompiler {
 		return generatedFiles;
 	}
 	
-	protected static void generateLookupTable(String tableFilenameString, List<String> strategoDebugFileNames)
+	protected void generateLookupTable(String tableFilenameString, List<String> strategoDebugFileNames)
 	{
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
@@ -303,8 +309,12 @@ public class DebugCompiler {
 		IStrategoTerm current = inputfilenames;
 		TermFactory factory = new TermFactory();
 		IStrategoTerm tableFilename = factory.makeString(tableFilenameString); 
-		
+		long startTime = System.currentTimeMillis();
 		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
+		long finishTime = System.currentTimeMillis();
+		long duration = finishTime - startTime;
+		this.debugCompileProgress.setGenerateLookupTableDuration(duration);
+		
 		if (output == null || !output.toString().equals(tableFilenameString))
 		{
 			// output should match tableFilenameString
@@ -347,6 +357,8 @@ public class DebugCompiler {
 		Context c = org.strategoxt.strj.Main.init();
 		CustomIOAgent ioAgent = new CustomIOAgent();
 		c.setIOAgent(ioAgent);
+		long startTime = System.currentTimeMillis();
+		long finishTime = -1;
 		try {
 			// TODO: can we forward the error log messages?
 			org.strategoxt.strj.Main.mainNoExit(c, strj_args);
@@ -374,6 +386,13 @@ public class DebugCompiler {
 			de.setStdErrContents(ioAgent.getStderr());
 			throw de;
 			
+		}
+		finally
+		{
+			finishTime = System.currentTimeMillis();
+			long duration = finishTime - startTime;
+			this.debugCompileProgress.setCompileStrategoDuration(duration);
+			System.out.println("Stratego to Java compiler finished in " + duration +" ms.");
 		}
 		
 		/*
@@ -451,38 +470,8 @@ public class DebugCompiler {
 		
 		//boolean systemExitWhenFinished = false;
 		//Map customDefaultOptions = new HashMap();
-		CompilationProgress compilationProgress = new CompilationProgress() {
-			
-			@Override
-			public void worked(int workIncrement, int remainingWork) {
-				// TODO Auto-generated method stub
-				//System.out.println("WORKED: " + workIncrement + " - " + remainingWork);
-			}
-			
-			@Override
-			public void setTaskName(String name) {
-				// TODO Auto-generated method stub
-				//System.out.println("SETTASKNAME: " + name);
-			}
-			
-			@Override
-			public boolean isCanceled() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public void done() {
-				// TODO Auto-generated method stub
-				//System.out.println("DONE");
-			}
-			
-			@Override
-			public void begin(int remainingWork) {
-				// TODO Auto-generated method stub
-				//System.out.println("BEGIN: " + remainingWork);
-			}
-		};
+		CompilationProgress compilationProgress = this.debugCompileProgress.getJavaCompileProgress();
+		
 		//org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
 		//boolean result = main.compile(args);
 		boolean result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(args, outWriter, errWriter, compilationProgress);
@@ -509,8 +498,13 @@ public class DebugCompiler {
 		{
 			System.out.println("Compile error");
 		}*/
-		System.out.println("Java compiler finished");
+		long duration = this.debugCompileProgress.getJavaCompileProgress().getDuration();
+		System.out.println("Java compiler finished in " + duration + " ms.");
 	    return binBasedir;
+	}
+	
+	public DebugCompileProgress getDebugCompileProgress() {
+		return debugCompileProgress;
 	}
 	
 	/**

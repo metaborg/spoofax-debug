@@ -23,7 +23,8 @@ rules // Main editor interface (defined by editor/Test-Builders and -References.
 strategies
 	main = option-wrap(create-options, create-usage, default-system-about, execute)
 	
-	execute = 
+	execute =
+		//check-options ; 
 		library-paths* := <get-config-I> // ; debug(!"-I: ")
 		; stratego-input-path := <get-config> "-i" // ; debug(!"-i: ")
 		; output-base-path := <get-config> "-o" // ; debug(!"-o: ")
@@ -50,10 +51,20 @@ strategies
 			, <set-config> ("-i", <id>)
  			, !"-i file          Main stratego program"
 		)
+     	+ OptionCheck(
+              <set-config> ("--help", ())
+            , OptionOneCheck("-i")
+            | "error: option -i is required"
+            )
 		+ ArgOption("-o"
 			, <set-config> ("-o", <id>)
  			, !"-o               Output base directory"
 		)
+     	+ OptionCheck(
+              <set-config> ("--help", ())
+            , OptionOneCheck("-o")
+            | "error: option -o is required"
+            )
 		+ ArgOption("-I"
 			, where(<extend-config> ("-I", [<id>]))
  			, !"-I directory     Stratego files in this external directory will also be debug-transformed when they are used as imports by the main stratego program."

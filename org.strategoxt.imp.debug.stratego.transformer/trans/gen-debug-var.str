@@ -197,7 +197,7 @@ rules
 	
 	// create the arguments for the s-var call	  
 	create-args-array(|filename, name, var-name, a) =
-	  	![<to-string> filename, <to-string> name, <to-string> var-name ,<location-to-term> a]
+	  	![<to-string-term> filename, <to-string-term> name, <to-string-term> var-name ,<location-to-term> a]
 	  
 	// return the name of the Var	
 	get-var-name:
@@ -210,5 +210,5 @@ rules
 
 	
 	// convert the value to a string in the stratego AST format  	
-	to-string :
+	to-string-term :
 	  	value ->  NoAnnoList(Str(value))

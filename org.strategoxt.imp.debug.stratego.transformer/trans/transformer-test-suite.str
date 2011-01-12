@@ -19,7 +19,7 @@ imports
 	tests/imports-test
 	tests/parsing-test
 	tests/strategoxt-parsing-test
-
+	tests/commandline-tests
 
 strategies // test the apply-debug-trans internal steps
 	
