@@ -9,9 +9,9 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.spoofax.interpreter.terms.BasicStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
+import org.strategoxt.lang.terms.TermFactory;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 
@@ -73,10 +73,10 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 			// add dynamic rules
 			if (this.frameData.getDynamicRules() != null)
 			{
+				TermFactory factory = new TermFactory();
 				for(String dynamicRuleName : this.frameData.getDynamicRules())
 				{
-					TODO: Use an (I)TermFactory to create terms; invoking string term constructors like this breaks all kinds of things! (LK)
-					EStrategoVariable v = new EStrategoVariable(this.fTarget, new BasicStrategoString("rule contents"), dynamicRuleName);
+					EStrategoVariable v = new EStrategoVariable(this.fTarget, factory.makeString("rule contents"), dynamicRuleName);
 					v.setValueChanged(true);
 					vars.add(v);
 				}
@@ -89,12 +89,20 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	}
 
 	public int getCharEnd() throws DebugException {
-		// TODO Auto-generated method stub
+		// TODO: char end in the offset from the start of the file
+		/*
+		int charend = frameData.getCurrentLocationInfo().getStart_token_pos();
+		return charend;
+		*/
 		return -1;
 	}
 
 	public int getCharStart() throws DebugException {
-		// TODO Auto-generated method stub
+		// TODO: char start is the offset from the start of the file
+		/*
+		int charstart = frameData.getCurrentLocationInfo().getStart_token_pos();
+		return charstart;
+		*/
 		return -1;
 	}
 

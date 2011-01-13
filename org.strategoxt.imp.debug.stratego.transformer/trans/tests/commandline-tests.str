@@ -1,0 +1,11 @@
+module tests/commandline-tests
+
+imports stratego-transformer
+
+strategies
+	
+	
+	test-missing-i =
+		<debug(!"test-missing-i")> ""
+		; arguments* := ["./transformer"]
+		; main

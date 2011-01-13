@@ -2,22 +2,20 @@ package org.strategoxt.debug.core.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.compiler.CompilationProgress;
-import org.eclipse.jdt.internal.compiler.batch.Main;
-import org.spoofax.interpreter.terms.BasicStrategoString;
-import org.spoofax.interpreter.terms.BasicStrategoTuple;
 import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.StrategoExit;
+import org.strategoxt.lang.terms.TermFactory;
 
 
 public class DebugCompiler {
@@ -26,9 +24,12 @@ public class DebugCompiler {
 	//public static final String WORKING_DIR = "/home/rlindeman/workspace/strj-dbg-app/working";
 	private String workingDir = null;
 	
+	private DebugCompileProgress debugCompileProgress = null;
+	
 	public DebugCompiler(String workingDir)
 	{
 		this.workingDir = workingDir;
+		this.debugCompileProgress = new DebugCompileProgress();
 	}
 	
 	public String getWorkingDir()
@@ -71,8 +72,9 @@ public class DebugCompiler {
 	 * @param projectName projectName is the name of the project, used to create temp folders
 	 * @return returns the basedir of the binary files
 	 * @throws IOException
+	 * @throws DebugCompileException 
 	 */
-	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException
+	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
 	{
 		// TODO: Use debugsettings
 		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
@@ -98,7 +100,12 @@ public class DebugCompiler {
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
 		String inputStrategoFilename = strategoSourceBasedir +"/" + strategoFilePath;
-		compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		if (!succes)
+		{
+			// TODO: what to do when compile fails... Throw an Exception?
+			throw new DebugCompileException("Failed to compile stratego program to java.");
+		}
 		
 		String sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
@@ -148,7 +155,7 @@ public class DebugCompiler {
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
-			throw new DebugCompileException("Failed to compile stratego program with debug information");
+			throw new DebugCompileException("Failed to compile stratego program with debug information.");
 		}
 		
 		// create lookup table
@@ -161,8 +168,12 @@ public class DebugCompiler {
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
 		String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
-		compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
-		
+		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
+		if (!succes)
+		{
+			// TODO: what to do when compile fails... Throw an Exception?
+			throw new DebugCompileException("Failed to compile stratego program to java.");
+		}
 		String sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
 		String binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
@@ -201,24 +212,30 @@ public class DebugCompiler {
 		
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		// TODO: set CustomIOAgent to forward error messages
 		//Context context = org.strjdbg.transformer.Main.init();
 		// see trans-str.str#apply-debug-project
 		// (base-path, output-base-path, stratego-file)
-		BasicStrategoString[] kids = new BasicStrategoString[]
+		TermFactory factory = new TermFactory();
+
+		IStrategoString[] kids = new IStrategoString[]
            {
-				new BasicStrategoString(sourceBasedir) , // base-path
-				new BasicStrategoString(strOutputBasedir) , // output-base-path
-				new BasicStrategoString(inputFilePath) // stratego-file
+				factory.makeString(sourceBasedir) , // base-path
+				factory.makeString(strOutputBasedir) , // output-base-path
+				factory.makeString(inputFilePath) // stratego-file
            };
-		IStrategoTerm input = new BasicStrategoTuple(kids);
+		IStrategoTerm input = factory.makeTuple(kids);
 		
 		// termArguments should be a list of Strings, each is a path for the "-I" parameter
 		StrategoTermBuilder b = new StrategoTermBuilder();
 		IStrategoList termArguments = b.convertToIStrategoList(libraryPaths);
 		
+		long startTime = System.currentTimeMillis();
 		IStrategoTerm term; 
 		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
-
+		long finishTime = System.currentTimeMillis();
+		long duration = finishTime - startTime;
+		this.debugCompileProgress.setGenerateStrategoDuration(duration);
 		
 		boolean hasFailed = false;
 		List<String> generatedFiles = new ArrayList<String>();
@@ -276,10 +293,11 @@ public class DebugCompiler {
 		return generatedFiles;
 	}
 	
-	protected static void generateLookupTable(String tableFilenameString, List<String> strategoDebugFileNames)
+	protected void generateLookupTable(String tableFilenameString, List<String> strategoDebugFileNames)
 	{
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		// TODO: Use CustomIOAgent to forward output
 		StrategoTermBuilder builder = new StrategoTermBuilder();
 		IStrategoList inputfilenames = builder.convertToIStrategoList(strategoDebugFileNames);
 		//IStrategoTerm input = new BasicStrategoString(strategoDebugFileName);
@@ -289,8 +307,14 @@ public class DebugCompiler {
 		// output is the location of the table
 		// STRATEGO: create-table(|table-filename): inputfilenames* -> table-filename
 		IStrategoTerm current = inputfilenames;
-		IStrategoTerm tableFilename = new BasicStrategoString(tableFilenameString); 
+		TermFactory factory = new TermFactory();
+		IStrategoTerm tableFilename = factory.makeString(tableFilenameString); 
+		long startTime = System.currentTimeMillis();
 		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
+		long finishTime = System.currentTimeMillis();
+		long duration = finishTime - startTime;
+		this.debugCompileProgress.setGenerateLookupTableDuration(duration);
+		
 		if (output == null || !output.toString().equals(tableFilenameString))
 		{
 			// output should match tableFilenameString
@@ -303,15 +327,22 @@ public class DebugCompiler {
 	 * @param inputStrategoFilename
 	 * @param libraryName
 	 * @param compiledStrategoFilename
+	 * @throws DebugCompileException 
 	 */
-	protected void compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename)
+	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename) throws DebugCompileException
 	{
 		System.out.println("Generated file at " + inputStrategoFilename);
 		System.out.println("Compile str to java...");
 		// compile the stratego file at $outputFilename
 		String strategodebuglib_rtree_dir = debugSessionSettings.getStrategoDebugLibraryDirectory();
 		String javaImportName = "org.strategoxt.imp.debug.stratego.runtime.trans"; // was: "org.strategoxt.libstrategodebuglib"
-		String[] strj_args = new String[] {
+		// TODO: when compiling we may need extra arguments
+		String[] extra_args = debugSessionSettings.getCompileTimeExtraArguments();
+		
+
+		//		"-I", "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/"
+
+		String[] basic_strj_args = new String[] {
 			"-i", 	inputStrategoFilename
 			, "-o", compiledStrategoFilename // output will be java, so folders should match the library name
 			, "-I", strategodebuglib_rtree_dir // location of rtree files
@@ -320,16 +351,61 @@ public class DebugCompiler {
 			, "--clean" // remove previous java
 			, "-la", javaImportName // used as java import
 		};
+		// Combine the basic_strj_args and the extra_I_args
+		String[] strj_args = StringUtil.concat(basic_strj_args, extra_args);
+		boolean succes = false;
+		Context c = org.strategoxt.strj.Main.init();
+		CustomIOAgent ioAgent = new CustomIOAgent();
+		c.setIOAgent(ioAgent);
+		long startTime = System.currentTimeMillis();
+		long finishTime = -1;
 		try {
-			org.strategoxt.strj.Main.mainNoExit(strj_args);
+			// TODO: can we forward the error log messages?
+			org.strategoxt.strj.Main.mainNoExit(c, strj_args);
+		}
+		catch(StrategoExit e)
+		{
+			if (e.getValue() == StrategoExit.SUCCESS)
+			{
+				succes = true;
+			}
+			else
+			{
+				System.out.println("Exception: " + e.getMessage());
+				String message = "Failed to compile stratego program to java. \n" + ioAgent.getStderr().trim();
+				DebugCompileException de = new DebugCompileException(message, e);
+				de.setStdErrContents(ioAgent.getStderr());
+				throw de;
+			}
 		}
 		catch(Exception e)
 		{
 			System.out.println("Exception: " + e.getMessage());
+			String message = "Failed to compile stratego program to java. \n" + ioAgent.getStderr().trim();
+			DebugCompileException de = new DebugCompileException(message, e);
+			de.setStdErrContents(ioAgent.getStderr());
+			throw de;
 			
 		}
+		finally
+		{
+			finishTime = System.currentTimeMillis();
+			long duration = finishTime - startTime;
+			this.debugCompileProgress.setCompileStrategoDuration(duration);
+			System.out.println("Stratego to Java compiler finished in " + duration +" ms.");
+		}
 		
-		System.out.println("Strj compiler finished");		
+		/*
+		System.out.println("Strj compiler finished.");
+		String s = ioAgent.getStderr();
+		System.out.println("ERR:");
+		System.out.println(s);
+		
+		String s2 = ioAgent.getStdout();
+		System.out.println("OUT:");
+		System.out.println(s2);
+		*/
+		return succes;
 	}
 	
 	/**
@@ -339,7 +415,6 @@ public class DebugCompiler {
 	 * @param binBasedir
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	protected String compileJava(DebugSessionSettings debugSessionSettings, String sourceBasedir, String mainSourceFileName, String binBasedir)
 	{
 		System.out.println("Compiling " + mainSourceFileName);
@@ -361,45 +436,45 @@ public class DebugCompiler {
 		         "-cp", classPath,
 		         "-source", "1.5"
 		    };
+		FileOutputStream outStream = null;
+		FileOutputStream errorStream = null;
+		try {
+			File outFile = new File("out.log");
+			File errorFile = new File("error.log");
+			outStream = new FileOutputStream(outFile, false);
+			errorStream = new FileOutputStream(errorFile, false);
+			
+			System.out.println("Logfile: " + outFile.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PrintWriter outWriter = null;
+		PrintWriter errWriter = null;
 		
-		PrintWriter outWriter = new PrintWriter(System.out);
-		PrintWriter errWriter = new PrintWriter(System.err);
-		boolean systemExitWhenFinished = false;
-		Map customDefaultOptions = new HashMap();
-		CompilationProgress compilationProgress = new CompilationProgress() {
-			
-			@Override
-			public void worked(int workIncrement, int remainingWork) {
-				// TODO Auto-generated method stub
-				//System.out.println("WORKED: " + workIncrement + " - " + remainingWork);
-			}
-			
-			@Override
-			public void setTaskName(String name) {
-				// TODO Auto-generated method stub
-				//System.out.println("SETTASKNAME: " + name);
-			}
-			
-			@Override
-			public boolean isCanceled() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public void done() {
-				// TODO Auto-generated method stub
-				//System.out.println("DONE");
-			}
-			
-			@Override
-			public void begin(int remainingWork) {
-				// TODO Auto-generated method stub
-				//System.out.println("BEGIN: " + remainingWork);
-			}
-		};
-		org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
-		boolean result = main.compile(args);
+		if (outStream != null)
+		{
+			outWriter = new PrintWriter(outStream);
+		} else
+		{
+			outWriter = new PrintWriter(System.out);
+		}
+		if (errorStream != null)
+		{
+			errWriter = new PrintWriter(errorStream);
+		}
+		else
+		{
+			errWriter = new PrintWriter(System.err);
+		}
+		
+		//boolean systemExitWhenFinished = false;
+		//Map customDefaultOptions = new HashMap();
+		CompilationProgress compilationProgress = this.debugCompileProgress.getJavaCompileProgress();
+		
+		//org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
+		//boolean result = main.compile(args);
+		boolean result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(args, outWriter, errWriter, compilationProgress);
 		System.out.println("Compile result: " + result);
 		//org.eclipse.jdt.internal.compiler.batch.Main.main(args);
 		
@@ -423,8 +498,13 @@ public class DebugCompiler {
 		{
 			System.out.println("Compile error");
 		}*/
-		System.out.println("Java compiler finished");
+		long duration = this.debugCompileProgress.getJavaCompileProgress().getDuration();
+		System.out.println("Java compiler finished in " + duration + " ms.");
 	    return binBasedir;
+	}
+	
+	public DebugCompileProgress getDebugCompileProgress() {
+		return debugCompileProgress;
 	}
 	
 	/**

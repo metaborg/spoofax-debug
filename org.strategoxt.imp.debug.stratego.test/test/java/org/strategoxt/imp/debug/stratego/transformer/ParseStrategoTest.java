@@ -7,6 +7,8 @@ import org.strategoxt.imp.debug.stratego.transformer.trans.test_output_parse_str
 import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_localvar_1_0_0;
 import org.strategoxt.imp.debug.stratego.transformer.trans.test_parse_test_prop_1_0_0;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.terms.TermFactory;
+
 
 public class ParseStrategoTest {
 
@@ -21,14 +23,16 @@ public class ParseStrategoTest {
 	public static void m1() {
 		System.out.println("test-parse-localvar-2");
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
-		IStrategoTerm currentTerm = new BasicStrategoString("");
+		TermFactory factory = new TermFactory();
+		IStrategoTerm currentTerm = factory.makeString("");
 		test_parse_localvar_1_0_0.instance.invoke(context, currentTerm);
 	}
 
 	public static void m2() {
 		System.out.println("test-parse-localvar-2");
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
-		IStrategoTerm currentTerm = new BasicStrategoString("");
+		TermFactory factory = new TermFactory();
+		IStrategoTerm currentTerm = factory.makeString("");
 		test_parse_test_prop_1_0_0.instance.invoke(context, currentTerm);
 
 	}

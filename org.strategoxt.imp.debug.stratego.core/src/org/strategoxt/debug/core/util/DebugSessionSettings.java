@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.util;
 
+
 public class DebugSessionSettings {
 
 	private String projectName;
@@ -80,6 +81,10 @@ public class DebugSessionSettings {
 
 	public void setJarLibraryDirectory(String directory)
 	{
+		if (directory.endsWith("/"))
+		{
+			directory = directory.substring(0, directory.length()-1);
+		}
 		String strategoxt_jar = directory + "/strategoxt.jar";
 		String stratego_debug_runtime_jar = directory + "/stratego-debug-runtime.jar";
 		String stratego_debug_runtime_java_jar = directory + "/stratego-debug-runtime-java.jar";
@@ -143,6 +148,21 @@ public class DebugSessionSettings {
 	public String getStrategoDebugRuntimeJavaJar()
 	{
 		return this.strategoDebugRuntimeJavaJar;
+	}
+	
+	
+	private String[] compileTimeExtraArguments = null;
+	
+	/**
+	 * Returns a list of paths that each should be used as "-I" argument when compiling the Stratego program to Java.
+	 * @return
+	 */
+	public String[] getCompileTimeExtraArguments() {
+		return compileTimeExtraArguments;
+	}
+	
+	public void setCompileTimeExtraArguments(String[] compileTimeExtraArguments) {
+		this.compileTimeExtraArguments = compileTimeExtraArguments;
 	}
 	
 }

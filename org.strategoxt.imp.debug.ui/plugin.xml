@@ -70,4 +70,13 @@
             id="org.strjdbg.eclipse.core">
       </debugModelPresentation>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.strjdbg.eclipse.ui.str.StrategoStatusHandler"
+            code="0"
+            id="org.strjdbg.eclipse.core.str.launching.statusHandler"
+            plugin="org.strjdbg.eclipse.core">
+      </statusHandler>
+   </extension>
 </plugin>
