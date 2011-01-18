@@ -5,12 +5,10 @@ import org.strategoxt.debug.core.eventspec.RuleExitBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-
 public class RuleExitHandler extends EventHandler {
 
-	public RuleExitHandler(MethodEntryEvent event) {
-		super(event);
+	public RuleExitHandler(ValueExtractor extractor) {
+		super(extractor);
 	}
 
 	@Override
@@ -30,6 +28,11 @@ public class RuleExitHandler extends EventHandler {
 	@Override
 	public boolean isEnter() {
 		return false;
+	}
+	
+	@Override
+	public boolean isExit() {
+		return true;
 	}
 	
 	

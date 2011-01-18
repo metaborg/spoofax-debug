@@ -144,7 +144,7 @@ public class DebugCompileTransformer {
 		long a3 = System.currentTimeMillis();
 		System.out.println("RUN:" + (a3 - a2));
 		
-		//testDebugCompileTransformerError();
+		testDebugCompileTransformerError();
 	}
 
 	private static void testDebugCompileTransformerError() {
@@ -196,7 +196,7 @@ public class DebugCompileTransformer {
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_1";
+			//String output = StrategoFileManager.WORKING_DIR + "/transformer_test_1";
 			String argsForMainClass = "-i " + input;// + " -o " + output;
 			String mainClass = "transformer.transformer";
 			String mainArgs = mainClass + " " + argsForMainClass;
@@ -320,14 +320,14 @@ public class DebugCompileTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = false;
+		boolean runjava = true;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run";
 			String argsForMainClass = "-i " + input + " -o " + output;
-			String mainClass = "transformer.transformer";
+			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
 			String strategoxtjar = debugSessionSettings.getStrategoxtJar();

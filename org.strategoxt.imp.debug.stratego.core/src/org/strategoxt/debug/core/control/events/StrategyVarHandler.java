@@ -3,12 +3,10 @@ package org.strategoxt.debug.core.control.events;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-
 public class StrategyVarHandler extends EventHandler {
 
-	public StrategyVarHandler(MethodEntryEvent event) {
-		super(event);
+	public StrategyVarHandler(ValueExtractor extractor) {
+		super(extractor);
 	}
 	
 	
@@ -24,6 +22,11 @@ public class StrategyVarHandler extends EventHandler {
 
 	@Override
 	public boolean isEnter() {
+		return false;
+	}
+	
+	@Override
+	public boolean isExit() {
 		return false;
 	}
 	

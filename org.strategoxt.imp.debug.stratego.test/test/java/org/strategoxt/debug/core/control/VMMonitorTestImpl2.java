@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
-import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.StrategoState;
+import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 
 public class VMMonitorTestImpl2 implements VMMonitor {
 	
@@ -48,6 +48,10 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		}
 	}
 	
+	/**
+	 * An asser failed in a thread, report it to the main thread
+	 * @param message
+	 */
 	private void reportAssertFailure(String message)
 	{
 		if (this.callback != null)
@@ -69,7 +73,7 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 				String message = "State #" + vmStateTester.getIndex()+ ": Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
 				Assert.assertTrue(message, expected);
 				System.out.println("current: " + state.currentFrame().getCurrentTerm());
-				for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+				for ( Entry<String, StrategoTermValueWrapper> entry : state.currentFrame().getVariables().entrySet() )
 				{
 					System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
 				}
@@ -105,7 +109,7 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		if ("VMDEATH".equals(event))
 		{
 			// vm terminated, TODO: last state should be a StrategoExitedState
-			if (this.vmStateTester.hasNext())
+			if (this.vmStateTester != null && this.vmStateTester.hasNext())
 			{
 				String message = "VM has terminated but there are still some expected hits left..."; 
 				//Assert.fail(message);

@@ -1,61 +1,17 @@
 package org.strategoxt.debug.core.control.events;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.spoofax.interpreter.terms.IStrategoAppl;
-import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.util.StrategoTermBuilder;
-import org.strategoxt.lang.terms.StrategoString;
+import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.LocalVariable;
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
-import com.sun.jdi.event.MethodEntryEvent;
-import com.sun.jdi.event.MethodExitEvent;
 
 public abstract class EventHandler {
 	
-	// The following object attrbibutes should match the parameters in the invoke-method of the classes java_[r/s]_[enter/exit]_0_{x}
-	// where {x} is the number of term arguments in the strategy
-	protected LocalVariable contextLV = null; // org.strategoxt.lang.Context
-	
-	/**
-	 * Current term should be the same as the given term
-	 */
-	protected LocalVariable currentLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
-	
-	/**
-	 * The filename from which the call originated
-	 */
-	protected LocalVariable filenameLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
-	
-	/**
-	 * The name of the rule or strategy
-	 */
-	protected LocalVariable nameLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
-	
-	/**
-	 * LocationInfo about the calling rule or strategy
-	 */
-	protected LocalVariable locationLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
-	
-	/**
-	 * Given term, the term that was the original term when the rule or strategy was entered.
-	 */
-	protected LocalVariable givenLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
-	
-	/**
-	 * Only applies to s-var events, contains the name of the local variable that is assigned.
-	 */
-	protected LocalVariable varnameLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
+
 	
 	public static String S_ENTER = "s_enter";
 	public static String S_EXIT = "s_exit";
@@ -63,386 +19,74 @@ public abstract class EventHandler {
 	public static String R_EXIT = "r_exit";
 	public static String S_STEP = "s_step";
 	public static String S_VAR = "s_var";
-	
-	protected MethodEntryEvent entry_event = null;
-	protected MethodExitEvent exit_event = null;
-	
-	protected StrategoTermBuilder builder = new StrategoTermBuilder();
-	
-	/**
-	 * The current com.sun.jdi.StackFrame.
-	 */
-	private StackFrame stackFrame = null;
-	
-	public EventHandler(MethodExitEvent event)
-	{
-		this.exit_event = event;
-		this.initLocalVariables();
-	}
-	
-	public EventHandler(MethodEntryEvent event)
-	{
-		this.entry_event = event;
-		this.initLocalVariables();
-	}
-	
-	/**
-	 * Extract the method arguments. 
-	 * @return Returns a list of LocalVariables each represents a method argument.
-	 */
-	private List<LocalVariable> getMethodArguments()
-	{
-		List<LocalVariable> args = new ArrayList<LocalVariable>();
-		if (this.entry_event != null)
-		{
-			try {
-				args = this.entry_event.method().arguments();
-			} catch (AbsentInformationException e) {
-				e.printStackTrace();
-			}
-		}
-		else if (exit_event != null)
-		{
-			try {
-				args = this.exit_event.method().arguments();
-			} catch (AbsentInformationException e) {
-				e.printStackTrace();
-			}
-		}
-		return args;
-	}
-	
-	
-	
-	/**
-	 * Returns the current com.sun.jdi.StackFrame
-	 * @return
-	 */
-	public StackFrame getStackFrame()
-	{
-		if (stackFrame == null)
-		{
-			if (this.entry_event != null)
-			{
-				ThreadReference thread = entry_event.thread();
-				
-				StackFrame fr = null;
-				try {
-					fr = thread.frame(0); // get current frame
-				} catch (IncompatibleThreadStateException e) {
-					e.printStackTrace(); // thread should be suspended
-				}
-				this.stackFrame = fr;
-			}
-			else if (exit_event != null)
-			{
-				ThreadReference thread = exit_event.thread();
-				
-				StackFrame fr = null;
-				try {
-					fr = thread.frame(0); // get current frame
-				} catch (IncompatibleThreadStateException e) {
-					e.printStackTrace(); // thread should be suspended
-				}
-				this.stackFrame = fr;
-			}
-		}
-		return stackFrame;
-	}
-	
-	private void initLocalVariables()
-	{
-		contextLV = null;
-		currentLV = null;
-		filenameLV = null;
-		nameLV = null; 
-		locationLV = null;
-		givenLV = null;
-		varnameLV = null;
-		// set arguments for easy reference	
-		List<LocalVariable> args = getMethodArguments();
 
-		for(LocalVariable lv : args)
-		{
-			String lvName = lv.name();
-			//System.out.println("LV: " + lv.name() + " " + lv.typeName());
-			if ("context".equals(lvName))
-			{
-				contextLV = lv;
-			}
-			else if ("current".equals(lvName))
-			{
-				currentLV = lv;					
-			}
-			else if ("filename".equals(lvName))
-			{
-				filenameLV = lv;
-			}
-			else if ("name".equals(lvName))
-			{
-				nameLV = lv;
-			}
-			else if ("location".equals(lvName))
-			{
-				locationLV = lv;
-			}
-			else if ("given".equals(lvName))
-			{
-				givenLV = lv;
-			}
-			else if ("varname".equals(lvName))
-			{
-				varnameLV = lv;
-			}
-		}	
+	
+	
+	private ValueExtractor valueExtractor = null;
+	
+	public EventHandler(ValueExtractor extractor)
+	{
+		this.valueExtractor = extractor;
 	}
 	
-	/**
-	 * Returns the value of the LocalVariable given which is a method parameter.
-	 * 
-	 * @return
-	 */
-	protected Value getGivenValue()
-	{
-		StackFrame fr = getStackFrame();
-		
-		Value val = fr.getValue(this.givenLV);	
-		
-		return val;		
+	public ValueExtractor getValueExtractor() {
+		return valueExtractor;
 	}
 	
-	/**
-	 * Returns the value of the LocalVariable context which is a method parameter.
-	 * 
-	 * @return
-	 */
-	public Value getContextValue()
-	{
-		StackFrame fr = getStackFrame();
-		
-		Value val = fr.getValue(this.contextLV);	
-		
-		return val;
-	}
-	
-	/**
-	 * Returns the value of the LocalVariable location which is a method parameter.
-	 * 
-	 * @return
-	 */
-	protected Value getLocationValue()
-	{
-		StackFrame fr = getStackFrame();
-		
-		Value val = fr.getValue(this.locationLV);	
-		
-		return val;
-	}
-
-	/**
-	 * Returns the value of the LocalVariable name which is a method parameter.
-	 * 
-	 * @return
-	 */
-	protected Value getNameValue()
-	{
-		StackFrame fr = getStackFrame();
-		
-		Value nameValue = fr.getValue(this.nameLV); // StrategoString instance
-		
-		return nameValue;
-	}
-	
-	/**
-	 * Returns the value of the LocalVariable filename which is a method parameter.
-	 * 
-	 * @return
-	 */
-	protected Value getFilenameValue()
-	{
-		StackFrame fr = getStackFrame();
-		
-		Value filenameValue = fr.getValue(this.filenameLV); // StrategoString instance
-		
-		return filenameValue;
-	}
-	
-	/**
-	 * Returns the value of the LocalVariable varname which is a method parameters.
-	 * This variable is only used in s-var. This method may return null when the method parameter is not defined.
-	 * @return
-	 */
-	protected Value getVarnameValue()
-	{
-		if (this.varnameLV == null)
-		{
-			return null;
-		}
-		
-		StackFrame fr = getStackFrame();
-		
-		Value varnameValue = fr.getValue(this.varnameLV); // StrategoString instance
-
-		return varnameValue;
-	}
-	
-	/**
-	 * Returns the value of the method parameter 'given' as an IStrategoTerm.
-	 * 
-	 * @return
-	 */
-	public IStrategoTerm getGiven()
-	{
-        Value givenValue = this.getGivenValue();
-        //Dump.dump(givenValue);
-        IStrategoTerm given = builder.buildIStrategoTerm(givenValue);
-        return given;
-	}
-
-	protected void getContext()
-	{
-		//System.out.println("CONTEXT");
-        //ObjectReference obj = (ObjectReference) this.getContextValue();
-        //ReferenceType refType = obj.referenceType();
-        //Dump.dump(obj, refType, refType);
-	}
-	
-	/**
-	 * Creates a LocationInfo containing the location information
-	 * 
-	 * @return
-	 */
-	public LocationInfo getLocationInfo()
-	{
-		String[] locationInfo = new String[4];
-		Value locationValue = getLocationValue();
-		IStrategoAppl appl = builder.buildStrategoAppl(locationValue);
-		IStrategoTerm[] terms = appl.getAllSubterms();
-		int i = 0;
-		for(IStrategoTerm term : terms)
-		{
-			if (term instanceof StrategoString)
-			{
-				StrategoString ss = (StrategoString) term;
-				String number = ss.stringValue();
-				if (number.startsWith("\"") && number.endsWith("\""))
-				{
-					number = number.substring(1, number.length()-1);
-				}
-				locationInfo[i] = number;
-				i++;   
-			}
-		}
-
-		LocationInfo loc = new LocationInfo(locationInfo);
-		return loc;
-	}
-
-	/**
-	 * Returns thevalue of the method parameter 'filename' as a String.
-	 * @return
-	 */
 	public String getFilename()
 	{
-		Value filenameValue = getFilenameValue(); // should be StrategoString
-		String s = builder.buildStrategoString(filenameValue).stringValue();
-		
-		String filename = "";
-		// name is surrounded by double quotes, remove them.
-		if (s.startsWith("\"") && s.endsWith("\""))
-		{
-			filename = s.substring(1, s.length()-1);
-		}
-		else
-		{
-			filename = s;
-		}
-		return filename;
+		return this.getValueExtractor().getFilename();
 	}
 	
-	/**
-	 * Returns the value of the method parameter 'name' as a String.
-	 * 
-	 * @return
-	 */
+	public StrategoTermValueWrapper getGiven()
+	{
+		return this.getValueExtractor().getGiven();
+	}
+
+	public LocationInfo getLocationInfo()
+	{
+		return this.getValueExtractor().getLocationInfo();
+	}
+	
 	public String getName()
 	{
-		Value nameValue = getNameValue(); // should be StrategoString
-		String s = builder.buildStrategoString(nameValue).stringValue();
-		
-		String name = "";
-		// name is surrounded by double quotes, remove them.
-		if (s.startsWith("\"") && s.endsWith("\""))
-		{
-			name = s.substring(1, s.length()-1);
-		}
-		else
-		{
-			name = s;
-		}
-		return name;
+		return this.getValueExtractor().getName();
 	}
 	
-	/**
-	 * Returns the value of the method parameter 'varname' as a String.
-	 * If the method does not have a parameter 'varname' null is returned.
-	 * @return
-	 */
+	public StackFrame getStackFrame()
+	{
+		return this.getValueExtractor().getStackFrame();
+	}
+	
 	public String getVarname()
 	{
-		Value varnameValue = getVarnameValue(); // should be StrategoString
-		if (varnameValue == null)
-		{
-			return null;
-		}
-		String s = builder.buildStrategoString(varnameValue).stringValue();
-		
-		String varname = "";
-		// varname is surrounded by double quotes, remove them.
-		if (s.startsWith("\"") && s.endsWith("\""))
-		{
-			varname = s.substring(1, s.length()-1);
-		}
-		else
-		{
-			varname = s;
-		}
-		return varname;
+		return this.getValueExtractor().getVarname();
+	}
+	
+	public Value getContextValue()
+	{
+		return this.getValueExtractor().getContextValue();
 	}
 	
 
 	/**
 	 * Returns true if the thread should stay suspended.
 	 * Returns false if the thread should resume
-	 * 
-	 * If we hit a breakpoint we should always suspend and cancel all stepping.
-	 * If we are doing a step over we suspend 
-	 * 		at the next s-step,s-exit,r-exit that is in the same StackFrame
-	 * 		or in the first s-step,s-exit,r-exit in a parent StackFrame (we stepped over the last statement)
-	 * If we are doing a step into we should suspend
-	 * 		at the first s-enter or s-exit that is in a child StackFrame 
-	 * 		or at the first s-step,s-exit,r-exit that is in the current StackFrame (current statement cannot be stepping into) 
-	 * 		or at the first s-step,s-exit,r-exit that is in the parent StackFrame (doing a step into at an s-exit,r-exit)
-	 * If we are doing a step return we should suspend
-	 * 		at the first s-step,s-exit,r-exit in the parent StackFrame
+	 * <ul>
+	 * <li>If we hit a breakpoint we should always suspend and cancel all stepping.</li>
+	 * <li>If we are doing a step over we suspend<ul><li> 
+	 * 		at the next s-step,s-exit,r-exit that is in the same StackFrame</li><li>
+	 * 		or in the first s-step,s-exit,r-exit in a parent StackFrame (we stepped over the last statement)</li></ul></li>
+	 * <li>If we are doing a step into we should suspend<ul><li> 
+	 * 		at the first s-enter or s-exit that is in a child StackFrame </li><li>
+	 * 		or at the first s-step,s-exit,r-exit that is in the current StackFrame (current statement cannot be stepping into) </li><li>
+	 * 		or at the first s-step,s-exit,r-exit that is in the parent StackFrame (doing a step into at an s-exit,r-exit)</li></ul></li>
+	 * <li>If we are doing a step return we should suspend<ul><li> 
+	 * 		at the first s-step,s-exit,r-exit in the parent StackFrame</li></ul></li>
+	 * </ul>
 	 * @return
 	 */
 	public boolean shouldSuspend(StrategoState currentState, EventSpecManager eventSpecManager){
-		// sysout debug info
-		/*
-		String name = this.getName(); // the name of the rule
-		LocationInfo locationInfo = getLocationInfo();
-		//IStrategoTerm given = getGiven();
-        //ITermPrinter pp = new PrettyPrinter();
-        //ITermPrinter pp = new InlinePrinter();
-        //given.prettyPrint(pp);
-        System.out.println(this.getEventType() + " Name: " + name);
-        System.out.println(locationInfo);
-		//System.out.println("Current term:");
-        //System.out.println(pp.getString());
-        //System.out.println();
-        */
-        // end debug info
 		boolean isBreakPointHit = eventSpecManager.match(createBreakPoint());
 		
         // if we should step
@@ -495,7 +139,7 @@ public abstract class EventHandler {
 			{
 				// what if the current stackframe level is smaller that the stepFrameLevel? We must have missed an r-exit/s-exit
 				// stop at the first s-step, s-exit, s-enter, r-exit, r-enter (s-var is ingnored)
-				System.out.println("Missed step over curLevel="+currentState.getCurrentFrameLevel() + " stepOverInLevel="+eventSpecManager.getStepFrameLevel());
+				log("Missed step over curLevel="+currentState.getCurrentFrameLevel() + " stepOverInLevel="+eventSpecManager.getStepFrameLevel());
 				shouldSuspend = true;
 				eventSpecManager.resetStep(currentState); // reset step
 				
@@ -562,7 +206,7 @@ public abstract class EventHandler {
 		{
 			// the program suspends but we are still stepping
 			// TODO: this should never occur...
-			System.out.println("The program suspended but we are still stepping!");
+			log("The program suspended but we are still stepping!");
 			
 		}
 		
@@ -586,4 +230,11 @@ public abstract class EventHandler {
 	public abstract String getEventType();
 
 	public abstract boolean isEnter();
+	
+	public abstract boolean isExit();
+	
+	protected void log(String message)
+	{
+		System.out.println(message);
+	}
 }

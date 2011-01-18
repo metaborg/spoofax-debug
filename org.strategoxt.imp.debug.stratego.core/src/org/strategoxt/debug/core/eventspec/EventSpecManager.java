@@ -126,7 +126,7 @@ public class EventSpecManager {
 			{
 				// no parent index
 				// we are at the exit of the main strategy!
-				System.out.println("At exit of top level strategy, just continue..");
+				log("At exit of top level strategy, just continue..");
 				return;
 			}
 			stepFrame = state.get(parentIndex);
@@ -157,7 +157,7 @@ public class EventSpecManager {
 		{
 			// current stackframe is suspend at a s-exit/r-exit/s-enter/r-enter
 			// just treat it as an step over
-			System.out.println("Cannot step into " + state.currentFrame().getEventType() + ", just do a step over...");
+			log("Cannot step into " + state.currentFrame().getEventType() + ", just do a step over...");
 			setStepOver(state);
 		}
 		state.setStepping(true);
@@ -168,7 +168,7 @@ public class EventSpecManager {
 		if (state.getCurrentFrameLevel() == 0)
 		{
 			// we are at the main strategy, cannot step return
-			System.out.println("Cannot step return in top level strategy, just continue...");
+			log("Cannot step return in top level strategy, just continue...");
 			return;
 		}
 		stepFrame = state.currentFrame();
@@ -191,6 +191,10 @@ public class EventSpecManager {
 	public EventTable getEventTable()
 	{
 		return this.eventTable;
+	}
+	
+	private void log(String message){
+		System.out.println(message);
 	}
 
 }

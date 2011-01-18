@@ -5,12 +5,10 @@ import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-
 public class StrategyStepHandler extends EventHandler {
 
-	public StrategyStepHandler(MethodEntryEvent event) {
-		super(event);
+	public StrategyStepHandler(ValueExtractor extractor) {
+		super(extractor);
 	}
 
 	@Override
@@ -32,7 +30,10 @@ public class StrategyStepHandler extends EventHandler {
 		return false;
 	}
 	
-
+	@Override
+	public boolean isExit() {
+		return false;
+	}
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {

@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
   DSMTestImports.class,
   DSMTestStepInto.class,
   DSMTestStepping.class,
-  DSMTestStepReturn.class
+  DSMTestStepReturn.class,
+  DSMTransformerDebug.class
 })
 
 public class DSMSuite {

@@ -5,6 +5,7 @@ public class TransformStrategoxtTest {
 	public static void main(String[] args) {
 		System.out.println("TEST");
 		String strategoxtDirectory = "/home/rlindeman/Documents/TU/strategoxt/strategoxt-debug";
-		// TODO: implement
+		// TODO: implement add debug info to strategoxt
+		System.out.println(strategoxtDirectory);
 	}
 }

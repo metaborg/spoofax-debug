@@ -417,8 +417,8 @@ public class DebugCompiler {
 	 */
 	protected String compileJava(DebugSessionSettings debugSessionSettings, String sourceBasedir, String mainSourceFileName, String binBasedir)
 	{
-		System.out.println("Compiling " + mainSourceFileName);
-		System.out.println("Please wait...");
+		log("Compiling " + mainSourceFileName);
+		log("Please wait...");
 		// import org.strategoxt.stratego_lib.*;
 		// import org.strategoxt.libstrategodebuglib.*;
 		// import org.strategoxt.lang.*;
@@ -427,7 +427,7 @@ public class DebugCompiler {
 		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 		
 		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
-		System.out.println(classPath);
+		log(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
 		String filename = sourceBasedir + "/" + mainSourceFileName;
 		String[] args = new String[] {
@@ -444,7 +444,7 @@ public class DebugCompiler {
 			outStream = new FileOutputStream(outFile, false);
 			errorStream = new FileOutputStream(errorFile, false);
 			
-			System.out.println("Logfile: " + outFile.getAbsolutePath());
+			log("Logfile: " + outFile.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -475,7 +475,7 @@ public class DebugCompiler {
 		//org.eclipse.jdt.internal.compiler.batch.Main main = new Main(outWriter, errWriter, systemExitWhenFinished, customDefaultOptions, compilationProgress);
 		//boolean result = main.compile(args);
 		boolean result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(args, outWriter, errWriter, compilationProgress);
-		System.out.println("Compile result: " + result);
+		log("Compile result: " + result);
 		//org.eclipse.jdt.internal.compiler.batch.Main.main(args);
 		
 		/*
@@ -499,7 +499,7 @@ public class DebugCompiler {
 			System.out.println("Compile error");
 		}*/
 		long duration = this.debugCompileProgress.getJavaCompileProgress().getDuration();
-		System.out.println("Java compiler finished in " + duration + " ms.");
+		log("Java compiler finished in " + duration + " ms.");
 	    return binBasedir;
 	}
 	
@@ -522,6 +522,10 @@ public class DebugCompiler {
 		// replace '-' with '_'
 		name = name.replace('-', '_');
 		return name;
+	}
+	
+	private void log(String message){
+		System.out.println(message);
 	}
 
 }

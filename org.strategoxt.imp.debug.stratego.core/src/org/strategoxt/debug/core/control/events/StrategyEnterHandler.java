@@ -6,13 +6,11 @@ import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-
 public class StrategyEnterHandler extends EventHandler {
 
-	public StrategyEnterHandler(MethodEntryEvent event)
+	public StrategyEnterHandler(ValueExtractor extractor)
 	{
-		super(event);
+		super(extractor);
 	}
 	
 	@Override
@@ -33,6 +31,11 @@ public class StrategyEnterHandler extends EventHandler {
 	@Override
 	public boolean isEnter() {
 		return true;
+	}
+	
+	@Override
+	public boolean isExit() {
+		return false;
 	}
 
 	@Override

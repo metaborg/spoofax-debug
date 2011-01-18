@@ -31,8 +31,14 @@ public class VMLauncherHelper {
     
 	private VirtualMachineManager vmManager = null;
     
-	public VMLauncherHelper(VirtualMachineManager vmManager) {
+	/**
+	 * Determines what Launching connector to use
+	 */
+	private String connectorType = null;
+	
+	public VMLauncherHelper(VirtualMachineManager vmManager, String connectorType) {
 		this.vmManager = vmManager;
+		this.connectorType = connectorType;
 	}
 
 	/**
@@ -86,11 +92,29 @@ public class VMLauncherHelper {
 		throw new Error("No com.sun.jdi.SocketListen connector");
 	}
 	
+	private Map<String, ? extends Connector.Argument> connectorAttachArguments(AttachingConnector connector, String mainArgs)
+	{
+		Map<String, ? extends Connector.Argument> arguments = connector.defaultArguments();
+		arguments.get("port").setValue("8000");
+		
+		return arguments;
+	}
+	
+	private Map<String, ? extends Connector.Argument> connectorListenArguments(ListeningConnector connector, String mainArgs)
+	{
+		Map<String, ? extends Connector.Argument> arguments = connector.defaultArguments();
+		arguments.get("port").setValue("8000");
+		arguments.get("localAddress").setValue("localhost");
+		
+		
+		return arguments;
+	}
+	
 	// set arguments for the connector
 	/**
 	 * Return the launching connector's arguments.
 	 */
-	private Map<String, ? extends Connector.Argument> connectorArguments(Connector connector, String mainArgs) {
+	private Map<String, ? extends Connector.Argument> connectorLaunchArguments(LaunchingConnector connector, String mainArgs) {
 		Map<String, ? extends Connector.Argument> arguments = connector.defaultArguments();
 		Connector.Argument mainArg = (Connector.Argument) arguments.get("main");
 		if (mainArg == null) {
@@ -101,7 +125,8 @@ public class VMLauncherHelper {
 		//System.out.println("CP:" + classpath);
 		Connector.Argument opts = (Connector.Argument) arguments.get("options");
 		String classpath = this.getDebugProgramClasspath();
-		opts.setValue("-classpath " + classpath);
+		String optionValue = "-Xss8m -Xms256m -Xmx1024m -XX:MaxPermSize=256m -server " + "-classpath " + classpath;
+		opts.setValue(optionValue);
 		
 		Connector.Argument susp = (Connector.Argument) arguments.get("suspend");
 		susp.setValue("true");
@@ -116,16 +141,52 @@ public class VMLauncherHelper {
 		}
 		return arguments;
 	}
+	
+	private VirtualMachine attachToTarget(String mainArgs)
+	{
+		AttachingConnector connector = null;
+		connector = VMLauncherHelper.findSocketAttachConnector(this.vmManager);
+		
+		Map<String, ? extends Connector.Argument> arguments = connectorAttachArguments(connector, mainArgs);
+		try {
+			return connector.attach(arguments);
+		} catch (IOException exc) {
+			throw new Error("Unable to attach target VM: " + exc);
+		} catch (IllegalConnectorArgumentsException exc) {
+			throw new Error("Internal error: " + exc);
+		}
+	}
+	
+	/**
+	 * target vm should have server=n in the -Xrunjdwp or
+	 * -Xrunjdwp:transport=dt_socket,address=8000
+	 * @param mainArgs
+	 * @return
+	 */
+	private VirtualMachine listenForTarget(String mainArgs){
+		ListeningConnector connector = null;
+		connector = VMLauncherHelper.findSocketListenConnector(this.vmManager);
+		
+		Map<String, ? extends Connector.Argument> arguments = connectorListenArguments(connector, mainArgs);
+		try {
+			return connector.accept(arguments);
+		} catch (IOException exc) {
+			throw new Error("Unable to listen for target VM: " + exc);
+		} catch (IllegalConnectorArgumentsException exc) {
+			throw new Error("Internal error: " + exc);
+		}
+	}
+	
 	// attach to target vm (target vm runs the stratego program)
 	/**
 	 * Launch target VM. Forward target's output and error.
 	 */
 	private VirtualMachine launchTarget(String mainArgs) {
 		LaunchingConnector connector = null;
-
+		
 		connector = VMLauncherHelper.findCLLaunchingConnector(this.vmManager);
 		
-		Map<String, ? extends Connector.Argument> arguments = connectorArguments(connector, mainArgs);
+		Map<String, ? extends Connector.Argument> arguments = connectorLaunchArguments(connector, mainArgs);
 		try {
 			return connector.launch(arguments);
 		} catch (IOException exc) {
@@ -140,7 +201,16 @@ public class VMLauncherHelper {
 	
 	public VirtualMachine getTargetVM(String mainArgs)
 	{
-		return this.launchTarget(mainArgs);
+		if (this.connectorType == null || "LAUNCH".equals(this.connectorType))
+		{
+			return this.launchTarget(mainArgs);
+		} else if ("LISTEN".equals(this.connectorType)) {
+			return this.listenForTarget(mainArgs);
+		} else if ("ATTACH".equals(this.connectorType)) { // server=y, start program before the debugger
+			return this.attachToTarget(mainArgs);
+		} else {
+			return null;
+		}
 		
 	}
 
@@ -181,7 +251,12 @@ public class VMLauncherHelper {
 		{
 			cp += ":" + path;
 		}
-		System.out.println("CP: " + cp);
+		log("CP: " + cp);
 		return cp;
+	}
+	
+	private void log(String message)
+	{
+		System.out.println();
 	}
 }

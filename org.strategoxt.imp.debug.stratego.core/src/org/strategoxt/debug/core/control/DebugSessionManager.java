@@ -72,8 +72,8 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(VirtualMachineManager vmManager, DebugSessionSettings settings, String mainArgs, String classpath) {
-		VMLauncherHelper helper = new VMLauncherHelper(vmManager);
+	public void initVM(VirtualMachineManager vmManager, DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
+		VMLauncherHelper helper = new VMLauncherHelper(vmManager, connectorType);
 		helper.setMainClasspath(classpath);
 		List<String> jars = new ArrayList<String>();
 		jars.add(settings.getStrategoxtJar());
@@ -91,11 +91,20 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath) {
+	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath)
+	{
+		// use default launch
+		this.initVM(settings, mainArgs, classpath, "LAUNCH");
+	}
+	
+	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
 		this.log("Use Sun VM");
 		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
-		this.initVM(vmManager, settings, mainArgs, classpath);
+		this.initVM(vmManager, settings, mainArgs, classpath, connectorType);
 	}
+	
+	
+	
 	
 	/**
 	 * Initialize a new VM using the given VirtualMachineManager.
@@ -164,27 +173,36 @@ public class DebugSessionManager {
 		}
 		else
 		{
-			System.out.println("no process with vm");
+			log("no process with vm");
 		}
 	}
 
 	// next block of methods can be used to control the VM
 
 	public void runVM() {
-		System.out.println("runVM start");
+		log("runVM start");
         vm.resume();
 
         // Shutdown begins when event thread terminates
         try {
-            //eventThread.join();
-            errThread.join(); // Make sure output is forwarded
-            outThread.join(); // before we exit
-            errThread.closeStream();
-            outThread.closeStream();
+        	if (eventThread != null)
+        	{
+        		eventThread.join();
+        	}
+        	if (errThread != null)
+        	{
+	            errThread.join(); // Make sure output is forwarded
+	        	errThread.closeStream();
+        	}
+        	if (outThread != null)
+        	{
+	            outThread.join(); // before we exit
+	            outThread.closeStream();
+        	}
         } catch (InterruptedException exc) {
             // we don't interrupt
         }
-        System.out.println("runVM end");
+        log("runVM end");
 	}
 	
 	/**
@@ -192,11 +210,11 @@ public class DebugSessionManager {
 	 */
 	public void resumeVM()
 	{
-		System.out.println("RESUME");
+		log("RESUME");
 		if (this.eventThread.getVMDied())
 		{
 			// cannot resume a VM that has died
-			System.out.println("Cannot resume a VM that has died...");
+			log("Cannot resume a VM that has died...");
 		}
 		else
 		{
@@ -217,7 +235,7 @@ public class DebugSessionManager {
 	{
 		if (canStepInto())
 		{
-			System.out.println("STEP INTO");
+			log("STEP INTO");
 			// stop at the first possible s-enter/r-enter event
 			// if the current statement is not a call to another method, we can only step over
 			this.eventSpecManager.setStepInto(this.getStrategoState());
@@ -229,7 +247,7 @@ public class DebugSessionManager {
 	{
 		if (this.canStepOver())
 		{
-			System.out.println("STEP OVER");
+			log("STEP OVER");
 			// get the thread that is suspended, stratego programs are single threaded, so we always know which thread we need.
 			// just save the step info in the EventSpecManager, if stratego becomes multi-threaded, step info needs to be saved per Thread
 			this.eventSpecManager.setStepOver(this.getStrategoState());
@@ -243,7 +261,7 @@ public class DebugSessionManager {
 	{
 		if (this.canStepReturn())
 		{
-			System.out.println("STEP RETURN");
+			log("STEP RETURN");
 			// continue until the current stackframe fires an s-exit or r-exit event.
 			// we should stop at the next s-step in the parent stackframe.
 			this.eventSpecManager.setStepReturn(this.getStrategoState());

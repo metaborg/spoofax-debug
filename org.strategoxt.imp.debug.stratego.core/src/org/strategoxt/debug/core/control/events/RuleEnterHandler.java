@@ -6,13 +6,10 @@ import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-
 public class RuleEnterHandler extends EventHandler {
 
-	public RuleEnterHandler(MethodEntryEvent event) {
-		super(event);
-		// TODO Auto-generated constructor stub
+	public RuleEnterHandler(ValueExtractor extractor) {
+		super(extractor);
 	}
 	
 	@Override
@@ -32,6 +29,11 @@ public class RuleEnterHandler extends EventHandler {
 	@Override
 	public boolean isEnter() {
 		return true;
+	}
+	
+	@Override
+	public boolean isExit() {
+		return false;
 	}
 	
 	@Override
