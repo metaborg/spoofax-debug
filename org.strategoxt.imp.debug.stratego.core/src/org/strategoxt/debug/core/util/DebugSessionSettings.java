@@ -16,8 +16,19 @@ public class DebugSessionSettings {
 		this.projectName = projectName;
 	}
 	
+	/**
+	 * The class directory
+	 */
 	public static String CLASS_DIR_NAME = "class";
+	
+	/**
+	 * The stratego directory
+	 */
 	public static String STRATEGO_DIR_NAME = "stratego";
+	
+	/**
+	 * The java directory
+	 */
 	public static String JAVA_DIR_NAME = "java";
 	
 	// generated using working directory and the project name
@@ -25,6 +36,10 @@ public class DebugSessionSettings {
 	private String strategoDirectory = null;
 	private String javaDirectory = null;
 	
+	/**
+	 * Returns the directory that contains the generated java class files.
+	 * @return
+	 */
 	public String getClassDirectory()
 	{
 		if (classDirectory == null)
@@ -34,6 +49,10 @@ public class DebugSessionSettings {
 		return classDirectory;
 	}
 	
+	/**
+	 * Returns the directory that contains the stratego files with debug information.
+	 * @return
+	 */
 	public String getStrategoDirectory()
 	{
 		if (strategoDirectory == null)
@@ -43,6 +62,10 @@ public class DebugSessionSettings {
 		return strategoDirectory;
 	}
 	
+	/**
+	 * Returns the directory that contains the generated java files.
+	 * @return
+	 */
 	public String getJavaDirectory()
 	{
 		if (javaDirectory == null)
@@ -52,6 +75,10 @@ public class DebugSessionSettings {
 		return javaDirectory;
 	}
 	
+	/**
+	 * Returns the project name.
+	 * @return
+	 */
 	public String getProjectName()
 	{
 		return this.projectName;
@@ -62,7 +89,10 @@ public class DebugSessionSettings {
 	
 	
 	
-	
+	/**
+	 * Returns the directory that is the base-dir containing the source of the stratego program.
+	 * @return
+	 */
 	public String getStrategoSourceBasedir() {
 		return strategoSourceBasedir;
 	}
@@ -71,6 +101,10 @@ public class DebugSessionSettings {
 		this.strategoSourceBasedir = strategoSourceBasedir;
 	}
 
+	/**
+	 * File location of the stratego program main entry point. The location is relative to the strategoSourceBasedir.
+	 * @return
+	 */
 	public String getStrategoFilePath() {
 		return strategoFilePath;
 	}

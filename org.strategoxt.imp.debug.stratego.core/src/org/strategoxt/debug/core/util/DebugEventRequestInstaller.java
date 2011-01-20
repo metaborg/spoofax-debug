@@ -21,7 +21,6 @@ import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.ThreadDeathRequest;
-import com.sun.tools.example.debug.tty.LineNotFoundException;
 
 public class DebugEventRequestInstaller {
 
@@ -114,24 +113,24 @@ public class DebugEventRequestInstaller {
 		*/
 	}
 	
-	private static Location location(ClassType clazz, int linenumber) throws LineNotFoundException {
+	private static Location location(ClassType clazz, int linenumber) {
 		Location location = null;
 		try {
 			List<Location> locs = clazz.locationsOfLine(linenumber);
 			if (locs.size() == 0) {
-				throw new LineNotFoundException();
+				return null;
 			}
 			// TODO handle multiple locations
 			location = (Location) locs.get(0);
 			if (location.method() == null) {
-				throw new LineNotFoundException();
+				return null;
 			}
 		} catch (AbsentInformationException e) {
 			/*
 			 * TO DO: throw something more specific, or allow AbsentInfo
 			 * exception to pass through.
 			 */
-			throw new LineNotFoundException();
+			return null;
 		}
 		return location;
 	}
@@ -139,25 +138,23 @@ public class DebugEventRequestInstaller {
 	public static void createBreakpointEntryRequest(EventRequestManager mgr, ClassType clazz, int linenumber, String eventType)
 	{
 		int suspendPolicy = EventRequest.SUSPEND_EVENT_THREAD;
-		Location location;
-		try {
-			location = location(clazz, linenumber);
-			List<BreakpointRequest> existing = mgr.breakpointRequests();
-			for(BreakpointRequest r : existing)
-			{
-				if (location.equals(r.location()))
-				{
-					System.out.println("THE SAME");
-				}
-			}
-			BreakpointRequest bpr = mgr.createBreakpointRequest(location);
-			bpr.setSuspendPolicy(suspendPolicy);
-			bpr.putProperty(EVENT_TYPE, eventType);
-			bpr.enable();
-		} catch (LineNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Location location = null;
+		location = location(clazz, linenumber);
+		if (location == null) {
+			return;
 		}
+		List<BreakpointRequest> existing = mgr.breakpointRequests();
+		for(BreakpointRequest r : existing)
+		{
+			if (location.equals(r.location()))
+			{
+				System.out.println("THE SAME");
+			}
+		}
+		BreakpointRequest bpr = mgr.createBreakpointRequest(location);
+		bpr.setSuspendPolicy(suspendPolicy);
+		bpr.putProperty(EVENT_TYPE, eventType);
+		bpr.enable();
 		
 	}
 	

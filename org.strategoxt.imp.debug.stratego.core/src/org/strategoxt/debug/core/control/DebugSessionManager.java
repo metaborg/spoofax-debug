@@ -102,36 +102,7 @@ public class DebugSessionManager {
 		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
 		this.initVM(vmManager, settings, mainArgs, classpath, connectorType);
 	}
-	
-	
-	
-	
-	/**
-	 * Initialize a new VM using the given VirtualMachineManager.
-	 * 
-	 * @param vmManager
-	 * @param mainArgs
-	 */
-	/*
-	private void initVM(VirtualMachineManager vmManager, String mainArgs) {
-		VMLauncherHelper helper = new VMLauncherHelper(vmManager);
-		//helper.setDefaultClasspath();
-		this.vm = helper.getTargetVM(mainArgs);
-	}*/
-	
-	/**
-	 * Initialize a new VM. The VM is found using Bootstrap.virtualMachineManager(), in tools.jar (Sun's implementation).
-	 * 
-	 * However if jdi.jar is used (The eclipse implementation) then Bootstrap.virtualMachineManager() returns null.
-	 * In this case we need to get our VM elsewhere...
-	 * @param mainArgs
-	 */
-	/*
-	private void initVM(String mainArgs) {
-		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
-		this.initVM(vmManager, mainArgs);
-	}*/
-	
+
 	/**
 	 * If initVM cannot be used, use this method to explicity set Virtual Machine.
 	 * @param vm
@@ -145,17 +116,10 @@ public class DebugSessionManager {
 	 * Initializes the event listeners for the current virtual machine
 	 */
 	public void setupEventListeners() {
-		// vm should not be null
-		/*
-		EventRequestManager em = vm.eventRequestManager();
-		MethodEntryRequest meR = em.createMethodEntryRequest();
-		meR.addClassFilter("strjdebugruntime.*");
-		meR.enable();
-		 */
 		int debugTraceMode = 0; // -dbgtrace 
 		vm.setDebugTraceMode(debugTraceMode);
 		this.eventThread = new EventThread(vm, excludes, eventSpecManager, vmMonitor);
-		this.eventThread.setEventRequests(watchFields);
+		this.eventThread.setEventRequests(watchFields); // install the debug events
 		this.eventThread.start();
 	}
 	

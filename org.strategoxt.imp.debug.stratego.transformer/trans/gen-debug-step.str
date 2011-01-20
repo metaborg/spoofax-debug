@@ -18,81 +18,493 @@ rules
 // add step call to rules		
 	add-step-in-r-def(|filename):
 		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r'){a}
-		with r' := <add-step-in-r-clause(|filename, r-name)> r
+		with r' := <bottomup(try(add-step-to-strategy(|filename, r-name)))> r
 		//with r' := r
 	add-step-in-r-def(|filename):
 		RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r'){a}
-		with r' := <add-step-in-r-clause(|filename, r-name)> r		
+		with r' := <bottomup(try(add-step-to-strategy(|filename, r-name)))> r		
 	add-step-in-r-def(|filename):
 		RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r'){a}
-		with r' := <add-step-in-r-clause(|filename, r-name)> r	
+		with r' := <bottomup(try(add-step-to-strategy(|filename, r-name)))> r	
 	 
-	// rule has no WithClause or WhereClause
-    add-step-in-r-clause(|filename, r-name) :
-    	r@RuleNoCond(match-term, build-term){a*} -> r
- 
- 	// rule has a single clause or a list of clauses
- 	add-step-in-r-clause(|filename, r-name):
-		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term, rule-cond'*){a}
-		where
-			// if rule-cond is a list, insert the r-exit at index 0
-			// if rule-cond is not a list, create a list
-            rule-cond'* := <add-step-in-rule-cond(|filename, r-name)> rule-cond
-
-    // current term can be a list with WhereClause and WithClause terms
-	// map each clause item
-	add-step-in-rule-cond(|filename, r-name) :
-		clause-list* -> clause-list'*
-		where <is-list> clause-list*
-		; clause-list'* := <map(add-step-to-clause(|filename, r-name))> clause-list*
-	
 // add step calls to strategies
 	add-step-in-s-def(|filename):
 		SDefNoArgs(s-name, s){a} -> SDefNoArgs(s-name, s'){a} // strategy with no args
-		with s' := <add-step-to-strategy(|filename, s-name)> s
+		with s' := <bottomup(try(add-step-to-strategy(|filename, s-name)))> s // <add-step-to-strategy(|filename, s-name)> s
 	add-step-in-s-def(|filename):
 		SDef(s-name, s-args, s){a} -> SDef(s-name, s-args, s'){a} // strategy with strategy-args
-		with s' := <add-step-to-strategy(|filename, s-name)> s
+		with s' := <bottomup(try(add-step-to-strategy(|filename, s-name)))> s // <add-step-to-strategy(|filename, s-name)> s
 	add-step-in-s-def(|filename):
 		SDefT(s-name, s-args, t-args, s){a} -> SDefT(s-name, s-args, t-args, s'){a} // strategy with strategy-args and term-args
-		with s' := <add-step-to-strategy(|filename, s-name)> s
+		with s' := <bottomup(try(add-step-to-strategy(|filename, s-name)))> s // <add-step-to-strategy(|filename, s-name)> s
 
-// add step calls to clauses
-
-	add-step-to-clause(|filename, name) :
-		WithClause(s){a} -> WithClause(s'){a}
-		with
-			s' := <add-step-to-strategy(|filename, name)> s
-			
-	add-step-to-clause(|filename, name) :
-		WhereClause(s){a} -> WhereClause(s'){a}
-		with
-			s' := <add-step-to-strategy(|filename, name)> s
-			
-	// current term is not a list of WhereClause or WithClause terms
-    // current term can be a Strategy
-	// create a list of size 2, with the first term a r-enter call and the second term the original Strategy
-	add-step-in-rule-cond(|filename, r-name) :
-		s{a} -> s'
-		where not(<is-list> s)
-		where s' := <add-step-to-strategy(|filename, r-name)> s
-
+/*
+	// walk over the tree, Seq has two child strategies
 	add-step-to-strategy(|filename, name): 
 		s@Seq(s1{a1}, s2{a2}) -> s'
-		//with debug(!"add-step-to-strategy SEQ") 
 		with
 			//s-step := <create-step-call(|filename, name, a1)>
 			s1' := <add-step-to-strategy(|filename, name)> s1
 			; s2' := <add-step-to-strategy(|filename, name)> s2
 			; s' := Seq(s1', s2')
-		  
+	
+	// walk over the tree, LChoice has two child strategies
 	add-step-to-strategy(|filename, name):
-		s{a1} -> s'
-		where not(?Seq(_,_))
-		//with debug(!"add-step-to-strategy not SEQ") 
+		s@LChoice(s1{a1}, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := LChoice(s1', s2')
+			  		
+	// walk over the tree, GuardedLChoice has three child strategies
+	add-step-to-strategy(|filename, name):
+		s@GuardedLChoice(s1{a1}, s2{a2}, s3{a3}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s3' := <add-step-to-strategy(|filename, name)> s3
+			; s' := GuardedLChoice(s1', s2', s3')
+			
+	// walk over the tree, CondChoice has three child strategies
+	add-step-to-strategy(|filename, name):
+		s@CondChoice(s1{a1}, s2{a2}, s3{a3}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s3' := <add-step-to-strategy(|filename, name)> s3
+			; s' := CondChoice(s1', s2', s3')
+
+	// walk over the tree, IfThen has two child strategies
+	add-step-to-strategy(|filename, name):
+		s@IfThen(s1{a1}, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := IfThen(s1', s2')
+			  
+	// walk over the tree, SwitchChoice has multiple child strategies
+	add-step-to-strategy(|filename, name):
+		s@SwitchChoice(switch{a1}, cases*, otherwise{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			switch' := <add-step-to-strategy(|filename, name)> switch
+			; cases'* := <map(add-step-to-switch-cases(|filename, name))> cases*
+			; otherwise' := <add-step-to-strategy(|filename, name)> otherwise
+			; s' := SwitchChoice(switch', cases'*,otherwise')
+
+	// walk over the tree, SwitchChoiceNoOtherwise has multiple child strategies
+	add-step-to-strategy(|filename, name):
+		s@SwitchChoiceNoOtherwise(switch{a1}, cases*) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			switch' := <add-step-to-strategy(|filename, name)> switch
+			; cases'* := <map(add-step-to-switch-cases(|filename, name))> cases*
+			; s' := SwitchChoiceNoOtherwise(switch', cases'*)
+			  	
+	add-step-to-switch-cases(|filename, name):
+		s@SwitchCase(s1{a1}, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := SwitchCase(s1', s2')
+
+	// walk over the tree, Choice has two child strategies
+	add-step-to-strategy(|filename, name):
+		s@Choice(s1{a1}, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := Choice(s1', s2')			
+			
+// Dynamic rules strategies
+	
+	// walk over the tree, DynRuleScope has one child strategy
+	add-step-to-strategy(|filename, name):
+		s@DynRuleScope(scopelabels, s1{a1}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s' := DynRuleScope(scopelabels, s1')
+			  
+	// walk over the tree, DynRuleIntersectFix has one child strategy
+	add-step-to-strategy(|filename, name):
+		s@DynRuleIntersectFix(rulenames, s1{a1}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s' := DynRuleIntersectFix(rulenames, s1')
+			  
+	// walk over the tree, DynRuleIntersect has one child strategy
+	add-step-to-strategy(|filename, name):
+		s@DynRuleIntersect(s1{a1}, rulenames, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := DynRuleIntersect(s1', rulenames, s2')
+			  
+	// walk over the tree, DynRuleUnion has one child strategy
+	add-step-to-strategy(|filename, name):
+		s@DynRuleUnion(s1{a1}, rulenames, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := DynRuleUnion(s1', rulenames, s2')
+			  
+	// walk over the tree, DynRuleIntersectUnion has one child strategy
+	add-step-to-strategy(|filename, name):
+		s@DynRuleIntersectUnion(s1{a1}, rulenames1, rulenames2, s2{a2}) -> s'
+		with
+			//s-step := <create-step-call(|filename, name, a1)>
+			s1' := <add-step-to-strategy(|filename, name)> s1
+			; s2' := <add-step-to-strategy(|filename, name)> s2
+			; s' := DynRuleIntersectUnion(s1', rulenames1, rulenames2, s2')
+*/		  			  
+// no child strategies
+	  		
+// GenDynRules	
+//    "rules" "(" DynRuleDef* ")" -> Strategy {cons("GenDynRules")}
+
+//     StrategyAngle Term 		          -> Strategy {cons("BA")}	  
+
+// Strategy "=>" Term 		  	  -> Strategy {cons("AM")}
+
+//    SVar "(" {Strategy ","}* ")" 	  -> Strategy {cons("Call")}
+
+//    "{" Strategy "}" 			  -> Strategy {cons("ScopeDefault")}
+
+//     StrategyAngle Term 		  -> Strategy {cons("BA")}
+//     "<" Strategy ">"			  -> StrategyAngle {bracket} %% {cons("AngleStrat")}    			  			
+
+
+//    "rec" Id "(" Strategy ")" 		  -> Strategy {cons("Rec")}
+
+//    "not"   "(" Strategy ")" 		  -> Strategy {cons("Not")}
+//    "where" "(" Strategy ")" 		  -> Strategy {cons("Where")}
+//    "with"  "(" Strategy ")" 		  -> Strategy {cons("With"), prefer}
+//    "test"  "(" Strategy ")" 		  -> Strategy {cons("Test")}
+
+//     "prim" "(" String ")" 		  -> Strategy {cons("PrimNoArgs")}
+//    "prim" "(" String "," {Term ","}* ")" -> Strategy {cons("Prim")}
+
+//    String 				  -> Strategy {cons("StrCong")}
+//    Int 				  -> Strategy {cons("IntCong")}
+//    Real 				  -> Strategy {cons("RealCong")}
+//    Char 			 	  -> Strategy {cons("CharCong")}
+
+//    String "(" {Strategy ","}* ")" 	  -> Strategy {cons("CongQ")}
+
+//    Strategy StrategyCurly		  -> Strategy {cons("AnnoCong")}
+    
+//    "{" Strategy "}"		  	  -> StrategyCurly {cons("StrategyCurly")}
+
+//    "("  ")" 		  		  -> Strategy {cons("EmptyTupleCong")}
+//   "(" Strategy  ")" 		          -> Strategy {bracket}
+//    "(" Strategy "," {Strategy ","}+ ")"  -> Strategy {cons("TupleCong")}
+
+//    "[" {Strategy ","}* "]" 		  -> Strategy {cons("ListCongNoTail")}
+//    "[" {Strategy ","}* "|" Strategy "]"  -> Strategy {cons("ListCong")}
+   
+//    Strategy "#" StrategyParen	  	  -> Strategy {cons("ExplodeCong")}   
+  
+/*  
+    SVar  		  		  -> Strategy {cons("CallNoArgs")}
+    "\\" Rule "\\" 			  -> Strategy {cons("LRule")}
+    "(" Rule ")" 			  -> Strategy {cons("SRule")}
+    Strategy "+" Strategy 		  -> Strategy {cons("Choice"),right} 
+    Strategy "+>" Strategy 		  -> Strategy {cons("RChoice"),right}
+
+    "proceed"                          -> Strategy {cons("ProceedNoArgs"), prefer}
+    "proceed" "(" {Strategy "," }+ ")" -> Strategy {cons("Proceed"), prefer}
+
+    "if" Strategy "then" Strategy 
+                  "else" Strategy "end"   -> Strategy {cons("CondChoice")}
+    "if" Strategy "then" Strategy "end"   -> Strategy {cons("IfThen")}
+
+    "switch" Strategy SwitchCase* "end"   -> Strategy {cons("SwitchChoiceNoOtherwise")}
+    "switch" Strategy SwitchCase*
+         "otherwise" ":" Strategy "end"   -> Strategy {cons("SwitchChoice")}
+
+    "case" Strategy ":" Strategy          -> SwitchCase {cons("SwitchCase")}
+
+    Strategy "=>" Term 		  	  -> Strategy {cons("AM")}
+
+    Term ":=" Term			  -> Strategy {cons("Assign")}
+*/     
+
+/*
+    "let" Def* "in" Strategy "end"		 -> Strategy {cons("Let")}
+    SVar "(" {Strategy ","}* "|" {Term ","}* ")" -> Strategy {cons("CallT")}
+
+    "call" "(" Term "|" {Strategy ","}* "|" {Term ","}* ")" -> Strategy {cons("CallDynamic")}
+*/
+
+/*
+    "fail" 				  -> Strategy {cons("Fail")}
+    "id" 				  -> Strategy {cons("Id")}
+
+    "proceed" "(" {Strategy ","}* "|" {Term ","}* ")" -> Strategy {cons("ProceedT"), prefer}
+    "proceed"                                         -> Strategy {cons("ProceedNoArgs"), prefer}
+*/
+
+/*
+    "?" Term 				  -> Strategy {cons("Match")}
+    "!" Term 				  -> Strategy {cons("Build")}
+    "{" {ID ","}* ":" Strategy "}" 	  -> Strategy {cons("Scope")}
+*/
+
+/*
+    "prim" "(" String "," {Strategy ","}* "|" {Term ","}*")"  -> Strategy {cons("PrimT")}
+*/
+
+/*
+    "some" "(" Strategy ")" 		  -> Strategy {cons("Some")}
+    "one" "(" Strategy ")" 		  -> Strategy {cons("One")}
+    "all" "(" Strategy ")" 		  -> Strategy {cons("All")}
+    */
+
+//     "import-term" "(" ModName ")" -> Strategy {cons("ImportTerm")}
+
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@GenDynRules(_){a1} -> s'
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Call(_, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@ScopeDefault(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Rec(_,_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Not(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Where(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@With(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Test(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@PrimNoArgs(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Prim(_, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+	
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@CallNoArgs(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@LRule(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@SRule(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@ProceedNoArgs(){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Proceed(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@AM(_,_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  			  			  			  		  			  		  			  			  			  			  			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Assign(_,_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Let(_,_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@CallT(_,_, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@CallDynamic(_,_, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Fail(){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Id(){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)		
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@ProceedT(_,_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@ProceedNoArgs(){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Match(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+
+	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Build(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Scope(_, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@PrimT(_, _, _){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@Some(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@One(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@All(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)	
+			  
+ 	// does not have child strategies
+	add-step-to-strategy(|filename, name):
+		s@ImportTerm(_){a1} -> s'
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+/*				
+	// does not have child strategies		  
+	add-step-to-strategy(|filename, name):
+		s{a1} -> s'
+		where not(?Seq(_,_))
+		with
+			s-step := <create-step-call(|filename, name, a1)>
+			; s' := Seq(s-step, s)
+*/
 strategies
 	create-step-call(|filename, name, a) = !CallT(SVar("s-step"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(name)), <location-to-term> a])
 	

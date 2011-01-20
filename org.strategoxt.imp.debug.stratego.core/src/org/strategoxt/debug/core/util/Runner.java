@@ -28,9 +28,9 @@ public class Runner {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public static void run(String projectName, String mainArgs, String classpath)
+	public static void run(DebugSessionSettings debugSessionSettings, String mainArgs, String classpath)
 	{
-		DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
+		//DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
 		DebugSessionManager manager = new DebugSessionManager(debugSessionSettings, null);
 		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath);
 		manager.setupEventListeners();

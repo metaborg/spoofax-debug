@@ -23,19 +23,8 @@ rules
 	        ; result := ("see", output-filename, r) // or None()
 	        //; str-ast := <get-anno-ast(|complete-path)> // get the stratego AST
 	        //; result := <pp-stratego-ast> str-ast // pretty print stratego AST
-	          
-//	            apply-debug-trans :
-//  	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename)
-
 	     )
-	      //; get-anno-ast(|<concat-strings> [project-path, "/", path]) => an_ast
-	      /*
-	      ; result   := <debug(!"selected: ")> selected
-	      	; <debug(!"ast: ")> ast
-	      	  ; <debug(!"position: ")> position
-	      	    ; <debug(!"path: ")> path
-	      	      ; <debug(!"project-path: ")> project-path
-	      	        */
+
 
 
   		
@@ -57,8 +46,9 @@ rules
 	// inputfilePath is relative to sourceBasedir.
 	// sourceBasedir should be treated as a project directory
 	// the generated file will be saved at outputfilename
+	// returns a tuple ("SUCCES", outputfilelocation, inputfilelocation)
   apply-debug-trans-internal :
-  	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename)
+  	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename, absPath)
   	where(
   	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
   	; parse-stratego-with-locations(|absPath)
@@ -103,10 +93,10 @@ rules
   			; missing := <filter(is-relpath)> files // files that still have a relative path are not found on the "-I" paths
   			; real-files := <filter(is-abspath)> files // only add debug information to the files that can be found on the "-I" paths
   			; results := <map(handle-file(|base-path, output-base-path))> real-files // do apply-debug-trans for each file, store the result in the output-base-path
-  			// results = [(status, filename), (status, filename)]
+  			// results = [(status, output-filename, input-filename), (status, output-filename, input-filename)]
 
 	prefer-rtree =
-		<set-config> ("output-rtree", "on")
+		<set-config> ("--output-rtree", "on")
 		
 	prefer-str =
-		<rm-config> "output-rtree"
+		<rm-config> "--output-rtree"

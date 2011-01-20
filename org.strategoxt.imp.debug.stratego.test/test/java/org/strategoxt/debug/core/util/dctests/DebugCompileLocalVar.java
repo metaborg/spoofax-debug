@@ -56,7 +56,7 @@ public class DebugCompileLocalVar {
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
-			org.strategoxt.debug.core.util.Runner.run(projectName, mainArgs, classpath);
+			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
 	}
 

@@ -42,6 +42,11 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 	private Text fProgramArgumentsText;  // multi-line textbox, every argument should be placed on a line
 	
 	/**
+	 * The extra arguments used when compiling the Stratego program (for example "-I" specifications)
+	 */
+	private Text fCompileArgumentsText; // multi-line textbox, every argument should be placed on a line
+	
+	/**
 	 * Checkbox, true if the stratego program needs to be recompiled before every launch.
 	 */
 	private Button fProgramRecompile;
@@ -86,7 +91,11 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		createArgumentsControl(font, comp);
 		
 		createVerticalSpacer(comp, 3);
+
+		createCompileArgumentsControl(font, comp);
 		
+		createVerticalSpacer(comp, 3);
+
 		createRecompileControl(comp);
 
 	}
@@ -111,9 +120,30 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
+	
+	private void createCompileArgumentsControl(Font font, Composite comp)
+	{
+		Label compileArgumentsLabel = new Label(comp, SWT.NONE);
+		compileArgumentsLabel.setText("Compile arguments:");
+		GridData gdArg = new GridData(GridData.BEGINNING);
+		compileArgumentsLabel.setLayoutData(gdArg);
+		compileArgumentsLabel.setFont(font);
+		
+		fCompileArgumentsText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL); // a multi line text box, every argument should be placed on its own line
+		gdArg = new GridData(GridData.FILL_HORIZONTAL);
+		gdArg.horizontalSpan = 2;
+		gdArg.verticalSpan = 5;
+		fCompileArgumentsText.setLayoutData(gdArg);
+		fCompileArgumentsText.setFont(font);
+		fCompileArgumentsText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
 
 	private void createArgumentsControl(Font font, Composite comp) {
-		// arguments
+		// runtime arguments
 		Label programArgumentsLabel = new Label(comp, SWT.NONE);
 		programArgumentsLabel.setText("Program arguments:");
 		GridData gdArg = new GridData(GridData.BEGINNING);
@@ -204,10 +234,17 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 			}
 			
 			// stratego program arguments
-			List argumentsList = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, (List)null);
-			if (argumentsList != null) {
-				String flatString = CollectionUtils.join(argumentsList, Text.DELIMITER);
+			List runtimeArgumentsList = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, (List)null);
+			if (runtimeArgumentsList != null) {
+				String flatString = CollectionUtils.join(runtimeArgumentsList, Text.DELIMITER);
 				fProgramArgumentsText.setText(flatString);
+			}
+			
+			// compile stratego program arguments
+			List compileArgumentsList = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_COMPILE_ARGUMENTS, (List)null);
+			if (compileArgumentsList != null) {
+				String flatString = CollectionUtils.join(compileArgumentsList, Text.DELIMITER);
+				fCompileArgumentsText.setText(flatString);
 			}
 			
 			// recompile stratego program before each launch
@@ -234,18 +271,31 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, program);
 		
-		// arguments
-		String arguments = fProgramArgumentsText.getText().trim();
-		if (arguments.length() == 0) {
-			arguments = null;
+		// runtime arguments
+		String runtimeArguments = fProgramArgumentsText.getText().trim();
+		if (runtimeArguments.length() == 0) {
+			runtimeArguments = null;
 		}
-		String[] argumentsArray = new String[0];
-		if (arguments != null)
+		String[] runtimeArgumentsArray = new String[0];
+		if (runtimeArguments != null)
 		{
-			argumentsArray = arguments.split(Text.DELIMITER);
+			runtimeArgumentsArray = runtimeArguments.split(Text.DELIMITER);
 		}
-		List<String> argumentsList = Arrays.asList(argumentsArray);
-		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, argumentsList);
+		List<String> runtimeArgumentsList = Arrays.asList(runtimeArgumentsArray);
+		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, runtimeArgumentsList);
+		
+		// runtime arguments
+		String compileArguments = fCompileArgumentsText.getText().trim();
+		if (compileArguments.length() == 0) {
+			compileArguments = null;
+		}
+		String[] compileArgumentsArray = new String[0];
+		if (compileArguments != null)
+		{
+			compileArgumentsArray = compileArguments.split(Text.DELIMITER);
+		}
+		List<String> compileArgumentsList = Arrays.asList(compileArgumentsArray);
+		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_COMPILE_ARGUMENTS, compileArgumentsList);
 		
 		// recompile
 		boolean reCompileSelected = fProgramRecompile.getSelection();
