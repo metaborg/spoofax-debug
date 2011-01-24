@@ -5,17 +5,10 @@ import org.strategoxt.debug.core.eventspec.StrategyExitBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
 
-import com.sun.jdi.event.MethodEntryEvent;
-import com.sun.jdi.event.MethodExitEvent;
-
 public class StrategyExitHandler extends EventHandler {
 
-	public StrategyExitHandler(MethodExitEvent event) {
-		super(event);
-	}
-	
-	public StrategyExitHandler(MethodEntryEvent event) {
-		super(event);
+	public StrategyExitHandler(ValueExtractor extractor) {
+		super(extractor);
 	}
 
 	@Override
@@ -35,6 +28,11 @@ public class StrategyExitHandler extends EventHandler {
 	@Override
 	public boolean isEnter() {
 		return false;
+	}
+	
+	@Override
+	public boolean isExit() {
+		return true;
 	}
 	
 	@Override

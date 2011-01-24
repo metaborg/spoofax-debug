@@ -1,0 +1,76 @@
+Module(
+  "term-traverse"
+, [ Imports([Import("libstrategolib")])
+  , Strategies(
+      [ SDefNoArgs("main", CallNoArgs(SVar("execute")))
+      , SDefNoArgs(
+          "execute"
+        , Seq(
+            Build(
+              NoAnnoList(
+                List(
+                  [NoAnnoList(Str("\"foo\"")), NoAnnoList(Str("\"bar\"")), NoAnnoList(Str("\"cheese\""))]
+                )
+              )
+            )
+          , Seq(
+              Assign(Var("k"), RootApp(Id()))
+            , Seq(
+                Call(SVar("map"), [CallNoArgs(SVar("element-stuff"))])
+              , Call(SVar("debug"), [Build(NoAnnoList(Str("\"\"")))])
+              )
+            )
+          )
+        )
+      , SDefNoArgs(
+          "element-stuff"
+        , Seq(
+            Match(Var("name"))
+          , Seq(
+              GenDynRules(
+                [ SetDynRule(
+                    DynRuleId(RDecNoArgs("GetName"))
+                  , Rule(
+                      Wld()
+                    , Var("name")
+                    , Seq(
+                        Assign(Var("hello-var"), NoAnnoList(Str("\"hello\"")))
+                      , Seq(
+                          Not(Seq(Id(), Fail()))
+                        , Seq(
+                            BA(
+                              CallNoArgs(SVar("concat-strings"))
+                            , NoAnnoList(List([Var("hello-var"), Var("hello-var")]))
+                            )
+                          , Call(SVar("debug"), [Build(NoAnnoList(Str("\"concat: \"")))])
+                          )
+                        )
+                      )
+                    )
+                  )
+                ]
+              )
+            , CallNoArgs(SVar("otherstuff"))
+            )
+          )
+        )
+      , SDefNoArgs(
+          "otherstuff"
+        , Seq(
+            Build(NoAnnoList(Str("\"stuff\"")))
+          , Seq(
+              Match(Var("stuff"))
+            , Seq(
+                Assign(Var("var"), Var("GetName"))
+              , Seq(
+                  Call(SVar("debug"), [Build(NoAnnoList(Str("\"name: \"")))])
+                , Build(Var("stuff"))
+                )
+              )
+            )
+          )
+        )
+      ]
+    )
+  ]
+)

@@ -13,6 +13,8 @@ signature
   	
   	Print	: Expression -> Statement
   	Assign	: String * Expression -> Statement
+  	Stuff1	: String * List(Statement) * String -> Statement
+  	Stuff2	: Int * List(Statement) * Int -> Statement
   	
   	Function : String * List(Statement) -> Definition
   	

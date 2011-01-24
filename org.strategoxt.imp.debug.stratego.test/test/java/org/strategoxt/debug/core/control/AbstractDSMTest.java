@@ -29,12 +29,35 @@ public abstract class AbstractDSMTest {
 	}
 	
 	/**
+	 * Start a DebugSession using the given main arguments and classpath.
+	 * Use the connectorType to specify how the VM will be launched and connected to the debugger.
+	 * @param manager
+	 * @param mainArgs
+	 * @param classpath
+	 * @return
+	 */
+	public DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath, String connectorType)
+	{
+		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath, connectorType);
+		manager.setupEventListeners();
+		manager.redirectOutput();
+		manager.runVM();
+		// runVM waits for the threads to end
+		// check if any Exceptions were thrown
+		checkThreadFailures();
+		return manager;
+	}
+	
+	/**
 	 * classPath contains the binary files of the compiled strj program
 	 * @param mainArgs
 	 * @param classpath
 	 */
 	public DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath)
 	{
+		// Default use the sun launch
+		return this.start(manager, mainArgs, classpath, "LAUNCH");
+		/*
 		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath);
 		manager.setupEventListeners();
 		manager.redirectOutput();
@@ -43,6 +66,7 @@ public abstract class AbstractDSMTest {
 		// check if any Exceptions were thrown
 		checkThreadFailures();
 		return manager;
+		*/
 	}
 	
 	private List<Throwable> exceptions = new ArrayList<Throwable>();
@@ -59,25 +83,33 @@ public abstract class AbstractDSMTest {
 	{
 		if (this.exceptions != null && this.exceptions.size() > 0)
 		{
+			String messages = "One of the treads threw an Exception: ";
 			for(Throwable e : this.exceptions)
 			{
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
+				messages += "\n" + e.getMessage();
 			}
-			Assert.fail("One of the treads threw an Exception...");
+			Assert.fail(messages);
 		}
 		
 		if (this.failMessages != null && this.failMessages.size() > 0)
 		{
+			String messages = "Assertion failed: ";
 			for(String message : this.failMessages)
 			{
-				System.out.println("FAILED: " + message);
+				//System.out.println("FAILED: " + message);
+				messages += "\n" + message;
 			}
-			Assert.fail("Assertion failed!");
+			Assert.fail(messages);
 		}
 	}
 
 	private List<String> failMessages = new ArrayList<String>();
 	
+	/**
+	 * Child threads report their assertion failures via this method.
+	 * @param message
+	 */
 	public void reportAssertFailure(String message)
 	{
 		//Assert.fail(message);

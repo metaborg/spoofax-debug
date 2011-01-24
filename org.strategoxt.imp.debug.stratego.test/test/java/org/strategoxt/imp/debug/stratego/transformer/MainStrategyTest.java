@@ -14,9 +14,9 @@ import org.strategoxt.lang.StrategoExit;
  */
 public class MainStrategyTest {
 	public static void main(String[] args) {
-		//m1();
-		//m2();
-		//m3();
+		m1();
+		m2();
+		m3();
 		m4();
 	}
 

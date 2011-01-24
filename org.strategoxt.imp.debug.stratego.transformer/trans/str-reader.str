@@ -28,7 +28,7 @@ rules
 rules
 	
   write-stratego(|absolute-location) =
-  	<get-config> "output-rtree" 
+  	<get-config> "--output-rtree" 
   	<
   	write-stratego-rtree(|<guarantee-extension(|"rtree")> absolute-location) // success, make rtree
   	+
@@ -55,8 +55,6 @@ rules
    	; <check-dir> dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
    	; write-to-file(|absolute-location, source-code)
 
-	get-config-output-rtree = 
-	  <get-config> "-r" <+ ![]
 strategies
 
   // accept a (filename, source-code)*

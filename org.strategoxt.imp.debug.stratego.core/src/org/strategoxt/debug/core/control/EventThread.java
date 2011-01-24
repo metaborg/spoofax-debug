@@ -35,18 +35,25 @@
 package org.strategoxt.debug.core.control;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugEventRequestInstaller;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_enter_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_exit_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_enter_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_exit_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_step_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_var_0_5;
 
-import com.sun.jdi.Field;
+import com.sun.jdi.ClassType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
@@ -63,7 +70,6 @@ import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.ModificationWatchpointRequest;
 
 /**
  * This class processes incoming JDI events and displays them
@@ -132,8 +138,8 @@ public class EventThread extends Thread {
 						vmMonitor.stateChanged(this.getStrategoState());
 					}
 					// no more active threads
-					System.out.println("All threads suspended");
-					System.out.println();
+					log("All threads suspended");
+					log("");
 					// all threads are suspended
                     //setCurrentThread(eventSet);
                     //notifier.vmInterrupted();
@@ -145,11 +151,11 @@ public class EventThread extends Thread {
 						vmMonitor.stateChanged(this.getStrategoState());
 					}
 					// not all threads are suspended
-					System.out.println("Not all threads are suspended");
+					log("Not all threads are suspended");
 					List<ThreadReference> refs = vm.allThreads();
 					for(ThreadReference r : refs)
 					{
-						System.out.println(r.name() + " " + r.status() + " " + r.isSuspended());
+						log(r.name() + " " + r.status() + " " + r.isSuspended());
 					}
 				}
 			} catch (InterruptedException exc) {
@@ -237,6 +243,9 @@ public class EventThread extends Thread {
 			return vmDeathEvent((VMDeathEvent) event);
 		} else if (event instanceof VMDisconnectEvent) {
 			return vmDisconnectEvent((VMDisconnectEvent) event);
+		} else if (event instanceof BreakpointEvent) {
+			// TODO: instead of the MethodEntry/Exit events which are _VERY_ time consuming!!
+			return breakpointEvent((BreakpointEvent) event);
 		} else {
 			throw new Error("Unexpected event type");
 		}
@@ -271,7 +280,7 @@ public class EventThread extends Thread {
 	}
 
 	private boolean vmStartEvent(VMStartEvent event) {
-		System.out.println("-------------------------------- VM started");
+		log("-------------------------------- VM started");
 		sendVMMonitorEvent("VMSTARTED");
 		return false; // resume thread
 	}
@@ -313,6 +322,56 @@ public class EventThread extends Thread {
 	 */
 	private boolean classPrepareEvent(ClassPrepareEvent event) {
 		EventRequestManager mgr = vm.eventRequestManager();
+
+		String name = event.referenceType().name();
+		//System.out.println(name);
+		// if the name matches on of the predefined strategies implemented in java (e.g.: s-enter, s-step) we should add a breakpoint
+		if (java_s_enter_0_4.getFullClassName().equals(name))
+		{
+            if (event.referenceType() instanceof ClassType) {
+            	ClassType clazz = (ClassType) event.referenceType();
+            	int l = 18;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_ENTER);
+            }
+		} else if (java_s_exit_0_4.getFullClassName().equals(name))
+		{
+            if (event.referenceType() instanceof ClassType) {
+            	ClassType clazz = (ClassType) event.referenceType();
+            	int l = 18;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_EXIT);
+            }
+		} else if (java_s_step_0_4.getFullClassName().equals(name))
+		{
+            if (event.referenceType() instanceof ClassType) {
+            	ClassType clazz = (ClassType) event.referenceType();
+            	int l = 24;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_STEP);
+            }
+		} else if (java_s_var_0_5.getFullClassName().equals(name))
+		{
+			if (event.referenceType() instanceof ClassType) {
+				ClassType clazz = (ClassType) event.referenceType();
+            	int l = 14;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_VAR);
+			}
+		}  else if (java_r_enter_0_4.getFullClassName().equals(name))
+		{
+			if (event.referenceType() instanceof ClassType) {
+				ClassType clazz = (ClassType) event.referenceType();
+            	int l = 18;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_ENTER);
+			}
+		} else if (java_r_exit_0_4.getFullClassName().equals(name))
+		{
+			if (event.referenceType() instanceof ClassType) {
+				ClassType clazz = (ClassType) event.referenceType();
+            	int l = 18;
+            	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_EXIT);
+			}
+		}
+		
+		// TODO: if watchFields is true
+		/*
 		List<Field> fields = event.referenceType().visibleFields();
 		for (Iterator<Field> it = fields.iterator(); it.hasNext();) {
 			Field field = (Field) it.next();
@@ -323,7 +382,7 @@ public class EventThread extends Thread {
 			}
 			req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
 			req.enable();
-		}
+		}*/
 		return false; // resume thread
 	}
 
@@ -351,6 +410,12 @@ public class EventThread extends Thread {
 		return false; // resume thread
 	}
 	
+	public boolean breakpointEvent(BreakpointEvent event)
+	{
+		boolean suspendThread = getThreadEventHandler(event.thread()).breakpointEvent(event, eventSpecManager);
+		return suspendThread;
+	}
+	
 	public boolean getVMDied()
 	{
 		return this.vmDied;
@@ -367,6 +432,11 @@ public class EventThread extends Thread {
 		{
 			vmMonitor.vmEvent(event);
 		}
+	}
+	
+	private void log(String message)
+	{
+		System.out.println(message);
 	}
 
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class StrategoState {
-
-	//private LocationInfo locationInfo = null;
 	
 	private boolean isSuspended = false;
 	private boolean isStepping = false;
@@ -14,25 +12,23 @@ public class StrategoState {
 	
 	private Stack<StrategoStackFrame> stack = new Stack<StrategoStackFrame>();
 	
-	/*
-	// LocationInfo should be saved per StrategoStackFrame
-	public LocationInfo getLocationInfo()
-	{
-		return this.locationInfo;
-	}
-
-	public void setLocationInfo(LocationInfo locationInfo) {
-		this.locationInfo = locationInfo;
-	}
-	*/
 	
-	// push given frame on top of stack
+	/**
+	 * Push given frame on top of stack.
+	 * @param frame
+	 * @return
+	 */
 	public StrategoStackFrame pushFrame(StrategoStackFrame frame)
 	{
 		return stack.push(frame);
 	}
 	
-	// given frame should be on top of the stack, pop it
+	/**
+	 * Pops the current StrategoStackFrame.
+	 * TODO: the given frame should be on top of the stack, pop it
+	 * @param frame
+	 * @return
+	 */
 	public StrategoStackFrame popFrame(StrategoStackFrame frame)
 	{
 		//StrategoStackFrame top = stack.peek();
@@ -41,21 +37,38 @@ public class StrategoState {
 	}
 	
 
+	/**
+	 * Pop the current StrategoStackFrame.
+	 * @return
+	 */
 	public StrategoStackFrame popFrame() {
 		// pop without matching
 		return stack.pop();
 	}
 	
+	/**
+	 * Returns the current StrategoStackFrame.
+	 * @return
+	 */
 	public StrategoStackFrame currentFrame()
 	{
 		return stack.peek();
 	}
 	
+	/**
+	 * Returns the number of stackframes.
+	 * @return
+	 */
 	public int size()
 	{
 		return this.stack.size();
 	}
 	
+	/**
+	 * Gets the StrategoStackFrame at the given index. The bottom stackframe has index 0.
+	 * @param index
+	 * @return
+	 */
 	public StrategoStackFrame get(int index)
 	{
 		return this.stack.get(index);
@@ -75,11 +88,19 @@ public class StrategoState {
 		return l;
 	}
 	
+	/**
+	 * Gets the current stackframe level. The bottom frame has level 0.
+	 * @return
+	 */
 	public int getCurrentFrameLevel()
 	{
 		return this.stack.size() - 1;
 	}
 	
+	/**
+	 * Returns an array of StrategoStackFrames.
+	 * @return
+	 */
 	public StrategoStackFrame[] getStackFrames()
 	{
 		StrategoStackFrame[] a = new StrategoStackFrame[this.stack.size()];
@@ -95,6 +116,10 @@ public class StrategoState {
 		return this.isSuspended;
 	}
 	
+	/**
+	 * Set the stratego state to suspended or not.
+	 * @param isSuspended
+	 */
 	public void setSuspended(boolean isSuspended)
 	{
 		this.isSuspended = isSuspended;

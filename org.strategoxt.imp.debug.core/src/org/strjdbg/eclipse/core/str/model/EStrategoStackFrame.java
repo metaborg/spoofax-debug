@@ -9,8 +9,10 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
+import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
+import org.strategoxt.debug.core.util.table.FileLineLengthTable;
+import org.strategoxt.debug.core.util.table.LineLengthTable;
 import org.strategoxt.lang.terms.TermFactory;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
@@ -61,12 +63,12 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	{		
 		synchronized(lock){
 			List<EStrategoVariable> vars = new ArrayList<EStrategoVariable>();
-			EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm(), "*current*");
+			EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm().getIStrategoTerm(), "*current*");
 			currentVar.setValueChanged(true);
 			vars.add(currentVar);
-			for(Map.Entry<String, IStrategoTerm> entry : this.frameData.getVariables().entrySet())
+			for(Map.Entry<String, StrategoTermValueWrapper> entry : this.frameData.getVariables().entrySet())
 			{
-				EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue(), entry.getKey());
+				EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue().getIStrategoTerm(), entry.getKey());
 				v.setValueChanged(true);
 				vars.add(v);
 			}
@@ -89,21 +91,27 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	}
 
 	public int getCharEnd() throws DebugException {
-		// TODO: char end in the offset from the start of the file
-		/*
-		int charend = frameData.getCurrentLocationInfo().getStart_token_pos();
-		return charend;
-		*/
-		return -1;
+		// convert linenumber and offset relative to the line to the total character offset
+		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
+		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
+		int linenumber = frameData.getCurrentLocationInfo().getEnd_line_num(); // one-based index
+		int end_token_pos = frameData.getCurrentLocationInfo().getEnd_token_pos();
+		int lineOffset = ft.getLineOffset(linenumber - 1); // convert linenumber to zero-based index
+		int charEnd = lineOffset + end_token_pos - 1; // convert charoffset to zero-based index
+		return charEnd;
 	}
 
 	public int getCharStart() throws DebugException {
-		// TODO: char start is the offset from the start of the file
-		/*
-		int charstart = frameData.getCurrentLocationInfo().getStart_token_pos();
-		return charstart;
-		*/
-		return -1;
+		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
+		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
+		int linenumber = frameData.getCurrentLocationInfo().getStart_line_num(); // one-based index
+		int start_token_pos = frameData.getCurrentLocationInfo().getStart_token_pos();
+		int lineOffset = ft.getLineOffset(linenumber - 1); // convert linenumber to zero-based index
+		int charStart = lineOffset + start_token_pos - 1; // convert charoffset to zero-based index
+		System.out.println("asd");
+		return charStart;
 	}
 
 	public int getLineNumber() throws DebugException {

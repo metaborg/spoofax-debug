@@ -8,6 +8,9 @@ imports
   gen-lookup
   traverse-imports // show all files used as import
   trans-str
+  
+  // test stratego execution
+  tests/term-traverse
 
 imports
   libstratego-lib

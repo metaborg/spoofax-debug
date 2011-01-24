@@ -202,8 +202,9 @@ public class StrategoTermBuilder {
 		}
 		else
 		{
-			System.err.println("buildStrategoList Not found!");
-			return null;
+			System.err.println("Value cannot be converted to a list: " + value.type());
+			throw new RuntimeException("Value cannot be converted to a list: " + value.type());
+			//return null;
 		}
 	}
 	
@@ -267,8 +268,9 @@ public class StrategoTermBuilder {
 		else
 		{
 			System.err.println("Missing type " + type);
+			throw new RuntimeException("Missing type " + type);
 		}
-		return null;
+		//return null;
 	}
 
 	public IStrategoConstructor buildStrategoConstructor(Value value)

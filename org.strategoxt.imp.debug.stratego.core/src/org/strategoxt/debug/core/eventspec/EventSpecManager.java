@@ -8,10 +8,16 @@ import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.debug.core.util.table.EventTable;
+import org.strategoxt.debug.core.util.table.LineLengthTable;
 
 public class EventSpecManager {
 
+	/**
+	 * Used to convert position in the textfile to debug breakpoints. for example, a position can correspond to a s-step or a s-enter.
+	 */
 	private EventTable eventTable = null;
+	
+	private LineLengthTable lineLengthTable = null;
 	
 	// true if the thread stopped in a rule/strategy and the stepNextEnter command was issued.
 	// stepNextEnter means that if the rule/strategy in the current frame calls another user-defined rule/strategy that will fire a s-enter or r-enter
@@ -28,10 +34,13 @@ public class EventSpecManager {
 		initializeTable();
 	}
 	
+	/**
+	 * Initializes the EventTable and the LineLengthTable
+	 */
 	private void initializeTable()
 	{
-		String extension = "table";
-		List<String> matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory(), extension);
+		String extensionT = "table";
+		List<String> matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory(), extensionT);
 		// TODO: use the first match as we only support one file
 		if (matches.size() > 0)
 		{
@@ -40,6 +49,15 @@ public class EventSpecManager {
 			this.eventTable = EventTable.readEventTable(location);
 		}
 		
+		String extensionO = "offset";
+		matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory(), extensionO);
+		// TODO: use the first match as we only support one file
+		if (matches.size() > 0)
+		{
+			String location = this.debugSessionSettings.getStrategoDirectory() + "/" + matches.get(0);
+			//String location ="/tmp/localvar_str/stratego/localvar.table";
+			this.lineLengthTable = LineLengthTable.readLineLengthTable(location);
+		}
 	}
 
 	/**
@@ -126,7 +144,7 @@ public class EventSpecManager {
 			{
 				// no parent index
 				// we are at the exit of the main strategy!
-				System.out.println("At exit of top level strategy, just continue..");
+				log("At exit of top level strategy, just continue..");
 				return;
 			}
 			stepFrame = state.get(parentIndex);
@@ -157,7 +175,7 @@ public class EventSpecManager {
 		{
 			// current stackframe is suspend at a s-exit/r-exit/s-enter/r-enter
 			// just treat it as an step over
-			System.out.println("Cannot step into " + state.currentFrame().getEventType() + ", just do a step over...");
+			log("Cannot step into " + state.currentFrame().getEventType() + ", just do a step over...");
 			setStepOver(state);
 		}
 		state.setStepping(true);
@@ -168,7 +186,7 @@ public class EventSpecManager {
 		if (state.getCurrentFrameLevel() == 0)
 		{
 			// we are at the main strategy, cannot step return
-			System.out.println("Cannot step return in top level strategy, just continue...");
+			log("Cannot step return in top level strategy, just continue...");
 			return;
 		}
 		stepFrame = state.currentFrame();
@@ -191,6 +209,15 @@ public class EventSpecManager {
 	public EventTable getEventTable()
 	{
 		return this.eventTable;
+	}
+	
+	public LineLengthTable getLineLengthTable()
+	{
+		return this.lineLengthTable;
+	}
+	
+	private void log(String message){
+		System.out.println(message);
 	}
 
 }

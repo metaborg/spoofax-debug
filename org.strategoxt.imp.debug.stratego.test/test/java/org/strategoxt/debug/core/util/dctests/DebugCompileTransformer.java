@@ -135,6 +135,8 @@ Caused by: org.strategoxt.lang.StrategoErrorExit: giving-up
 public class DebugCompileTransformer {
 
 	public static void main(String[] args) {
+		testDebugCompileTransformerError();
+
 		long a1 = System.currentTimeMillis();
 		testDebugCompileTransformer();
 		long a2 = System.currentTimeMillis();
@@ -144,7 +146,6 @@ public class DebugCompileTransformer {
 		long a3 = System.currentTimeMillis();
 		System.out.println("RUN:" + (a3 - a2));
 		
-		//testDebugCompileTransformerError();
 	}
 
 	private static void testDebugCompileTransformerError() {
@@ -196,7 +197,7 @@ public class DebugCompileTransformer {
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_1";
+			//String output = StrategoFileManager.WORKING_DIR + "/transformer_test_1";
 			String argsForMainClass = "-i " + input;// + " -o " + output;
 			String mainClass = "transformer.transformer";
 			String mainArgs = mainClass + " " + argsForMainClass;
@@ -208,7 +209,7 @@ public class DebugCompileTransformer {
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(projectName, mainArgs, classpath);
+			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
 	}
 
@@ -255,14 +256,14 @@ public class DebugCompileTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = false;
+		boolean runjava = true;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_debug";
+			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_debug2";
 			String argsForMainClass = "-i " + input + " -o " + output;
-			String mainClass = "transformer.transformer";
+			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
 			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
@@ -272,7 +273,7 @@ public class DebugCompileTransformer {
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(projectName, mainArgs, classpath);
+			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
 		debugCompiler.getDebugCompileProgress().printStats();
 	}
@@ -320,14 +321,14 @@ public class DebugCompileTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = false;
+		boolean runjava = true;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run";
+			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run2";
 			String argsForMainClass = "-i " + input + " -o " + output;
-			String mainClass = "transformer.transformer";
+			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
 			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
@@ -337,7 +338,7 @@ public class DebugCompileTransformer {
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(projectName, mainArgs, classpath);
+			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
 		debugCompiler.getDebugCompileProgress().printStats();
 	}

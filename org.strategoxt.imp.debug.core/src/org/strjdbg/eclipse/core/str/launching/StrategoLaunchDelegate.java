@@ -218,6 +218,16 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		// program recompile
 		boolean rebuildBinary = false;
 		rebuildBinary = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, true);
+
+
+		// program arguments
+		List compileArguments = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_COMPILE_ARGUMENTS, (List)null);
+		if (compileArguments == null) {
+			//abort("Stratego program unspecified.", null);
+			compileArguments = new ArrayList<String>();
+		}
+		String[] compileTimeExtraArguments = (String[]) compileArguments.toArray(new String[0]);
+		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
 		
 		String binBase = debugSessionSettings.getClassDirectory(); // default
 
@@ -392,8 +402,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			Object result = handler.handleStatus(status, null);
 			System.out.println(result);
 		}
-		// write to the error log
-		Activator.getDefault().getLog().log(status);
 	}
 	
 	/**

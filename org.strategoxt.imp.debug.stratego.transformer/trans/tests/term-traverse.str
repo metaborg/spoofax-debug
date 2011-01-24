@@ -1,0 +1,17 @@
+module tests/term-traverse
+
+imports
+  libstrategolib
+
+strategies
+
+	main-test-term-traverse = execute-term-traverse
+	
+	execute-term-traverse = !["foo", "bar", "cheese"]; map(element-stuff); debug(!"")
+	
+	element-stuff = ?name
+	; rules
+	  ( GetName : _ -> name where (hello-var := "hello"; not(id; fail); <concat-strings> [hello-var, hello-var]; debug(!"concat: ")))
+	; otherstuff
+
+	otherstuff = !"stuff"; ?stuff; GetName; debug(!"name: "); !stuff

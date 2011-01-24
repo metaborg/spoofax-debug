@@ -2,8 +2,6 @@ package org.strategoxt.debug.core.model;
 
 import java.util.HashMap;
 
-import org.spoofax.interpreter.terms.IStrategoTerm;
-
 public class StrategoStackFrame {
 	
 	/**
@@ -35,9 +33,9 @@ public class StrategoStackFrame {
 	/**
 	 * The current stratego term.
 	 */
-	private IStrategoTerm current;
+	private StrategoTermValueWrapper current;
 
-	private HashMap<String, IStrategoTerm> variables = null;
+	private HashMap<String, StrategoTermValueWrapper> variables = null;
 	
 	/**
 	 * The event that is associated with the currentLocationInfo.
@@ -53,13 +51,13 @@ public class StrategoStackFrame {
 	 * @param current The current stratego term.
 	 */
 	public StrategoStackFrame(int level, String filename, String name, LocationInfo locationInfo,
-			IStrategoTerm current) {
+			StrategoTermValueWrapper current) {
 		this.level = level;
 		this.name = name;
 		this.filename = filename;
 		this.locationInfo = locationInfo;
 		this.current = current;
-		this.variables = new HashMap<String, IStrategoTerm>();
+		this.variables = new HashMap<String, StrategoTermValueWrapper>();
 	}
 	
 	public String toString()
@@ -116,7 +114,7 @@ public class StrategoStackFrame {
 	 * 
 	 * @return
 	 */
-	public IStrategoTerm getCurrentTerm()
+	public StrategoTermValueWrapper getCurrentTerm()
 	{
 		return this.current;
 	}
@@ -130,7 +128,7 @@ public class StrategoStackFrame {
 		return this.currentLocationInfo;
 	}
 	
-	public HashMap<String, IStrategoTerm> getVariables()
+	public HashMap<String, StrategoTermValueWrapper> getVariables()
 	{
 		return this.variables;
 	}
@@ -144,7 +142,7 @@ public class StrategoStackFrame {
 		return this.eventType;
 	}
 	
-	public void setCurrentTerm(IStrategoTerm term)
+	public void setCurrentTerm(StrategoTermValueWrapper term)
 	{
 		this.current = term;
 	}
@@ -160,7 +158,7 @@ public class StrategoStackFrame {
 	 * @param varname
 	 * @param value
 	 */
-	public void addVariable(String varname, IStrategoTerm value)
+	public void addVariable(String varname, StrategoTermValueWrapper value)
 	{
 		this.variables.put(varname, value);
 	}

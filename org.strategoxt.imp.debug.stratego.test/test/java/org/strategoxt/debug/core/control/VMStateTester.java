@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
+import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 
 enum VMStateTesterCompareType
 {
@@ -145,7 +145,7 @@ public class VMStateTester {
 	{
 		StrategoState state = new StrategoState();
 		LocationInfo currentLocationInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
-		IStrategoTerm current = null;
+		StrategoTermValueWrapper current = null;
 		// TODO: add stackframedepth
 		StrategoStackFrame frame = new StrategoStackFrame(-1, filename, name, null, current);
 		frame.setCurrentLocationInfo(currentLocationInfo, eventType);

@@ -1,5 +1,7 @@
 package org.strategoxt.debug.core.util;
 
+import java.util.List;
+
 import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_enter_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_exit_0_4;
@@ -8,7 +10,11 @@ import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_exit_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_step_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_var_0_5;
 
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Location;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -30,9 +36,20 @@ public class DebugEventRequestInstaller {
 	
 	private static final String EVENT_TYPE = "event-type";
 	
+	public static final boolean installStrategoDebugEventRequests = false;
+	
+	
 	public static void installDebugEventRequests(VirtualMachine vm, boolean watchFields, String[] excludes)
 	{
 		EventRequestManager mgr = vm.eventRequestManager();
+		// listen to the class prepare requests for all classes in this package
+		// the classes are s-enter, r-enter, ....
+		// when they are prepared, catch that DebugEvent and create a BreakpointEntryRequest in each class in the invoke method
+		// Using MethodEntry events is way too slow because it prevents method-inlining optimizations
+		ClassPrepareRequest str_cpr = mgr.createClassPrepareRequest();
+		str_cpr.addClassFilter("org.strategoxt.imp.debug.stratego.runtime.strategies.*");
+		str_cpr.enable();
+		
 		// want all exceptions 
 		/*
 		ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
@@ -40,33 +57,37 @@ public class DebugEventRequestInstaller {
 		excReq.enable();*/
 
 
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_ENTER);
 		
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_EXIT);
-		
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_ENTER);
-		
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_EXIT);
-		
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_STEP, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_STEP);
+		if (installStrategoDebugEventRequests)
+		{
 
-		createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_VAR, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_VAR);
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_ENTER);
+			
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_EXIT);
+			
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_ENTER);
+			
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_EXIT);
+			
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_STEP, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_STEP);
+	
+			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_VAR, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_VAR);
+	
+			
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_ENTER);
+			
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_EXIT);
+	
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_ENTER);
+	
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_EXIT);
+	
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_STEP, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_STEP);
+			
+			createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_VAR, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_VAR);
 
-		
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_ENTER);
-		
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_EXIT);
+		}
 
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_ENTER);
-
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_R_EXIT, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.R_EXIT);
-
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_STEP, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_STEP);
-		
-		createMethodExitRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_VAR, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_VAR);
-
-
-		
 		// thread dies
 		ThreadDeathRequest tdr = mgr.createThreadDeathRequest();
 		// Make sure we sync on thread death
@@ -92,6 +113,51 @@ public class DebugEventRequestInstaller {
 		*/
 	}
 	
+	private static Location location(ClassType clazz, int linenumber) {
+		Location location = null;
+		try {
+			List<Location> locs = clazz.locationsOfLine(linenumber);
+			if (locs.size() == 0) {
+				return null;
+			}
+			// TODO handle multiple locations
+			location = (Location) locs.get(0);
+			if (location.method() == null) {
+				return null;
+			}
+		} catch (AbsentInformationException e) {
+			/*
+			 * TO DO: throw something more specific, or allow AbsentInfo
+			 * exception to pass through.
+			 */
+			return null;
+		}
+		return location;
+	}
+	
+	public static void createBreakpointEntryRequest(EventRequestManager mgr, ClassType clazz, int linenumber, String eventType)
+	{
+		int suspendPolicy = EventRequest.SUSPEND_EVENT_THREAD;
+		Location location = null;
+		location = location(clazz, linenumber);
+		if (location == null) {
+			return;
+		}
+		List<BreakpointRequest> existing = mgr.breakpointRequests();
+		for(BreakpointRequest r : existing)
+		{
+			if (location.equals(r.location()))
+			{
+				System.out.println("THE SAME");
+			}
+		}
+		BreakpointRequest bpr = mgr.createBreakpointRequest(location);
+		bpr.setSuspendPolicy(suspendPolicy);
+		bpr.putProperty(EVENT_TYPE, eventType);
+		bpr.enable();
+		
+	}
+	
 	/**
 	 * Creates a new MethodEntry Request DebugEvnt for the given class.
 	 * The eventType should match one of the stratego debug events.
@@ -101,6 +167,7 @@ public class DebugEventRequestInstaller {
 	 */
 	public static void createMethodEntryRequest(EventRequestManager mgr, String classFilter, int suspendPolicy, String eventType)
 	{
+		
 		MethodEntryRequest menr = mgr.createMethodEntryRequest();
 		menr.addClassFilter(classFilter);
 		menr.setSuspendPolicy(suspendPolicy);

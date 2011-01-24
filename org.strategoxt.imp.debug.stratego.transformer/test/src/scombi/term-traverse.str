@@ -1,0 +1,358 @@
+module term-traverse
+
+imports
+  strategodebuglib
+
+
+imports
+  libstrategolib
+
+
+strategies
+  main =
+    s-enter(
+    | "test/src/scombi/term-traverse.tes"
+    , "main"
+    , LocationInfo("8", "2", "8", "16")
+    )
+    ; (s-step(
+       | "test/src/scombi/term-traverse.tes"
+       , "main"
+       , LocationInfo("8", "9", "8", "16")
+       )
+       ; execute
+       < s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "main"
+         , LocationInfo("8", "2", "8", "16")
+         )
+       + s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "main"
+         , LocationInfo("8", "2", "8", "16")
+         )
+         ; fail)
+
+  execute =
+    s-enter(
+    | "test/src/scombi/term-traverse.tes"
+    , "execute"
+    , LocationInfo("10", "2", "10", "81")
+    )
+    ; ((s-step(
+        | "test/src/scombi/term-traverse.tes"
+        , "execute"
+        , LocationInfo("10", "12", "10", "37")
+        )
+        ; !["foo", "bar", "cheese"])
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "execute"
+          , LocationInfo("10", "39", "10", "48")
+          )
+          ; k := <s-step(
+                  | "test/src/scombi/term-traverse.tes"
+                  , "execute"
+                  , LocationInfo("10", "44", "10", "48")
+                  )
+                  ; id>
+          ; <s-var(
+             | "test/src/scombi/term-traverse.tes"
+             , "execute"
+             , "k"
+             , LocationInfo("10", "39", "10", "40")
+             )> k)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "execute"
+          , LocationInfo("10", "51", "10", "69")
+          )
+          ; map(
+              s-step(
+              | "test/src/scombi/term-traverse.tes"
+              , "execute"
+              , LocationInfo("10", "55", "10", "68")
+              )
+              ; element-stuff
+            ))
+       ; s-step(
+         | "test/src/scombi/term-traverse.tes"
+         , "execute"
+         , LocationInfo("10", "71", "10", "81")
+         )
+       ; debug(
+           s-step(
+           | "test/src/scombi/term-traverse.tes"
+           , "execute"
+           , LocationInfo("10", "77", "10", "80")
+           )
+           ; !""
+         )
+       < s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "execute"
+         , LocationInfo("10", "2", "10", "81")
+         )
+       + s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "execute"
+         , LocationInfo("10", "2", "10", "81")
+         )
+         ; fail)
+
+  element-stuff =
+    s-enter(
+    | "test/src/scombi/term-traverse.tes"
+    , "element-stuff"
+    , LocationInfo("12", "2", "15", "70")
+    )
+    ; ((s-step(
+        | "test/src/scombi/term-traverse.tes"
+        , "element-stuff"
+        , LocationInfo("12", "18", "12", "23")
+        )
+        ; ?name)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "element-stuff"
+          , LocationInfo("13", "4", "14", "131")
+          )
+          ; rules (
+              GetName :
+                _ -> name
+                where (s-step(
+                       | "test/src/scombi/term-traverse.tes"
+                       , "element-stuff"
+                       , LocationInfo("14", "33", "14", "53")
+                       )
+                       ; hello-var := "hello"
+                       ; <s-var(
+                          | "test/src/scombi/term-traverse.tes"
+                          , "element-stuff"
+                          , "hello-var"
+                          , LocationInfo("14", "33", "14", "42")
+                          )> hello-var)
+                      ; (s-step(
+                         | "test/src/scombi/term-traverse.tes"
+                         , "element-stuff"
+                         , LocationInfo("14", "55", "14", "68")
+                         )
+                         ; not((s-step(
+                                | "test/src/scombi/term-traverse.tes"
+                                , "element-stuff"
+                                , LocationInfo("14", "59", "14", "61")
+                                )
+                                ; id)
+                               ; s-step(
+                                 | "test/src/scombi/term-traverse.tes"
+                                 , "element-stuff"
+                                 , LocationInfo("14", "63", "14", "67")
+                                 )
+                               ; fail))
+                      ; <(s-step(
+                          | "test/src/scombi/term-traverse.tes"
+                          , "element-stuff"
+                          , LocationInfo("14", "70", "14", "86")
+                          )
+                          ; concat-strings)> [hello-var, hello-var]
+                      ; s-step(
+                        | "test/src/scombi/term-traverse.tes"
+                        , "element-stuff"
+                        , LocationInfo("14", "111", "14", "129")
+                        )
+                      ; debug(
+                          s-step(
+                          | "test/src/scombi/term-traverse.tes"
+                          , "element-stuff"
+                          , LocationInfo("14", "117", "14", "128")
+                          )
+                          ; !"concat: "
+                        )
+            ))
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "element-stuff"
+          , LocationInfo("15", "4", "15", "14")
+          )
+          ; otherstuff)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "element-stuff"
+          , LocationInfo("15", "16", "15", "22")
+          )
+          ; ?stuff)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "element-stuff"
+          , LocationInfo("15", "24", "15", "38")
+          )
+          ; !(stuff, name))
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "element-stuff"
+          , LocationInfo("15", "40", "15", "51")
+          )
+          ; match-tuple)
+       ; s-step(
+         | "test/src/scombi/term-traverse.tes"
+         , "element-stuff"
+         , LocationInfo("15", "53", "15", "70")
+         )
+       ; debug(
+           s-step(
+           | "test/src/scombi/term-traverse.tes"
+           , "element-stuff"
+           , LocationInfo("15", "59", "15", "69")
+           )
+           ; !"tuple: "
+         )
+       < s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "element-stuff"
+         , LocationInfo("12", "2", "15", "70")
+         )
+       + s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "element-stuff"
+         , LocationInfo("12", "2", "15", "70")
+         )
+         ; fail)
+
+  otherstuff =
+    s-enter(
+    | "test/src/scombi/term-traverse.tes"
+    , "otherstuff"
+    , LocationInfo("17", "2", "17", "75")
+    )
+    ; ((s-step(
+        | "test/src/scombi/term-traverse.tes"
+        , "otherstuff"
+        , LocationInfo("17", "15", "17", "23")
+        )
+        ; !"stuff")
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "otherstuff"
+          , LocationInfo("17", "25", "17", "31")
+          )
+          ; ?stuff)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "otherstuff"
+          , LocationInfo("17", "33", "17", "49")
+          )
+          ; var := <s-step(
+                    | "test/src/scombi/term-traverse.tes"
+                    , "otherstuff"
+                    , LocationInfo("17", "40", "17", "49")
+                    )
+                    ; GetName>
+          ; <s-var(
+             | "test/src/scombi/term-traverse.tes"
+             , "otherstuff"
+             , "var"
+             , LocationInfo("17", "33", "17", "36")
+             )> var)
+       ; (s-step(
+          | "test/src/scombi/term-traverse.tes"
+          , "otherstuff"
+          , LocationInfo("17", "51", "17", "67")
+          )
+          ; debug(
+              s-step(
+              | "test/src/scombi/term-traverse.tes"
+              , "otherstuff"
+              , LocationInfo("17", "57", "17", "66")
+              )
+              ; !"name: "
+            ))
+       ; s-step(
+         | "test/src/scombi/term-traverse.tes"
+         , "otherstuff"
+         , LocationInfo("17", "69", "17", "75")
+         )
+       ; !stuff
+       < s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "otherstuff"
+         , LocationInfo("17", "2", "17", "75")
+         )
+       + s-exit(
+         | "test/src/scombi/term-traverse.tes"
+         , "otherstuff"
+         , LocationInfo("17", "2", "17", "75")
+         )
+         ; fail)
+
+  match-tuple :
+    (item1, item2) -> <r-exit(
+                       | "test/src/scombi/term-traverse.tes"
+                       , "match-tuple"
+                       , LocationInfo("19", "2", "23", "23")
+                       )> ( <(s-step(
+                              | "test/src/scombi/term-traverse.tes"
+                              , "match-tuple"
+                              , LocationInfo("20", "23", "20", "26")
+                              )
+                              ; ?ik)
+                             ; (s-step(
+                                | "test/src/scombi/term-traverse.tes"
+                                , "match-tuple"
+                                , LocationInfo("20", "28", "20", "41")
+                                )
+                                ; var := ";aas"
+                                ; <s-var(
+                                   | "test/src/scombi/term-traverse.tes"
+                                   , "match-tuple"
+                                   , "var"
+                                   , LocationInfo("20", "28", "20", "31")
+                                   )> var)
+                             ; s-step(
+                               | "test/src/scombi/term-traverse.tes"
+                               , "match-tuple"
+                               , LocationInfo("20", "43", "20", "46")
+                               )
+                             ; !ik> item1'
+                          , item2'
+                          )
+    where r-enter(
+          | "test/src/scombi/term-traverse.tes"
+          , "match-tuple"
+          , LocationInfo("19", "2", "23", "23")
+          )
+    where <s-var(
+           | "test/src/scombi/term-traverse.tes"
+           , "match-tuple"
+           , "item1"
+           , LocationInfo("20", "4", "20", "9")
+           )> item1
+          ; <s-var(
+             | "test/src/scombi/term-traverse.tes"
+             , "match-tuple"
+             , "item2"
+             , LocationInfo("20", "11", "20", "16")
+             )> item2
+    where (s-step(
+           | "test/src/scombi/term-traverse.tes"
+           , "match-tuple"
+           , LocationInfo("22", "4", "22", "21")
+           )
+           ; item1' := "item1"
+           ; <s-var(
+              | "test/src/scombi/term-traverse.tes"
+              , "match-tuple"
+              , "item1'"
+              , LocationInfo("22", "4", "22", "10")
+              )> item1')
+          ; s-step(
+            | "test/src/scombi/term-traverse.tes"
+            , "match-tuple"
+            , LocationInfo("23", "6", "23", "23")
+            )
+          ; item2' := "item2"
+          ; <s-var(
+             | "test/src/scombi/term-traverse.tes"
+             , "match-tuple"
+             , "item2'"
+             , LocationInfo("23", "6", "23", "12")
+             )> item2'
