@@ -1,0 +1,5 @@
+s-enter	"program.str"	"main"	"4"	"2"	"5"	"17"
+s-step	"program.str"	"main"	"5"	"3"	"5"	"17"
+s-step	"program.str"	"main"	"5"	"9"	"5"	"16"
+s-exit	"program.str"	"main"	"4"	"2"	"5"	"17"
+s-exit	"program.str"	"main"	"4"	"2"	"5"	"17"

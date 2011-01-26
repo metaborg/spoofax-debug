@@ -1,0 +1,1370 @@
+module tests/imports-test
+
+imports
+  strategodebuglib
+
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports
+  trans-str
+
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+
+
+strategies
+  test-list-imports-1 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-1"
+    , LocationInfo("22", "3", "34", "31")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-1"
+        , LocationInfo("23", "4", "23", "32")
+        )
+        ; echo(|"test-list-imports-1"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("24", "6", "24", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-1"
+             , LocationInfo("24", "6", "24", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("25", "6", "25", "35")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-1"
+             , LocationInfo("25", "6", "25", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("26", "6", "26", "50")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-1"
+             , LocationInfo("26", "6", "26", "33")
+             )
+             ; !"testimports/localvar.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("27", "6", "27", "98")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-1"
+              , LocationInfo("27", "7", "27", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("28", "6", "28", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("29", "6", "29", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("31", "6", "31", "39")
+          )
+          ; args := ["-i", absolute-location]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-1"
+             , "args"
+             , LocationInfo("31", "6", "31", "10")
+             )> args)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-1"
+           , LocationInfo("32", "7", "32", "26")
+           )
+           ; list-imports(|args))> absolute-location
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-1"
+          , LocationInfo("33", "6", "33", "17")
+          )
+          ; ?(files, _))
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-1"
+           , LocationInfo("34", "7", "34", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-1"
+               , LocationInfo("34", "13", "34", "23")
+               )
+               ; !"files: "
+             ))> files
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-1"
+         , LocationInfo("22", "3", "34", "31")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-1"
+         , LocationInfo("22", "3", "34", "31")
+         )
+         ; fail)
+
+  test-list-imports-2 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-2"
+    , LocationInfo("36", "3", "48", "31")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-2"
+        , LocationInfo("37", "4", "37", "32")
+        )
+        ; echo(|"test-list-imports-2"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("38", "6", "38", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-2"
+             , LocationInfo("38", "6", "38", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("39", "6", "39", "35")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-2"
+             , LocationInfo("39", "6", "39", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("40", "6", "40", "51")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-2"
+             , LocationInfo("40", "6", "40", "34")
+             )
+             ; !"testogetarts/ogetarts.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("41", "6", "41", "98")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-2"
+              , LocationInfo("41", "7", "41", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("42", "6", "42", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("43", "6", "43", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("45", "6", "45", "39")
+          )
+          ; args := ["-i", absolute-location]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-2"
+             , "args"
+             , LocationInfo("45", "6", "45", "10")
+             )> args)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-2"
+           , LocationInfo("46", "7", "46", "26")
+           )
+           ; list-imports(|args))> absolute-location
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-2"
+          , LocationInfo("47", "6", "47", "17")
+          )
+          ; ?(files, _))
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-2"
+           , LocationInfo("48", "7", "48", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-2"
+               , LocationInfo("48", "13", "48", "23")
+               )
+               ; !"files: "
+             ))> files
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-2"
+         , LocationInfo("36", "3", "48", "31")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-2"
+         , LocationInfo("36", "3", "48", "31")
+         )
+         ; fail)
+
+  test-list-imports-3 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-3"
+    , LocationInfo("52", "3", "80", "24")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-3"
+        , LocationInfo("53", "4", "53", "32")
+        )
+        ; echo(|"test-list-imports-3"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("54", "6", "54", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , LocationInfo("54", "6", "54", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("55", "6", "55", "32")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , LocationInfo("55", "6", "55", "14")
+             )
+             ; !"trans") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("56", "6", "56", "50")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , LocationInfo("56", "6", "56", "33")
+             )
+             ; !"stratego-transformer.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("57", "6", "57", "98")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-3"
+              , LocationInfo("57", "7", "57", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("58", "6", "58", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("59", "6", "59", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("61", "6", "61", "67")
+          )
+          ; include-dir := <s-step(
+                            | "tests/imports-test.str"
+                            , "test-list-imports-3"
+                            , LocationInfo("61", "22", "61", "36")
+                            )
+                            ; concat-strings> [project-dir, "/", "include"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , "include-dir"
+             , LocationInfo("61", "6", "61", "17")
+             )> include-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("62", "6", "62", "59")
+          )
+          ; lib-dir := <s-step(
+                        | "tests/imports-test.str"
+                        , "test-list-imports-3"
+                        , LocationInfo("62", "18", "62", "32")
+                        )
+                        ; concat-strings> [project-dir, "/", "lib"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , "lib-dir"
+             , LocationInfo("62", "6", "62", "13")
+             )> lib-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("63", "6", "63", "65")
+          )
+          ; syntax-dir := <s-step(
+                           | "tests/imports-test.str"
+                           , "test-list-imports-3"
+                           , LocationInfo("63", "21", "63", "35")
+                           )
+                           ; concat-strings> [project-dir, "/", "syntax"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , "syntax-dir"
+             , LocationInfo("63", "6", "63", "16")
+             )> syntax-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("64", "6", "71", "17")
+          )
+          ; args := ["--slack", "-i", absolute-location, "-I", project-dir]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , "args"
+             , LocationInfo("64", "6", "64", "10")
+             )> args)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("72", "6", "72", "27")
+          )
+          ; debug(
+              s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-3"
+              , LocationInfo("72", "12", "72", "26")
+              )
+              ; !"arguments: "
+            ))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("73", "6", "74", "39")
+          )
+          ; incl := [lib-dir, syntax-dir, project-dir]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-3"
+             , "incl"
+             , LocationInfo("73", "6", "73", "10")
+             )> incl)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-3"
+           , LocationInfo("75", "7", "75", "17")
+           )
+           ; set-config)> ("-I", incl)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-3"
+           , LocationInfo("77", "7", "77", "26")
+           )
+           ; list-imports(|args))> absolute-location
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-3"
+          , LocationInfo("78", "6", "78", "17")
+          )
+          ; ?(files, _))
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-3"
+           , LocationInfo("79", "7", "79", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-3"
+               , LocationInfo("79", "13", "79", "23")
+               )
+               ; !"files: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-3"
+           , LocationInfo("80", "7", "80", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-3"
+               , LocationInfo("80", "11", "80", "16")
+               )
+               ; debug
+             ))> files
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-3"
+         , LocationInfo("52", "3", "80", "24")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-3"
+         , LocationInfo("52", "3", "80", "24")
+         )
+         ; fail)
+
+  test-list-imports-4 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-4"
+    , LocationInfo("84", "3", "112", "24")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-4"
+        , LocationInfo("85", "4", "85", "32")
+        )
+        ; echo(|"test-list-imports-4"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("86", "6", "86", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , LocationInfo("86", "6", "86", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("87", "6", "87", "32")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , LocationInfo("87", "6", "87", "14")
+             )
+             ; !"trans") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("88", "6", "88", "50")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , LocationInfo("88", "6", "88", "33")
+             )
+             ; !"stratego-transformer.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("89", "6", "89", "98")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-4"
+              , LocationInfo("89", "7", "89", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", main-str-file] => absolute-location)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("90", "6", "90", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("91", "6", "91", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("93", "6", "93", "67")
+          )
+          ; include-dir := <s-step(
+                            | "tests/imports-test.str"
+                            , "test-list-imports-4"
+                            , LocationInfo("93", "22", "93", "36")
+                            )
+                            ; concat-strings> [project-dir, "/", "include"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , "include-dir"
+             , LocationInfo("93", "6", "93", "17")
+             )> include-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("94", "6", "94", "59")
+          )
+          ; lib-dir := <s-step(
+                        | "tests/imports-test.str"
+                        , "test-list-imports-4"
+                        , LocationInfo("94", "18", "94", "32")
+                        )
+                        ; concat-strings> [project-dir, "/", "lib"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , "lib-dir"
+             , LocationInfo("94", "6", "94", "13")
+             )> lib-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("95", "6", "95", "65")
+          )
+          ; syntax-dir := <s-step(
+                           | "tests/imports-test.str"
+                           , "test-list-imports-4"
+                           , LocationInfo("95", "21", "95", "35")
+                           )
+                           ; concat-strings> [project-dir, "/", "syntax"]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , "syntax-dir"
+             , LocationInfo("95", "6", "95", "16")
+             )> syntax-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("96", "6", "102", "17")
+          )
+          ; args := ["--slack", "-i", absolute-location, "-I", "."]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , "args"
+             , LocationInfo("96", "6", "96", "10")
+             )> args)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("103", "6", "103", "27")
+          )
+          ; debug(
+              s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-4"
+              , LocationInfo("103", "12", "103", "26")
+              )
+              ; !"arguments: "
+            ))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("104", "6", "106", "12")
+          )
+          ; incl := ["."]
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-4"
+             , "incl"
+             , LocationInfo("104", "6", "104", "10")
+             )> incl)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-4"
+           , LocationInfo("107", "7", "107", "17")
+           )
+           ; set-config)> ("-I", incl)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-4"
+           , LocationInfo("109", "7", "109", "26")
+           )
+           ; list-imports(|args))> absolute-location
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-4"
+          , LocationInfo("110", "6", "110", "17")
+          )
+          ; ?(files, _))
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-4"
+           , LocationInfo("111", "7", "111", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-4"
+               , LocationInfo("111", "13", "111", "23")
+               )
+               ; !"files: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-4"
+           , LocationInfo("112", "7", "112", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-4"
+               , LocationInfo("112", "11", "112", "16")
+               )
+               ; debug
+             ))> files
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-4"
+         , LocationInfo("84", "3", "112", "24")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-4"
+         , LocationInfo("84", "3", "112", "24")
+         )
+         ; fail)
+
+  test-list-imports-5 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-5"
+    , LocationInfo("117", "3", "133", "38")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-5"
+        , LocationInfo("118", "4", "118", "32")
+        )
+        ; echo(|"test-list-imports-5"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("119", "6", "119", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-5"
+             , LocationInfo("119", "6", "119", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("120", "6", "120", "32")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-5"
+             , LocationInfo("120", "6", "120", "14")
+             )
+             ; !"trans") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("121", "6", "121", "50")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-5"
+             , LocationInfo("121", "6", "121", "33")
+             )
+             ; !"stratego-transformer.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("122", "6", "122", "70")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-5"
+              , LocationInfo("122", "7", "122", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir] => base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("123", "6", "123", "71")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-5"
+              , LocationInfo("123", "7", "123", "21")
+              )
+              ; concat-strings)> [base-path, "/", main-str-file] => absolute-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("124", "6", "124", "57")
+          )
+          ; files := <s-step(
+                      | "tests/imports-test.str"
+                      , "test-list-imports-5"
+                      , LocationInfo("124", "16", "124", "42")
+                      )
+                      ; get-internal-files(|["."])> absolute-file
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-5"
+             , "files"
+             , LocationInfo("124", "6", "124", "11")
+             )> files)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-5"
+           , LocationInfo("128", "7", "128", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-5"
+               , LocationInfo("128", "13", "128", "23")
+               )
+               ; !"files: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-5"
+           , LocationInfo("129", "7", "129", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-5"
+               , LocationInfo("129", "11", "129", "16")
+               )
+               ; debug
+             ))> files
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-5"
+          , LocationInfo("130", "6", "130", "43")
+          )
+          ; missing := <s-step(
+                        | "tests/imports-test.str"
+                        , "test-list-imports-5"
+                        , LocationInfo("130", "18", "130", "36")
+                        )
+                        ; filter(
+                            s-step(
+                            | "tests/imports-test.str"
+                            , "test-list-imports-5"
+                            , LocationInfo("130", "25", "130", "35")
+                            )
+                            ; is-relpath
+                          )> files
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-5"
+             , "missing"
+             , LocationInfo("130", "6", "130", "13")
+             )> missing)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-5"
+           , LocationInfo("131", "7", "131", "26")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-5"
+               , LocationInfo("131", "13", "131", "25")
+               )
+               ; !"missing: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-5"
+           , LocationInfo("132", "7", "132", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-5"
+               , LocationInfo("132", "11", "132", "16")
+               )
+               ; debug
+             ))> missing
+       ; s-step(
+         | "tests/imports-test.str"
+         , "test-list-imports-5"
+         , LocationInfo("133", "6", "133", "38")
+         )
+       ; echo(|"end test-list-imports-5")
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-5"
+         , LocationInfo("117", "3", "133", "38")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-5"
+         , LocationInfo("117", "3", "133", "38")
+         )
+         ; fail)
+
+  test-list-imports-6 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-6"
+    , LocationInfo("139", "3", "155", "38")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-6"
+        , LocationInfo("140", "4", "140", "32")
+        )
+        ; echo(|"test-list-imports-6"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("141", "6", "141", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-6"
+             , LocationInfo("141", "6", "141", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("142", "6", "142", "32")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-6"
+             , LocationInfo("142", "6", "142", "14")
+             )
+             ; !"trans") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("143", "6", "143", "50")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-6"
+             , LocationInfo("143", "6", "143", "33")
+             )
+             ; !"stratego-transformer.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("144", "6", "144", "70")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-6"
+              , LocationInfo("144", "7", "144", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir] => base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("145", "6", "145", "71")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-6"
+              , LocationInfo("145", "7", "145", "21")
+              )
+              ; concat-strings)> [base-path, "/", main-str-file] => absolute-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("149", "6", "149", "65")
+          )
+          ; files := <s-step(
+                      | "tests/imports-test.str"
+                      , "test-list-imports-6"
+                      , LocationInfo("149", "16", "149", "50")
+                      )
+                      ; get-internal-files(|[project-dir])> absolute-file
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-6"
+             , "files"
+             , LocationInfo("149", "6", "149", "11")
+             )> files)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-6"
+           , LocationInfo("150", "7", "150", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-6"
+               , LocationInfo("150", "13", "150", "23")
+               )
+               ; !"files: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-6"
+           , LocationInfo("151", "7", "151", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-6"
+               , LocationInfo("151", "11", "151", "16")
+               )
+               ; debug
+             ))> files
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-6"
+          , LocationInfo("152", "6", "152", "43")
+          )
+          ; missing := <s-step(
+                        | "tests/imports-test.str"
+                        , "test-list-imports-6"
+                        , LocationInfo("152", "18", "152", "36")
+                        )
+                        ; filter(
+                            s-step(
+                            | "tests/imports-test.str"
+                            , "test-list-imports-6"
+                            , LocationInfo("152", "25", "152", "35")
+                            )
+                            ; is-relpath
+                          )> files
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-6"
+             , "missing"
+             , LocationInfo("152", "6", "152", "13")
+             )> missing)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-6"
+           , LocationInfo("153", "7", "153", "26")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-6"
+               , LocationInfo("153", "13", "153", "25")
+               )
+               ; !"missing: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-6"
+           , LocationInfo("154", "7", "154", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-6"
+               , LocationInfo("154", "11", "154", "16")
+               )
+               ; debug
+             ))> missing
+       ; s-step(
+         | "tests/imports-test.str"
+         , "test-list-imports-6"
+         , LocationInfo("155", "6", "155", "38")
+         )
+       ; echo(|"end test-list-imports-6")
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-6"
+         , LocationInfo("139", "3", "155", "38")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-6"
+         , LocationInfo("139", "3", "155", "38")
+         )
+         ; fail)
+
+  test-list-imports-7 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-7"
+    , LocationInfo("160", "3", "176", "52")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-7"
+        , LocationInfo("161", "4", "161", "32")
+        )
+        ; echo(|"test-list-imports-7"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("162", "6", "162", "36")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , LocationInfo("162", "6", "162", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("163", "6", "163", "47")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , LocationInfo("163", "6", "163", "29")
+             )
+             ; !"test/src/testimports") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("164", "6", "164", "54")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , LocationInfo("164", "6", "164", "35")
+             )
+             ; !"test/generated/testimports") => output-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("165", "6", "165", "38")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , LocationInfo("165", "6", "165", "21")
+             )
+             ; !"localvar.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("166", "6", "166", "70")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-7"
+              , LocationInfo("166", "7", "166", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir] => base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("167", "6", "167", "78")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-7"
+              , LocationInfo("167", "7", "167", "21")
+              )
+              ; concat-strings)> [project-dir, "/", output-base-dir] => output-base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("168", "6", "168", "71")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-7"
+              , LocationInfo("168", "7", "168", "21")
+              )
+              ; concat-strings)> [base-path, "/", main-str-file] => absolute-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("169", "6", "169", "57")
+          )
+          ; files := <s-step(
+                      | "tests/imports-test.str"
+                      , "test-list-imports-7"
+                      , LocationInfo("169", "16", "169", "42")
+                      )
+                      ; get-internal-files(|["."])> absolute-file
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , "files"
+             , LocationInfo("169", "6", "169", "11")
+             )> files)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-7"
+           , LocationInfo("170", "7", "170", "24")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-7"
+               , LocationInfo("170", "13", "170", "23")
+               )
+               ; !"files: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-7"
+           , LocationInfo("171", "7", "171", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-7"
+               , LocationInfo("171", "11", "171", "16")
+               )
+               ; debug
+             ))> files
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("172", "6", "172", "43")
+          )
+          ; missing := <s-step(
+                        | "tests/imports-test.str"
+                        , "test-list-imports-7"
+                        , LocationInfo("172", "18", "172", "36")
+                        )
+                        ; filter(
+                            s-step(
+                            | "tests/imports-test.str"
+                            , "test-list-imports-7"
+                            , LocationInfo("172", "25", "172", "35")
+                            )
+                            ; is-relpath
+                          )> files
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , "missing"
+             , LocationInfo("172", "6", "172", "13")
+             )> missing)
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-7"
+           , LocationInfo("173", "7", "173", "26")
+           )
+           ; debug(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-7"
+               , LocationInfo("173", "13", "173", "25")
+               )
+               ; !"missing: "
+             ))> ""
+       ; <(s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-7"
+           , LocationInfo("174", "7", "174", "17")
+           )
+           ; map(
+               s-step(
+               | "tests/imports-test.str"
+               , "test-list-imports-7"
+               , LocationInfo("174", "11", "174", "16")
+               )
+               ; debug
+             ))> missing
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-7"
+          , LocationInfo("175", "6", "175", "46")
+          )
+          ; real-files := <s-step(
+                           | "tests/imports-test.str"
+                           , "test-list-imports-7"
+                           , LocationInfo("175", "21", "175", "39")
+                           )
+                           ; filter(
+                               s-step(
+                               | "tests/imports-test.str"
+                               , "test-list-imports-7"
+                               , LocationInfo("175", "28", "175", "38")
+                               )
+                               ; is-abspath
+                             )> files
+          ; <s-var(
+             | "tests/imports-test.str"
+             , "test-list-imports-7"
+             , "real-files"
+             , LocationInfo("175", "6", "175", "16")
+             )> real-files)
+       ; s-step(
+         | "tests/imports-test.str"
+         , "test-list-imports-7"
+         , LocationInfo("176", "6", "176", "52")
+         )
+       ; map(
+           s-step(
+           | "tests/imports-test.str"
+           , "test-list-imports-7"
+           , LocationInfo("176", "10", "176", "51")
+           )
+           ; handle-file(|base-path, output-base-path)
+         )
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-7"
+         , LocationInfo("160", "3", "176", "52")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-7"
+         , LocationInfo("160", "3", "176", "52")
+         )
+         ; fail)
+
+  test-list-imports-8 =
+    s-enter(
+    | "tests/imports-test.str"
+    , "test-list-imports-8"
+    , LocationInfo("179", "2", "188", "36")
+    )
+    ; ((s-step(
+        | "tests/imports-test.str"
+        , "test-list-imports-8"
+        , LocationInfo("180", "3", "180", "31")
+        )
+        ; echo(|"test-list-imports-8"))
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("181", "7", "181", "37")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-8"
+             , LocationInfo("181", "7", "181", "22")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("182", "7", "182", "48")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-8"
+             , LocationInfo("182", "7", "182", "30")
+             )
+             ; !"test/src/testimports") => input-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("183", "7", "183", "55")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-8"
+             , LocationInfo("183", "7", "183", "36")
+             )
+             ; !"test/generated/testimports") => output-base-dir)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("184", "7", "184", "39")
+          )
+          ; (s-step(
+             | "tests/imports-test.str"
+             , "test-list-imports-8"
+             , LocationInfo("184", "7", "184", "22")
+             )
+             ; !"localvar.str") => main-str-file)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("185", "7", "185", "71")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-8"
+              , LocationInfo("185", "8", "185", "22")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir] => base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("186", "7", "186", "79")
+          )
+          ; <(s-step(
+              | "tests/imports-test.str"
+              , "test-list-imports-8"
+              , LocationInfo("186", "8", "186", "22")
+              )
+              ; concat-strings)> [project-dir, "/", output-base-dir] => output-base-path)
+       ; (s-step(
+          | "tests/imports-test.str"
+          , "test-list-imports-8"
+          , LocationInfo("187", "9", "187", "54")
+          )
+          ; !(base-path, output-base-path, main-str-file))
+       ; s-step(
+         | "tests/imports-test.str"
+         , "test-list-imports-8"
+         , LocationInfo("188", "9", "188", "36")
+         )
+       ; apply-debug-project(|["."])
+       < s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-8"
+         , LocationInfo("179", "2", "188", "36")
+         )
+       + s-exit(
+         | "tests/imports-test.str"
+         , "test-list-imports-8"
+         , LocationInfo("179", "2", "188", "36")
+         )
+         ; fail)

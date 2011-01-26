@@ -4,11 +4,20 @@ import java.io.File;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
 /*
+Stackoverflow
+Add command line options!
+
+-Xss8m
+-Xms256m
+-Xmx1024m
+-XX:MaxPermSize=256m
+-server
 
 
 gen-debug-var.str:213
@@ -19,62 +28,6 @@ replace it with
 	to-string-term :
 	  	value ->  NoAnnoList(Str(value))
 
-
-P:/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test
-Adding debug information to /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/stratego-transformer.str
-Please wait...
-/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans
-stratego-transformer.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/tests/strategoxt-parsing-test.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/strategoxt-parsing-test.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/tests/parsing-test.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/parsing-test.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/tests/imports-test.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/imports-test.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/transformer-test-suite.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/transformer-test-suite.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/traverse-imports.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/traverse-imports.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-lookup.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-lookup.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/assert.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/assert.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/location-util.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/location-util.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-debug-entry.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-entry.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-debug-var-arg.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var-arg.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-debug-var.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-debug-step.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-step.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/gen-debug-info.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-info.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/str-reader.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/str-reader.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/trans-str.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/trans-str.str
-file: /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/stratego-transformer.str
-Writing str.../home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/stratego-transformer.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/strategoxt-parsing-test.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/parsing-test.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/imports-test.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/transformer-test-suite.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/traverse-imports.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-lookup.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/assert.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/location-util.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-entry.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var-arg.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-step.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-info.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/str-reader.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/trans-str.str
-SUCCES /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/stratego-transformer.str
-create-table["/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/strategoxt-parsing-test.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/parsing-test.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/tests/imports-test.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/transformer-test-suite.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/traverse-imports.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-lookup.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/assert.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/location-util.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-entry.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var-arg.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-var.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-step.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/gen-debug-info.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/str-reader.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/trans-str.str","/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/stratego-transformer.str"]
-Generated file at /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/transformer/stratego/stratego-transformer.str
 Compile str to java...
 Exception: giving-up
 org.strategoxt.debug.core.util.DebugCompileException: Failed to compile stratego program to java. 
@@ -132,88 +85,25 @@ Caused by: org.strategoxt.lang.StrategoErrorExit: giving-up
 	... 3 more
 
  */
-public class DebugCompileTransformer {
+public class DebugCompileTransformer extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
-		testDebugCompileTransformerError();
 
-		long a1 = System.currentTimeMillis();
-		testDebugCompileTransformer();
+		DebugCompileTransformer test = new DebugCompileTransformer();
+		
+		//long a1 = System.currentTimeMillis();
+		//test.testDebugCompileTransformer();
 		long a2 = System.currentTimeMillis();
-		System.out.println("DBG:" + (a2 - a1));
+		//System.out.println("DBG:" + (a2 - a1));
 
-		testRunCompileTransformer();
+		test.testRunCompileTransformer();
 		long a3 = System.currentTimeMillis();
 		System.out.println("RUN:" + (a3 - a2));
 		
 	}
 
-	private static void testDebugCompileTransformerError() {
-		// TODO Auto-generated method stub
-		String baseInputPath = "trans";
-		String strategoFilePath = "stratego-transformer.str";
-
-		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
-		File f = new File(transformerProject);
-		try {
-			//System.out.println("INPUT: " + f.getCanonicalPath());
-			transformerProject = f.getCanonicalPath(); 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
-		
-		String projectName = "transformer";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
-		debugSessionSettings.setStrategoFilePath(strategoFilePath);
-		
-		String[] compileTimeExtraArguments = new String[]
-		                                          {
-				"-I", transformerProject
-				, "-la", "strc"
-		                                          };
-		
-		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
-		// mkdir localvar/stratego in workingdir
-		// mkdir localvar/java
-		// mkdir localvar/class
-		String binBase = null;
-		boolean compileSucces = false;
-		try {
-			binBase = debugCompiler.runCompile(debugSessionSettings);
-			compileSucces = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		boolean runjava = true;
-		// run .class
-		if (runjava && compileSucces)
-		{
-			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			//String output = StrategoFileManager.WORKING_DIR + "/transformer_test_1";
-			String argsForMainClass = "-i " + input;// + " -o " + output;
-			String mainClass = "transformer.transformer";
-			String mainArgs = mainClass + " " + argsForMainClass;
-			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
-			String classpath = cp;
-			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
-		}
-	}
-
-	private static void testDebugCompileTransformer() {
+	@Test
+	public void testDebugCompileTransformer() {
 		String baseInputPath = "trans";
 		String strategoFilePath = "stratego-transformer.str";
 
@@ -256,12 +146,15 @@ public class DebugCompileTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = true;
+		
+		checkOutput(debugSessionSettings);
+		
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_debug2";
+			String output = StrategoFileManager.WORKING_DIR + "/transformer_debug_output_localvar";
 			String argsForMainClass = "-i " + input + " -o " + output;
 			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
@@ -278,7 +171,8 @@ public class DebugCompileTransformer {
 		debugCompiler.getDebugCompileProgress().printStats();
 	}
 
-	private static void testRunCompileTransformer() {
+	@Test
+	public void testRunCompileTransformer() {
 		String baseInputPath = "trans";
 		String strategoFilePath = "stratego-transformer.str";
 
@@ -321,12 +215,15 @@ public class DebugCompileTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = true;
+		
+		checkOutput(debugSessionSettings);
+		
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
-			String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run2";
+			String output = StrategoFileManager.WORKING_DIR + "/transformer_run_output_localvar";
 			String argsForMainClass = "-i " + input + " -o " + output;
 			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;

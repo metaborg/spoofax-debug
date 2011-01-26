@@ -1,0 +1,6 @@
+/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/testimports/java/testimports/testimports.java: \
+	/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/testimports/stratego/localmod/util/utils.str \
+	/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/testimports/stratego/localmod/syntax/varsyntax.str \
+	 \
+	/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/../org.strategoxt.imp.debug.stratego.core/lib/strategodebuglib.rtree \
+	/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/testimports/stratego/localvar.str
