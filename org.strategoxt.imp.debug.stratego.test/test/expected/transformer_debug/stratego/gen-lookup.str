@@ -1,0 +1,789 @@
+module gen-lookup
+
+imports
+  strategodebuglib
+
+
+imports
+  include/Test
+  str-reader
+  assert
+  trans-str
+
+
+rules
+
+  create-table(|table-filename):
+    inputfilenames* -> <r-exit(
+                        | "gen-lookup.str"
+                        , "create-table"
+                        , LocationInfo("14", "2", "20", "3")
+                        )> table-filename
+    where r-enter(
+          | "gen-lookup.str"
+          , "create-table"
+          , LocationInfo("14", "2", "20", "3")
+          )
+    where <s-var(
+           | "gen-lookup.str"
+           , "create-table"
+           , "table-filename"
+           , LocationInfo("14", "16", "14", "30")
+           )> table-filename
+    where <s-var(
+           | "gen-lookup.str"
+           , "create-table"
+           , "inputfilenames*"
+           , LocationInfo("14", "33", "14", "48")
+           )> inputfilenames*
+    where s-step(
+          | "gen-lookup.str"
+          , "create-table"
+          , LocationInfo("15", "8", "15", "30")
+          )
+          ; debug(
+              s-step(
+              | "gen-lookup.str"
+              , "create-table"
+              , LocationInfo("15", "14", "15", "29")
+              )
+              ; !"create-table"
+            )
+    where (s-step(
+           | "gen-lookup.str"
+           , "create-table"
+           , LocationInfo("17", "3", "17", "58")
+           )
+           ; table-file-handle := <s-step(
+                                   | "gen-lookup.str"
+                                   , "create-table"
+                                   , LocationInfo("17", "25", "17", "57")
+                                   )
+                                   ; get-file-handle(|table-filename)>
+           ; <s-var(
+              | "gen-lookup.str"
+              , "create-table"
+              , "table-file-handle"
+              , LocationInfo("17", "3", "17", "20")
+              )> table-file-handle)
+          ; <(s-step(
+              | "gen-lookup.str"
+              , "create-table"
+              , LocationInfo("18", "6", "18", "53")
+              )
+              ; map(
+                  s-step(
+                  | "gen-lookup.str"
+                  , "create-table"
+                  , LocationInfo("18", "10", "18", "52")
+                  )
+                  ; create-table-for-input(|table-file-handle)
+                ))> inputfilenames*
+          ; s-step(
+            | "gen-lookup.str"
+            , "create-table"
+            , LocationInfo("19", "5", "19", "42")
+            )
+          ; close-file-handle(|table-file-handle)
+
+  create-table-for-input(|table-file-handle):
+    inputfilename -> <r-exit(
+                      | "gen-lookup.str"
+                      , "create-table-for-input"
+                      , LocationInfo("32", "4", "40", "62")
+                      )> contents
+    where r-enter(
+          | "gen-lookup.str"
+          , "create-table-for-input"
+          , LocationInfo("32", "4", "40", "62")
+          )
+    where <s-var(
+           | "gen-lookup.str"
+           , "create-table-for-input"
+           , "table-file-handle"
+           , LocationInfo("32", "28", "32", "45")
+           )> table-file-handle
+    where <s-var(
+           | "gen-lookup.str"
+           , "create-table-for-input"
+           , "inputfilename"
+           , LocationInfo("33", "5", "33", "18")
+           )> inputfilename
+    where (s-step(
+           | "gen-lookup.str"
+           , "create-table-for-input"
+           , LocationInfo("35", "4", "35", "49")
+           )
+           ; parse-stratego-with-locations(|inputfilename))
+          ; (s-step(
+             | "gen-lookup.str"
+             , "create-table-for-input"
+             , LocationInfo("36", "8", "36", "21")
+             )
+             ; assert-module)
+          ; (s-step(
+             | "gen-lookup.str"
+             , "create-table-for-input"
+             , LocationInfo("37", "8", "37", "27")
+             )
+             ; collect-debug-calls)
+          ; (s-step(
+             | "gen-lookup.str"
+             , "create-table-for-input"
+             , LocationInfo("38", "8", "38", "41")
+             )
+             ; lines* := <s-step(
+                          | "gen-lookup.str"
+                          , "create-table-for-input"
+                          , LocationInfo("38", "20", "38", "40")
+                          )
+                          ; create-table-entries>
+             ; <s-var(
+                | "gen-lookup.str"
+                , "create-table-for-input"
+                , "lines*"
+                , LocationInfo("38", "8", "38", "14")
+                )> lines*)
+          ; (s-step(
+             | "gen-lookup.str"
+             , "create-table-for-input"
+             , LocationInfo("39", "8", "39", "31")
+             )
+             ; contents := $[[lines*]]
+             ; <s-var(
+                | "gen-lookup.str"
+                , "create-table-for-input"
+                , "contents"
+                , LocationInfo("39", "8", "39", "16")
+                )> contents)
+          ; s-step(
+            | "gen-lookup.str"
+            , "create-table-for-input"
+            , LocationInfo("40", "8", "40", "62")
+            )
+          ; write-contents-to-handle(|table-file-handle, contents)
+
+  collect-debug-calls =
+    s-enter(
+    | "gen-lookup.str"
+    , "collect-debug-calls"
+    , LocationInfo("43", "2", "44", "32")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "collect-debug-calls"
+       , LocationInfo("44", "6", "44", "32")
+       )
+       ; collect-all(
+           s-step(
+           | "gen-lookup.str"
+           , "collect-debug-calls"
+           , LocationInfo("44", "18", "44", "31")
+           )
+           ; is-debug-call
+         )
+       < s-exit(
+         | "gen-lookup.str"
+         , "collect-debug-calls"
+         , LocationInfo("43", "2", "44", "32")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "collect-debug-calls"
+         , LocationInfo("43", "2", "44", "32")
+         )
+         ; fail)
+
+  is-debug-call =
+    s-enter(
+    | "gen-lookup.str"
+    , "is-debug-call"
+    , LocationInfo("47", "5", "48", "85")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "is-debug-call"
+       , LocationInfo("48", "6", "48", "85")
+       )
+       ; ?CallT(
+            SVar("s-enter")
+          , []
+          , [ NoAnnoList(Str(_))
+            , NoAnnoList(Str(_))
+            , _
+            ]
+          ){anno*}
+       < s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("47", "5", "48", "85")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("47", "5", "48", "85")
+         )
+         ; fail)
+
+  is-debug-call =
+    s-enter(
+    | "gen-lookup.str"
+    , "is-debug-call"
+    , LocationInfo("51", "5", "52", "84")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "is-debug-call"
+       , LocationInfo("52", "6", "52", "84")
+       )
+       ; ?CallT(
+            SVar("s-exit")
+          , []
+          , [ NoAnnoList(Str(_))
+            , NoAnnoList(Str(_))
+            , _
+            ]
+          ){anno*}
+       < s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("51", "5", "52", "84")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("51", "5", "52", "84")
+         )
+         ; fail)
+
+  is-debug-call =
+    s-enter(
+    | "gen-lookup.str"
+    , "is-debug-call"
+    , LocationInfo("55", "5", "56", "85")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "is-debug-call"
+       , LocationInfo("56", "6", "56", "85")
+       )
+       ; ?CallT(
+            SVar("r-enter")
+          , []
+          , [ NoAnnoList(Str(_))
+            , NoAnnoList(Str(_))
+            , _
+            ]
+          ){anno*}
+       < s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("55", "5", "56", "85")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("55", "5", "56", "85")
+         )
+         ; fail)
+
+  is-debug-call =
+    s-enter(
+    | "gen-lookup.str"
+    , "is-debug-call"
+    , LocationInfo("59", "5", "60", "84")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "is-debug-call"
+       , LocationInfo("60", "6", "60", "84")
+       )
+       ; ?CallT(
+            SVar("r-exit")
+          , []
+          , [ NoAnnoList(Str(_))
+            , NoAnnoList(Str(_))
+            , _
+            ]
+          ){anno*}
+       < s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("59", "5", "60", "84")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("59", "5", "60", "84")
+         )
+         ; fail)
+
+  is-debug-call =
+    s-enter(
+    | "gen-lookup.str"
+    , "is-debug-call"
+    , LocationInfo("63", "5", "64", "84")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "is-debug-call"
+       , LocationInfo("64", "6", "64", "84")
+       )
+       ; ?CallT(
+            SVar("s-step")
+          , []
+          , [ NoAnnoList(Str(_))
+            , NoAnnoList(Str(_))
+            , _
+            ]
+          ){anno*}
+       < s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("63", "5", "64", "84")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "is-debug-call"
+         , LocationInfo("63", "5", "64", "84")
+         )
+         ; fail)
+
+  create-table-entries =
+    s-enter(
+    | "gen-lookup.str"
+    , "create-table-entries"
+    , LocationInfo("67", "5", "67", "66")
+    )
+    ; (s-step(
+       | "gen-lookup.str"
+       , "create-table-entries"
+       , LocationInfo("67", "28", "67", "66")
+       )
+       ; map(
+           (s-step(
+            | "gen-lookup.str"
+            , "create-table-entries"
+            , LocationInfo("67", "32", "67", "48")
+            )
+            ; convert-to-tuple)
+           ; s-step(
+             | "gen-lookup.str"
+             , "create-table-entries"
+             , LocationInfo("67", "50", "67", "65")
+             )
+           ; convert-to-line
+         )
+       < s-exit(
+         | "gen-lookup.str"
+         , "create-table-entries"
+         , LocationInfo("67", "5", "67", "66")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "create-table-entries"
+         , LocationInfo("67", "5", "67", "66")
+         )
+         ; fail)
+
+  convert-to-tuple :
+    CallT(
+      SVar(debug-event)
+    , []
+    , [ NoAnnoList(Str(filename))
+      , NoAnnoList(Str(name))
+      , NoAnnoList(
+          Op(
+            _
+          , [ NoAnnoList(Str(a))
+            , NoAnnoList(Str(b))
+            , NoAnnoList(Str(c))
+            , NoAnnoList(Str(d))
+            ]
+          )
+        )
+      ]
+    ){anno*} -> <r-exit(
+                 | "gen-lookup.str"
+                 , "convert-to-tuple"
+                 , LocationInfo("69", "5", "71", "64")
+                 )> ( debug-event{}
+                    , filename{}
+                    , name{}
+                    , a{}
+                    , b{}
+                    , c{}
+                    , d{}
+                    )
+    where r-enter(
+          | "gen-lookup.str"
+          , "convert-to-tuple"
+          , LocationInfo("69", "5", "71", "64")
+          )
+    where <s-var(
+           | "gen-lookup.str"
+           , "convert-to-tuple"
+           , "debug-event"
+           , LocationInfo("70", "17", "70", "28")
+           )> debug-event
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "filename"
+             , LocationInfo("70", "51", "70", "59")
+             )> filename
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "name"
+             , LocationInfo("70", "78", "70", "82")
+             )> name
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "a"
+             , LocationInfo("70", "119", "70", "120")
+             )> a
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "b"
+             , LocationInfo("70", "139", "70", "140")
+             )> b
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "c"
+             , LocationInfo("70", "159", "70", "160")
+             )> c
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "d"
+             , LocationInfo("70", "179", "70", "180")
+             )> d
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-tuple"
+             , "anno*"
+             , LocationInfo("70", "189", "70", "194")
+             )> anno*
+
+  convert-to-line :
+    (debug-event, filename, name, a, b, c, d) -> <r-exit(
+                                                  | "gen-lookup.str"
+                                                  , "convert-to-line"
+                                                  , LocationInfo("73", "5", "76", "7")
+                                                  )> $[[debug-event]	[filename]	[name]	[a]	[b]	[c]	[d]
+     ]
+    where r-enter(
+          | "gen-lookup.str"
+          , "convert-to-line"
+          , LocationInfo("73", "5", "76", "7")
+          )
+    where <s-var(
+           | "gen-lookup.str"
+           , "convert-to-line"
+           , "debug-event"
+           , LocationInfo("74", "4", "74", "15")
+           )> debug-event
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "filename"
+             , LocationInfo("74", "17", "74", "25")
+             )> filename
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "name"
+             , LocationInfo("74", "27", "74", "31")
+             )> name
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "a"
+             , LocationInfo("74", "33", "74", "34")
+             )> a
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "b"
+             , LocationInfo("74", "36", "74", "37")
+             )> b
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "c"
+             , LocationInfo("74", "39", "74", "40")
+             )> c
+          ; <s-var(
+             | "gen-lookup.str"
+             , "convert-to-line"
+             , "d"
+             , LocationInfo("74", "42", "74", "43")
+             )> d
+
+
+strategies
+  test-create-table-1 =
+    s-enter(
+    | "gen-lookup.str"
+    , "test-create-table-1"
+    , LocationInfo("80", "2", "88", "53")
+    )
+    ; ((s-step(
+        | "gen-lookup.str"
+        , "test-create-table-1"
+        , LocationInfo("81", "3", "81", "31")
+        )
+        ; echo(|"test-create-table-1"))
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("82", "7", "82", "37")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-1"
+             , LocationInfo("82", "7", "82", "22")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("83", "7", "83", "69")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-1"
+             , LocationInfo("83", "7", "83", "42")
+             )
+             ; !"test/generated/localvar/stratego") => stratego-files-base-dir)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("84", "7", "84", "44")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-1"
+             , LocationInfo("84", "7", "84", "22")
+             )
+             ; !"localvar.str") => main-stratego-file)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("85", "7", "85", "101")
+          )
+          ; <(s-step(
+              | "gen-lookup.str"
+              , "test-create-table-1"
+              , LocationInfo("85", "8", "85", "22")
+              )
+              ; concat-strings)> [project-dir, "/", stratego-files-base-dir, "/", main-stratego-file] => file1)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("86", "7", "86", "32")
+          )
+          ; stratego-files := [file1]
+          ; <s-var(
+             | "gen-lookup.str"
+             , "test-create-table-1"
+             , "stratego-files"
+             , LocationInfo("86", "7", "86", "21")
+             )> stratego-files)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-1"
+          , LocationInfo("87", "7", "87", "120")
+          )
+          ; table-filename := <s-step(
+                               | "gen-lookup.str"
+                               , "test-create-table-1"
+                               , LocationInfo("87", "26", "87", "40")
+                               )
+                               ; concat-strings> [ project-dir
+                                                 , "/"
+                                                 , stratego-files-base-dir
+                                                 , "/"
+                                                 , main-stratego-file
+                                                 , ".table"
+                                                 ]
+          ; <s-var(
+             | "gen-lookup.str"
+             , "test-create-table-1"
+             , "table-filename"
+             , LocationInfo("87", "7", "87", "21")
+             )> table-filename)
+       ; <(s-step(
+           | "gen-lookup.str"
+           , "test-create-table-1"
+           , LocationInfo("88", "8", "88", "37")
+           )
+           ; create-table(|table-filename))> stratego-files
+       < s-exit(
+         | "gen-lookup.str"
+         , "test-create-table-1"
+         , LocationInfo("80", "2", "88", "53")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "test-create-table-1"
+         , LocationInfo("80", "2", "88", "53")
+         )
+         ; fail)
+
+  test-create-table-2 =
+    s-enter(
+    | "gen-lookup.str"
+    , "test-create-table-2"
+    , LocationInfo("90", "2", "102", "51")
+    )
+    ; ((s-step(
+        | "gen-lookup.str"
+        , "test-create-table-2"
+        , LocationInfo("91", "3", "91", "31")
+        )
+        ; echo(|"test-create-table-2"))
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("92", "7", "92", "37")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , LocationInfo("92", "7", "92", "22")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("93", "7", "93", "63")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , LocationInfo("93", "7", "93", "36")
+             )
+             ; !"test/generated/testimports") => stratego-files-base-dir)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("94", "7", "94", "32")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , LocationInfo("94", "7", "94", "22")
+             )
+             ; !"localvar.str") => rel-f1)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("95", "7", "95", "49")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , LocationInfo("95", "7", "95", "39")
+             )
+             ; !"localmod/syntax/varsyntax.str") => rel-f2)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("96", "7", "96", "43")
+          )
+          ; (s-step(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , LocationInfo("96", "7", "96", "33")
+             )
+             ; !"localmod/util/utils.str") => rel-f3)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("97", "5", "97", "87")
+          )
+          ; <(s-step(
+              | "gen-lookup.str"
+              , "test-create-table-2"
+              , LocationInfo("97", "6", "97", "20")
+              )
+              ; concat-strings)> [project-dir, "/", stratego-files-base-dir, "/", rel-f1] => file1)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("98", "5", "98", "87")
+          )
+          ; <(s-step(
+              | "gen-lookup.str"
+              , "test-create-table-2"
+              , LocationInfo("98", "6", "98", "20")
+              )
+              ; concat-strings)> [project-dir, "/", stratego-files-base-dir, "/", rel-f2] => file2)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("99", "5", "99", "87")
+          )
+          ; <(s-step(
+              | "gen-lookup.str"
+              , "test-create-table-2"
+              , LocationInfo("99", "6", "99", "20")
+              )
+              ; concat-strings)> [project-dir, "/", stratego-files-base-dir, "/", rel-f3] => file3)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("100", "5", "100", "44")
+          )
+          ; stratego-files := [file1, file2, file3]
+          ; <s-var(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , "stratego-files"
+             , LocationInfo("100", "5", "100", "19")
+             )> stratego-files)
+       ; (s-step(
+          | "gen-lookup.str"
+          , "test-create-table-2"
+          , LocationInfo("101", "5", "101", "106")
+          )
+          ; table-filename := <s-step(
+                               | "gen-lookup.str"
+                               , "test-create-table-2"
+                               , LocationInfo("101", "24", "101", "38")
+                               )
+                               ; concat-strings> [ project-dir
+                                                 , "/"
+                                                 , stratego-files-base-dir
+                                                 , "/"
+                                                 , rel-f1
+                                                 , ".table"
+                                                 ]
+          ; <s-var(
+             | "gen-lookup.str"
+             , "test-create-table-2"
+             , "table-filename"
+             , LocationInfo("101", "5", "101", "19")
+             )> table-filename)
+       ; <(s-step(
+           | "gen-lookup.str"
+           , "test-create-table-2"
+           , LocationInfo("102", "6", "102", "35")
+           )
+           ; create-table(|table-filename))> stratego-files
+       < s-exit(
+         | "gen-lookup.str"
+         , "test-create-table-2"
+         , LocationInfo("90", "2", "102", "51")
+         )
+       + s-exit(
+         | "gen-lookup.str"
+         , "test-create-table-2"
+         , LocationInfo("90", "2", "102", "51")
+         )
+         ; fail)

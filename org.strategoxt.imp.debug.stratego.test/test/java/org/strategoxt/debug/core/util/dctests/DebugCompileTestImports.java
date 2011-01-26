@@ -7,7 +7,7 @@ import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
-public class DebugCompileTestImports {
+public class DebugCompileTestImports extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
 		testDebugCompileTestImports();
@@ -38,7 +38,10 @@ public class DebugCompileTestImports {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = true;
+		
+		checkOutput(debugSessionSettings);
+		
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{

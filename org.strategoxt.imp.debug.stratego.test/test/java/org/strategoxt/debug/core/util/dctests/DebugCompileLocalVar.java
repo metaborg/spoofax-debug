@@ -7,7 +7,7 @@ import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
-public class DebugCompileLocalVar {
+public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 
 	/**
 	 * @param args
@@ -41,7 +41,10 @@ public class DebugCompileLocalVar {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = true;
+		
+		checkOutput(debugSessionSettings);
+		
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{
@@ -59,5 +62,5 @@ public class DebugCompileLocalVar {
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
 	}
-
+	
 }

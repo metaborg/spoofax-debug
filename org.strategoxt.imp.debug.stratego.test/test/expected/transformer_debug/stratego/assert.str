@@ -1,0 +1,83 @@
+module assert
+
+imports
+  strategodebuglib
+
+
+imports
+  include/Test
+
+
+strategies
+  assert-module =
+    s-enter(
+    | "assert.str"
+    , "assert-module"
+    , LocationInfo("8", "1", "9", "73")
+    )
+    ; ((s-step(
+        | "assert.str"
+        , "assert-module"
+        , LocationInfo("9", "4", "9", "16")
+        )
+        ; ?Module(_, _)
+        <+ (s-step(
+            | "assert.str"
+            , "assert-module"
+            , LocationInfo("9", "20", "9", "66")
+            )
+            ; debug(
+                s-step(
+                | "assert.str"
+                , "assert-module"
+                , LocationInfo("9", "26", "9", "65")
+                )
+                ; !"Assert: current term is not a Module"
+              ))
+           ; s-step(
+             | "assert.str"
+             , "assert-module"
+             , LocationInfo("9", "68", "9", "72")
+             )
+           ; fail)
+       < s-exit(
+         | "assert.str"
+         , "assert-module"
+         , LocationInfo("8", "1", "9", "73")
+         )
+       + s-exit(
+         | "assert.str"
+         , "assert-module"
+         , LocationInfo("8", "1", "9", "73")
+         )
+         ; fail)
+
+  echo(|msg):
+    t -> <r-exit(
+          | "assert.str"
+          , "echo"
+          , LocationInfo("11", "3", "14", "16")
+          )> t
+    where r-enter(
+          | "assert.str"
+          , "echo"
+          , LocationInfo("11", "3", "14", "16")
+          )
+    where <s-var(
+           | "assert.str"
+           , "echo"
+           , "msg"
+           , LocationInfo("11", "9", "11", "12")
+           )> msg
+    where <s-var(
+           | "assert.str"
+           , "echo"
+           , "t"
+           , LocationInfo("12", "4", "12", "5")
+           )> t
+    where <(s-step(
+            | "assert.str"
+            , "echo"
+            , LocationInfo("14", "6", "14", "11")
+            )
+            ; debug)> msg

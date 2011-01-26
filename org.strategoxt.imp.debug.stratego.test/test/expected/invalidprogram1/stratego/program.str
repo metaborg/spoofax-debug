@@ -1,0 +1,37 @@
+module program
+
+imports
+  strategodebuglib
+
+
+strategies
+  main =
+    s-enter(
+    | "program.str"
+    , "main"
+    , LocationInfo("4", "2", "5", "17")
+    )
+    ; (s-step(
+       | "program.str"
+       , "main"
+       , LocationInfo("5", "3", "5", "17")
+       )
+       ; debug(
+           s-step(
+           | "program.str"
+           , "main"
+           , LocationInfo("5", "9", "5", "16")
+           )
+           ; !"MAIN"
+         )
+       < s-exit(
+         | "program.str"
+         , "main"
+         , LocationInfo("4", "2", "5", "17")
+         )
+       + s-exit(
+         | "program.str"
+         , "main"
+         , LocationInfo("4", "2", "5", "17")
+         )
+         ; fail)

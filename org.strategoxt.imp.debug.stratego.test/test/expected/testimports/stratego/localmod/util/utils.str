@@ -1,0 +1,107 @@
+module localmod/util/utils
+
+imports
+  strategodebuglib
+
+
+imports
+  localmod/syntax/varsyntax
+
+
+strategies
+  is-empty =
+    s-enter(
+    | "localmod/util/utils.str"
+    , "is-empty"
+    , LocationInfo("8", "2", "8", "16")
+    )
+    ; (s-step(
+       | "localmod/util/utils.str"
+       , "is-empty"
+       , LocationInfo("8", "13", "8", "16")
+       )
+       ; ?[]
+       < s-exit(
+         | "localmod/util/utils.str"
+         , "is-empty"
+         , LocationInfo("8", "2", "8", "16")
+         )
+       + s-exit(
+         | "localmod/util/utils.str"
+         , "is-empty"
+         , LocationInfo("8", "2", "8", "16")
+         )
+         ; fail)
+
+  first =
+    s-enter(
+    | "localmod/util/utils.str"
+    , "first"
+    , LocationInfo("11", "2", "13", "30")
+    )
+    ; ((s-step(
+        | "localmod/util/utils.str"
+        , "first"
+        , LocationInfo("12", "3", "12", "20")
+        )
+        ; debug(
+            s-step(
+            | "localmod/util/utils.str"
+            , "first"
+            , LocationInfo("12", "9", "12", "19")
+            )
+            ; !"first: "
+          ))
+       ; (s-step(
+          | "localmod/util/utils.str"
+          , "first"
+          , LocationInfo("13", "4", "13", "12")
+          )
+          ; is-empty
+          < s-step(
+            | "localmod/util/utils.str"
+            , "first"
+            , LocationInfo("13", "15", "13", "22")
+            )
+            ; build-c
+          + s-step(
+            | "localmod/util/utils.str"
+            , "first"
+            , LocationInfo("13", "25", "13", "29")
+            )
+            ; last)
+       < s-exit(
+         | "localmod/util/utils.str"
+         , "first"
+         , LocationInfo("11", "2", "13", "30")
+         )
+       + s-exit(
+         | "localmod/util/utils.str"
+         , "first"
+         , LocationInfo("11", "2", "13", "30")
+         )
+         ; fail)
+
+  build-c =
+    s-enter(
+    | "localmod/util/utils.str"
+    , "build-c"
+    , LocationInfo("16", "2", "16", "40")
+    )
+    ; (s-step(
+       | "localmod/util/utils.str"
+       , "build-c"
+       , LocationInfo("16", "12", "16", "40")
+       )
+       ; !Comment("new", "created!!")
+       < s-exit(
+         | "localmod/util/utils.str"
+         , "build-c"
+         , LocationInfo("16", "2", "16", "40")
+         )
+       + s-exit(
+         | "localmod/util/utils.str"
+         , "build-c"
+         , LocationInfo("16", "2", "16", "40")
+         )
+         ; fail)

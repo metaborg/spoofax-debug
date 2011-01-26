@@ -1,0 +1,1161 @@
+module transformer-test-suite
+
+imports
+  strategodebuglib
+
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports
+  trans-str
+  tests/term-traverse
+
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+
+
+imports
+  tests/imports-test
+  tests/parsing-test
+  tests/strategoxt-parsing-test
+  tests/commandline-tests
+
+
+strategies
+  foo2 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "foo2"
+    , LocationInfo("33", "3", "46", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "foo2"
+        , LocationInfo("34", "4", "34", "23")
+        )
+        ; echo(|"Start foo2"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("35", "6", "35", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo2"
+             , LocationInfo("35", "6", "35", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("36", "6", "36", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo2"
+             , LocationInfo("36", "6", "36", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("37", "6", "37", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo2"
+             , LocationInfo("37", "6", "37", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("38", "6", "38", "32")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo2"
+             , LocationInfo("38", "6", "38", "20")
+             )
+             ; !"example.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("39", "6", "39", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "foo2"
+              , LocationInfo("39", "7", "39", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("40", "6", "40", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("41", "6", "41", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("42", "6", "42", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("43", "6", "43", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo2"
+          , LocationInfo("44", "6", "44", "21")
+          )
+          ; filter-location)
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "foo2"
+         , LocationInfo("46", "6", "46", "23")
+         )
+       ; echo(|"End foo2")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "foo2"
+         , LocationInfo("33", "3", "46", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "foo2"
+         , LocationInfo("33", "3", "46", "23")
+         )
+         ; fail)
+
+  foo3 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "foo3"
+    , LocationInfo("49", "3", "63", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "foo3"
+        , LocationInfo("50", "4", "50", "23")
+        )
+        ; echo(|"Start foo3"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("51", "6", "51", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo3"
+             , LocationInfo("51", "6", "51", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("52", "6", "52", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo3"
+             , LocationInfo("52", "6", "52", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("53", "6", "53", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo3"
+             , LocationInfo("53", "6", "53", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("54", "6", "54", "32")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo3"
+             , LocationInfo("54", "6", "54", "20")
+             )
+             ; !"example.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("55", "6", "55", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "foo3"
+              , LocationInfo("55", "7", "55", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("56", "6", "56", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("57", "6", "57", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("58", "6", "58", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("59", "6", "59", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("60", "6", "60", "21")
+          )
+          ; filter-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo3"
+          , LocationInfo("61", "6", "61", "40")
+          )
+          ; add-debug-info(|absolute-location))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "foo3"
+         , LocationInfo("63", "6", "63", "23")
+         )
+       ; echo(|"End foo3")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "foo3"
+         , LocationInfo("49", "3", "63", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "foo3"
+         , LocationInfo("49", "3", "63", "23")
+         )
+         ; fail)
+
+  bar3 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "bar3"
+    , LocationInfo("66", "3", "80", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "bar3"
+        , LocationInfo("67", "4", "67", "23")
+        )
+        ; echo(|"Start bar3"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("68", "6", "68", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar3"
+             , LocationInfo("68", "6", "68", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("69", "6", "69", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar3"
+             , LocationInfo("69", "6", "69", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("70", "6", "70", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar3"
+             , LocationInfo("70", "6", "70", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("71", "6", "71", "33")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar3"
+             , LocationInfo("71", "6", "71", "21")
+             )
+             ; !"localvar.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("72", "6", "72", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "bar3"
+              , LocationInfo("72", "7", "72", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("73", "6", "73", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("74", "6", "74", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("75", "6", "75", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("76", "6", "76", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("77", "6", "77", "21")
+          )
+          ; filter-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar3"
+          , LocationInfo("78", "6", "78", "40")
+          )
+          ; add-debug-info(|absolute-location))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "bar3"
+         , LocationInfo("80", "6", "80", "23")
+         )
+       ; echo(|"End bar3")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "bar3"
+         , LocationInfo("66", "3", "80", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "bar3"
+         , LocationInfo("66", "3", "80", "23")
+         )
+         ; fail)
+
+  foo4 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "foo4"
+    , LocationInfo("83", "3", "98", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "foo4"
+        , LocationInfo("84", "4", "84", "23")
+        )
+        ; echo(|"Start foo4"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("85", "6", "85", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo4"
+             , LocationInfo("85", "6", "85", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("86", "6", "86", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo4"
+             , LocationInfo("86", "6", "86", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("87", "6", "87", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo4"
+             , LocationInfo("87", "6", "87", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("88", "6", "88", "32")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo4"
+             , LocationInfo("88", "6", "88", "20")
+             )
+             ; !"example.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("89", "6", "89", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "foo4"
+              , LocationInfo("89", "7", "89", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("90", "6", "90", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("91", "6", "91", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("92", "6", "92", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("93", "6", "93", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("94", "6", "94", "21")
+          )
+          ; filter-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("95", "6", "95", "40")
+          )
+          ; add-debug-info(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo4"
+          , LocationInfo("96", "6", "96", "21")
+          )
+          ; pp-stratego-ast)
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "foo4"
+         , LocationInfo("98", "6", "98", "23")
+         )
+       ; echo(|"End foo4")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "foo4"
+         , LocationInfo("83", "3", "98", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "foo4"
+         , LocationInfo("83", "3", "98", "23")
+         )
+         ; fail)
+
+  bar4 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "bar4"
+    , LocationInfo("101", "3", "116", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "bar4"
+        , LocationInfo("102", "4", "102", "23")
+        )
+        ; echo(|"Start bar4"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("103", "6", "103", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar4"
+             , LocationInfo("103", "6", "103", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("104", "6", "104", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar4"
+             , LocationInfo("104", "6", "104", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("105", "6", "105", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar4"
+             , LocationInfo("105", "6", "105", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("106", "6", "106", "33")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "bar4"
+             , LocationInfo("106", "6", "106", "21")
+             )
+             ; !"localvar.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("107", "6", "107", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "bar4"
+              , LocationInfo("107", "7", "107", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("108", "6", "108", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("109", "6", "109", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("110", "6", "110", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("111", "6", "111", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("112", "6", "112", "21")
+          )
+          ; filter-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("113", "6", "113", "40")
+          )
+          ; add-debug-info(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "bar4"
+          , LocationInfo("114", "6", "114", "21")
+          )
+          ; pp-stratego-ast)
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "bar4"
+         , LocationInfo("116", "6", "116", "23")
+         )
+       ; echo(|"End bar4")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "bar4"
+         , LocationInfo("101", "3", "116", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "bar4"
+         , LocationInfo("101", "3", "116", "23")
+         )
+         ; fail)
+
+  foo5 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "foo5"
+    , LocationInfo("119", "3", "135", "23")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "foo5"
+        , LocationInfo("120", "4", "120", "23")
+        )
+        ; echo(|"Start foo5"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("121", "6", "121", "36")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo5"
+             , LocationInfo("121", "6", "121", "21")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("122", "6", "122", "35")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo5"
+             , LocationInfo("122", "6", "122", "17")
+             )
+             ; !"test/src") => input-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("123", "6", "123", "42")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo5"
+             , LocationInfo("123", "6", "123", "23")
+             )
+             ; !"test/generated") => output-base-dir)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("124", "6", "124", "32")
+          )
+          ; (s-step(
+             | "transformer-test-suite.str"
+             , "foo5"
+             , LocationInfo("124", "6", "124", "20")
+             )
+             ; !"example.tes") => sma-file)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("125", "6", "125", "93")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "foo5"
+              , LocationInfo("125", "7", "125", "21")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir, "/", sma-file] => absolute-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("126", "6", "126", "131")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "foo5"
+              , LocationInfo("126", "7", "126", "21")
+              )
+              ; concat-strings)> [ project-dir
+                                 , "/"
+                                 , output-base-dir
+                                 , "/"
+                                 , <s-step(
+                                    | "transformer-test-suite.str"
+                                    , "foo5"
+                                    , LocationInfo("126", "65", "126", "92")
+                                    )
+                                    ; guarantee-extension(|"str")> sma-file
+                                 ] => absolute-output-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("127", "6", "127", "33")
+          )
+          ; echo(|"reading ast from: "))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("128", "6", "128", "30")
+          )
+          ; echo(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("129", "6", "129", "55")
+          )
+          ; parse-stratego-with-locations(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("130", "6", "130", "19")
+          )
+          ; assert-module)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("131", "6", "131", "21")
+          )
+          ; filter-location)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("132", "6", "132", "40")
+          )
+          ; add-debug-info(|absolute-location))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "foo5"
+          , LocationInfo("133", "6", "133", "51")
+          )
+          ; write-stratego-str(|absolute-output-location))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "foo5"
+         , LocationInfo("135", "6", "135", "23")
+         )
+       ; echo(|"End foo5")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "foo5"
+         , LocationInfo("119", "3", "135", "23")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "foo5"
+         , LocationInfo("119", "3", "135", "23")
+         )
+         ; fail)
+
+
+strategies
+  test-apply-debug-1 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "test-apply-debug-1"
+    , LocationInfo("139", "4", "139", "61")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "test-apply-debug-1"
+        , LocationInfo("139", "25", "139", "42")
+        )
+        ; !("asdf", "ddfg"))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-1"
+         , LocationInfo("139", "44", "139", "61")
+         )
+       ; apply-debug-trans
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-1"
+         , LocationInfo("139", "4", "139", "61")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-1"
+         , LocationInfo("139", "4", "139", "61")
+         )
+         ; fail)
+
+  test-apply-debug-2 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "test-apply-debug-2"
+    , LocationInfo("140", "3", "140", "68")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "test-apply-debug-2"
+        , LocationInfo("140", "24", "140", "49")
+        )
+        ; !("asdf", "ddfg", "asfd"))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-2"
+         , LocationInfo("140", "51", "140", "68")
+         )
+       ; apply-debug-trans
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-2"
+         , LocationInfo("140", "3", "140", "68")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-2"
+         , LocationInfo("140", "3", "140", "68")
+         )
+         ; fail)
+
+  test-apply-debug-3 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "test-apply-debug-3"
+    , LocationInfo("141", "3", "141", "50")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "test-apply-debug-3"
+        , LocationInfo("141", "24", "141", "31")
+        )
+        ; !"asdf")
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-3"
+         , LocationInfo("141", "33", "141", "50")
+         )
+       ; apply-debug-trans
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-3"
+         , LocationInfo("141", "3", "141", "50")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "test-apply-debug-3"
+         , LocationInfo("141", "3", "141", "50")
+         )
+         ; fail)
+
+
+strategies
+  create-s =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "create-s"
+    , LocationInfo("146", "3", "146", "151")
+    )
+    ; (s-step(
+       | "transformer-test-suite.str"
+       , "create-s"
+       , LocationInfo("146", "14", "146", "151")
+       )
+       ; !"/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports/localvar.str"
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "create-s"
+         , LocationInfo("146", "3", "146", "151")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "create-s"
+         , LocationInfo("146", "3", "146", "151")
+         )
+         ; fail)
+
+  create-sub =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "create-sub"
+    , LocationInfo("147", "3", "147", "140")
+    )
+    ; (s-step(
+       | "transformer-test-suite.str"
+       , "create-sub"
+       , LocationInfo("147", "16", "147", "140")
+       )
+       ; !"/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "create-sub"
+         , LocationInfo("147", "3", "147", "140")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "create-sub"
+         , LocationInfo("147", "3", "147", "140")
+         )
+         ; fail)
+
+  test-extract-base-from-path-1 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "test-extract-base-from-path-1"
+    , LocationInfo("152", "3", "165", "48")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "test-extract-base-from-path-1"
+        , LocationInfo("153", "4", "153", "42")
+        )
+        ; echo(|"test-extract-base-from-path-1"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("156", "7", "156", "15")
+          )
+          ; create-s)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("156", "17", "156", "50")
+          )
+          ; string-starts-with(
+            | <s-step(
+               | "transformer-test-suite.str"
+               , "test-extract-base-from-path-1"
+               , LocationInfo("156", "38", "156", "48")
+               )
+               ; create-sub>
+            ))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("156", "53", "156", "76")
+          )
+          ; debug(
+              s-step(
+              | "transformer-test-suite.str"
+              , "test-extract-base-from-path-1"
+              , LocationInfo("156", "59", "156", "75")
+              )
+              ; !"starts-with: "
+            ))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("157", "6", "157", "16")
+          )
+          ; create-sub)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("158", "6", "158", "42")
+          )
+          ; sub-string-length := <s-step(
+                                  | "transformer-test-suite.str"
+                                  , "test-extract-base-from-path-1"
+                                  , LocationInfo("158", "28", "158", "41")
+                                  )
+                                  ; string-length>
+          ; <s-var(
+             | "transformer-test-suite.str"
+             , "test-extract-base-from-path-1"
+             , "sub-string-length"
+             , LocationInfo("158", "6", "158", "23")
+             )> sub-string-length)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("159", "6", "159", "14")
+          )
+          ; create-s)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("160", "6", "160", "43")
+          )
+          ; full-string-length := <s-step(
+                                   | "transformer-test-suite.str"
+                                   , "test-extract-base-from-path-1"
+                                   , LocationInfo("160", "29", "160", "42")
+                                   )
+                                   ; string-length>
+          ; <s-var(
+             | "transformer-test-suite.str"
+             , "test-extract-base-from-path-1"
+             , "full-string-length"
+             , LocationInfo("160", "6", "160", "24")
+             )> full-string-length)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("161", "6", "161", "14")
+          )
+          ; create-s)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("161", "16", "161", "47")
+          )
+          ; string-list := <s-step(
+                            | "transformer-test-suite.str"
+                            , "test-extract-base-from-path-1"
+                            , LocationInfo("161", "32", "161", "46")
+                            )
+                            ; explode-string>
+          ; <s-var(
+             | "transformer-test-suite.str"
+             , "test-extract-base-from-path-1"
+             , "string-list"
+             , LocationInfo("161", "16", "161", "27")
+             )> string-list)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-1"
+          , LocationInfo("162", "6", "162", "64")
+          )
+          ; <(s-step(
+              | "transformer-test-suite.str"
+              , "test-extract-base-from-path-1"
+              , LocationInfo("162", "7", "162", "35")
+              )
+              ; split-at(|sub-string-length))> string-list => (base, path))
+       ; <(s-step(
+           | "transformer-test-suite.str"
+           , "test-extract-base-from-path-1"
+           , LocationInfo("163", "7", "163", "29")
+           )
+           ; debug(
+               s-step(
+               | "transformer-test-suite.str"
+               , "test-extract-base-from-path-1"
+               , LocationInfo("163", "13", "163", "28")
+               )
+               ; !"base, path: "
+             ))> ( <s-step(
+                    | "transformer-test-suite.str"
+                    , "test-extract-base-from-path-1"
+                    , LocationInfo("163", "33", "163", "47")
+                    )
+                    ; implode-string> base
+                 , <s-step(
+                    | "transformer-test-suite.str"
+                    , "test-extract-base-from-path-1"
+                    , LocationInfo("163", "56", "163", "70")
+                    )
+                    ; implode-string> path
+                 )
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-1"
+         , LocationInfo("165", "6", "165", "48")
+         )
+       ; echo(|"end test-extract-base-from-path-1")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-1"
+         , LocationInfo("152", "3", "165", "48")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-1"
+         , LocationInfo("152", "3", "165", "48")
+         )
+         ; fail)
+
+  test-extract-base-from-path-2 =
+    s-enter(
+    | "transformer-test-suite.str"
+    , "test-extract-base-from-path-2"
+    , LocationInfo("167", "3", "171", "48")
+    )
+    ; ((s-step(
+        | "transformer-test-suite.str"
+        , "test-extract-base-from-path-2"
+        , LocationInfo("168", "4", "168", "42")
+        )
+        ; echo(|"test-extract-base-from-path-2"))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-2"
+          , LocationInfo("169", "6", "169", "14")
+          )
+          ; create-s)
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-2"
+          , LocationInfo("169", "16", "169", "41")
+          )
+          ; split-path(
+            | <s-step(
+               | "transformer-test-suite.str"
+               , "test-extract-base-from-path-2"
+               , LocationInfo("169", "29", "169", "39")
+               )
+               ; create-sub>
+            ))
+       ; (s-step(
+          | "transformer-test-suite.str"
+          , "test-extract-base-from-path-2"
+          , LocationInfo("170", "6", "170", "31")
+          )
+          ; debug(
+              s-step(
+              | "transformer-test-suite.str"
+              , "test-extract-base-from-path-2"
+              , LocationInfo("170", "12", "170", "30")
+              )
+              ; !"parent, child: "
+            ))
+       ; s-step(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-2"
+         , LocationInfo("171", "6", "171", "48")
+         )
+       ; echo(|"end test-extract-base-from-path-2")
+       < s-exit(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-2"
+         , LocationInfo("167", "3", "171", "48")
+         )
+       + s-exit(
+         | "transformer-test-suite.str"
+         , "test-extract-base-from-path-2"
+         , LocationInfo("167", "3", "171", "48")
+         )
+         ; fail)

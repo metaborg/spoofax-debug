@@ -3,13 +3,13 @@
 <project name="build.generated">
 
 	<target name="spoofaximp.default" depends="spoofaximp.default.ctree" />
-	<target name="spoofaximp.default.ctree" depends="check-classpath,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,stratego.ctree,java.jar,sdf2imp,refresh" />
-	<target name="spoofaximp.default.jar" depends="check-classpath,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,stratego.jar,  java.jar,sdf2imp,refresh" />
+	<target name="spoofaximp.default.ctree" depends="check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,stratego.ctree,java.jar,sdf2imp,refresh" />
+	<target name="spoofaximp.default.jar" depends="check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,stratego.jar,  java.jar,sdf2imp,refresh" />
 
 	<!-- Initialization -->
-	<!--<available file="${build}/strjdebugruntime/strategies/Main.class" property="java.jar.enabled"/>-->
+	<!--<available file="${build}/org/strategoxt/imp/debug/stratego/transformer/strategies/Main.class" property="java.jar.enabled"/>-->
 	<!-- do not use class file exists method, but set it explicitly -->
-	<!-- <condition property="java.jar.import" value="-la strjdebugruntime.strategies" else=""> -->
+	<!-- <condition property="java.jar.import" value="-la org.strategoxt.imp.debug.stratego.transformer.strategies" else=""> -->
 	<condition property="java.jar.import" value="-la ${build.stratego.external.strategies.name}" else="">
 		<isset property="java.jar.enabled" />
 	</condition>
@@ -52,9 +52,11 @@
 
 	<target name="refresh" if="eclipse.running">
 		<eclipse.convertPath fileSystemPath="${basedir}" property="projectdir" />
-		<eclipse.refreshLocal resource="${projectdir}/lib" depth="infinite" />
-		<eclipse.refreshLocal resource="${projectdir}/syntax/${sdfmodule}.pp.generated" depth="infinite" />
-		<eclipse.refreshLocal resource="${projectdir}/lib/editor-common.generated.str" depth="infinite" />
+		<eclipse.convertPath fileSystemPath="${syntax}" property="syntaxdir"/>
+		<eclipse.convertPath fileSystemPath="${lib}" property="libdir"/>
+		<eclipse.refreshLocal resource="${libdir}" depth="infinite"/>
+		<eclipse.refreshLocal resource="${syntaxdir}/${sdfmodule}.pp.generated" depth="infinite"/>
+		<eclipse.refreshLocal resource="${libdir}/editor-common.generated.str" depth="infinite"/>
 		<eclipse.refreshLocal resource="${projectdir}/build.generated.xml" depth="infinite" />
 		<eclipse.refreshLocal resource="${projectdir}/editor/${sdfmodule}-Builders.generated.esv" depth="infinite" />
 		<eclipse.refreshLocal resource="${projectdir}/editor/${sdfmodule}-Colorer.generated.esv" depth="infinite" />
@@ -83,6 +85,13 @@
 	<target name="check-classpath">
 		<available classname="org.strategoxt.imp.generator.sdf2imp" property="check-classpath.available" />
 		<antcall target="check-classpath.helper" />
+	</target>
+
+	<target name="init" if="eclipse.running">
+		<!-- refresh one file/dir in the project to trigger an Ant rebuild with the next build command -->
+		<java classname="org.strategoxt.imp.metatooling.building.AntForceRefreshScheduler" failonerror="false">
+		<arg value="${include}"/>
+		</java>
 	</target>
 
 	<target name="check-classpath.helper" unless="check-classpath.available">
@@ -143,8 +152,7 @@
 		</java>
 	</target>
 
-	<target name="utils-files">
-		<!-- only useful for builds outside of Eclipse -->
+	<target name="utils-files"> <!-- only useful for builds outside of Eclipse -->
 		<mkdir dir="utils" />
 		<copy file="${eclipse.spoofaximp.jars}/make_permissive.jar" todir="utils" failonerror="false" />
 		<copy file="${eclipse.spoofaximp.jars}/sdf2imp.jar" todir="utils" failonerror="false" />
@@ -154,8 +162,11 @@
 
 	<target name="pack-sdf" unless="externaldef">
 		<dependset>
-			<srcfileset dir="${syntax}">
-				<include name="**/*.sdf" />
+        	<srcfileset dir="${basedir}">
+				<include name="**/*.sdf"/>
+			</srcfileset>
+			<srcfileset dir="${lib}">
+				<include name="**/*.def"/>
 			</srcfileset>
 			<targetfileset file="${include}/${sdfmodule}.def" />
 		</dependset>
@@ -300,9 +311,7 @@
 	<target name="stratego.aster">
 		<available file="${trans}/${strmodule}.rtree" property="aster-output.available" />
 		<pathconvert property="aster-input" setonempty="false" pathsep=" ">
-			<path>
-				<fileset dir="${basedir}" includes="*.astr" />
-			</path>
+			<path><fileset dir="${basedir}" includes="*.astr" /></path>
 		</pathconvert>
 		<dependset>
 			<srcfileset dir="${basedir}">

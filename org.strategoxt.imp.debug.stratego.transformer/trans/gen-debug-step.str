@@ -11,6 +11,21 @@ imports
 rules
 // add step statements in with/where blocks in rules and in strategies
 
+// TODO: slow!!
+// do not use multiple bottom up's
+// do a single topdown and use dynamic rule to store the current Rule or Strategy
+/*
+ topdown(
+ 	if (Rule)
+ 	{	set GetName := r-name}
+ 	else if (Strategy)
+ 	{ 	set GetName := s-name}
+ 	)
+ 	else {
+ 		match add-step-to-strategy
+ 	}
+ 	*/
+
 	add-step-statements(|filename) = 
 		bottomup(try(add-step-in-r-def(|filename)))
 		; bottomup(try(add-step-in-s-def(|filename)))

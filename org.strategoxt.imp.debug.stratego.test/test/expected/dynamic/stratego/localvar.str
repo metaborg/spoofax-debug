@@ -1,0 +1,679 @@
+module localvar
+
+imports
+  strategodebuglib
+
+
+imports
+  libstrategolib
+
+
+signature
+  sorts
+    Prop
+
+  constructors
+    Var      : String -> Expression
+    Number   : Int -> Expression
+    Add      : Expression * Expression -> Expression
+    Sub      : Expression * Expression -> Expression
+    Print    : Expression -> Statement
+    Assign   : String * Expression -> Statement
+    Function : String * List(Statement) -> Definition
+    Comment  : String * String -> Definition
+    Program  : String * List(Definition) -> Program
+
+
+strategies
+  main =
+    s-enter(
+    | "localvar.str"
+    , "main"
+    , LocationInfo("31", "3", "32", "21")
+    )
+    ; (s-step(
+       | "localvar.str"
+       , "main"
+       , LocationInfo("32", "5", "32", "21")
+       )
+       ; io-wrap(
+           s-step(
+           | "localvar.str"
+           , "main"
+           , LocationInfo("32", "13", "32", "20")
+           )
+           ; execute
+         )
+       < s-exit(
+         | "localvar.str"
+         , "main"
+         , LocationInfo("31", "3", "32", "21")
+         )
+       + s-exit(
+         | "localvar.str"
+         , "main"
+         , LocationInfo("31", "3", "32", "21")
+         )
+         ; fail)
+
+
+rules
+
+  execute :
+    input -> <r-exit(
+              | "localvar.str"
+              , "execute"
+              , LocationInfo("37", "3", "40", "38")
+              )> output
+    where r-enter(
+          | "localvar.str"
+          , "execute"
+          , LocationInfo("37", "3", "40", "38")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "execute"
+           , "input"
+           , LocationInfo("38", "4", "38", "9")
+           )> input
+    with s-step(
+         | "localvar.str"
+         , "execute"
+         , LocationInfo("40", "6", "40", "38")
+         )
+         ; output := <s-step(
+                      | "localvar.str"
+                      , "execute"
+                      , LocationInfo("40", "17", "40", "31")
+                      )
+                      ; match-comments> input
+         ; <s-var(
+            | "localvar.str"
+            , "execute"
+            , "output"
+            , LocationInfo("40", "6", "40", "12")
+            )> output
+
+
+rules
+
+  match-comments :
+    Program(_, definitions*) -> <r-exit(
+                                 | "localvar.str"
+                                 , "match-comments"
+                                 , LocationInfo("43", "2", "49", "37")
+                                 )> out
+    where r-enter(
+          | "localvar.str"
+          , "match-comments"
+          , LocationInfo("43", "2", "49", "37")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "match-comments"
+           , "definitions*"
+           , LocationInfo("45", "14", "45", "26")
+           )> definitions*
+    with (s-step(
+          | "localvar.str"
+          , "match-comments"
+          , LocationInfo("47", "4", "47", "39")
+          )
+          ; f* := <s-step(
+                   | "localvar.str"
+                   , "match-comments"
+                   , LocationInfo("47", "11", "47", "25")
+                   )
+                   ; find-functions> definitions*
+          ; <s-var(
+             | "localvar.str"
+             , "match-comments"
+             , "f*"
+             , LocationInfo("47", "4", "47", "6")
+             )> f*)
+         ; (s-step(
+            | "localvar.str"
+            , "match-comments"
+            , LocationInfo("48", "6", "48", "40")
+            )
+            ; c* := <s-step(
+                     | "localvar.str"
+                     , "match-comments"
+                     , LocationInfo("48", "13", "48", "26")
+                     )
+                     ; find-comments> definitions*
+            ; <s-var(
+               | "localvar.str"
+               , "match-comments"
+               , "c*"
+               , LocationInfo("48", "6", "48", "8")
+               )> c*)
+         ; s-step(
+           | "localvar.str"
+           , "match-comments"
+           , LocationInfo("49", "6", "49", "37")
+           )
+         ; out := <s-step(
+                   | "localvar.str"
+                   , "match-comments"
+                   , LocationInfo("49", "14", "49", "27")
+                   )
+                   ; match-f-and-c> (f*, c*)
+         ; <s-var(
+            | "localvar.str"
+            , "match-comments"
+            , "out"
+            , LocationInfo("49", "6", "49", "9")
+            )> out
+
+  find-functions :
+    definition* -> <r-exit(
+                    | "localvar.str"
+                    , "find-functions"
+                    , LocationInfo("52", "2", "55", "54")
+                    )> functions*
+    where r-enter(
+          | "localvar.str"
+          , "find-functions"
+          , LocationInfo("52", "2", "55", "54")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "find-functions"
+           , "definition*"
+           , LocationInfo("53", "3", "53", "14")
+           )> definition*
+    with s-step(
+         | "localvar.str"
+         , "find-functions"
+         , LocationInfo("55", "4", "55", "54")
+         )
+         ; functions* := <s-step(
+                          | "localvar.str"
+                          , "find-functions"
+                          , LocationInfo("55", "19", "55", "41")
+                          )
+                          ; filter(
+                              s-step(
+                              | "localvar.str"
+                              , "find-functions"
+                              , LocationInfo("55", "26", "55", "40")
+                              )
+                              ; ?Function(_, _)
+                            )> definition*
+         ; <s-var(
+            | "localvar.str"
+            , "find-functions"
+            , "functions*"
+            , LocationInfo("55", "4", "55", "14")
+            )> functions*
+
+  find-comments :
+    definition* -> <r-exit(
+                    | "localvar.str"
+                    , "find-comments"
+                    , LocationInfo("57", "2", "60", "52")
+                    )> comments*
+    where r-enter(
+          | "localvar.str"
+          , "find-comments"
+          , LocationInfo("57", "2", "60", "52")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "find-comments"
+           , "definition*"
+           , LocationInfo("58", "3", "58", "14")
+           )> definition*
+    with s-step(
+         | "localvar.str"
+         , "find-comments"
+         , LocationInfo("60", "4", "60", "52")
+         )
+         ; comments* := <s-step(
+                         | "localvar.str"
+                         , "find-comments"
+                         , LocationInfo("60", "18", "60", "39")
+                         )
+                         ; filter(
+                             s-step(
+                             | "localvar.str"
+                             , "find-comments"
+                             , LocationInfo("60", "25", "60", "38")
+                             )
+                             ; ?Comment(_, _)
+                           )> definition*
+         ; <s-var(
+            | "localvar.str"
+            , "find-comments"
+            , "comments*"
+            , LocationInfo("60", "4", "60", "13")
+            )> comments*
+
+  match-f-and-c :
+    (f*, c*) -> <r-exit(
+                 | "localvar.str"
+                 , "match-f-and-c"
+                 , LocationInfo("62", "2", "66", "55")
+                 )> matches*
+    where r-enter(
+          | "localvar.str"
+          , "match-f-and-c"
+          , LocationInfo("62", "2", "66", "55")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "match-f-and-c"
+           , "f*"
+           , LocationInfo("63", "4", "63", "6")
+           )> f*
+          ; <s-var(
+             | "localvar.str"
+             , "match-f-and-c"
+             , "c*"
+             , LocationInfo("63", "8", "63", "10")
+             )> c*
+    with s-step(
+         | "localvar.str"
+         , "match-f-and-c"
+         , LocationInfo("66", "4", "66", "55")
+         )
+         ; matches* := <s-step(
+                        | "localvar.str"
+                        , "match-f-and-c"
+                        , LocationInfo("66", "17", "66", "51")
+                        )
+                        ; map(
+                            s-step(
+                            | "localvar.str"
+                            , "match-f-and-c"
+                            , LocationInfo("66", "21", "66", "50")
+                            )
+                            ; try-find-comment-by-name(|c*)
+                          )> f*
+         ; <s-var(
+            | "localvar.str"
+            , "match-f-and-c"
+            , "matches*"
+            , LocationInfo("66", "4", "66", "12")
+            )> matches*
+
+  try-find-comment-by-name(|c*) =
+    s-enter(
+    | "localvar.str"
+    , "try-find-comment-by-name"
+    , LocationInfo("68", "2", "68", "57")
+    )
+    ; (where(<s-var(
+              | "localvar.str"
+              , "try-find-comment-by-name"
+              , "c*"
+              , LocationInfo("68", "28", "68", "30")
+              )> c*)
+       ; s-step(
+         | "localvar.str"
+         , "try-find-comment-by-name"
+         , LocationInfo("68", "34", "68", "57")
+         )
+       ; find-comment-match(|c*)
+       < s-exit(
+         | "localvar.str"
+         , "try-find-comment-by-name"
+         , LocationInfo("68", "2", "68", "57")
+         )
+       + s-exit(
+         | "localvar.str"
+         , "try-find-comment-by-name"
+         , LocationInfo("68", "2", "68", "57")
+         )
+         ; fail)
+
+  find-comment-match(|c*):
+    f -> <r-exit(
+          | "localvar.str"
+          , "find-comment-match"
+          , LocationInfo("70", "2", "78", "43")
+          )> (f, c)
+    where r-enter(
+          | "localvar.str"
+          , "find-comment-match"
+          , LocationInfo("70", "2", "78", "43")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "find-comment-match"
+           , "c*"
+           , LocationInfo("70", "22", "70", "24")
+           )> c*
+    where <s-var(
+           | "localvar.str"
+           , "find-comment-match"
+           , "f"
+           , LocationInfo("71", "3", "71", "4")
+           )> f
+    where (s-step(
+           | "localvar.str"
+           , "find-comment-match"
+           , LocationInfo("74", "4", "74", "33")
+           )
+           ; name := <s-step(
+                      | "localvar.str"
+                      , "find-comment-match"
+                      , LocationInfo("74", "13", "74", "30")
+                      )
+                      ; get-function-name> f
+           ; <s-var(
+              | "localvar.str"
+              , "find-comment-match"
+              , "name"
+              , LocationInfo("74", "4", "74", "8")
+              )> name)
+          ; (s-step(
+             | "localvar.str"
+             , "find-comment-match"
+             , LocationInfo("75", "6", "77", "7")
+             )
+             ; rules ( get-current-name :
+                         input -> name ))
+          ; s-step(
+            | "localvar.str"
+            , "find-comment-match"
+            , LocationInfo("78", "6", "78", "43")
+            )
+          ; c := <s-step(
+                  | "localvar.str"
+                  , "find-comment-match"
+                  , LocationInfo("78", "12", "78", "39")
+                  )
+                  ; find-comment-by-name(|name)> c*
+          ; <s-var(
+             | "localvar.str"
+             , "find-comment-match"
+             , "c"
+             , LocationInfo("78", "6", "78", "7")
+             )> c
+
+  get-function-name :
+    Function(name, _) -> <r-exit(
+                          | "localvar.str"
+                          , "get-function-name"
+                          , LocationInfo("80", "2", "81", "28")
+                          )> name
+    where r-enter(
+          | "localvar.str"
+          , "get-function-name"
+          , LocationInfo("80", "2", "81", "28")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "get-function-name"
+           , "name"
+           , LocationInfo("81", "12", "81", "16")
+           )> name
+
+  find-comment-by-name(|name):
+    c* -> <r-exit(
+           | "localvar.str"
+           , "find-comment-by-name"
+           , LocationInfo("83", "2", "93", "55")
+           )> comment
+    where r-enter(
+          | "localvar.str"
+          , "find-comment-by-name"
+          , LocationInfo("83", "2", "93", "55")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "find-comment-by-name"
+           , "name"
+           , LocationInfo("83", "24", "83", "28")
+           )> name
+    where <s-var(
+           | "localvar.str"
+           , "find-comment-by-name"
+           , "c*"
+           , LocationInfo("84", "3", "84", "5")
+           )> c*
+    where <(s-step(
+            | "localvar.str"
+            , "find-comment-by-name"
+            , LocationInfo("85", "10", "85", "41")
+            )
+            ; debug(
+                s-step(
+                | "localvar.str"
+                , "find-comment-by-name"
+                , LocationInfo("85", "16", "85", "40")
+                )
+                ; !"find-comment-by-name "
+              ))> name
+    where (s-step(
+           | "localvar.str"
+           , "find-comment-by-name"
+           , LocationInfo("86", "9", "86", "32")
+           )
+           ; c := <s-step(
+                   | "localvar.str"
+                   , "find-comment-by-name"
+                   , LocationInfo("86", "15", "86", "31")
+                   )
+                   ; get-current-name>
+           ; <s-var(
+              | "localvar.str"
+              , "find-comment-by-name"
+              , "c"
+              , LocationInfo("86", "9", "86", "10")
+              )> c)
+          ; <(s-step(
+              | "localvar.str"
+              , "find-comment-by-name"
+              , LocationInfo("86", "35", "86", "62")
+              )
+              ; debug(
+                  s-step(
+                  | "localvar.str"
+                  , "find-comment-by-name"
+                  , LocationInfo("86", "41", "86", "61")
+                  )
+                  ; !"get-current-name "
+                ))> c
+    where s-step(
+          | "localvar.str"
+          , "find-comment-by-name"
+          , LocationInfo("88", "9", "90", "4")
+          )
+          ; rules ( baz-rule :
+                      input -> "output" )
+    with (s-step(
+          | "localvar.str"
+          , "find-comment-by-name"
+          , LocationInfo("92", "3", "92", "48")
+          )
+          ; c-filtered* := <s-step(
+                            | "localvar.str"
+                            , "find-comment-by-name"
+                            , LocationInfo("92", "19", "92", "44")
+                            )
+                            ; filter(
+                                s-step(
+                                | "localvar.str"
+                                , "find-comment-by-name"
+                                , LocationInfo("92", "26", "92", "43")
+                                )
+                                ; ?Comment(name, _)
+                              )> c*
+          ; <s-var(
+             | "localvar.str"
+             , "find-comment-by-name"
+             , "c-filtered*"
+             , LocationInfo("92", "3", "92", "14")
+             )> c-filtered*)
+         ; s-step(
+           | "localvar.str"
+           , "find-comment-by-name"
+           , LocationInfo("93", "5", "93", "55")
+           )
+         ; comment := ( <(s-step(
+                          | "localvar.str"
+                          , "find-comment-by-name"
+                          , LocationInfo("93", "18", "93", "34")
+                          )
+                          ; debug(
+                              s-step(
+                              | "localvar.str"
+                              , "find-comment-by-name"
+                              , LocationInfo("93", "24", "93", "33")
+                              )
+                              ; !"stuff:"
+                            ))
+                         ; s-step(
+                           | "localvar.str"
+                           , "find-comment-by-name"
+                           , LocationInfo("93", "36", "93", "41")
+                           )
+                         ; first> c-filtered*
+                      )
+         ; <s-var(
+            | "localvar.str"
+            , "find-comment-by-name"
+            , "comment"
+            , LocationInfo("93", "5", "93", "12")
+            )> comment
+
+  old-first :
+    c-list* -> <r-exit(
+                | "localvar.str"
+                , "old-first"
+                , LocationInfo("99", "2", "100", "40")
+                )> out
+    where r-enter(
+          | "localvar.str"
+          , "old-first"
+          , LocationInfo("99", "2", "100", "40")
+          )
+    where <s-var(
+           | "localvar.str"
+           , "old-first"
+           , "c-list*"
+           , LocationInfo("99", "14", "99", "21")
+           )> c-list*
+    where s-step(
+          | "localvar.str"
+          , "old-first"
+          , LocationInfo("100", "8", "100", "29")
+          )
+          ; out := <s-step(
+                    | "localvar.str"
+                    , "old-first"
+                    , LocationInfo("100", "16", "100", "20")
+                    )
+                    ; last> c-list*
+          ; <s-var(
+             | "localvar.str"
+             , "old-first"
+             , "out"
+             , LocationInfo("100", "8", "100", "11")
+             )> out
+          <+ s-step(
+             | "localvar.str"
+             , "old-first"
+             , LocationInfo("100", "33", "100", "40")
+             )
+             ; build-c
+
+  is-empty =
+    s-enter(
+    | "localvar.str"
+    , "is-empty"
+    , LocationInfo("102", "2", "102", "16")
+    )
+    ; (s-step(
+       | "localvar.str"
+       , "is-empty"
+       , LocationInfo("102", "13", "102", "16")
+       )
+       ; ?[]
+       < s-exit(
+         | "localvar.str"
+         , "is-empty"
+         , LocationInfo("102", "2", "102", "16")
+         )
+       + s-exit(
+         | "localvar.str"
+         , "is-empty"
+         , LocationInfo("102", "2", "102", "16")
+         )
+         ; fail)
+
+  first =
+    s-enter(
+    | "localvar.str"
+    , "first"
+    , LocationInfo("105", "2", "107", "30")
+    )
+    ; ((s-step(
+        | "localvar.str"
+        , "first"
+        , LocationInfo("106", "3", "106", "20")
+        )
+        ; debug(
+            s-step(
+            | "localvar.str"
+            , "first"
+            , LocationInfo("106", "9", "106", "19")
+            )
+            ; !"first: "
+          ))
+       ; (s-step(
+          | "localvar.str"
+          , "first"
+          , LocationInfo("107", "4", "107", "12")
+          )
+          ; is-empty
+          < s-step(
+            | "localvar.str"
+            , "first"
+            , LocationInfo("107", "15", "107", "22")
+            )
+            ; build-c
+          + s-step(
+            | "localvar.str"
+            , "first"
+            , LocationInfo("107", "25", "107", "29")
+            )
+            ; last)
+       < s-exit(
+         | "localvar.str"
+         , "first"
+         , LocationInfo("105", "2", "107", "30")
+         )
+       + s-exit(
+         | "localvar.str"
+         , "first"
+         , LocationInfo("105", "2", "107", "30")
+         )
+         ; fail)
+
+  build-c =
+    s-enter(
+    | "localvar.str"
+    , "build-c"
+    , LocationInfo("109", "2", "109", "40")
+    )
+    ; (s-step(
+       | "localvar.str"
+       , "build-c"
+       , LocationInfo("109", "12", "109", "40")
+       )
+       ; !Comment("new", "created!!")
+       < s-exit(
+         | "localvar.str"
+         , "build-c"
+         , LocationInfo("109", "2", "109", "40")
+         )
+       + s-exit(
+         | "localvar.str"
+         , "build-c"
+         , LocationInfo("109", "2", "109", "40")
+         )
+         ; fail)

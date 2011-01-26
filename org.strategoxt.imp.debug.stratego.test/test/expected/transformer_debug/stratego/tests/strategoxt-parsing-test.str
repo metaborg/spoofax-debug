@@ -1,0 +1,994 @@
+module tests/strategoxt-parsing-test
+
+imports
+  strategodebuglib
+
+
+imports
+  str-reader
+  libstratego-lib
+  gen-debug-info
+  assert
+  gen-lookup
+  traverse-imports
+  trans-str
+
+
+imports
+  libstratego-lib
+  libstratego-sglr
+  libstratego-xtc
+  libstrc
+
+
+strategies
+  test-walk-strategoxt-source =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-walk-strategoxt-source"
+    , LocationInfo("21", "2", "27", "28")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-walk-strategoxt-source"
+        , LocationInfo("22", "3", "22", "39")
+        )
+        ; echo(|"test-walk-strategoxt-source"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-strategoxt-source"
+          , LocationInfo("23", "5", "23", "70")
+          )
+          ; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-strategoxt-source"
+             , "base-path"
+             , LocationInfo("23", "5", "23", "14")
+             )> base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-strategoxt-source"
+          , LocationInfo("24", "5", "24", "47")
+          )
+          ; str-files* := <s-step(
+                           | "tests/strategoxt-parsing-test.str"
+                           , "test-walk-strategoxt-source"
+                           , LocationInfo("24", "20", "24", "46")
+                           )
+                           ; walk-dir(
+                               s-step(
+                               | "tests/strategoxt-parsing-test.str"
+                               , "test-walk-strategoxt-source"
+                               , LocationInfo("24", "29", "24", "45")
+                               )
+                               ; is-stratego-file
+                             )>
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-strategoxt-source"
+             , "str-files*"
+             , LocationInfo("24", "5", "24", "15")
+             )> str-files*)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-strategoxt-source"
+          , LocationInfo("25", "5", "25", "32")
+          )
+          ; size := <s-step(
+                     | "tests/strategoxt-parsing-test.str"
+                     , "test-walk-strategoxt-source"
+                     , LocationInfo("25", "14", "25", "20")
+                     )
+                     ; length> str-files*
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-strategoxt-source"
+             , "size"
+             , LocationInfo("25", "5", "25", "9")
+             )> size)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-walk-strategoxt-source"
+           , LocationInfo("26", "6", "26", "33")
+           )
+           ; debug(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-walk-strategoxt-source"
+               , LocationInfo("26", "12", "26", "32")
+               )
+               ; !"str files count: "
+             ))> size
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-walk-strategoxt-source"
+           , LocationInfo("27", "6", "27", "16")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-walk-strategoxt-source"
+               , LocationInfo("27", "10", "27", "15")
+               )
+               ; debug
+             ))> str-files*
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-walk-strategoxt-source"
+         , LocationInfo("21", "2", "27", "28")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-walk-strategoxt-source"
+         , LocationInfo("21", "2", "27", "28")
+         )
+         ; fail)
+
+  test-apply-debug-testimports-full-str =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-apply-debug-testimports-full-str"
+    , LocationInfo("32", "2", "41", "64")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-apply-debug-testimports-full-str"
+        , LocationInfo("33", "3", "33", "41")
+        )
+        ; echo(|"test-apply-debug-strategoxt-1"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-str"
+          , LocationInfo("36", "5", "36", "145")
+          )
+          ; base-path := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-str"
+             , "base-path"
+             , LocationInfo("36", "5", "36", "14")
+             )> base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-str"
+          , LocationInfo("37", "5", "37", "35")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-str"
+             , LocationInfo("37", "5", "37", "20")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-str"
+          , LocationInfo("38", "5", "38", "57")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-str"
+             , LocationInfo("38", "5", "38", "38")
+             )
+             ; !"test/generated/walktestimports") => output-base-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-str"
+          , LocationInfo("39", "5", "39", "77")
+          )
+          ; output-base-path := <s-step(
+                                 | "tests/strategoxt-parsing-test.str"
+                                 , "test-apply-debug-testimports-full-str"
+                                 , LocationInfo("39", "26", "39", "40")
+                                 )
+                                 ; concat-strings> [project-dir, "/", output-base-dir]
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-str"
+             , "output-base-path"
+             , LocationInfo("39", "5", "39", "21")
+             )> output-base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-str"
+          , LocationInfo("40", "5", "40", "57")
+          )
+          ; str-files* := <s-step(
+                           | "tests/strategoxt-parsing-test.str"
+                           , "test-apply-debug-testimports-full-str"
+                           , LocationInfo("40", "20", "40", "46")
+                           )
+                           ; walk-dir(
+                               s-step(
+                               | "tests/strategoxt-parsing-test.str"
+                               , "test-apply-debug-testimports-full-str"
+                               , LocationInfo("40", "29", "40", "45")
+                               )
+                               ; is-stratego-file
+                             )> base-path
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-str"
+             , "str-files*"
+             , LocationInfo("40", "5", "40", "15")
+             )> str-files*)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-apply-debug-testimports-full-str"
+           , LocationInfo("41", "6", "41", "52")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-apply-debug-testimports-full-str"
+               , LocationInfo("41", "10", "41", "51")
+               )
+               ; handle-file(|base-path, output-base-path)
+             ))> str-files*
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-testimports-full-str"
+         , LocationInfo("32", "2", "41", "64")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-testimports-full-str"
+         , LocationInfo("32", "2", "41", "64")
+         )
+         ; fail)
+
+  test-apply-debug-testimports-full-rtree =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-apply-debug-testimports-full-rtree"
+    , LocationInfo("46", "2", "56", "64")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-apply-debug-testimports-full-rtree"
+        , LocationInfo("47", "3", "47", "41")
+        )
+        ; echo(|"test-apply-debug-strategoxt-1"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-rtree"
+          , LocationInfo("50", "5", "50", "145")
+          )
+          ; base-path := "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/test/src/testimports"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-rtree"
+             , "base-path"
+             , LocationInfo("50", "5", "50", "14")
+             )> base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-rtree"
+          , LocationInfo("51", "5", "51", "35")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-rtree"
+             , LocationInfo("51", "5", "51", "20")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-rtree"
+          , LocationInfo("52", "5", "52", "57")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-rtree"
+             , LocationInfo("52", "5", "52", "38")
+             )
+             ; !"test/generated/walktestimports") => output-base-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-rtree"
+          , LocationInfo("53", "5", "53", "77")
+          )
+          ; output-base-path := <s-step(
+                                 | "tests/strategoxt-parsing-test.str"
+                                 , "test-apply-debug-testimports-full-rtree"
+                                 , LocationInfo("53", "26", "53", "40")
+                                 )
+                                 ; concat-strings> [project-dir, "/", output-base-dir]
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-rtree"
+             , "output-base-path"
+             , LocationInfo("53", "5", "53", "21")
+             )> output-base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-testimports-full-rtree"
+          , LocationInfo("54", "5", "54", "57")
+          )
+          ; str-files* := <s-step(
+                           | "tests/strategoxt-parsing-test.str"
+                           , "test-apply-debug-testimports-full-rtree"
+                           , LocationInfo("54", "20", "54", "46")
+                           )
+                           ; walk-dir(
+                               s-step(
+                               | "tests/strategoxt-parsing-test.str"
+                               , "test-apply-debug-testimports-full-rtree"
+                               , LocationInfo("54", "29", "54", "45")
+                               )
+                               ; is-stratego-file
+                             )> base-path
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-testimports-full-rtree"
+             , "str-files*"
+             , LocationInfo("54", "5", "54", "15")
+             )> str-files*)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-apply-debug-testimports-full-rtree"
+           , LocationInfo("55", "6", "55", "16")
+           )
+           ; set-config)> ("output-rtree", "on")
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-apply-debug-testimports-full-rtree"
+           , LocationInfo("56", "6", "56", "52")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-apply-debug-testimports-full-rtree"
+               , LocationInfo("56", "10", "56", "51")
+               )
+               ; handle-file(|base-path, output-base-path)
+             ))> str-files*
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-testimports-full-rtree"
+         , LocationInfo("46", "2", "56", "64")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-testimports-full-rtree"
+         , LocationInfo("46", "2", "56", "64")
+         )
+         ; fail)
+
+  test-apply-debug-strategoxt-full =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-apply-debug-strategoxt-full"
+    , LocationInfo("62", "2", "71", "64")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-apply-debug-strategoxt-full"
+        , LocationInfo("63", "3", "63", "41")
+        )
+        ; echo(|"test-apply-debug-strategoxt-1"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-full"
+          , LocationInfo("66", "5", "66", "70")
+          )
+          ; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-full"
+             , "base-path"
+             , LocationInfo("66", "5", "66", "14")
+             )> base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-full"
+          , LocationInfo("67", "5", "67", "35")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-full"
+             , LocationInfo("67", "5", "67", "20")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-full"
+          , LocationInfo("68", "5", "68", "51")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-full"
+             , LocationInfo("68", "5", "68", "32")
+             )
+             ; !"test/generated/teststrxt") => output-base-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-full"
+          , LocationInfo("69", "5", "69", "77")
+          )
+          ; output-base-path := <s-step(
+                                 | "tests/strategoxt-parsing-test.str"
+                                 , "test-apply-debug-strategoxt-full"
+                                 , LocationInfo("69", "26", "69", "40")
+                                 )
+                                 ; concat-strings> [project-dir, "/", output-base-dir]
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-full"
+             , "output-base-path"
+             , LocationInfo("69", "5", "69", "21")
+             )> output-base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-full"
+          , LocationInfo("70", "5", "70", "66")
+          )
+          ; str-files* := <s-step(
+                           | "tests/strategoxt-parsing-test.str"
+                           , "test-apply-debug-strategoxt-full"
+                           , LocationInfo("70", "20", "70", "55")
+                           )
+                           ; walk-dir(
+                               s-step(
+                               | "tests/strategoxt-parsing-test.str"
+                               , "test-apply-debug-strategoxt-full"
+                               , LocationInfo("70", "29", "70", "54")
+                               )
+                               ; is-strategoxt-source-file
+                             )> base-path
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-full"
+             , "str-files*"
+             , LocationInfo("70", "5", "70", "15")
+             )> str-files*)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-apply-debug-strategoxt-full"
+           , LocationInfo("71", "6", "71", "52")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-apply-debug-strategoxt-full"
+               , LocationInfo("71", "10", "71", "51")
+               )
+               ; handle-file(|base-path, output-base-path)
+             ))> str-files*
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-strategoxt-full"
+         , LocationInfo("62", "2", "71", "64")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-strategoxt-full"
+         , LocationInfo("62", "2", "71", "64")
+         )
+         ; fail)
+
+  is-strategoxt-source-file =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "is-strategoxt-source-file"
+    , LocationInfo("76", "5", "80", "13")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "is-strategoxt-source-file"
+        , LocationInfo("76", "33", "76", "49")
+        )
+        ; is-stratego-file)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-strategoxt-source-file"
+          , LocationInfo("76", "51", "76", "56")
+          )
+          ; ?path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-strategoxt-source-file"
+          , LocationInfo("76", "58", "76", "66")
+          )
+          ; excludes)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-strategoxt-source-file"
+          , LocationInfo("77", "8", "77", "35")
+          )
+          ; filter(
+              s-step(
+              | "tests/strategoxt-parsing-test.str"
+              , "is-strategoxt-source-file"
+              , LocationInfo("77", "15", "77", "34")
+              )
+              ; is-prefix-of(|path)
+            ))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-strategoxt-source-file"
+          , LocationInfo("78", "8", "78", "24")
+          )
+          ; size := <s-step(
+                     | "tests/strategoxt-parsing-test.str"
+                     , "is-strategoxt-source-file"
+                     , LocationInfo("78", "17", "78", "23")
+                     )
+                     ; length>
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "is-strategoxt-source-file"
+             , "size"
+             , LocationInfo("78", "8", "78", "12")
+             )> size)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "is-strategoxt-source-file"
+           , LocationInfo("79", "9", "79", "11")
+           )
+           ; eq)> (size, 0)
+       ; s-step(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-strategoxt-source-file"
+         , LocationInfo("80", "8", "80", "13")
+         )
+       ; !path
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-strategoxt-source-file"
+         , LocationInfo("76", "5", "80", "13")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-strategoxt-source-file"
+         , LocationInfo("76", "5", "80", "13")
+         )
+         ; fail)
+
+  is-prefix-of(|string) =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "is-prefix-of"
+    , LocationInfo("84", "5", "84", "75")
+    )
+    ; (where(<s-var(
+              | "tests/strategoxt-parsing-test.str"
+              , "is-prefix-of"
+              , "string"
+              , LocationInfo("84", "19", "84", "25")
+              )> string)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-prefix-of"
+          , LocationInfo("84", "29", "84", "36")
+          )
+          ; ?prefix)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "is-prefix-of"
+          , LocationInfo("84", "39", "84", "46")
+          )
+          ; !string)
+       ; s-step(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-prefix-of"
+         , LocationInfo("84", "48", "84", "75")
+         )
+       ; string-starts-with(|prefix)
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-prefix-of"
+         , LocationInfo("84", "5", "84", "75")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "is-prefix-of"
+         , LocationInfo("84", "5", "84", "75")
+         )
+         ; fail)
+
+  excludes =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "excludes"
+    , LocationInfo("86", "5", "89", "6")
+    )
+    ; (s-step(
+       | "tests/strategoxt-parsing-test.str"
+       , "excludes"
+       , LocationInfo("86", "16", "89", "6")
+       )
+       ; !["/home/rlindeman/Documents/TU/strategoxt/strategoxt/strc-core/tests", "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test"]
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "excludes"
+         , LocationInfo("86", "5", "89", "6")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "excludes"
+         , LocationInfo("86", "5", "89", "6")
+         )
+         ; fail)
+
+  test-exclude =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-exclude"
+    , LocationInfo("91", "5", "94", "68")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-exclude"
+        , LocationInfo("93", "6", "93", "107")
+        )
+        ; !"/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/pp/dynrule-intersection.str")
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-exclude"
+          , LocationInfo("94", "9", "94", "34")
+          )
+          ; is-strategoxt-source-file
+          < s-step(
+            | "tests/strategoxt-parsing-test.str"
+            , "test-exclude"
+            , LocationInfo("94", "37", "94", "50")
+            )
+            ; debug(
+                s-step(
+                | "tests/strategoxt-parsing-test.str"
+                , "test-exclude"
+                , LocationInfo("94", "43", "94", "49")
+                )
+                ; !"suc"
+              )
+          + s-step(
+            | "tests/strategoxt-parsing-test.str"
+            , "test-exclude"
+            , LocationInfo("94", "53", "94", "67")
+            )
+            ; debug(
+                s-step(
+                | "tests/strategoxt-parsing-test.str"
+                , "test-exclude"
+                , LocationInfo("94", "59", "94", "66")
+                )
+                ; !"fail"
+              ))
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-exclude"
+         , LocationInfo("91", "5", "94", "68")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-exclude"
+         , LocationInfo("91", "5", "94", "68")
+         )
+         ; fail)
+
+  test-apply-debug-strategoxt-1 =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-apply-debug-strategoxt-1"
+    , LocationInfo("96", "2", "115", "13")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-apply-debug-strategoxt-1"
+        , LocationInfo("97", "3", "97", "41")
+        )
+        ; echo(|"test-apply-debug-strategoxt-1"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("100", "5", "100", "70")
+          )
+          ; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "base-path"
+             , LocationInfo("100", "5", "100", "14")
+             )> base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("101", "5", "101", "35")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , LocationInfo("101", "5", "101", "20")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("102", "5", "102", "51")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , LocationInfo("102", "5", "102", "32")
+             )
+             ; !"test/generated/teststrxt") => output-base-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("103", "5", "103", "77")
+          )
+          ; output-base-path := <s-step(
+                                 | "tests/strategoxt-parsing-test.str"
+                                 , "test-apply-debug-strategoxt-1"
+                                 , LocationInfo("103", "26", "103", "40")
+                                 )
+                                 ; concat-strings> [project-dir, "/", output-base-dir]
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "output-base-path"
+             , LocationInfo("103", "5", "103", "21")
+             )> output-base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("105", "5", "105", "112")
+          )
+          ; f1 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/gpp/tests/abox2text-tests.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f1"
+             , LocationInfo("105", "5", "105", "7")
+             )> f1)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("106", "5", "106", "131")
+          )
+          ; f2 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-libraries/lib/tests/dynamic-rules/dr-propconst-tests-1.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f2"
+             , LocationInfo("106", "5", "106", "7")
+             )> f2)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("107", "5", "107", "95")
+          )
+          ; f3 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/gen-sdf-mix.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f3"
+             , LocationInfo("107", "5", "107", "7")
+             )> f3)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("108", "5", "108", "100")
+          )
+          ; f4 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/sdf-tools/trans/sdf2parenthesize.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f4"
+             , LocationInfo("108", "5", "108", "7")
+             )> f4)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("109", "5", "109", "92")
+          )
+          ; f5 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/gpp/tools3/pp2c-box-to-c.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f5"
+             , LocationInfo("109", "5", "109", "7")
+             )> f5)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("110", "5", "110", "127")
+          )
+          ; f6 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/interpret/core-format-check-to-xhtml.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f6"
+             , LocationInfo("110", "5", "110", "7")
+             )> f6)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("111", "5", "111", "119")
+          )
+          ; f7 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-regular/trans/sdf2rtg/core-sdf-grammar2rtg.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f7"
+             , LocationInfo("111", "5", "111", "7")
+             )> f7)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("112", "5", "112", "93")
+          )
+          ; f8 := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test/prop1.str"
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "f8"
+             , LocationInfo("112", "5", "112", "7")
+             )> f8)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-apply-debug-strategoxt-1"
+          , LocationInfo("113", "5", "113", "23")
+          )
+          ; str-files* := [f5]
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-apply-debug-strategoxt-1"
+             , "str-files*"
+             , LocationInfo("113", "5", "113", "15")
+             )> str-files*)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-apply-debug-strategoxt-1"
+           , LocationInfo("114", "6", "114", "52")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-apply-debug-strategoxt-1"
+               , LocationInfo("114", "10", "114", "51")
+               )
+               ; handle-file(|base-path, output-base-path)
+             ))> str-files*
+       ; s-step(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-strategoxt-1"
+         , LocationInfo("115", "5", "115", "13")
+         )
+       ; run-time
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-strategoxt-1"
+         , LocationInfo("96", "2", "115", "13")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-apply-debug-strategoxt-1"
+         , LocationInfo("96", "2", "115", "13")
+         )
+         ; fail)
+
+  test-walk-dir =
+    s-enter(
+    | "tests/strategoxt-parsing-test.str"
+    , "test-walk-dir"
+    , LocationInfo("123", "2", "132", "28")
+    )
+    ; ((s-step(
+        | "tests/strategoxt-parsing-test.str"
+        , "test-walk-dir"
+        , LocationInfo("124", "3", "124", "25")
+        )
+        ; echo(|"test-walk-dir"))
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-dir"
+          , LocationInfo("125", "7", "125", "37")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-dir"
+             , LocationInfo("125", "7", "125", "22")
+             )
+             ; get-project-dir) => project-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-dir"
+          , LocationInfo("126", "7", "126", "48")
+          )
+          ; (s-step(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-dir"
+             , LocationInfo("126", "7", "126", "30")
+             )
+             ; !"test/src/testimports") => input-base-dir)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-dir"
+          , LocationInfo("127", "7", "127", "71")
+          )
+          ; <(s-step(
+              | "tests/strategoxt-parsing-test.str"
+              , "test-walk-dir"
+              , LocationInfo("127", "8", "127", "22")
+              )
+              ; concat-strings)> [project-dir, "/", input-base-dir] => base-path)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-dir"
+          , LocationInfo("129", "5", "129", "47")
+          )
+          ; str-files* := <s-step(
+                           | "tests/strategoxt-parsing-test.str"
+                           , "test-walk-dir"
+                           , LocationInfo("129", "20", "129", "46")
+                           )
+                           ; walk-dir(
+                               s-step(
+                               | "tests/strategoxt-parsing-test.str"
+                               , "test-walk-dir"
+                               , LocationInfo("129", "29", "129", "45")
+                               )
+                               ; is-stratego-file
+                             )>
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-dir"
+             , "str-files*"
+             , LocationInfo("129", "5", "129", "15")
+             )> str-files*)
+       ; (s-step(
+          | "tests/strategoxt-parsing-test.str"
+          , "test-walk-dir"
+          , LocationInfo("130", "5", "130", "32")
+          )
+          ; size := <s-step(
+                     | "tests/strategoxt-parsing-test.str"
+                     , "test-walk-dir"
+                     , LocationInfo("130", "14", "130", "20")
+                     )
+                     ; length> str-files*
+          ; <s-var(
+             | "tests/strategoxt-parsing-test.str"
+             , "test-walk-dir"
+             , "size"
+             , LocationInfo("130", "5", "130", "9")
+             )> size)
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-walk-dir"
+           , LocationInfo("131", "6", "131", "33")
+           )
+           ; debug(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-walk-dir"
+               , LocationInfo("131", "12", "131", "32")
+               )
+               ; !"str files count: "
+             ))> size
+       ; <(s-step(
+           | "tests/strategoxt-parsing-test.str"
+           , "test-walk-dir"
+           , LocationInfo("132", "6", "132", "16")
+           )
+           ; map(
+               s-step(
+               | "tests/strategoxt-parsing-test.str"
+               , "test-walk-dir"
+               , LocationInfo("132", "10", "132", "15")
+               )
+               ; debug
+             ))> str-files*
+       < s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-walk-dir"
+         , LocationInfo("123", "2", "132", "28")
+         )
+       + s-exit(
+         | "tests/strategoxt-parsing-test.str"
+         , "test-walk-dir"
+         , LocationInfo("123", "2", "132", "28")
+         )
+         ; fail)

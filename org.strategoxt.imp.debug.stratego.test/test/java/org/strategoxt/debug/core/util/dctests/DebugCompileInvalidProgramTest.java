@@ -9,7 +9,7 @@ import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 
-public class DebugCompileInvalidProgramTest {
+public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
 		testCompileInvalidProgram();
@@ -40,13 +40,16 @@ public class DebugCompileInvalidProgramTest {
 			e.printStackTrace();
 		} catch (DebugCompileException e)
 		{
-			
+			e.printStackTrace();
 		} catch (Exception e) {
 			Assert.fail("Should throw a DebugCompileException!");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean runjava = true;
+		
+		checkOutput(debugSessionSettings);
+		
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{

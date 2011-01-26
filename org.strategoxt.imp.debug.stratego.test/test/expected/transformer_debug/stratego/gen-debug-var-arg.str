@@ -1,0 +1,799 @@
+module gen-debug-var-arg
+
+imports
+  strategodebuglib
+
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  location-util
+  gen-debug-var
+
+
+signature
+  sorts
+    BA
+
+  constructors
+    BA : Strategy * Term -> BA
+
+
+rules
+
+  match-term-to-s-var-clause(|filename, name):
+    match-term -> <r-exit(
+                   | "gen-debug-var-arg.str"
+                   , "match-term-to-s-var-clause"
+                   , LocationInfo("25", "2", "31", "32")
+                   )> clause
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "match-term-to-s-var-clause"
+          , LocationInfo("25", "2", "31", "32")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "match-term-to-s-var-clause"
+           , "filename"
+           , LocationInfo("25", "30", "25", "38")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "match-term-to-s-var-clause"
+             , "name"
+             , LocationInfo("25", "40", "25", "44")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "match-term-to-s-var-clause"
+           , "match-term"
+           , LocationInfo("26", "3", "26", "13")
+           )> match-term
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "match-term-to-s-var-clause"
+           , LocationInfo("30", "4", "30", "68")
+           )
+           ; seq := <s-step(
+                     | "gen-debug-var-arg.str"
+                     , "match-term-to-s-var-clause"
+                     , LocationInfo("30", "12", "30", "56")
+                     )
+                     ; create-s-var-calls-for-Term(|filename, name)> match-term
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "match-term-to-s-var-clause"
+              , "seq"
+              , LocationInfo("30", "4", "30", "7")
+              )> seq)
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "match-term-to-s-var-clause"
+            , LocationInfo("31", "6", "31", "32")
+            )
+          ; clause := WhereClause(seq)
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "match-term-to-s-var-clause"
+             , "clause"
+             , LocationInfo("31", "6", "31", "12")
+             )> clause
+
+  create-s-var-calls-for-Term(|filename, name):
+    term -> <r-exit(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-calls-for-Term"
+             , LocationInfo("36", "2", "43", "34")
+             )> seq
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-s-var-calls-for-Term"
+          , LocationInfo("36", "2", "43", "34")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-calls-for-Term"
+           , "filename"
+           , LocationInfo("36", "31", "36", "39")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-calls-for-Term"
+             , "name"
+             , LocationInfo("36", "41", "36", "45")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-calls-for-Term"
+           , "term"
+           , LocationInfo("37", "3", "37", "7")
+           )> term
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-calls-for-Term"
+           , LocationInfo("40", "4", "40", "36")
+           )
+           ; vars* := <s-step(
+                       | "gen-debug-var-arg.str"
+                       , "create-s-var-calls-for-Term"
+                       , LocationInfo("40", "14", "40", "30")
+                       )
+                       ; collect(
+                           s-step(
+                           | "gen-debug-var-arg.str"
+                           , "create-s-var-calls-for-Term"
+                           , LocationInfo("40", "22", "40", "29")
+                           )
+                           ; ?Var(_)
+                         )> term
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "create-s-var-calls-for-Term"
+              , "vars*"
+              , LocationInfo("40", "4", "40", "9")
+              )> vars*)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-calls-for-Term"
+             , LocationInfo("41", "6", "41", "74")
+             )
+             ; s-vars* := <s-step(
+                           | "gen-debug-var-arg.str"
+                           , "create-s-var-calls-for-Term"
+                           , LocationInfo("41", "18", "41", "67")
+                           )
+                           ; map(
+                               s-step(
+                               | "gen-debug-var-arg.str"
+                               , "create-s-var-calls-for-Term"
+                               , LocationInfo("41", "22", "41", "66")
+                               )
+                               ; create-s-var-call-with-term(|filename, name)
+                             )> vars*
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "create-s-var-calls-for-Term"
+                , "s-vars*"
+                , LocationInfo("41", "6", "41", "13")
+                )> s-vars*)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-calls-for-Term"
+             , LocationInfo("42", "6", "42", "14")
+             )
+             ; not(s-step(
+                   | "gen-debug-var-arg.str"
+                   , "create-s-var-calls-for-Term"
+                   , LocationInfo("42", "10", "42", "13")
+                   )
+                   ; ?[]))
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "create-s-var-calls-for-Term"
+            , LocationInfo("43", "6", "43", "34")
+            )
+          ; seq := <s-step(
+                    | "gen-debug-var-arg.str"
+                    , "create-s-var-calls-for-Term"
+                    , LocationInfo("43", "14", "43", "25")
+                    )
+                    ; create-seqs> s-vars*
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-calls-for-Term"
+             , "seq"
+             , LocationInfo("43", "6", "43", "9")
+             )> seq
+
+  t-args-to-s-var-where-clause(|filename, name):
+    t-args* -> <r-exit(
+                | "gen-debug-var-arg.str"
+                , "t-args-to-s-var-where-clause"
+                , LocationInfo("48", "2", "56", "31")
+                )> clause
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "t-args-to-s-var-where-clause"
+          , LocationInfo("48", "2", "56", "31")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-clause"
+           , "filename"
+           , LocationInfo("48", "32", "48", "40")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-clause"
+             , "name"
+             , LocationInfo("48", "42", "48", "46")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-clause"
+           , "t-args*"
+           , LocationInfo("49", "2", "49", "9")
+           )> t-args*
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-clause"
+           , LocationInfo("51", "3", "51", "60")
+           )
+           ; s-vars* := <s-step(
+                         | "gen-debug-var-arg.str"
+                         , "t-args-to-s-var-where-clause"
+                         , LocationInfo("51", "15", "51", "51")
+                         )
+                         ; map(
+                             s-step(
+                             | "gen-debug-var-arg.str"
+                             , "t-args-to-s-var-where-clause"
+                             , LocationInfo("51", "19", "51", "50")
+                             )
+                             ; t-arg-to-s-var(|filename, name)
+                           )> t-args*
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "t-args-to-s-var-where-clause"
+              , "s-vars*"
+              , LocationInfo("51", "3", "51", "10")
+              )> s-vars*)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-clause"
+             , LocationInfo("52", "5", "52", "13")
+             )
+             ; not(s-step(
+                   | "gen-debug-var-arg.str"
+                   , "t-args-to-s-var-where-clause"
+                   , LocationInfo("52", "9", "52", "12")
+                   )
+                   ; ?[]))
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-clause"
+             , LocationInfo("54", "5", "54", "33")
+             )
+             ; seq := <s-step(
+                       | "gen-debug-var-arg.str"
+                       , "t-args-to-s-var-where-clause"
+                       , LocationInfo("54", "13", "54", "24")
+                       )
+                       ; create-seqs> s-vars*
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "t-args-to-s-var-where-clause"
+                , "seq"
+                , LocationInfo("54", "5", "54", "8")
+                )> seq)
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "t-args-to-s-var-where-clause"
+            , LocationInfo("56", "5", "56", "31")
+            )
+          ; clause := WhereClause(seq)
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-clause"
+             , "clause"
+             , LocationInfo("56", "5", "56", "11")
+             )> clause
+
+  t-args-to-s-var-where-strategy(|filename, name):
+    t-args* -> <r-exit(
+                | "gen-debug-var-arg.str"
+                , "t-args-to-s-var-where-strategy"
+                , LocationInfo("59", "2", "67", "26")
+                )> where-s
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "t-args-to-s-var-where-strategy"
+          , LocationInfo("59", "2", "67", "26")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-strategy"
+           , "filename"
+           , LocationInfo("59", "34", "59", "42")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-strategy"
+             , "name"
+             , LocationInfo("59", "44", "59", "48")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-strategy"
+           , "t-args*"
+           , LocationInfo("60", "3", "60", "10")
+           )> t-args*
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "t-args-to-s-var-where-strategy"
+           , LocationInfo("62", "3", "62", "60")
+           )
+           ; s-vars* := <s-step(
+                         | "gen-debug-var-arg.str"
+                         , "t-args-to-s-var-where-strategy"
+                         , LocationInfo("62", "15", "62", "51")
+                         )
+                         ; map(
+                             s-step(
+                             | "gen-debug-var-arg.str"
+                             , "t-args-to-s-var-where-strategy"
+                             , LocationInfo("62", "19", "62", "50")
+                             )
+                             ; t-arg-to-s-var(|filename, name)
+                           )> t-args*
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "t-args-to-s-var-where-strategy"
+              , "s-vars*"
+              , LocationInfo("62", "3", "62", "10")
+              )> s-vars*)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-strategy"
+             , LocationInfo("63", "5", "63", "13")
+             )
+             ; not(s-step(
+                   | "gen-debug-var-arg.str"
+                   , "t-args-to-s-var-where-strategy"
+                   , LocationInfo("63", "9", "63", "12")
+                   )
+                   ; ?[]))
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-strategy"
+             , LocationInfo("65", "5", "65", "33")
+             )
+             ; seq := <s-step(
+                       | "gen-debug-var-arg.str"
+                       , "t-args-to-s-var-where-strategy"
+                       , LocationInfo("65", "13", "65", "24")
+                       )
+                       ; create-seqs> s-vars*
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "t-args-to-s-var-where-strategy"
+                , "seq"
+                , LocationInfo("65", "5", "65", "8")
+                )> seq)
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "t-args-to-s-var-where-strategy"
+            , LocationInfo("67", "5", "67", "26")
+            )
+          ; where-s := Where(seq)
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-args-to-s-var-where-strategy"
+             , "where-s"
+             , LocationInfo("67", "5", "67", "12")
+             )> where-s
+
+  t-arg-to-s-var(|filename, name):
+    DefaultVarDec(v){a} -> <r-exit(
+                            | "gen-debug-var-arg.str"
+                            , "t-arg-to-s-var"
+                            , LocationInfo("71", "2", "75", "71")
+                            )> s-var-call
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "t-arg-to-s-var"
+          , LocationInfo("71", "2", "75", "71")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-arg-to-s-var"
+           , "filename"
+           , LocationInfo("71", "18", "71", "26")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-arg-to-s-var"
+             , "name"
+             , LocationInfo("71", "28", "71", "32")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "t-arg-to-s-var"
+           , "v"
+           , LocationInfo("72", "17", "72", "18")
+           )> v
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-arg-to-s-var"
+             , "a"
+             , LocationInfo("72", "20", "72", "21")
+             )> a
+    with (s-step(
+          | "gen-debug-var-arg.str"
+          , "t-arg-to-s-var"
+          , LocationInfo("74", "5", "74", "26")
+          )
+          ; var := <s-step(
+                    | "gen-debug-var-arg.str"
+                    , "t-arg-to-s-var"
+                    , LocationInfo("74", "13", "74", "23")
+                    )
+                    ; create-var> v
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "t-arg-to-s-var"
+             , "var"
+             , LocationInfo("74", "5", "74", "8")
+             )> var)
+         ; s-step(
+           | "gen-debug-var-arg.str"
+           , "t-arg-to-s-var"
+           , LocationInfo("75", "7", "75", "71")
+           )
+         ; s-var-call := <s-step(
+                          | "gen-debug-var-arg.str"
+                          , "t-arg-to-s-var"
+                          , LocationInfo("75", "22", "75", "66")
+                          )
+                          ; create-s-var-call-with-term(|filename, name)> var
+         ; <s-var(
+            | "gen-debug-var-arg.str"
+            , "t-arg-to-s-var"
+            , "s-var-call"
+            , LocationInfo("75", "7", "75", "17")
+            )> s-var-call
+
+  create-s-var-call-with-term(|filename, name):
+    var{a} -> <r-exit(
+               | "gen-debug-var-arg.str"
+               , "create-s-var-call-with-term"
+               , LocationInfo("78", "2", "83", "34")
+               )> s-var
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-s-var-call-with-term"
+          , LocationInfo("78", "2", "83", "34")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-call-with-term"
+           , "filename"
+           , LocationInfo("78", "31", "78", "39")
+           )> filename
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-call-with-term"
+             , "name"
+             , LocationInfo("78", "41", "78", "45")
+             )> name
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-call-with-term"
+           , "var"
+           , LocationInfo("79", "3", "79", "6")
+           )> var
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-call-with-term"
+             , "a"
+             , LocationInfo("79", "7", "79", "8")
+             )> a
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "create-s-var-call-with-term"
+           , LocationInfo("81", "4", "81", "34")
+           )
+           ; var-name := <s-step(
+                          | "gen-debug-var-arg.str"
+                          , "create-s-var-call-with-term"
+                          , LocationInfo("81", "17", "81", "29")
+                          )
+                          ; get-var-name> var
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "create-s-var-call-with-term"
+              , "var-name"
+              , LocationInfo("81", "4", "81", "12")
+              )> var-name)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-call-with-term"
+             , LocationInfo("82", "6", "82", "69")
+             )
+             ; s-var-call := <s-step(
+                              | "gen-debug-var-arg.str"
+                              , "create-s-var-call-with-term"
+                              , LocationInfo("82", "21", "82", "68")
+                              )
+                              ; create-s-var-call(|filename, name, var-name, a)>
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "create-s-var-call-with-term"
+                , "s-var-call"
+                , LocationInfo("82", "6", "82", "16")
+                )> s-var-call)
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "create-s-var-call-with-term"
+            , LocationInfo("83", "6", "83", "34")
+            )
+          ; s-var := BA(s-var-call, var)
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-s-var-call-with-term"
+             , "s-var"
+             , LocationInfo("83", "6", "83", "11")
+             )> s-var
+
+  create-var :
+    v{a} -> <r-exit(
+             | "gen-debug-var-arg.str"
+             , "create-var"
+             , LocationInfo("87", "2", "88", "20")
+             )> Var(v){a}
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-var"
+          , LocationInfo("87", "2", "88", "20")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-var"
+           , "v"
+           , LocationInfo("88", "3", "88", "4")
+           )> v
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-var"
+             , "a"
+             , LocationInfo("88", "5", "88", "6")
+             )> a
+
+  create-seqs :
+    s* -> <r-exit(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , LocationInfo("91", "2", "99", "50")
+           )> seq
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-seqs"
+          , LocationInfo("91", "2", "99", "50")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , "s*"
+           , LocationInfo("92", "3", "92", "5")
+           )> s*
+    where <(s-step(
+            | "gen-debug-var-arg.str"
+            , "create-seqs"
+            , LocationInfo("93", "10", "93", "13")
+            )
+            ; geq)> ( <s-step(
+                       | "gen-debug-var-arg.str"
+                       , "create-seqs"
+                       , LocationInfo("93", "17", "93", "23")
+                       )
+                       ; length> s*
+                    , 2
+                    )
+    where (s-step(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , LocationInfo("95", "4", "95", "27")
+           )
+           ; l-length := <s-step(
+                          | "gen-debug-var-arg.str"
+                          , "create-seqs"
+                          , LocationInfo("95", "17", "95", "23")
+                          )
+                          ; length> s*
+           ; <s-var(
+              | "gen-debug-var-arg.str"
+              , "create-seqs"
+              , "l-length"
+              , LocationInfo("95", "4", "95", "12")
+              )> l-length)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-seqs"
+             , LocationInfo("96", "6", "96", "40")
+             )
+             ; take-length := <s-step(
+                               | "gen-debug-var-arg.str"
+                               , "create-seqs"
+                               , LocationInfo("96", "22", "96", "26")
+                               )
+                               ; subt> (l-length, 1)
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "create-seqs"
+                , "take-length"
+                , LocationInfo("96", "6", "96", "17")
+                )> take-length)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-seqs"
+             , LocationInfo("97", "6", "97", "49")
+             )
+             ; sub-list := <s-step(
+                            | "gen-debug-var-arg.str"
+                            , "create-seqs"
+                            , LocationInfo("97", "19", "97", "45")
+                            )
+                            ; take(
+                              | <s-step(
+                                 | "gen-debug-var-arg.str"
+                                 , "create-seqs"
+                                 , LocationInfo("97", "26", "97", "30")
+                                 )
+                                 ; subt> (l-length, 1)
+                              )> s*
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "create-seqs"
+                , "sub-list"
+                , LocationInfo("97", "6", "97", "14")
+                )> sub-list)
+          ; (s-step(
+             | "gen-debug-var-arg.str"
+             , "create-seqs"
+             , LocationInfo("98", "6", "98", "25")
+             )
+             ; s-last := <s-step(
+                          | "gen-debug-var-arg.str"
+                          , "create-seqs"
+                          , LocationInfo("98", "17", "98", "21")
+                          )
+                          ; last> s*
+             ; <s-var(
+                | "gen-debug-var-arg.str"
+                , "create-seqs"
+                , "s-last"
+                , LocationInfo("98", "6", "98", "12")
+                )> s-last)
+          ; s-step(
+            | "gen-debug-var-arg.str"
+            , "create-seqs"
+            , LocationInfo("99", "6", "99", "50")
+            )
+          ; seq := <s-step(
+                    | "gen-debug-var-arg.str"
+                    , "create-seqs"
+                    , LocationInfo("99", "14", "99", "40")
+                    )
+                    ; foldr(
+                        s-step(
+                        | "gen-debug-var-arg.str"
+                        , "create-seqs"
+                        , LocationInfo("99", "20", "99", "27")
+                        )
+                        ; !s-last
+                      , s-step(
+                        | "gen-debug-var-arg.str"
+                        , "create-seqs"
+                        , LocationInfo("99", "29", "99", "39")
+                        )
+                        ; create-seq
+                      )> sub-list
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-seqs"
+             , "seq"
+             , LocationInfo("99", "6", "99", "9")
+             )> seq
+
+  create-seqs :
+    s* -> <r-exit(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , LocationInfo("102", "2", "105", "23")
+           )> s
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-seqs"
+          , LocationInfo("102", "2", "105", "23")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , "s*"
+           , LocationInfo("103", "3", "103", "5")
+           )> s*
+    where <(s-step(
+            | "gen-debug-var-arg.str"
+            , "create-seqs"
+            , LocationInfo("104", "10", "104", "12")
+            )
+            ; eq)> ( <s-step(
+                      | "gen-debug-var-arg.str"
+                      , "create-seqs"
+                      , LocationInfo("104", "16", "104", "22")
+                      )
+                      ; length> s*
+                   , 1
+                   )
+    where s-step(
+          | "gen-debug-var-arg.str"
+          , "create-seqs"
+          , LocationInfo("105", "9", "105", "23")
+          )
+          ; s := <s-step(
+                  | "gen-debug-var-arg.str"
+                  , "create-seqs"
+                  , LocationInfo("105", "15", "105", "19")
+                  )
+                  ; last> s*
+          ; <s-var(
+             | "gen-debug-var-arg.str"
+             , "create-seqs"
+             , "s"
+             , LocationInfo("105", "9", "105", "10")
+             )> s
+
+  create-seqs :
+    s* -> <r-exit(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , LocationInfo("108", "2", "110", "30")
+           )> s*
+    where r-enter(
+          | "gen-debug-var-arg.str"
+          , "create-seqs"
+          , LocationInfo("108", "2", "110", "30")
+          )
+    where <s-var(
+           | "gen-debug-var-arg.str"
+           , "create-seqs"
+           , "s*"
+           , LocationInfo("109", "3", "109", "5")
+           )> s*
+    where <(s-step(
+            | "gen-debug-var-arg.str"
+            , "create-seqs"
+            , LocationInfo("110", "10", "110", "12")
+            )
+            ; eq)> ( <s-step(
+                      | "gen-debug-var-arg.str"
+                      , "create-seqs"
+                      , LocationInfo("110", "16", "110", "22")
+                      )
+                      ; length> s*
+                   , 0
+                   )
+
+
+strategies
+  create-seq =
+    s-enter(
+    | "gen-debug-var-arg.str"
+    , "create-seq"
+    , LocationInfo("116", "2", "116", "38")
+    )
+    ; ((s-step(
+        | "gen-debug-var-arg.str"
+        , "create-seq"
+        , LocationInfo("116", "15", "116", "24")
+        )
+        ; ?(s1, s2))
+       ; s-step(
+         | "gen-debug-var-arg.str"
+         , "create-seq"
+         , LocationInfo("116", "26", "116", "38")
+         )
+       ; !Seq(s1, s2)
+       < s-exit(
+         | "gen-debug-var-arg.str"
+         , "create-seq"
+         , LocationInfo("116", "2", "116", "38")
+         )
+       + s-exit(
+         | "gen-debug-var-arg.str"
+         , "create-seq"
+         , LocationInfo("116", "2", "116", "38")
+         )
+         ; fail)

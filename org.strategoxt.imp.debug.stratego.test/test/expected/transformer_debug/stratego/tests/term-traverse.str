@@ -1,0 +1,226 @@
+module tests/term-traverse
+
+imports
+  strategodebuglib
+
+
+imports
+  libstrategolib
+
+
+strategies
+  main-test-term-traverse =
+    s-enter(
+    | "tests/term-traverse.str"
+    , "main-test-term-traverse"
+    , LocationInfo("8", "2", "8", "49")
+    )
+    ; (s-step(
+       | "tests/term-traverse.str"
+       , "main-test-term-traverse"
+       , LocationInfo("8", "28", "8", "49")
+       )
+       ; execute-term-traverse
+       < s-exit(
+         | "tests/term-traverse.str"
+         , "main-test-term-traverse"
+         , LocationInfo("8", "2", "8", "49")
+         )
+       + s-exit(
+         | "tests/term-traverse.str"
+         , "main-test-term-traverse"
+         , LocationInfo("8", "2", "8", "49")
+         )
+         ; fail)
+
+  execute-term-traverse =
+    s-enter(
+    | "tests/term-traverse.str"
+    , "execute-term-traverse"
+    , LocationInfo("10", "2", "10", "83")
+    )
+    ; ((s-step(
+        | "tests/term-traverse.str"
+        , "execute-term-traverse"
+        , LocationInfo("10", "26", "10", "51")
+        )
+        ; !["foo", "bar", "cheese"])
+       ; (s-step(
+          | "tests/term-traverse.str"
+          , "execute-term-traverse"
+          , LocationInfo("10", "53", "10", "71")
+          )
+          ; map(
+              s-step(
+              | "tests/term-traverse.str"
+              , "execute-term-traverse"
+              , LocationInfo("10", "57", "10", "70")
+              )
+              ; element-stuff
+            ))
+       ; s-step(
+         | "tests/term-traverse.str"
+         , "execute-term-traverse"
+         , LocationInfo("10", "73", "10", "83")
+         )
+       ; debug(
+           s-step(
+           | "tests/term-traverse.str"
+           , "execute-term-traverse"
+           , LocationInfo("10", "79", "10", "82")
+           )
+           ; !""
+         )
+       < s-exit(
+         | "tests/term-traverse.str"
+         , "execute-term-traverse"
+         , LocationInfo("10", "2", "10", "83")
+         )
+       + s-exit(
+         | "tests/term-traverse.str"
+         , "execute-term-traverse"
+         , LocationInfo("10", "2", "10", "83")
+         )
+         ; fail)
+
+  element-stuff =
+    s-enter(
+    | "tests/term-traverse.str"
+    , "element-stuff"
+    , LocationInfo("12", "2", "15", "14")
+    )
+    ; ((s-step(
+        | "tests/term-traverse.str"
+        , "element-stuff"
+        , LocationInfo("12", "18", "12", "23")
+        )
+        ; ?name)
+       ; (s-step(
+          | "tests/term-traverse.str"
+          , "element-stuff"
+          , LocationInfo("13", "4", "14", "131")
+          )
+          ; rules (
+              GetName :
+                _ -> name
+                where (s-step(
+                       | "tests/term-traverse.str"
+                       , "element-stuff"
+                       , LocationInfo("14", "33", "14", "53")
+                       )
+                       ; hello-var := "hello"
+                       ; <s-var(
+                          | "tests/term-traverse.str"
+                          , "element-stuff"
+                          , "hello-var"
+                          , LocationInfo("14", "33", "14", "42")
+                          )> hello-var)
+                      ; (s-step(
+                         | "tests/term-traverse.str"
+                         , "element-stuff"
+                         , LocationInfo("14", "55", "14", "68")
+                         )
+                         ; not((s-step(
+                                | "tests/term-traverse.str"
+                                , "element-stuff"
+                                , LocationInfo("14", "59", "14", "61")
+                                )
+                                ; id)
+                               ; s-step(
+                                 | "tests/term-traverse.str"
+                                 , "element-stuff"
+                                 , LocationInfo("14", "63", "14", "67")
+                                 )
+                               ; fail))
+                      ; <(s-step(
+                          | "tests/term-traverse.str"
+                          , "element-stuff"
+                          , LocationInfo("14", "71", "14", "85")
+                          )
+                          ; concat-strings)> [hello-var, hello-var]
+                      ; s-step(
+                        | "tests/term-traverse.str"
+                        , "element-stuff"
+                        , LocationInfo("14", "111", "14", "129")
+                        )
+                      ; debug(
+                          s-step(
+                          | "tests/term-traverse.str"
+                          , "element-stuff"
+                          , LocationInfo("14", "117", "14", "128")
+                          )
+                          ; !"concat: "
+                        )
+            ))
+       ; s-step(
+         | "tests/term-traverse.str"
+         , "element-stuff"
+         , LocationInfo("15", "4", "15", "14")
+         )
+       ; otherstuff
+       < s-exit(
+         | "tests/term-traverse.str"
+         , "element-stuff"
+         , LocationInfo("12", "2", "15", "14")
+         )
+       + s-exit(
+         | "tests/term-traverse.str"
+         , "element-stuff"
+         , LocationInfo("12", "2", "15", "14")
+         )
+         ; fail)
+
+  otherstuff =
+    s-enter(
+    | "tests/term-traverse.str"
+    , "otherstuff"
+    , LocationInfo("17", "2", "17", "66")
+    )
+    ; ((s-step(
+        | "tests/term-traverse.str"
+        , "otherstuff"
+        , LocationInfo("17", "15", "17", "23")
+        )
+        ; !"stuff")
+       ; (s-step(
+          | "tests/term-traverse.str"
+          , "otherstuff"
+          , LocationInfo("17", "25", "17", "31")
+          )
+          ; ?stuff)
+       ; (s-step(
+          | "tests/term-traverse.str"
+          , "otherstuff"
+          , LocationInfo("17", "33", "17", "40")
+          )
+          ; GetName)
+       ; (s-step(
+          | "tests/term-traverse.str"
+          , "otherstuff"
+          , LocationInfo("17", "42", "17", "58")
+          )
+          ; debug(
+              s-step(
+              | "tests/term-traverse.str"
+              , "otherstuff"
+              , LocationInfo("17", "48", "17", "57")
+              )
+              ; !"name: "
+            ))
+       ; s-step(
+         | "tests/term-traverse.str"
+         , "otherstuff"
+         , LocationInfo("17", "60", "17", "66")
+         )
+       ; !stuff
+       < s-exit(
+         | "tests/term-traverse.str"
+         , "otherstuff"
+         , LocationInfo("17", "2", "17", "66")
+         )
+       + s-exit(
+         | "tests/term-traverse.str"
+         , "otherstuff"
+         , LocationInfo("17", "2", "17", "66")
+         )
+         ; fail)
