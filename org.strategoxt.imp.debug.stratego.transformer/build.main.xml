@@ -27,6 +27,17 @@
 	<property name="build.stratego.library.name" value="org.strategoxt.imp.debug.stratego.transformer.trans"/>
 	<property name="build.stratego.library.location" value="org/strategoxt/imp/debug/stratego/transformer/trans"/>
 
+	
+	<!-- the name of the package that contains the external defined strategies (implemented in java) -->
+	<property name="build.stratego.external.name" value="org/strategoxt/imp/debug/stratego/transformer/strategies"/> <!-- class file location -->
+	<property name="build.stratego.external.strategies.name" value="org.strategoxt.imp.debug.stratego.transformer.strategies"/> <!-- name of the library -->
+	<property name="build.stratego.external.strategies.location" value="org/strategoxt/imp/debug/stratego/transformer/strategies"/>
+	
+	<!-- build external strategies defined in java -->
+	<!-- <available file="${build}/strjdebugruntime/strategies/Main.class" property="java.jar.enabled"/> -->
+	<available file="${src-gen}/${build.stratego.external.strategies.location}/Main.java" property="java.jar.enabled"/>
+		
+		
 	<!-- Imports -->
 	<property name="build.sdf.imports" value="" />
 	<property name="build.stratego.args" value="

@@ -32,7 +32,16 @@ rules
   	create-table-for-input(|table-file-handle) :
   		inputfilename -> contents
   		where
-			parse-stratego-with-locations(|inputfilename)
+  			switch get-extension
+  				case "str" :
+	  				// parse stratego
+					program-with-location-info := <parse-stratego-with-locations(|inputfilename)>
+  				case "rtree":
+  					// parse rtree (ast representation of stratego source with WITH LocationInfo annotations)
+  					program-with-location-info := <ReadFromFile>
+  				otherwise :
+  					debug(!"Extension unknown: "); fail
+  				end
 		  	; assert-module // check if it properly parsed!
 		  	; collect-debug-calls
 		  	; lines* :=  <create-table-entries>

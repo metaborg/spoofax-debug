@@ -38,7 +38,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(56, eventTable.size());
+		Assert.assertEquals(82, eventTable.size());
 		
 		// 78, 8
 		// ; c := <find-comment-by-name(|name)> c*

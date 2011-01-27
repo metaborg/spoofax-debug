@@ -44,7 +44,7 @@ public class DebugSessionSettings {
 	{
 		if (classDirectory == null)
 		{
-			classDirectory = workingDirectory + "/" + projectName + "/" + CLASS_DIR_NAME;
+			classDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + CLASS_DIR_NAME;
 		}
 		return classDirectory;
 	}
@@ -57,7 +57,7 @@ public class DebugSessionSettings {
 	{
 		if (strategoDirectory == null)
 		{
-			strategoDirectory = workingDirectory + "/" + projectName + "/" + STRATEGO_DIR_NAME;
+			strategoDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + STRATEGO_DIR_NAME;
 		}
 		return strategoDirectory;
 	}
@@ -70,9 +70,18 @@ public class DebugSessionSettings {
 	{
 		if (javaDirectory == null)
 		{
-			javaDirectory = workingDirectory + "/" + projectName + "/" + JAVA_DIR_NAME;
+			javaDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + JAVA_DIR_NAME;
 		}
 		return javaDirectory;
+	}
+	
+	/**
+	 * Returns the working directory
+	 * @return
+	 */
+	public String getWorkingDirectory()
+	{
+		return this.workingDirectory;
 	}
 	
 	/**
@@ -185,18 +194,40 @@ public class DebugSessionSettings {
 	}
 	
 	
-	private String[] compileTimeExtraArguments = null;
+	private String[] strategoCompileTimeExtraArguments = null;
+	
+	public String[] getCompileTimeExtraArguments() {
+		return strategoCompileTimeExtraArguments;
+	}
+	
+	public void setCompileTimeExtraArguments(String[] strategoCompileTimeExtraArguments) {
+		this.strategoCompileTimeExtraArguments = strategoCompileTimeExtraArguments;
+	}
 	
 	/**
-	 * Returns a list of paths that each should be used as "-I" argument when compiling the Stratego program to Java.
-	 * @return
+	 * Extra arguments such as --output-rtree
 	 */
-	public String[] getCompileTimeExtraArguments() {
-		return compileTimeExtraArguments;
+	private String[] generateStrategoExtraArguments = null;
+	
+	public String[] getGenerateStrategoExtraArguments() {
+		return generateStrategoExtraArguments;
 	}
 	
-	public void setCompileTimeExtraArguments(String[] compileTimeExtraArguments) {
-		this.compileTimeExtraArguments = compileTimeExtraArguments;
+	public void setGenerateStrategoExtraArguments(
+			String[] generateStrategoExtraArguments) {
+		this.generateStrategoExtraArguments = generateStrategoExtraArguments;
 	}
 	
+	/**
+	 * Classpath entry may be used when the stratego program references external strategies defined in java.
+	 */
+	public String[] javaCompileExtraClasspath = null;
+	
+	public void setJavaCompileExtraClasspath(String[] javaCompileExtraClasspath) {
+		this.javaCompileExtraClasspath = javaCompileExtraClasspath;
+	}
+	
+	public String[] getJavaCompileExtraClasspath() {
+		return javaCompileExtraClasspath;
+	}
 }

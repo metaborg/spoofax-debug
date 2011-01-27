@@ -15,6 +15,7 @@
 		<copy todir="${basedir}/lib" flatten="true">
 			<resources>
 				<file file="../${project.debug.transformer}/include/stratego-transformer.jar" />
+				<file file="../${project.debug.transformer}/include/stratego-transformer-java.jar" />
 				<file file="../${project.debug.runtime}/include/stratego-debug-runtime.jar" />
 				<file file="../${project.debug.runtime}/include/stratego-debug-runtime-java.jar" />
 				<file file="../${project.debug.runtime}/str-lib/strategodebuglib.rtree" />
@@ -34,6 +35,7 @@
 		<copy todir="${eclipse.lib.dir}" flatten="true">
 			<resources>
 				<file file="${basedir}/lib/stratego-transformer.jar" />
+				<file file="${basedir}/lib/stratego-transformer-java.jar" />
 				<file file="${basedir}/lib/stratego-debug-runtime.jar" />
 				<file file="${basedir}/lib/stratego-debug-runtime-java.jar" />
 				<file file="${basedir}/lib/strategodebuglib.rtree" />

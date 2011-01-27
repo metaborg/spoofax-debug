@@ -91,12 +91,12 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 
 		DebugCompileTransformer test = new DebugCompileTransformer();
 		
-		//long a1 = System.currentTimeMillis();
-		//test.testDebugCompileTransformer();
+		long a1 = System.currentTimeMillis();
+		test.testDebugCompileTransformer();
 		long a2 = System.currentTimeMillis();
-		//System.out.println("DBG:" + (a2 - a1));
+		System.out.println("DBG:" + (a2 - a1));
 
-		test.testRunCompileTransformer();
+		//test.testRunCompileTransformer();
 		long a3 = System.currentTimeMillis();
 		System.out.println("RUN:" + (a3 - a2));
 		
@@ -129,9 +129,14 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		                                          {
 				"-I", transformerProject
 				, "-la", "strc"
+				, "-la", "org.strategoxt.imp.debug.stratego.transformer.strategies"
 		                                          };
 		
+		String[] javaCompileExtraClasspath = new String[] {
+				transformerProject + "/" + "include/stratego-transformer-java.jar"
+		};
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
+		debugSessionSettings.setJavaCompileExtraClasspath(javaCompileExtraClasspath);
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
@@ -142,20 +147,29 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			compileSucces = true;
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch(StackOverflowError e) {
+			// change jvm arguments
+			/*
+			-Xss8m
+			-Xms256m
+			-Xmx1024m
+			-XX:MaxPermSize=256m
+			-server
+			*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		checkOutput(debugSessionSettings);
+		//checkOutput(debugSessionSettings);
 		
-		boolean runjava = false;
+		boolean runjava = true;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 			String output = StrategoFileManager.WORKING_DIR + "/transformer_debug_output_localvar";
-			String argsForMainClass = "-i " + input + " -o " + output;
+			String argsForMainClass = "-i " + input + " --gen-dir " + output;
 			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
@@ -164,6 +178,13 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
+			{
+				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+				{
+					cp += ":" + c;
+				}
+			}
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
@@ -198,9 +219,13 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		                                          {
 				"-I", transformerProject
 				, "-la", "strc"
+				, "-la", "org.strategoxt.imp.debug.stratego.transformer.strategies"
 		                                          };
-		
+		String[] javaCompileExtraClasspath = new String[] {
+				transformerProject + "/" + "include/stratego-transformer-java.jar"
+		};
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
+		debugSessionSettings.setJavaCompileExtraClasspath(javaCompileExtraClasspath);
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
@@ -216,15 +241,15 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			e.printStackTrace();
 		}
 		
-		checkOutput(debugSessionSettings);
+		//checkOutput(debugSessionSettings);
 		
-		boolean runjava = false;
+		boolean runjava = true;
 		// run .class
 		if (runjava && compileSucces)
 		{
 			String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 			String output = StrategoFileManager.WORKING_DIR + "/transformer_run_output_localvar";
-			String argsForMainClass = "-i " + input + " -o " + output;
+			String argsForMainClass = "-i " + input + " --gen-dir " + output;
 			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
@@ -233,6 +258,13 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
+			{
+				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+				{
+					cp += ":" + c;
+				}
+			}
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);

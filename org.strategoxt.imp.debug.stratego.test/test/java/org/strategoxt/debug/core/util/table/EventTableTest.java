@@ -4,6 +4,8 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Test;
+
 public class EventTableTest {
 	
 	public static void main(String[] args) {
@@ -16,11 +18,12 @@ public class EventTableTest {
 		test.testReadTable();
 	}
 	
+	@Test
 	public void testReadTable()
 	{
 		String location = "working/localvar/stratego/localvar.table";
 		EventTable eventTable = EventTable.readEventTable(location);
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 		
 		// 31,1 // 0
 		List<EventEntry> entries = countEntries(eventTable, 31, 1, 0);

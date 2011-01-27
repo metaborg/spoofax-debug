@@ -28,17 +28,21 @@ rules
 rules
 	
   write-stratego(|absolute-location) =
-  	<get-config> "--output-rtree" 
-  	<
-  	write-stratego-rtree(|<guarantee-extension(|"rtree")> absolute-location) // success, make rtree
-  	+
-  	write-stratego-str(|<guarantee-extension(|"str")> absolute-location) //fail, make str
+  	?ast
+  	; (
+  	(<get-config> "--output-rtree")
+  		<
+  			<write-stratego-rtree(|<guarantee-extension(|"rtree")> absolute-location)> ast// success, make rtree
+  		+
+  			<write-stratego-str(|<guarantee-extension(|"str")> absolute-location)> ast //fail, make str
+  	)
 	
   // current term is an ast
   // writes the ast in binary form (rtree) to absolute-location
   write-stratego-rtree(|absolute-location) = 
-  	where(<debug(!"Writing rtree...")> absolute-location) ;
   	?ast
+  	; where(<debug(!"Writing rtree...")> absolute-location)
+  	//; where(<debug(!"Writing ast...")> ast)
   	; <dirname> absolute-location => dir
    	; <check-dir> dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
   	; <WriteToBinaryFile> (absolute-location, ast) // write current term to file

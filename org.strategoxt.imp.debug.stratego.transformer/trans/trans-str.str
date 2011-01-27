@@ -48,7 +48,7 @@ rules
 	// the generated file will be saved at outputfilename
 	// returns a tuple ("SUCCES", outputfilelocation, inputfilelocation)
   apply-debug-trans-internal :
-  	(sourceBasedir, inputfilePath, outputfilename) -> (status, outputfilename, absPath)
+  	(sourceBasedir, inputfilePath, outputfilename) -> (status, actual-output-file-location, absPath)
   	where(
   	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
   	; parse-stratego-with-locations(|absPath)
@@ -57,9 +57,12 @@ rules
   	//; debug(!"assert-module")
   	; filter-location
   	//; debug(!"filter-location")
-  	; add-debug-info(|inputfilePath)
+  	; debug-program := <add-debug-info(|inputfilePath)>
   	//; debug(!"add-debug-info(|inputfilePath)")
-  	; write-stratego(|outputfilename)
+  	// change the extension of the outputfilename to reflect the --output-rtree config
+  	; (<get-config> "--output-rtree" < <guarantee-extension(|"rtree")> outputfilename + <guarantee-extension(|"str")> outputfilename)
+  	; ?actual-output-file-location
+  	; <write-stratego(|actual-output-file-location)> debug-program
   	//; debug(!"write-stratego-str")
   	; status := "SUCCES"  		
   	)
@@ -71,13 +74,21 @@ rules
   	with output := input
   	
   apply-debug-trans-error :
-  	false-arguments -> (status, outputfilename)
+  	false-arguments -> (status, outputfilename, outputfilename)
   	where(
   		not(?(i_sourceBasedir, i_inputfilePath, i_outputfilename))
   		; echo(!"Wrong arguments: ")
   		; outputfilename := ""
   		; status := "FAIL"
   	)
+  	
+  apply-debug-trans-error :
+  	t-arguments -> (status, outputfilename, outputfilename)
+  	where(?(i_sourceBasedir, i_inputfilePath, i_outputfilename))
+  	with
+  		echo(!"Transformer failed: ")
+  		; outputfilename := ""
+  		; status := "FAIL"
   	
   	apply-debug-project = apply-debug-project(|["."])
   	

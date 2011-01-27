@@ -28,7 +28,7 @@ public class TransformTransformerTest {
 		String output_base_dir = StrategoFileManager.WORKING_DIR + "/" + "java_main_test4";
 		String[] l_args = new String[]{
 				"-i", stratego_input
-				, "-o", output_base_dir
+				, "--gen-dir", output_base_dir
 				, "--output-rtree"};
 		IStrategoTerm result = null;
 		Context context = new Context();

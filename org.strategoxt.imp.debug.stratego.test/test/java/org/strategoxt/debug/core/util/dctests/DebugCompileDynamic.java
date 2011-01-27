@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -11,10 +12,12 @@ public class DebugCompileDynamic extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
 		//testDebugCompileLocalVar();
-		testDebugCompileDynamic();
+		DebugCompileDynamic t = new DebugCompileDynamic();
+		t.testDebugCompileDynamic();
 	}
 	
-	public static void testDebugCompileDynamic() {
+	@Test
+	public void testDebugCompileDynamic() {
 		String baseInputPath = "src/stratego/dynamic";
 		String strategoFilePath = "localvar.str";
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;

@@ -40,7 +40,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -61,7 +61,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//	definition* -> functions*
 		//	with
 		//		functions* := <filter(?Function(_,_))> definition*
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-enter", 52, 2, 55, 54));
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-enter", 47, 11, 47, 25));
 	
 		
 		
@@ -100,7 +100,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -117,7 +117,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
 		// perform a STEP_INTO, but current statement cannot be stepped into. a STEP_OVER will occur
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 52, 2, 55, 54)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 55, 19, 55, 41)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
 		vmMonitor.addAction(VMMonitorTestImpl2.RESUME);
 		
 		vmStateTester.initialize();
