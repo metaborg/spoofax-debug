@@ -112,7 +112,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 		
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
@@ -175,7 +175,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 		
 		// 47, 8
 		// f* := <find-functions> definitions* // find functions
@@ -241,7 +241,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 		
 		// find-comment-match s-enter is at 71,7
 		List<EventEntry> entries = eventTable.getEventEntries(strategoFilename, 71, 7);

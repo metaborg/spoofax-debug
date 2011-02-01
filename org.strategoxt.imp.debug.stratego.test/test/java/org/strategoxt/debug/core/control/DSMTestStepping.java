@@ -40,7 +40,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -59,22 +59,14 @@ public class DSMTestStepping extends AbstractDSMTest {
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
 		// in rule "match-comments"
-		lineNumber = 48;
-		startTokenPosition = 8;
 		eventType = "s-step";
 		//this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40)); // match-comments[localvar.str]@(48,6) 48,40
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 11, 47, 25)); // match-comments[localvar.str]@(48,6) 48,40
 		
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
-		// perform a STEP_OVER, will hit
-		// 49, 8
-		// out := <match-f-and-c> (f*, c*)
-		// in rule "match-comments"
-		lineNumber = 49;
-		startTokenPosition = 8;
 		eventType = "s-step";
 		//this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 49, 6, 49, 37)); // match-comments[localvar.str]@(49,6) 49 37
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40)); // match-comments[localvar.str]@(49,6) 49 37
 	
 		
 
@@ -113,7 +105,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -136,7 +128,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		startTokenPosition = 8;
 		eventType = "s-step";
 		//this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40)); // match-comments[localvar.str]@(48,6) 48,40
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 11, 47, 25)); // match-comments[localvar.str]@(48,6) 48,40
 		
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
 		// perform a STEP_OVER, will hit
@@ -146,18 +138,13 @@ public class DSMTestStepping extends AbstractDSMTest {
 		lineNumber = 49;
 		startTokenPosition = 8;
 		eventType = "s-step";
-		//this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 49, 6, 49, 37)); // match-comments[localvar.str]@(49,6) 49 37
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40)); // match-comments[localvar.str]@(49,6) 49 37
 	
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
-		// perform a STEP_OVER, no s-steps left, stop at s-exit
-		//match-comments[localvar.str]@(43,2) 49 37
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 43, 2, 49, 37)); // match-comments[localvar.str]@(49,6) 49 37
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 13, 48, 26)); // match-comments[localvar.str]@(49,6) 49 37
 		
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
-		// hit s-exit of match-comments, perform a STEP_OVER
-		// should suspend at execute, execute is the caller of match-comments, will suspend at the s-exit of execute
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "execute", eventType, 37, 3, 40, 38)); // match-comments[localvar.str]@(49,6) 49 37
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 49, 6, 49, 37)); // match-comments[localvar.str]@(49,6) 49 37
 		
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);
@@ -196,7 +183,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -219,7 +206,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 		
 		
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39)); // match-comments[localvar.str]@(47,4)47 39
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39));
 		
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
 		// perform a STEP_OVER, should hit
@@ -227,9 +214,15 @@ public class DSMTestStepping extends AbstractDSMTest {
 		// c* := <find-comments> definitions* // find comments
 		// in rule "match-comments"
 		// but we placed a breakpoint in find-functions. VM will suspend at 55,4
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54)); // match-comments[localvar.str]@(48,6) 48,40
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 11, 47, 25));
 		
+		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		// next s-step is (s-step(| "localvar.str", "match-comments", LocationInfo("48", "6", "48", "40"))
+		// for call ; c* := <s-step(| "localvar.str", "match-comments", LocationInfo("48", "13", "48", "26")); find-comments> definitions*
 
+		// but a breakpoint was placed in "find-functions"
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54));
+		
 
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);

@@ -40,7 +40,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);
@@ -103,7 +103,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(51, eventTable.size());
+		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.TopStackFrame);

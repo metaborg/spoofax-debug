@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -10,10 +11,12 @@ import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 public class DebugCompileTestImports extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
-		testDebugCompileTestImports();
+		DebugCompileTestImports t = new DebugCompileTestImports();
+		t.testDebugCompileTestImports();
 	}
 
-	public static void testDebugCompileTestImports()
+	@Test
+	public void testDebugCompileTestImports()
 	{
 		String baseInputPath = "src/stratego/testimports";
 		String strategoFilePath = "localvar.str";

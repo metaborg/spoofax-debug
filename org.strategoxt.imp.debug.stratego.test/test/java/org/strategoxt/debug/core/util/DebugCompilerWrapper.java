@@ -10,9 +10,9 @@ public class DebugCompilerWrapper extends DebugCompiler {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Map<String, String> generateStratego(String sourceBasedir, String inputFilePath, String strOutputBasedir, Collection<String> libraryPaths) throws DebugCompileException
+	public Map<String, String> generateStratego(DebugSessionSettings debugSessionSettings, Collection<String> libraryPaths) throws DebugCompileException
 	{
-		return super.generateStratego(sourceBasedir, inputFilePath, strOutputBasedir, libraryPaths);
+		return super.generateStratego(debugSessionSettings, libraryPaths);
 	}
 
 	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename) throws DebugCompileException

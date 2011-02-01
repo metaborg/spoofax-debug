@@ -37,7 +37,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
-		Assert.assertEquals(48, eventTable.size());
+		Assert.assertEquals(69, eventTable.size());
 		
 		// localvar.str # match-comments # 31, 8
 		// ; out := <match-f-and-c> (f*, c*)

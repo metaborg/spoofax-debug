@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -17,11 +18,12 @@ import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
-		testDebugCompileTransformerError();
+		DebugCompileTransformerError t = new DebugCompileTransformerError();
+		t.testDebugCompileTransformerError();
 	}
 	
-
-	private static void testDebugCompileTransformerError() {
+	@Test
+	private void testDebugCompileTransformerError() {
 		// TODO Auto-generated method stub
 		String baseInputPath = "trans";
 		String strategoFilePath = "stratego-transformer.str";

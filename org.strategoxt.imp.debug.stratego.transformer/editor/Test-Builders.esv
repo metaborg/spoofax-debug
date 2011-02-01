@@ -14,7 +14,8 @@ builders
   //provider                  : include/test.ctree     // c-based                                                                          
   //provider: include/org.strjdbg.transformer.jar // java-based // oldname
   provider : include/stratego-transformer.jar
-                                          
+  provider : include/stratego-transformer-java.jar
+                                            
 // we do not need an editor, as we only transform stratego files                                                                                                                               
 //  observer                  : editor-analyze                                                                                   
                                                                                                                                

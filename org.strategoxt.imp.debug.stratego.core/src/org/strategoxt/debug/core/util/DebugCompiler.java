@@ -154,9 +154,10 @@ public class DebugCompiler {
 		String strOutputBasedir = projectStrategoDir;
 		// strategoSourceBasedir + strategoFilePath is the input stratego file (without debug information)
 		// strOutputBasedir + strategoFilePath will be the output stratego file (with debug information)
-		Map<String, String> result = generateStratego(strategoSourceBasedir, strategoFilePath, strOutputBasedir, libraryPaths); // str to str (with debug info)
-		Collection<String> generatedFiles = result.keySet();
-		Collection<String> inputFiles = result.values();
+		// TODO: removed , strategoSourceBasedir, strategoFilePath, strOutputBasedir
+		Map<String, String> result = generateStratego(debugSessionSettings, libraryPaths); // str to str (with debug info)
+		Collection<String> inputFiles = result.keySet();
+		Collection<String> generatedFiles = result.values();
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
@@ -196,7 +197,9 @@ public class DebugCompiler {
 		String className = projectName;
 		String packageFolder = projectName;
 		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
-		String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
+		//String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
+		String foo = debugSessionSettings.getStrategoSourceBasedir() + "/" + debugSessionSettings.getStrategoFilePath();
+		String inputStrategoFilename = result.get(foo); // maps the original input to the generated output
 		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
 		if (!succes)
 		{
@@ -220,7 +223,7 @@ public class DebugCompiler {
 	 * of the complete absolute path so it points to a relative file containing the original stratego source.
 	 * The debugger needs to figure out what the actual absolute path is.
 	 * 
-	 * Method returns a Map, the key is the generated file, the value is the original file.
+	 * Method returns a Map, the key is the input file, the value is the generated file.
 	 * 
 	 * @param sourceBasedir
 	 * @param inputFilePath
@@ -228,45 +231,55 @@ public class DebugCompiler {
 	 * @return
 	 * @throws DebugCompileException 
 	 */
-	protected Map<String, String>  generateStratego(String sourceBasedir, String inputFilePath, String strOutputBasedir, Collection<String> libraryPaths) throws DebugCompileException
+	protected Map<String, String> generateStratego(DebugSessionSettings debugSessionSettings, Collection<String> libraryPaths) throws DebugCompileException
 	{
+		String sourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
+		String inputFilePath = debugSessionSettings.getStrategoFilePath();
+		String strOutputBasedir = debugSessionSettings.getStrategoDirectory();
 		// assume f is a valid file
 		File absInput = new File(sourceBasedir, inputFilePath);
 		System.out.println("Adding debug information to " + absInput.getAbsolutePath());
 		System.out.println("Please wait...");
 		
-		System.out.println(sourceBasedir);
-		System.out.println(inputFilePath);
+		//System.out.println(sourceBasedir);
+		//System.out.println(inputFilePath);
 		//System.out.println(outputFilename);
 		
 		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		context.setStandAlone(true);
 		// TODO: set CustomIOAgent to forward error messages
-		//Context context = org.strjdbg.transformer.Main.init();
-		// see trans-str.str#apply-debug-project
-		// (base-path, output-base-path, stratego-file)
-		TermFactory factory = new TermFactory();
+		
+		IStrategoTerm term = null;; 
+		String stratego_input = sourceBasedir + "/" + inputFilePath;
+		String[] basic_args = new String[]{
+				"-i", stratego_input
+				, "--gen-dir", strOutputBasedir
+			};
 
-		IStrategoString[] kids = new IStrategoString[]
-           {
-				factory.makeString(sourceBasedir) , // base-path
-				factory.makeString(strOutputBasedir) , // output-base-path
-				factory.makeString(inputFilePath) // stratego-file
-           };
-		IStrategoTerm input = factory.makeTuple(kids);
+		String[] transformer_args = StringUtil.concat(basic_args, debugSessionSettings.getGenerateStrategoExtraArguments());
 		
-		// termArguments should be a list of Strings, each is a path for the "-I" parameter
-		StrategoTermBuilder b = new StrategoTermBuilder();
-		IStrategoList termArguments = b.convertToIStrategoList(libraryPaths);
-		
+		boolean strategoGenerationHasFailed = false; // true if the transformer program failed with an exception or one of the files could not be transformed
 		long startTime = System.currentTimeMillis();
-		IStrategoTerm term; 
-		term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
+		//term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
+		try {
+			term = org.strategoxt.imp.debug.stratego.transformer.trans.Main.mainNoExit(context, transformer_args);
+			// term will be null because of the StrategoExit Exception
+		} catch (StrategoExit e) {
+			if (e.getValue() != StrategoExit.SUCCESS)
+			{
+				strategoGenerationHasFailed = true;
+				System.err.println("Stratego transformer exited with: ");
+				e.printStackTrace();
+			}
+		}
 		long finishTime = System.currentTimeMillis();
 		long duration = finishTime - startTime;
 		this.debugCompileProgress.setGenerateStrategoDuration(duration);
+		System.out.println("Generate Stratego finished in " + duration +" ms.");
+		// luckily we stored the term using java-store-term
+		term = org.strategoxt.imp.debug.stratego.transformer.strategies.java_store_term_0_0.instance.getStoredTerm();
 		
-		boolean hasFailed = false;
 		List<String> generatedFiles = new ArrayList<String>();
 		List<String> inputFiles = new ArrayList<String>();
 		
@@ -301,7 +314,7 @@ public class DebugCompiler {
 						//System.out.println(status + " " + filename);
 						if (!"SUCCES".equals(status))
 						{
-							hasFailed = true;
+							strategoGenerationHasFailed = true;
 							System.out.println(status + " : Failed at " + sInputFilename);
 						}
 						else
@@ -320,7 +333,7 @@ public class DebugCompiler {
 		}
 
 
-		if (hasFailed)
+		if (strategoGenerationHasFailed)
 		{
 			System.out.println("Adding debug information failed!");
 			throw new DebugCompileException("Adding debug information failed!");
@@ -331,7 +344,7 @@ public class DebugCompiler {
 		{
 			String genFile = generatedFiles.get(i);
 			String inputFile = inputFiles.get(i);
-			result.put(genFile, inputFile);
+			result.put(inputFile, genFile);
 		}
 		return result;
 	}
@@ -471,7 +484,14 @@ public class DebugCompiler {
 		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
 		
 		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
-		log(classPath);
+		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
+		{
+			for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+			{
+				classPath += ":" + c;
+			}
+		}
+		//log(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
 		String filename = sourceBasedir + "/" + mainSourceFileName;
 		String[] args = new String[] {
@@ -480,6 +500,7 @@ public class DebugCompiler {
 		         "-cp", classPath,
 		         "-source", "1.5"
 		    };
+		// TODO: get extra compiler arguments from debugSessionSettings
 		FileOutputStream outStream = null;
 		FileOutputStream errorStream = null;
 		try {

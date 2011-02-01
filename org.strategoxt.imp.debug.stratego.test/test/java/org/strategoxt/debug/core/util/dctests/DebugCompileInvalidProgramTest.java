@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.StrategoFileManager;
 import org.junit.Assert;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -12,10 +13,12 @@ import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 
 	public static void main(String[] args) {
-		testCompileInvalidProgram();
+		DebugCompileInvalidProgramTest t = new DebugCompileInvalidProgramTest();
+		t.testCompileInvalidProgram();
 	}
 	
-	public static void testCompileInvalidProgram()
+	@Test
+	public void testCompileInvalidProgram()
 	{
 		String baseInputPath = "src/stratego/invalid-program";
 		String strategoFilePath = "program.str";

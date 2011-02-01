@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -10,12 +11,13 @@ import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 public class DebugCompilerTest extends AbstractDebugCompileTest {
 	
 	public static void main(String[] args) {
-		testDebugCompileLocalVarDebug();
+		DebugCompilerTest t = new DebugCompilerTest();
+		t.testDebugCompileLocalVarDebug();
 	}
 	
 
-	
-	public static void testDebugCompileLocalVarDebug() {
+	@Test
+	public void testDebugCompileLocalVarDebug() {
 		String baseInputPath = "src/stratego/localvardebug";
 		String strategoFilePath = "localvar.str";
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
