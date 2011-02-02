@@ -1,5 +1,7 @@
 package org.strategoxt.debug.core.model;
 
+import java.util.StringTokenizer;
+
 /**
  * 
  * This class is used to specify a selection using the start linenumber, start token position and the end linenumber and end token position.
@@ -175,6 +177,22 @@ public class LocationInfo {
 		result = prime * result + end_token_pos;
 
 		return result;
+	}
+	
+	public static LocationInfo parse(String locationInfoString)
+	{
+		String delim = "\"";
+		StringTokenizer t = new StringTokenizer(locationInfoString, delim);
+		t.nextToken(); // LocationInfo(
+		String startLineNum = t.nextToken();
+		t.nextToken(); // ,
+		String startTokenPos = t.nextToken();
+		t.nextToken(); // ,
+		String endLineNum = t.nextToken();
+		t.nextToken(); // ,
+		String endTokenPos = t.nextToken();
+		LocationInfo parsedInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
+		return parsedInfo;
 	}
 	
 }

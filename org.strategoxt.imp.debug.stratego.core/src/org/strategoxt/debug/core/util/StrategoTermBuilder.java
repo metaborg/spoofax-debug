@@ -13,6 +13,7 @@ import org.spoofax.interpreter.terms.IStrategoReal;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.IStrategoTuple;
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.lang.terms.StrategoList;
 import org.strategoxt.lang.terms.TermFactory;
 
@@ -129,11 +130,16 @@ public class StrategoTermBuilder {
 	
 	public IStrategoAppl buildStrategoAppl(Value value)
 	{
+		EventProfiler.instance.startMark("BUILD");
         ObjectReference obj = (ObjectReference) value; // instance of org.strategoxt.lang.terms.StrategoAppl
         ReferenceType refType = obj.referenceType(); // class org.strategoxt.lang.terms.StrategoAppl
         
+        EventProfiler.instance.subMark("BUILD", "B-1");
+        
         Field ctorField = refType.fieldByName("ctor");
         Value ctorValue = obj.getValue(ctorField); // org.strategoxt.lang.terms.StrategoConstructor
+        
+        EventProfiler.instance.subMark("BUILD", "B-2");
         
         Field kidsField = refType.fieldByName("kids");
         Value kidsValue = obj.getValue(kidsField); // org.spoofax.interpreter.terms.IStrategoTerm[]
@@ -141,11 +147,21 @@ public class StrategoTermBuilder {
         IStrategoConstructor ctr = null;
         IStrategoList kids = null;
         
+        EventProfiler.instance.subMark("BUILD", "B-3");
+        
         ctr = buildStrategoConstructor(ctorValue);
+        
+        EventProfiler.instance.subMark("BUILD", "B-4");
+        
         kids = buildStrategoList(kidsValue);
+    
+        EventProfiler.instance.subMark("BUILD", "B-5");
         
 		IStrategoAppl strategoAppl = f.makeAppl(ctr, kids);
-		return strategoAppl;
+		
+        EventProfiler.instance.subMark("BUILD", "B-6");
+        
+        return strategoAppl;
 	}
 	
 	public IStrategoList buildStrategoList(Value value) 

@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
 import org.strategoxt.lang.terms.StrategoString;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidStackFrameException;
 import com.sun.jdi.LocalVariable;
@@ -47,6 +49,11 @@ public class ValueExtractor {
 	 * LocationInfo about the calling rule or strategy
 	 */
 	protected LocalVariable locationLV = null; // org.spoofax.interpreter.terms.IStrategoTerm
+	
+	/**
+	 * A java String representation of LocationInfo
+	 */
+	protected LocalVariable locationStringLV = null; // String
 	
 	/**
 	 * Given term, the term that was the original term when the rule or strategy was entered.
@@ -101,6 +108,7 @@ public class ValueExtractor {
 		filenameLV = null;
 		nameLV = null; 
 		locationLV = null;
+		locationStringLV = null;
 		givenLV = null;
 		varnameLV = null;
 		// set arguments for easy reference	
@@ -137,6 +145,9 @@ public class ValueExtractor {
 			else if ("varname".equals(lvName))
 			{
 				varnameLV = lv;
+			} else if ("locationString".equals(lvName))
+			{
+				this.locationStringLV = lv;
 			}
 		}	
 	}
@@ -167,6 +178,20 @@ public class ValueExtractor {
 		{
 			try {
 				args = this.getStackFrame().visibleVariables();
+				
+				/*
+				//List<Field> fields = this.getStackFrame().thisObject().referenceType().allFields();
+				Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName("locationString");
+				Value vvv = this.getStackFrame().thisObject().getValue(lsField);
+				this.locationStringValue = vvv;
+				
+				for(Field f : fields)
+				{
+					System.out.println(f.name());
+					Value vvv = this.getStackFrame().thisObject().getValue(f);
+					String vType = vvv.type().name();
+					System.out.println(vType);
+				}*/
 			} catch (AbsentInformationException e) {
 				e.printStackTrace();
 			}
@@ -289,7 +314,29 @@ public class ValueExtractor {
 		}
 		return locationValue;
 	}
-
+	
+	/**
+	 * A string representation of the LocationInfo StrategoTerm, this maybe faster to copy from the debug vm instead of the StrategoTerm.
+	 */
+	private Value locationStringValue = null;
+	
+	/**
+	 * This value is a String representation of the LocationInfo StrategoTerm
+	 * @return
+	 */
+	protected Value getLocationStringValue()
+	{
+		if (this.locationStringValue == null)
+		{
+			Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName("locationString");
+			Value val = this.getStackFrame().thisObject().getValue(lsField);
+			
+			//Value val = getSafeValue(this.locationStringLV);
+			this.locationStringValue = val;
+		}
+		return this.locationStringValue;
+	}
+	
 	private Value nameValue = null;
 	
 	/**
@@ -354,6 +401,8 @@ public class ValueExtractor {
 	 */
 	public StrategoTermValueWrapper getGiven()
 	{
+		return null;
+		/*
 		if (this.given == null)
 		{
 	        Value givenValue = this.getGivenValue();
@@ -362,6 +411,7 @@ public class ValueExtractor {
 	        given = new StrategoTermValueWrapper(givenValue);
 		}
         return given;
+        */
 	}
 
 	protected void getContext()
@@ -370,6 +420,29 @@ public class ValueExtractor {
         //ObjectReference obj = (ObjectReference) this.getContextValue();
         //ReferenceType refType = obj.referenceType();
         //Dump.dump(obj, refType, refType);
+	}
+	
+	private String locationInfoString = null;
+	
+	public String getLocationInfoString()
+	{
+		if (this.locationInfoString == null)
+		{
+			String markName = "LOCATIONSTRING";
+			EventProfiler.instance.startMark(markName);
+			
+			Value stringValue = this.getLocationStringValue();
+			
+			EventProfiler.instance.subMark(markName, "LS-1");
+			
+			
+			String s = builder.buildString(stringValue);
+			
+			EventProfiler.instance.subMark(markName, "LS-2");
+			
+			this.locationInfoString = s;
+		}
+		return this.locationInfoString;
 	}
 	
 	
@@ -384,30 +457,57 @@ public class ValueExtractor {
 	{
 		if (this.locationInfo == null)
 		{
-			String[] locationInfo = new String[4];
-			Value locationValue = getLocationValue();
-			IStrategoAppl appl = builder.buildStrategoAppl(locationValue);
-			IStrategoTerm[] terms = appl.getAllSubterms();
-			int i = 0;
-			for(IStrategoTerm term : terms)
-			{
-				if (term instanceof StrategoString)
-				{
-					StrategoString ss = (StrategoString) term;
-					String number = ss.stringValue();
-					if (number.startsWith("\"") && number.endsWith("\""))
-					{
-						number = number.substring(1, number.length()-1);
-					}
-					locationInfo[i] = number;
-					i++;   
-				}
-			}
-	
-			LocationInfo loc = new LocationInfo(locationInfo);
-			this.locationInfo = loc;
+
+			this.locationInfo = createLocationInfoFromString();
 		}
 		return locationInfo;
+	}
+	
+	private LocationInfo createLocationInfoFromString()
+	{
+		String s = this.getLocationInfoString();
+		LocationInfo loc = LocationInfo.parse(s);
+		return loc;
+	}
+	
+	private LocationInfo createLocationInfoFromIStrategoTerm()
+	{
+		String[] locationInfo = new String[4];
+		
+		String markName = "LOCATION";
+		EventProfiler.instance.startMark(markName);
+		
+		Value locationValue = getLocationValue();
+		
+		EventProfiler.instance.subMark(markName, "L-1");
+		
+		
+		IStrategoAppl appl = builder.buildStrategoAppl(locationValue);
+		
+
+		EventProfiler.instance.subMark(markName, "L-2");
+		
+		IStrategoTerm[] terms = appl.getAllSubterms();
+		int i = 0;
+		for(IStrategoTerm term : terms)
+		{
+			if (term instanceof StrategoString)
+			{
+				StrategoString ss = (StrategoString) term;
+				String number = ss.stringValue();
+				if (number.startsWith("\"") && number.endsWith("\""))
+				{
+					number = number.substring(1, number.length()-1);
+				}
+				locationInfo[i] = number;
+				i++;   
+			}
+		}
+		
+		EventProfiler.instance.subMark(markName, "L-3");
+
+		LocationInfo loc = new LocationInfo(locationInfo);
+		return loc;
 	}
 	
 	private String filename = null;
@@ -420,9 +520,11 @@ public class ValueExtractor {
 	{
 		if (this.filename == null)
 		{
+			EventProfiler.instance.startMark("GETFILENAME");
 			Value filenameValue = getFilenameValue(); // should be StrategoString
+			EventProfiler.instance.subMark("GETFILENAME", "FF-1");
 			String s = builder.buildStrategoString(filenameValue).stringValue();
-			
+			EventProfiler.instance.subMark("GETFILENAME", "FF-2");
 			String f = "";
 			// name is surrounded by double quotes, remove them.
 			if (s.startsWith("\"") && s.endsWith("\""))
@@ -434,6 +536,7 @@ public class ValueExtractor {
 				f = s;
 			}
 			this.filename = f;
+			EventProfiler.instance.subMark("GETFILENAME", "FF-3");
 		}
 		return filename;
 	}

@@ -16,8 +16,8 @@ public class ParseStrategoTest {
 		//m1();
 		//m2();
 		//m3();
-		//m4(); // walk over strategoxt source and apply debug transformation
-		m5();
+		m4(); // walk over strategoxt source and apply debug transformation
+		//m5();
 	}
 	
 	public static void m1() {
@@ -40,10 +40,14 @@ public class ParseStrategoTest {
 
 	public static void m4()
 	{
+		long start = System.currentTimeMillis();
 		System.out.println("test-apply-debug-strategoxt-full");
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
 		IStrategoTerm currentTerm = new BasicStrategoString("");
 		test_apply_debug_strategoxt_full_0_0.instance.invoke(context, currentTerm);
+		long end = System.currentTimeMillis();
+		long duration = end - start;
+		System.out.println("GENERATE STRATEGO: " + duration);
 	}
 	
 	public static void m5()

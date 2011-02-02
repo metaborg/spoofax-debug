@@ -19,10 +19,6 @@ public class EventSpecManager {
 	
 	private LineLengthTable lineLengthTable = null;
 	
-	// true if the thread stopped in a rule/strategy and the stepNextEnter command was issued.
-	// stepNextEnter means that if the rule/strategy in the current frame calls another user-defined rule/strategy that will fire a s-enter or r-enter
-	private boolean stepNextEnter = false;
-	
 	private DebugSessionSettings debugSessionSettings = null;
 	
 	// a list of active breakpoints
@@ -67,13 +63,7 @@ public class EventSpecManager {
 	 */
 	public boolean match(BreakPoint b) {
 		boolean match = false;
-		if (stepNextEnter)
-		{
-			match = true;
-			// reset the stepNextEnter
-			stepNextEnter = false;
-		}
-		else if (this.eventSpecList.contains(b))
+		if (this.eventSpecList.contains(b))
 		{
 			// the given breakpoint matches one of the defined breakpoints
 			match = true;
@@ -88,11 +78,6 @@ public class EventSpecManager {
 	public boolean remove(BreakPoint bp)
 	{
 		return this.eventSpecList.remove(bp);
-	}
-
-	public void setStepNextEnter() {
-		this.stepNextEnter = true;
-		
 	}
 	
 	// StackFrame in which the step was started

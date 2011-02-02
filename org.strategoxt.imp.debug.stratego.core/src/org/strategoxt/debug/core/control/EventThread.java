@@ -330,42 +330,42 @@ public class EventThread extends Thread {
 		{
             if (event.referenceType() instanceof ClassType) {
             	ClassType clazz = (ClassType) event.referenceType();
-            	int l = 18;
+            	int l = java_s_enter_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_ENTER);
             }
 		} else if (java_s_exit_0_4.getFullClassName().equals(name))
 		{
             if (event.referenceType() instanceof ClassType) {
             	ClassType clazz = (ClassType) event.referenceType();
-            	int l = 18;
+            	int l = java_s_exit_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_EXIT);
             }
 		} else if (java_s_step_0_4.getFullClassName().equals(name))
 		{
             if (event.referenceType() instanceof ClassType) {
             	ClassType clazz = (ClassType) event.referenceType();
-            	int l = 24;
+            	int l = java_s_step_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_STEP);
             }
 		} else if (java_s_var_0_5.getFullClassName().equals(name))
 		{
 			if (event.referenceType() instanceof ClassType) {
 				ClassType clazz = (ClassType) event.referenceType();
-            	int l = 14;
+            	int l = java_s_var_0_5.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_VAR);
 			}
 		}  else if (java_r_enter_0_4.getFullClassName().equals(name))
 		{
 			if (event.referenceType() instanceof ClassType) {
 				ClassType clazz = (ClassType) event.referenceType();
-            	int l = 18;
+            	int l = java_r_enter_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_ENTER);
 			}
 		} else if (java_r_exit_0_4.getFullClassName().equals(name))
 		{
 			if (event.referenceType() instanceof ClassType) {
 				ClassType clazz = (ClassType) event.referenceType();
-            	int l = 18;
+            	int l = java_r_exit_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_EXIT);
 			}
 		}

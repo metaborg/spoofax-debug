@@ -14,6 +14,7 @@ import org.junit.runners.Suite;
   DSMTestStepInto.class,
   DSMTestStepping.class,
   DSMTestStepReturn.class,
+  DSMTestTransformerRun.class,
   DSMTransformerDebug.class
 })
 

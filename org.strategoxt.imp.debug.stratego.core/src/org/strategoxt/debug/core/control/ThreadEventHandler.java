@@ -10,7 +10,6 @@ import org.strategoxt.debug.core.control.events.RuleExitHandler;
 import org.strategoxt.debug.core.control.events.StrategyExitHandler;
 import org.strategoxt.debug.core.control.events.ValueExtractor;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
-import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
 
@@ -65,9 +64,13 @@ public class ThreadEventHandler {
 	private void exitStrategoStackFrame(EventHandler h) {
 		if (h != null)
 		{
+			/*
 			int level = this.strategoState.getCurrentFrameLevel();
 			StrategoStackFrame frame = new StrategoStackFrame(level, h.getFilename(), h.getName(), h.getLocationInfo(), h.getGiven());
 			this.strategoState.popFrame(frame);
+			*/
+			// TODO: optimize: just pop the frame
+			this.strategoState.popFrame();
 		}
 		else
 		{
@@ -91,21 +94,25 @@ public class ThreadEventHandler {
 	protected boolean breakpointEvent(BreakpointEvent event, EventSpecManager eventSpecManager)
 	{
 		executePendingExit();
-		
+		long start = System.nanoTime(); // profile internal
 		boolean suspendThread = false;
 		String eventType = (String) event.request().getProperty("event-type");
 		ValueExtractor extractor = new ValueExtractor(event);
-
+		long extractorEnd = System.nanoTime();
 		EventHandler h = EventHandlerFactory.createEventHandler(extractor, eventType);
 		if (h.isEnter())
 		{
 			// current stack frame should be pushed, this is done in processDebugEvent
+			
+			// record the enter time
+			EventProfiler.instance.enter(extractor.getName());
 		}
+		long processStart = System.nanoTime();
 		h.processDebugEvent(this.strategoState);
-		
+		long processEnd = System.nanoTime();
 		suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
 		// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended
-
+		long suspendCheckEnd = System.nanoTime();
 		if (suspendThread)
 		{
 			String[] dynamicRuleNames = getDynamicRuleNames(h);
@@ -119,6 +126,8 @@ public class ThreadEventHandler {
 
 		if (h.isExit())
 		{
+			// record the exit time
+			EventProfiler.instance.exit(extractor.getName());
 			if (suspendThread) {
 				// do not pop the current stack frame here
 				// an exit breakpoint could also set the vm in the suspended state and then we will still need to access the current stack.
@@ -131,6 +140,9 @@ public class ThreadEventHandler {
 				this.exitStrategoStackFrame(h);
 			}
 		}
+		
+		long end = System.nanoTime(); // profile internal
+		EventProfiler.instance.internalProfile(eventType, start-start, extractorEnd-start, processStart-extractorEnd, processEnd-processStart, suspendCheckEnd-processEnd, end-suspendCheckEnd);
 		return suspendThread;
 	}
 
@@ -321,6 +333,8 @@ public class ThreadEventHandler {
 		{
 			System.out.println("Thread death...");
 		}
+		// profile statistics
+		EventProfiler.instance.write();
 
 	}
 	

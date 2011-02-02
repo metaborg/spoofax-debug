@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.control.events;
 
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyExitBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
@@ -12,9 +13,13 @@ public class StrategyExitHandler extends EventHandler {
 	}
 
 	@Override
-	protected BreakPoint createBreakPoint() {
-		String name = this.getName(); // the name of the strategy
-		String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
+	protected BreakPoint createBreakPoint(StrategoState currentState) {
+		//String name = this.getName(); // the name of the strategy
+		String name = currentState.currentFrame().getName(); // OPTIMIZE
+		
+		//String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
+		String filename = currentState.currentFrame().getFilename(); // OPTIMIZE
+		
 		LocationInfo locationInfo = getLocationInfo();
 		StrategyExitBreakPoint b = new StrategyExitBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
@@ -45,7 +50,16 @@ public class StrategyExitHandler extends EventHandler {
 
 		// the current term on the frame should now be
 		//h.getGiven();
+		String markName = "PDE_" + this.getEventType();
+		EventProfiler.instance.startMark(markName);
+		
 		strategoState.currentFrame().setCurrentTerm(this.getGiven());
+
+		EventProfiler.instance.subMark(markName, "P-1");
+		
 		super.processDebugEvent(strategoState); // update current location info
+		
+		EventProfiler.instance.subMark(markName, "P-SUPER");
+
 	}
 }

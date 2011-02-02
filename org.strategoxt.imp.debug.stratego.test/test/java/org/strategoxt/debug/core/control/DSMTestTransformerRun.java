@@ -19,7 +19,7 @@ public class DSMTestTransformerRun extends AbstractDSMTest {
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 		String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run1";
-		String argsForMainClass = "-i " + input + " --gen-dir " + output;
+		String argsForMainClass = "-i " + input + " --gen-dir " + output; // + " --output-rtree";
 		String mainClass = "transformer_run.transformer_run";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		
