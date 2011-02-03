@@ -163,7 +163,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		
 		//checkOutput(debugSessionSettings);
 		
-		boolean runjava = true;
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{
@@ -243,7 +243,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		
 		//checkOutput(debugSessionSettings);
 		
-		boolean runjava = true;
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{

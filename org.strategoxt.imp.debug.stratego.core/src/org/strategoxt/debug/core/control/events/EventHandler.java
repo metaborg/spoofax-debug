@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.control.events;
 
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.LocationInfo;
@@ -48,6 +49,11 @@ public abstract class EventHandler {
 		return this.getValueExtractor().getLocationInfo();
 	}
 	
+	public String getLocationInfoString()
+	{
+		return this.getValueExtractor().getLocationInfoString();
+	}
+	
 	public String getName()
 	{
 		return this.getValueExtractor().getName();
@@ -87,8 +93,16 @@ public abstract class EventHandler {
 	 * @return
 	 */
 	public boolean shouldSuspend(StrategoState currentState, EventSpecManager eventSpecManager){
-		boolean isBreakPointHit = eventSpecManager.match(createBreakPoint());
+		String markName = "SS_" + this.getEventType();
+		EventProfiler.instance.startMark(markName);
 		
+		BreakPoint bp = createBreakPoint(currentState);
+		
+		EventProfiler.instance.subMark(markName, "SUSPEND-1");
+		
+		boolean isBreakPointHit = eventSpecManager.match(bp);
+
+		EventProfiler.instance.subMark(markName, "SUSPEND-2");
         // if we should step
 		// stop at the first s-step that is in the same StackFrame
 		boolean shouldSuspend = false;
@@ -200,7 +214,8 @@ public abstract class EventHandler {
 				}
 			}
 		}
-		
+
+		EventProfiler.instance.subMark(markName, "SUSPEND-3");
 		// TODO assert
 		if (shouldSuspend && currentState.isStepping())
 		{
@@ -209,7 +224,7 @@ public abstract class EventHandler {
 			log("The program suspended but we are still stepping!");
 			
 		}
-		
+
         return shouldSuspend; // if break point exists suspend thread
 	}
 	
@@ -221,11 +236,20 @@ public abstract class EventHandler {
 	public void processDebugEvent(StrategoState strategoState) 
 	{
 		// update the current location
+		String markName = "SUPERPDE_" + this.getEventType();
+		EventProfiler.instance.startMark(markName);
+		
 		LocationInfo locationInfo = this.getLocationInfo();
+		
+		EventProfiler.instance.subMark(markName, "D-1");
+		
 		strategoState.currentFrame().setCurrentLocationInfo(locationInfo, this.getEventType());
+		
+		EventProfiler.instance.subMark(markName, "D-2");
+		
 	}
 	
-	protected abstract BreakPoint createBreakPoint();
+	protected abstract BreakPoint createBreakPoint(StrategoState currentState);
 
 	public abstract String getEventType();
 

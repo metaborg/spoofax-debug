@@ -38,13 +38,17 @@ public abstract class AbstractDSMTest {
 	 */
 	public DebugSessionManager start(DebugSessionManager manager, String mainArgs, String classpath, String connectorType)
 	{
+		long start = System.currentTimeMillis();
 		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath, connectorType);
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		manager.runVM();
 		// runVM waits for the threads to end
+		long end = System.currentTimeMillis();
 		// check if any Exceptions were thrown
 		checkThreadFailures();
+		long duration = end - start;
+		System.out.println("DURATION: " + duration);
 		return manager;
 	}
 	

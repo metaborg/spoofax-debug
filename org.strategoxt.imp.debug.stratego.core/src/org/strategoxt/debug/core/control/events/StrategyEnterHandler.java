@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.control.events;
 
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
@@ -14,10 +15,11 @@ public class StrategyEnterHandler extends EventHandler {
 	}
 	
 	@Override
-	protected BreakPoint createBreakPoint() {
+	protected BreakPoint createBreakPoint(StrategoState currentState) {
 		String name = this.getName(); // the name of the strategy
 		String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
 		LocationInfo locationInfo = getLocationInfo();
+		
 		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
 		return b;
 	}
@@ -41,9 +43,24 @@ public class StrategyEnterHandler extends EventHandler {
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
 		// current event is an enter event, push a new StackFrame on the stack
+		String markName = "PDE_" + this.getEventType();
+		EventProfiler.instance.startMark(markName);
+		
 		int level = strategoState.getCurrentFrameLevel() + 1;
+		
+		EventProfiler.instance.subMark(markName, "P-1");
+		
 		StrategoStackFrame frame = new StrategoStackFrame(level, this.getFilename(), this.getName(), this.getLocationInfo(), this.getGiven());
+		
+		EventProfiler.instance.subMark(markName, "P-2");
+		
 		strategoState.pushFrame(frame);
+		
+		EventProfiler.instance.subMark(markName, "P-3");
+		
 		super.processDebugEvent(strategoState); // update current location info
+		
+		EventProfiler.instance.subMark(markName, "P-SUPER");
+
 	}
 }

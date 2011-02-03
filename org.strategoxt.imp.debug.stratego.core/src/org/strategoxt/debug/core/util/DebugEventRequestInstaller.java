@@ -36,20 +36,23 @@ public class DebugEventRequestInstaller {
 	
 	private static final String EVENT_TYPE = "event-type";
 	
-	public static final boolean installStrategoDebugEventRequests = false;
+	public static final boolean useMethodRequests = false;
 	
+	public static final boolean useBreakpoints = true;
 	
 	public static void installDebugEventRequests(VirtualMachine vm, boolean watchFields, String[] excludes)
 	{
 		EventRequestManager mgr = vm.eventRequestManager();
-		// listen to the class prepare requests for all classes in this package
-		// the classes are s-enter, r-enter, ....
-		// when they are prepared, catch that DebugEvent and create a BreakpointEntryRequest in each class in the invoke method
-		// Using MethodEntry events is way too slow because it prevents method-inlining optimizations
-		ClassPrepareRequest str_cpr = mgr.createClassPrepareRequest();
-		str_cpr.addClassFilter("org.strategoxt.imp.debug.stratego.runtime.strategies.*");
-		str_cpr.enable();
 		
+		if (useBreakpoints) {
+			// listen to the class prepare requests for all classes in this package
+			// the classes are s-enter, r-enter, ....
+			// when they are prepared, catch that DebugEvent and create a BreakpointEntryRequest in each class in the invoke method
+			// Using MethodEntry events is way too slow because it prevents method-inlining optimizations
+			ClassPrepareRequest str_cpr = mgr.createClassPrepareRequest();
+			str_cpr.addClassFilter("org.strategoxt.imp.debug.stratego.runtime.strategies.*");
+			str_cpr.enable();
+		}
 		// want all exceptions 
 		/*
 		ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
@@ -58,7 +61,7 @@ public class DebugEventRequestInstaller {
 
 
 		
-		if (installStrategoDebugEventRequests)
+		if (useMethodRequests)
 		{
 
 			createMethodEntryRequest(mgr, STRJ_DBG_RUNTIME_LIB_S_ENTER, EventRequest.SUSPEND_EVENT_THREAD, EventHandler.S_ENTER);
