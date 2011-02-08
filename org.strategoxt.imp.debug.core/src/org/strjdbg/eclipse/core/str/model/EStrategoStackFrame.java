@@ -9,11 +9,11 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 import org.strategoxt.debug.core.util.table.FileLineLengthTable;
 import org.strategoxt.debug.core.util.table.LineLengthTable;
-import org.strategoxt.lang.terms.TermFactory;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 
