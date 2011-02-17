@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.spoofax.terms.StringTermReader;
+import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.control.events.EventHandlerFactory;
+import org.strategoxt.debug.core.control.events.EventInfoStringExtractor;
+import org.strategoxt.debug.core.control.events.IEventInfoExtractor;
 import org.strategoxt.debug.core.control.events.RuleExitHandler;
 import org.strategoxt.debug.core.control.events.StrategyExitHandler;
-import org.strategoxt.debug.core.control.events.ValueExtractor;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.DebugCallStrategy;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -97,7 +101,7 @@ public class ThreadEventHandler {
 		long start = System.nanoTime(); // profile internal
 		boolean suspendThread = false;
 		String eventType = (String) event.request().getProperty("event-type");
-		ValueExtractor extractor = new ValueExtractor(event);
+		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
 		long extractorEnd = System.nanoTime();
 		EventHandler h = EventHandlerFactory.createEventHandler(extractor, eventType);
 		if (h.isEnter())
@@ -150,15 +154,14 @@ public class ThreadEventHandler {
 	{
 		Method method = null;
 		List<Value> arguments = new ArrayList<Value>();
-		// java method "getDRKeySet" calls a stratego strategy and returns a list of strings for each dynamic rule
-		List<Method> methods = h.getStackFrame().thisObject().referenceType().methodsByName("getDRKeySet");
+		// java method "getDRKeySetString" calls a stratego strategy and returns a list of strings for each dynamic rule
+		List<Method> methods = h.getStackFrame().thisObject().referenceType().methodsByName(DebugCallStrategy.GETDRKEYSETSTRING);
 		// should be only one method!
 		method = methods.get(0);
-		arguments.add(h.getContextValue());
 		
 		// the stratego program is suspended
 		//System.out.println("suspend");
-		Value output = null;
+		Value output = null; // will be a string representation of an IStrategoTerm, IStrategoList, containing the names of the active dynamic rules
 		try {
 			output = h.getStackFrame().thisObject().invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
@@ -179,9 +182,13 @@ public class ThreadEventHandler {
 		{
 			return null;
 		}
-		//System.out.println(output.toString());
 		StrategoTermBuilder builder = new StrategoTermBuilder();
-		IStrategoTerm term = builder.buildIStrategoTerm(output); // instance of org.strategoxt.lang.terms.StrategoList(id=1193)
+		String s = builder.buildString(output); // instance of String
+
+		TermFactory f = new TermFactory();
+		StringTermReader r = new StringTermReader(f);
+		IStrategoTerm term = r.parseFromString(s); // IStrategoList
+		//System.out.println(output.toString());
 		//System.out.println(term.toString());
 		String[] dynamicRuleNames = builder.convertToStringArray(term);
 		
@@ -208,7 +215,7 @@ public class ThreadEventHandler {
 		}
 		
 		EventHandler h = null;
-		ValueExtractor extractor = new ValueExtractor(event);
+		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
 		h = EventHandlerFactory.createEventHandler(extractor, eventType);
 		
 		if (h != null)
@@ -274,7 +281,7 @@ public class ThreadEventHandler {
 		}
 		
 		EventHandler h = null;
-		ValueExtractor extractor = new ValueExtractor(event);
+		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
 		if (EventHandler.R_ENTER.equals(eventType))
 		{
 			//h = new RuleEnterHandler(event);
@@ -327,6 +334,7 @@ public class ThreadEventHandler {
 		// thread death event
 		if (this.strategoState != null && this.strategoState.getCurrentFrameLevel() > -1)
 		{
+			// TODO: when the main stragey is an io-wrap call, the s-exit of the main strategy will never be reached because io-wrap will call exit
 			System.out.println("A thread death occured, but the StrategoState has some StackFrame left...");
 		}
 		else

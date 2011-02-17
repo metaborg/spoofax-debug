@@ -9,7 +9,7 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyEnterHandler extends EventHandler {
 
-	public StrategyEnterHandler(ValueExtractor extractor)
+	public StrategyEnterHandler(IEventInfoExtractor extractor)
 	{
 		super(extractor);
 	}

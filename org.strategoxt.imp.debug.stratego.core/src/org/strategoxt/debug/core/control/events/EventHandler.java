@@ -1,11 +1,11 @@
 package org.strategoxt.debug.core.control.events;
 
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.Value;
@@ -23,55 +23,50 @@ public abstract class EventHandler {
 
 	
 	
-	private ValueExtractor valueExtractor = null;
+	private IEventInfoExtractor extractor = null;
 	
-	public EventHandler(ValueExtractor extractor)
+	public EventHandler(IEventInfoExtractor extractor)
 	{
-		this.valueExtractor = extractor;
+		this.extractor = extractor;
 	}
 	
-	public ValueExtractor getValueExtractor() {
-		return valueExtractor;
+	public IEventInfoExtractor getIEventInfoExtractor() {
+		return extractor;
 	}
 	
 	public String getFilename()
 	{
-		return this.getValueExtractor().getFilename();
+		return this.getIEventInfoExtractor().getFilename();
 	}
 	
-	public StrategoTermValueWrapper getGiven()
+	public IStrategoTerm getGiven()
 	{
-		return this.getValueExtractor().getGiven();
+		return this.getIEventInfoExtractor().getGiven();
 	}
 
 	public LocationInfo getLocationInfo()
 	{
-		return this.getValueExtractor().getLocationInfo();
-	}
-	
-	public String getLocationInfoString()
-	{
-		return this.getValueExtractor().getLocationInfoString();
+		return this.getIEventInfoExtractor().getLocationInfo();
 	}
 	
 	public String getName()
 	{
-		return this.getValueExtractor().getName();
+		return this.getIEventInfoExtractor().getName();
 	}
 	
 	public StackFrame getStackFrame()
 	{
-		return this.getValueExtractor().getStackFrame();
+		return this.getIEventInfoExtractor().getStackFrame();
 	}
 	
 	public String getVarname()
 	{
-		return this.getValueExtractor().getVarname();
+		return this.getIEventInfoExtractor().getVarname();
 	}
 	
 	public Value getContextValue()
 	{
-		return this.getValueExtractor().getContextValue();
+		return this.getIEventInfoExtractor().getContextValue();
 	}
 	
 

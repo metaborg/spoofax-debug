@@ -8,11 +8,15 @@ imports
   gen-lookup
   traverse-imports // show all files used as import
   trans-str
-
+  str-reader
+  stratego-transformer
+  
 imports
   libstratego-lib
   libstratego-sglr
   libstratego-xtc
+  libstratego-gpp
+  libstratego-aterm
   libstrc
   
 strategies
@@ -69,6 +73,23 @@ strategies
 		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
 		; str-files* := <walk-dir(is-strategoxt-source-file)> base-path
 		; <map(handle-file(|base-path, output-base-path))> str-files*
+		; java-timer-print
+		  
+	// walk over al stratego files in the strategoxt source and add debug information.
+	// output will be placed in test/generated/teststrxt
+	// we will walk over ALL .str files, this is a file based walk instead of a import-based walk.
+	test-apply-debug-strategoxt-full-rtree = 
+		echo(|"test-apply-debug-strategoxt-rtree")
+		// get the stratego files
+		// source s in the base-path
+		; prefer-rtree
+		; base-path := "/home/rlindeman/Documents/TU/strategoxt/strategoxt"
+		; get-project-dir => project-dir
+		; !"test/generated/teststrxt" => output-base-dir
+		; output-base-path := <concat-strings> [project-dir, "/", output-base-dir]
+		; str-files* := <walk-dir(is-strategoxt-source-file)> base-path
+		; <map(handle-file(|base-path, output-base-path))> str-files*
+		; java-timer-print
 		 
     // we should ignore some file when walking over strategoxt source
     // if path starts with "/home/rlindeman/Documents/TU/strategoxt/strategoxt/stratego-front/test" the strategy should fail
@@ -130,3 +151,30 @@ strategies
 		; size := <length> str-files*
 		; <debug(!"str files count: ")> size
 		; <map(debug)> str-files*
+		  
+		  
+		  
+	test-parse-rtree-1 = 
+		//<set-config> ("--cache-dir", "test-cache-dir")
+		// /home/rlindeman/Documents/TU/strategoxt/strategoxt/strc-core/lib/stratego/strc/parse/parse-stratego.str
+		// has rtree
+		f1-str := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/strc-core/lib/stratego/strc/parse/parse-stratego.str"
+		; f1-rtree := "/home/rlindeman/Documents/TU/strategoxt/strategoxt/strc-core/lib/stratego/strc/parse/parse-stratego.rtree"
+		//; f1-rtree := <guarantee-extension(|"rtree")> f1-str
+		//; file-exists; filemode; not(isdir)
+		; <debug(!"parse normal str-file...")> ""
+		; f1-str-ast := <parse-stratego-with-locations(|f1-str)>
+		; debug(!"DONE ")
+		; <debug(!"parse rtree-file...")> ""
+		//; try(f1-rtree-ast := <parse-stratego-with-locations(|f1-rtree)>; debug(!"DONE"))
+		; f1-rtree-ast := <ReadFromFile> f1-rtree
+		; debug(!"DONE ")
+		; try(<equal> (f1-str-ast, f1-rtree-ast); debug(!"they are equal")) // they are not equal, the rtree misses LocationInfo
+		; <debug(!"END")> ""
+		// use file without rtree
+		// /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/trans/tests/strategoxt-parsing-test.str
+		// .....
+		// use file without rtree but with cache entry 
+		// /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/.cache/+home+rlindeman+Documents+TU+strategoxt+spoofax-imp+source+org.strategoxt.imp.debug.stratego.transformer+trans+tests+strategoxt-parsing-test.str.cache
+		// the cache entry also misses LocationInfo
+		

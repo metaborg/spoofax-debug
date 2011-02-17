@@ -13,17 +13,23 @@ import org.spoofax.interpreter.terms.IStrategoReal;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.IStrategoTuple;
+import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.control.EventProfiler;
-import org.strategoxt.lang.terms.StrategoList;
-import org.strategoxt.lang.terms.TermFactory;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Field;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
+/**
+ * Now fails because of the new-terms implementation.
+ * TODO: fix using interfaces...
+ * @author rlindeman
+ *
+ */
 public class StrategoTermBuilder {
 	
 	private TermFactory f = new TermFactory();
@@ -33,6 +39,11 @@ public class StrategoTermBuilder {
 		
 	}
 	
+	/**
+	 * The given Value should be a String object. The method returns the string contents.
+	 * @param value
+	 * @return
+	 */
 	public String buildString(Value value)
 	{
 		// value should be a string
@@ -255,7 +266,16 @@ public class StrategoTermBuilder {
 	{
 		// dispatch to correct builder
 		Type t = value.type();
-		String type = t.name();
+		String type = t.name(); // TODO: work with interfaces instead of the internal implementations
+		if (t instanceof com.sun.jdi.ClassType)
+		{
+			com.sun.jdi.ClassType ct = (com.sun.jdi.ClassType) t;
+			for(InterfaceType it : ct.allInterfaces())
+			{
+				String n = it.name();
+				it.implementors();
+			}
+		}
 		if ("org.strategoxt.lang.terms.StrategoString".equals(type))
 		{
 			return buildStrategoString(value);
@@ -317,14 +337,15 @@ public class StrategoTermBuilder {
 	 */
 	public String[] convertToStringArray(IStrategoTerm term)
 	{
-		if (term instanceof org.strategoxt.lang.terms.StrategoList)
+		if (term instanceof IStrategoList)
 		{
-			StrategoList list = (StrategoList) term;
+			IStrategoList list = (IStrategoList) term;
 			int size = list.size();
 			String[] items = new String[size];
 			for(int i = 0; i < size; i++)
 			{
-				items[i] = list.get(i).toString();
+				items[i] = list.getSubterm(i).toString();
+				//items[i] = list.get(i).toString();
 			}
 			return items;
 		}

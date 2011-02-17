@@ -8,7 +8,7 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class RuleExitHandler extends EventHandler {
 
-	public RuleExitHandler(ValueExtractor extractor) {
+	public RuleExitHandler(IEventInfoExtractor extractor) {
 		super(extractor);
 	}
 

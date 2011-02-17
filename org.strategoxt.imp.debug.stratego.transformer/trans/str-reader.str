@@ -139,7 +139,7 @@ strategies // parsing stratego
   parse-stratego-with-locations(|file-path) =
 	!FILE(file-path) 
 	; parse-stratego-trm(| [ "-i", file-path
-	  , "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source
+	  , "--preserve-locations" // added in rev:21513 of strategoxt, use a build from source or wait for new release from the buildfarm
 	  , "-I", <stratego-box-path>
 	  , "-I", <stratego-sdf2-path>
 	  , "-I", <stratego-stratego-path>

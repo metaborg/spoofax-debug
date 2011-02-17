@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.spoofax.terms.StrategoString;
 import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.model.LocationInfo;
-import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
-import org.strategoxt.lang.terms.StrategoString;
 
 import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidStackFrameException;
 import com.sun.jdi.LocalVariable;
@@ -24,7 +22,7 @@ import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.MethodExitEvent;
 
-public class ValueExtractor {
+public class ValueExtractor implements IEventInfoExtractor {
 
 	// The following object attributes should match the parameters in the invoke-method of the classes java_[r/s]_[enter/exit]_0_{x}
 	// where {x} is the number of term arguments in the strategy
@@ -315,27 +313,7 @@ public class ValueExtractor {
 		return locationValue;
 	}
 	
-	/**
-	 * A string representation of the LocationInfo StrategoTerm, this maybe faster to copy from the debug vm instead of the StrategoTerm.
-	 */
-	private Value locationStringValue = null;
-	
-	/**
-	 * This value is a String representation of the LocationInfo StrategoTerm
-	 * @return
-	 */
-	protected Value getLocationStringValue()
-	{
-		if (this.locationStringValue == null)
-		{
-			Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName("locationString");
-			Value val = this.getStackFrame().thisObject().getValue(lsField);
-			
-			//Value val = getSafeValue(this.locationStringLV);
-			this.locationStringValue = val;
-		}
-		return this.locationStringValue;
-	}
+
 	
 	private Value nameValue = null;
 	
@@ -392,14 +370,12 @@ public class ValueExtractor {
 		return varnameValue;
 	}
 	
-	private StrategoTermValueWrapper given = null;
-	
 	/**
 	 * Returns the value of the method parameter 'given' as an IStrategoTerm.
 	 * 
 	 * @return
 	 */
-	public StrategoTermValueWrapper getGiven()
+	public IStrategoTerm getGiven()
 	{
 		return null;
 		/*
@@ -422,6 +398,7 @@ public class ValueExtractor {
         //Dump.dump(obj, refType, refType);
 	}
 	
+	/*
 	private String locationInfoString = null;
 	
 	public String getLocationInfoString()
@@ -444,7 +421,7 @@ public class ValueExtractor {
 		}
 		return this.locationInfoString;
 	}
-	
+	*/
 	
 	private LocationInfo locationInfo = null;
 	
@@ -465,8 +442,11 @@ public class ValueExtractor {
 	
 	private LocationInfo createLocationInfoFromString()
 	{
-		String s = this.getLocationInfoString();
+		/*
+		String s = this.getLocationInfoString(); // TODO: extract the values from the (filename, name, location)-tuple
 		LocationInfo loc = LocationInfo.parse(s);
+		*/
+		LocationInfo loc = createLocationInfoFromIStrategoTerm();
 		return loc;
 	}
 	

@@ -6,7 +6,7 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyVarHandler extends EventHandler {
 
-	public StrategyVarHandler(ValueExtractor extractor) {
+	public StrategyVarHandler(IEventInfoExtractor extractor) {
 		super(extractor);
 	}
 	

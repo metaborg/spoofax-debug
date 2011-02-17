@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 
 enum VMStateTesterCompareType
 {
@@ -67,6 +67,10 @@ public class VMStateTester {
 		return this.current;
 	}
 	
+	/**
+	 * The VMStateTester expects that the state of the program will match the current StrategoState (specified in the testcase)
+	 * @return
+	 */
 	public StrategoState current()
 	{
 		return this.current;
@@ -85,8 +89,8 @@ public class VMStateTester {
 	 */
 	public boolean compareState(StrategoState state)
 	{
-		StrategoStackFrame currentTop = this.current().currentFrame();
-		StrategoStackFrame compareTop = state.currentFrame();
+		StrategoStackFrame currentTop = this.current().currentFrame(); // the expected value
+		StrategoStackFrame compareTop = state.currentFrame(); // top frame in the program
 		
 		boolean statesEquals = false;
 		switch(this.compareType) {
@@ -145,7 +149,7 @@ public class VMStateTester {
 	{
 		StrategoState state = new StrategoState();
 		LocationInfo currentLocationInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
-		StrategoTermValueWrapper current = null;
+		IStrategoTerm current = null;
 		// TODO: add stackframedepth
 		StrategoStackFrame frame = new StrategoStackFrame(-1, filename, name, null, current);
 		frame.setCurrentLocationInfo(currentLocationInfo, eventType);

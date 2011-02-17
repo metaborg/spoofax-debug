@@ -2,7 +2,7 @@ package org.strategoxt.debug.core.control.events;
 
 public class EventHandlerFactory {
 	
-	public static EventHandler createEventHandler(ValueExtractor extractor, String eventType)
+	public static EventHandler createEventHandler(IEventInfoExtractor extractor, String eventType)
 	{
 		EventHandler h = null;
 		if (EventHandler.R_ENTER.equals(eventType))

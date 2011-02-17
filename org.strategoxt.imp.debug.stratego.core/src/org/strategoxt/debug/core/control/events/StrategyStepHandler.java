@@ -8,7 +8,7 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyStepHandler extends EventHandler {
 
-	public StrategyStepHandler(ValueExtractor extractor) {
+	public StrategyStepHandler(IEventInfoExtractor extractor) {
 		super(extractor);
 	}
 

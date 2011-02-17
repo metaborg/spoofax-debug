@@ -9,6 +9,8 @@ imports
   traverse-imports // show all files used as import
   transformer-test-suite // test-suite
   	
+  stratego-transformer	
+  
 rules
 // transform stratego to stratego but add debug statements
 	generate-str:
@@ -51,7 +53,9 @@ rules
   	(sourceBasedir, inputfilePath, outputfilename) -> (status, actual-output-file-location, absPath)
   	where(
   	absPath := 	<concat-strings> [sourceBasedir, "/", inputfilePath]
+  	; java-monitor-start(|"parse")
   	; parse-stratego-with-locations(|absPath)
+  	; java-monitor-end(|"parse")
   	//; debug(!"get-anno-ast")
   	; assert-module
   	//; debug(!"assert-module")
@@ -62,7 +66,9 @@ rules
   	// change the extension of the outputfilename to reflect the --output-rtree config
   	; (<get-config> "--output-rtree" < <guarantee-extension(|"rtree")> outputfilename + <guarantee-extension(|"str")> outputfilename)
   	; ?actual-output-file-location
+  	; java-monitor-start(|"write")
   	; <write-stratego(|actual-output-file-location)> debug-program
+  	; java-monitor-end(|"write")
   	//; debug(!"write-stratego-str")
   	; status := "SUCCES"  		
   	)
@@ -100,10 +106,12 @@ rules
 		(base-path, output-base-path, stratego-file) -> results
 		where
 			<concat-strings> [base-path, "/", stratego-file] // absolute path to the main stratego file
+			// find all required files that will be debug-transformed
   			; files := <get-internal-files(|library-paths)>
   			; missing := <filter(is-relpath)> files // files that still have a relative path are not found on the "-I" paths
   			; real-files := <filter(is-abspath)> files // only add debug information to the files that can be found on the "-I" paths
-  			; results := <map(handle-file(|base-path, output-base-path))> real-files // do apply-debug-trans for each file, store the result in the output-base-path
+  			; results := <map(handle-file(|base-path, output-base-path))> real-files // do apply-debug-trans for each file, store the result in the folder specified by output-base-path
+  			// handle-file does the parsing, transforming and writing per file. 
   			// results = [(status, output-filename, input-filename), (status, output-filename, input-filename)]
 
 	prefer-rtree =

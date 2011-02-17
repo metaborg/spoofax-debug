@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="lib/stratego-debug-runtime.jar"/>
 	<classpathentry kind="lib" path="lib/stratego-transformer.jar" sourcepath="/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/editor/java"/>
 	<classpathentry kind="lib" path="lib/strategoxt.jar" sourcepath="/home/rlindeman/Documents/TU/strategoxt/strategoxt-java-backend/java"/>
-	<classpathentry kind="lib" path="lib/stratego-transformer-java.jar"/>
+	<classpathentry kind="lib" path="lib/stratego-transformer-java.jar" sourcepath="/org.strategoxt.imp.debug.stratego.transformer/editor/java"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

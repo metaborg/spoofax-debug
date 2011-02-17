@@ -1,12 +1,8 @@
 package org.strategoxt.debug.core.model;
 
-import org.spoofax.interpreter.terms.IStrategoTerm;
-import org.strategoxt.debug.core.util.StrategoTermBuilder;
-
-import com.sun.jdi.Value;
 
 public class StrategoTermValueWrapper {
-	
+/*	
 	protected StrategoTermBuilder builder = new StrategoTermBuilder();
 	
 	private Value value = null;
@@ -31,5 +27,5 @@ public class StrategoTermValueWrapper {
 		}
 		return this.term;
 	}
-
+*/
 }

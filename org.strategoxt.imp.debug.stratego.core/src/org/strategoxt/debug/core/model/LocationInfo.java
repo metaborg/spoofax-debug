@@ -2,6 +2,9 @@ package org.strategoxt.debug.core.model;
 
 import java.util.StringTokenizer;
 
+import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.strategoxt.debug.core.util.StringUtil;
+
 /**
  * 
  * This class is used to specify a selection using the start linenumber, start token position and the end linenumber and end token position.
@@ -177,6 +180,22 @@ public class LocationInfo {
 		result = prime * result + end_token_pos;
 
 		return result;
+	}
+	
+	public static LocationInfo parse(IStrategoTerm term)
+	{
+		String startLineNum = term.getSubterm(0).toString();
+		startLineNum = StringUtil.trimQuotes(startLineNum);
+		String startTokenPos = term.getSubterm(1).toString();
+		startTokenPos = StringUtil.trimQuotes(startTokenPos);
+		String endLineNum = term.getSubterm(2).toString();
+		endLineNum = StringUtil.trimQuotes(endLineNum);
+		String endTokenPos = term.getSubterm(3).toString();
+		endTokenPos = StringUtil.trimQuotes(endTokenPos);
+		
+		LocationInfo parsedInfo = new LocationInfo(startLineNum, startTokenPos, endLineNum, endTokenPos);
+		
+		return parsedInfo;
 	}
 	
 	public static LocationInfo parse(String locationInfoString)

@@ -1,6 +1,7 @@
 package org.strategoxt.debug.core.util;
 
 import org.eclipse.jdt.core.compiler.CompilationProgress;
+import org.strategoxt.imp.debug.stratego.transformer.strategies.TimeMonitor;
 
 public class DebugCompileProgress {
 
@@ -48,6 +49,7 @@ public class DebugCompileProgress {
 		{
 			System.out.format(pattern, "COMPILE JAVA:", getCompileJavaDuration());
 		}
+		TimeMonitor.getTimeMonitor().print();
 	}
 	
 	public long getGenerateStrategoDuration() {

@@ -15,12 +15,11 @@ import org.eclipse.jdt.core.compiler.CompilationProgress;
 import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.util.table.FileLineLengthTable;
 import org.strategoxt.debug.core.util.table.LineLengthTable;
 import org.strategoxt.lang.Context;
 import org.strategoxt.lang.StrategoExit;
-import org.strategoxt.lang.terms.TermFactory;
-
 
 public class DebugCompiler {
 	
