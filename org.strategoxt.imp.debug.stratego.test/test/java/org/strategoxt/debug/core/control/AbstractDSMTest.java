@@ -5,6 +5,8 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.spoofax.terms.StringTermReader;
+import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.util.table.EventEntry;
@@ -12,6 +14,9 @@ import org.strategoxt.debug.core.util.table.EventTable;
 
 public abstract class AbstractDSMTest {
 
+	protected TermFactory termFactory = new TermFactory();
+	protected StringTermReader termReader = new StringTermReader(termFactory);
+	
 	
 	protected void addBP(DebugSessionManager dsm, String filename, int lineNumber, int startTokenPosition, String eventType)
 	{

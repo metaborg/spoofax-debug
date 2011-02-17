@@ -22,17 +22,17 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 	protected String eventInfo = null;
 	
 	/**
-	 * Name of the variable that contains the current Term. The type of the variable should be String.
+	 * Name of the variable that contains the given Term. The type of the variable should be String.
 	 */
-	public static String CURRENTTERMSTRING = "currentTermString";
+	public static String CURRENTTERMSTRING = "givenTermString";
 	
 	/**
-	 * String representation of the current IStrategoTerm.
+	 * String representation of the given IStrategoTerm.
 	 * Fetching a String and parsing it in the debugger should be faster than using jdi reflection to generate the IStrategoTerm.
 	 * 
 	 * Should be protected so it can be accessed in any of its subclasses.
 	 */
-	protected String currentTermString = null;
+	protected String givenTermString = null;
 	
 	/**
 	 * Name of the variable that contains the varname. The type of the variable should be String.
@@ -106,13 +106,15 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename, IStrategoTerm name, IStrategoTerm location, IStrategoTerm given) {
 		this.context = context;
 		this.eventInfo = factory.makeTuple(filename, name, location).toString();
+		this.givenTermString = given.toString();
 		return current;
 	}
 	
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename, IStrategoTerm name, IStrategoTerm varname, IStrategoTerm location, IStrategoTerm given) {
 		this.context = context;
 		this.eventInfo = factory.makeTuple(filename, name, location).toString();
-		this.currentTermString = given.toString();
+		this.givenTermString = given.toString();
+		this.varnameString = varname.toString();
 		return current;
 	}
 }

@@ -53,7 +53,9 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		int startTokenPosition = 8;
 		String eventType = "s-step";
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39)); // match-comments[localvar.str]@(47,4)47 39
+		String term = null;
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_RETURN);
 		// perform a STEP_RETURN, will hit s-exit of execute
@@ -62,7 +64,8 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		//	  	input -> output
 		//	  	with
 		//	  	  output := <match-comments> input
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "execute", "s-var", 37, 3, 40, 38));
+		term = "[(Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Comment(\"fname\",\"laalalalalalalalalal\")),(Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Comment(\"new\",\"created!!\"))]";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "execute", "s-var", 37, 3, 40, 38, term));
 		
 		
 		
@@ -115,7 +118,9 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		int startTokenPosition = 8;
 		String eventType = "s-step";
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39)); // match-comments[localvar.str]@(47,4)47 39
+		String term = null;
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
 
 		// 48, 8
@@ -128,7 +133,8 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_RETURN);
 		// perform a STEP_RETURN, will hit breakpoint on line 48
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40)); // match-comments[localvar.str]@(48,6) 48,40
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40, term)); // match-comments[localvar.str]@(48,6) 48,40
 
 
 		

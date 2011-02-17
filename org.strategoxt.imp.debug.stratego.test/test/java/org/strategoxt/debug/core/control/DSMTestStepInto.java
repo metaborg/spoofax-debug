@@ -52,7 +52,9 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		int startTokenPosition = 8;
 		String eventType = "s-step";
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39)); // match-comments[localvar.str]@(47,4)47 39
+		String term = null;
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
 		// perform a STEP_INTO, will hit
@@ -61,7 +63,8 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//	definition* -> functions*
 		//	with
 		//		functions* := <filter(?Function(_,_))> definition*
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-enter", 47, 11, 47, 25));
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-enter", 47, 11, 47, 25, term));
 	
 		
 		
@@ -112,12 +115,14 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		int startTokenPosition = 6;
 		String eventType = "s-step";
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
-		
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54)); // find-functions[localvar.str]@(55,4,55,54)
+		String term = null;
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54, term)); // find-functions[localvar.str]@(55,4,55,54)
 
 		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
 		// perform a STEP_INTO, but current statement cannot be stepped into. a STEP_OVER will occur
-		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 55, 19, 55, 41)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
+		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 55, 19, 55, 41, term)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
 		vmMonitor.addAction(VMMonitorTestImpl2.RESUME);
 		
 		vmStateTester.initialize();

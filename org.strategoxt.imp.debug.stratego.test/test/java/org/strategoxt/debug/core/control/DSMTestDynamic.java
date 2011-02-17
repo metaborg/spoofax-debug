@@ -76,10 +76,15 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("find-comment-by-name");
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("find-comment-by-name");
+		String term = null;
+		term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
+		vmStateTester.addStrategoState("find-comment-by-name", termReader.parseFromString(term));
+		term = "Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
+		vmStateTester.addStrategoState("find-comment-by-name", termReader.parseFromString(term));
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);
 		

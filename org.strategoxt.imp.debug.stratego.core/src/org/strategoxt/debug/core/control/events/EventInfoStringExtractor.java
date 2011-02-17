@@ -33,10 +33,20 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	
 	
 	private String eventInfoString = null;
-	private String currentTermString = null;
+	private String givenTermString = null;
 	private String varnameString = null;
 	
 	private IStrategoTerm eventInfoStrategoTerm = null;
+	
+	
+	
+	private String filename = null;
+	private String name = null;
+	private LocationInfo locationInfo = null;
+	
+	private IStrategoTerm given = null;
+	
+	private String varname = null;
 	
 	protected MethodEntryEvent entry_event = null;
 	protected MethodExitEvent exit_event = null;
@@ -74,34 +84,40 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 		
 		// fetch the current Term
 		// TODO: use lazy loading when the current Term is big...
-		String currentTermString = builder.buildString(getCurrentTermStringValue());
+		String givenTermString = builder.buildString(getGivenTermStringValue());
+		this.givenTermString = givenTermString;
+		this.given = termReader.parseFromString(this.givenTermString);
 		
+		Value v = getVarnameStringValue();
+		if (v != null)
+		{
+		String varnameString = builder.buildString(v);
+		this.varnameString = varnameString;
+		this.varname = StringUtil.trimQuotes(this.varnameString);
+		}
 	}
 
-	private String filename = null;
-	
 	public String getFilename() {
 		return filename;
 	}
-	
-	private IStrategoTerm given = null;
 
 	public IStrategoTerm getGiven() {
 		return given;
 	}
-
-	private LocationInfo locationInfo = null;
 	
 	public LocationInfo getLocationInfo() {
 		return locationInfo;
 	}
 	
-	private String name = null;
-
 	public String getName() {
 		return name;
 	}
 
+	public String getVarname()
+	{
+		return this.varname;
+	}
+	
 	public Value getContextValue() {
 		// TODO Auto-generated method stub
 		return null;
@@ -158,11 +174,6 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 		}
 	}
 
-	public String getVarname() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
 	/**
 	 * A string representation of the Event Info tuple (filename, name, LocationInfo), this maybe faster to copy from the debug vm instead of each one separately.
@@ -186,18 +197,18 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 		return this.eventInfoStringValue;
 	}
 	
-	private Value currentTermStringValue = null;
+	private Value givenTermStringValue = null;
 	
-	public Value getCurrentTermStringValue() {
-		if (this.currentTermStringValue == null) 
+	public Value getGivenTermStringValue() {
+		if (this.givenTermStringValue == null) 
 		{
 			Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName(DebugCallStrategy.CURRENTTERMSTRING);
 			Value val = this.getStackFrame().thisObject().getValue(lsField);
 			
-			this.currentTermStringValue = val;
+			this.givenTermStringValue = val;
 		}
 
-		return this.currentTermStringValue;
+		return this.givenTermStringValue;
 	}
 	
 	private Value varnameStringValue = null;

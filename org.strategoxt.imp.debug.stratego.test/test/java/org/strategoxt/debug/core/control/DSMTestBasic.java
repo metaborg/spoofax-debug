@@ -36,8 +36,10 @@ public class DSMTestBasic extends AbstractDSMTest {
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("find-comment-match");
+		String term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term)); // Function("fname",[Assign("var_foo",Add(Number(2),Number(7))),Print("var_foo")])
+		term = "Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term)); // Function("nocomment",[Assign("var_foo",Add(Number(2),Number(7))),Print("var_foo")])
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 		// create a breakpoint
@@ -72,10 +74,15 @@ public class DSMTestBasic extends AbstractDSMTest {
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("first");
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("first");
+		String term = null;
+		term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term)); // Function("fname",[Assign("var_foo",Add(Number(2),Number(7))),Print("var_foo")])
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\")]";
+		vmStateTester.addStrategoState("first", termReader.parseFromString(term)); // 
+		term = "Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
+		term = "[]";
+		vmStateTester.addStrategoState("first", termReader.parseFromString(term));
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 		// create a breakpoint
@@ -140,9 +147,11 @@ public class DSMTestBasic extends AbstractDSMTest {
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("match-comments");
-		vmStateTester.addStrategoState("match-comments");
-		vmStateTester.addStrategoState("match-comments");
+		String term = null;
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 
@@ -205,9 +214,11 @@ public class DSMTestBasic extends AbstractDSMTest {
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("match-comments");
-		vmStateTester.addStrategoState("match-comments"); // value f* should be set
-		vmStateTester.addStrategoState("match-comments"); // value c* should be set
+		String term = null;
+		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term)); // value f* should be set
+		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term)); // value c* should be set
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 
@@ -259,8 +270,11 @@ public class DSMTestBasic extends AbstractDSMTest {
 
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
-		vmStateTester.addStrategoState("find-comment-match");
-		vmStateTester.addStrategoState("find-comment-match");
+		String term = null;
+		term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
+		term = "Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
 		vmMonitor.setVMStateTester(vmStateTester);
 		
 		// create a breakpoint
