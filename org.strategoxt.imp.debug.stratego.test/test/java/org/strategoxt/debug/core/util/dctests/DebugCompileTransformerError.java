@@ -23,7 +23,7 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 	}
 	
 	@Test
-	private void testDebugCompileTransformerError() {
+	public void testDebugCompileTransformerError() {
 		// TODO Auto-generated method stub
 		String baseInputPath = "trans";
 		String strategoFilePath = "stratego-transformer.str";

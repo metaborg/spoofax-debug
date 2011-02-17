@@ -79,12 +79,14 @@ public class FileTest {
 	public static void assertReaders(BufferedReader expected,
 			BufferedReader actual) throws IOException {
 		String expectedLine;
+		int index = 0;
 		while ((expectedLine = expected.readLine()) != null) {
 			String actualLine = actual.readLine();
 
-			assertNotNull("Expected had more lines then the actual.",
+			assertNotNull("Expected had more lines then the actual (index="+index+").",
 					actualLine);
-			assertEquals(expectedLine, actualLine);
+			assertEquals("At index " + index,expectedLine, actualLine);
+			index++;
 		}
 
 		assertNull("Actual had more lines then the expected.", actual

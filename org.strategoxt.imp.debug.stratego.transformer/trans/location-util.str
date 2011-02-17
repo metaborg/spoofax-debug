@@ -16,6 +16,12 @@ rules
 			; term := NoAnnoList(Op("LocationInfo", args))
 		
 
+	// a should be a String, thus "12"
 	create-arg:
 		a -> NoAnnoList(Str(a))
+		where(<is-string> a)
+		
+	create-arg:
+		a -> NoAnnoList(Str(<int-to-string> a))
+		where(<is-int> a)
 // ===============	

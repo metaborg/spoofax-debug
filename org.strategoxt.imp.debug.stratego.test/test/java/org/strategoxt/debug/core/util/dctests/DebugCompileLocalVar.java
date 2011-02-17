@@ -89,6 +89,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		String binBase = null;
 		boolean compileSucces = false;
 		try {
+			// strj -i /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/localvar_rtree/stratego/localvar.rtree -o /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/localvar_rtree/java/localvar_rtree/localvar_rtree.java -I /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/../org.strategoxt.imp.debug.stratego.core/lib -p localvar_rtree --clean -la org.strategoxt.imp.debug.stratego.runtime.trans
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
 			compileSucces = true;
 		} catch (IOException e) {

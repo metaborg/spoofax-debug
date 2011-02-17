@@ -45,7 +45,7 @@ rules
   	//; where(<debug(!"Writing ast...")> ast)
   	; <dirname> absolute-location => dir
    	; <check-dir> dir // check if dir exists, if not create the complete path otherwise write-to-file will fail 
-  	; <WriteToBinaryFile> (absolute-location, ast) // write current term to file
+  	; <WriteToBinaryFile> (absolute-location, <strip-annos> ast) // write current term to file
   
 	// current term is an ast
 	// writes the string to the absolute-location

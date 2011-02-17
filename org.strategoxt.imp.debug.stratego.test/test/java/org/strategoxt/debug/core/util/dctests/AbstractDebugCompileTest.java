@@ -81,6 +81,9 @@ public class AbstractDebugCompileTest {
 				if (oFileCur.getName().endsWith(".str") && oFileCur.isFile())
 				{
 					strFiles.add(oFileCur);
+				} else if (oFileCur.getName().endsWith(".rtree") && oFileCur.isFile())
+				{
+					strFiles.add(oFileCur);
 				}
 			}
 		}

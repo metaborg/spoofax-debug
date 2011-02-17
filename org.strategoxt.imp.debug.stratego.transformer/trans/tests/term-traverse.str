@@ -3,6 +3,8 @@ module tests/term-traverse
 imports
   libstrategolib
 
+  location-util
+
 strategies
 
 	main-test-term-traverse = execute-term-traverse
@@ -15,3 +17,20 @@ strategies
 	; otherstuff
 
 	otherstuff = !"stuff"; ?stuff; GetName; debug(!"name: "); !stuff
+	
+	test-location-to-term-1 =
+		a := 12
+		; <is-int> a 
+		; debug(!"a: ")
+		; b := <int-to-string> a
+		; debug(!"b: ")
+		; c := <create-arg> b
+		; debug(!"c: ")
+		  
+	test-location-to-term-2 =
+		a := "12"
+		; debug(!"a: ")
+		; b := <int-to-string> a
+		; debug(!"b: ")
+		; c := <create-arg> b
+		; debug(!"c: ")
