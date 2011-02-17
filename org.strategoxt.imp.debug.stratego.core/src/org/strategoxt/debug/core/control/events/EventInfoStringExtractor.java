@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control.events;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.StringTermReader;
 import org.spoofax.terms.TermFactory;
+import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.util.StrategoTermBuilder;
 import org.strategoxt.debug.core.util.StringUtil;
@@ -10,6 +11,7 @@ import org.strategoxt.imp.debug.stratego.runtime.strategies.DebugCallStrategy;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
@@ -48,6 +50,9 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	
 	private String varname = null;
 	
+	
+	private boolean extractCurrentTerm = true;
+	
 	protected MethodEntryEvent entry_event = null;
 	protected MethodExitEvent exit_event = null;
 	protected BreakpointEvent breakpoint_event = null;
@@ -72,28 +77,61 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	
 	private void init()
 	{
-		String eventInfoString = builder.buildString(getEventInfoStringValue());
-		this.eventInfoString = eventInfoString;
-		// parse the eventInfoString
 		
+		String markName = "EXTRACT";
+		EventProfiler.instance.startMark(markName);
+		getStackFrame();
+		EventProfiler.instance.subMark(markName, "STACKFRAME");
+		
+		this.thisObject = this.stackFrame.thisObject();
+		EventProfiler.instance.subMark(markName, "THISOBJECT");
+		
+		getEventInfoField();
+		EventProfiler.instance.subMark(markName, "FIELD_EVENTINFO");
+		
+		Value v = getEventInfoStringValue();
+		EventProfiler.instance.subMark(markName, "VALUE_EVENTINFO");
+		String eventInfoString = builder.buildString(v);
+		this.eventInfoString = eventInfoString;
+		EventProfiler.instance.subMark(markName, "BUILD_EVENTINFO");
+				
+				
+		// parse the eventInfoString
 		eventInfoStrategoTerm = termReader.parseFromString(this.eventInfoString);
 		// return a tuple (filename, name, location)
 		this.filename = StringUtil.trimQuotes(eventInfoStrategoTerm.getSubterm(0).toString());
 		this.name = StringUtil.trimQuotes(eventInfoStrategoTerm.getSubterm(1).toString());
 		this.locationInfo = LocationInfo.parse(eventInfoStrategoTerm.getSubterm(2));
 		
-		// fetch the current Term
-		// TODO: use lazy loading when the current Term is big...
-		String givenTermString = builder.buildString(getGivenTermStringValue());
-		this.givenTermString = givenTermString;
-		this.given = termReader.parseFromString(this.givenTermString);
+		EventProfiler.instance.subMark(markName, "PARSE_EVENTINFO");
 		
-		Value v = getVarnameStringValue();
-		if (v != null)
+		
+		if (extractCurrentTerm)
 		{
-		String varnameString = builder.buildString(v);
-		this.varnameString = varnameString;
-		this.varname = StringUtil.trimQuotes(this.varnameString);
+			// fetch the current Term
+			// TODO: use lazy loading when the current Term is big...
+			Value vTerm = getGivenTermStringValue();
+			EventProfiler.instance.subMark(markName, "VALUE_TERM");
+			String givenTermString = builder.buildString(vTerm);
+			this.givenTermString = givenTermString;
+			
+			EventProfiler.instance.subMark(markName, "BUILD_TERM");
+			
+			// parse the givenTermString
+			this.given = termReader.parseFromString(this.givenTermString);
+			
+			EventProfiler.instance.subMark(markName, "PARSE_TERM");
+		}
+		
+		Value vVarname = getVarnameStringValue();
+		EventProfiler.instance.subMark(markName, "VALUE_VAR");
+		if (vVarname != null)
+		{
+			String varnameString = builder.buildString(vVarname);
+			this.varnameString = varnameString;
+			this.varname = StringUtil.trimQuotes(this.varnameString);
+			
+			EventProfiler.instance.subMark(markName, "PARSE_VAR");
 		}
 	}
 
@@ -117,16 +155,13 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	{
 		return this.varname;
 	}
-	
-	public Value getContextValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * The current com.sun.jdi.StackFrame.
 	 */
 	private StackFrame stackFrame = null;
+	
+	private ObjectReference thisObject = null;
 	
 	/**
 	 * Returns the current com.sun.jdi.StackFrame
@@ -150,7 +185,6 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 				}
 				this.stackFrame = fr;
 			}
-
 		}
 		return stackFrame;
 	}
@@ -188,8 +222,9 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	{
 		if (this.eventInfoStringValue == null)
 		{
-			Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName(DebugCallStrategy.EVENTINFO);
-			Value val = this.getStackFrame().thisObject().getValue(lsField);
+			//Field eventInfoField = this.thisObject.referenceType().fieldByName(DebugCallStrategy.EVENTINFO);
+			
+			Value val = this.thisObject.getValue(getEventInfoField());
 			
 			//Value val = getSafeValue(this.locationStringLV);
 			this.eventInfoStringValue = val;
@@ -197,13 +232,25 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 		return this.eventInfoStringValue;
 	}
 	
+	// TODO: store the field, maybe fieldByName is slow.. also do this for currentTermField
+	private static Field eventInfoField = null;
+	
+	private Field getEventInfoField()
+	{
+		if (eventInfoField == null)
+		{
+			eventInfoField = this.thisObject.referenceType().fieldByName(DebugCallStrategy.EVENTINFO);
+		}
+		return eventInfoField;
+	}
+	
 	private Value givenTermStringValue = null;
 	
 	public Value getGivenTermStringValue() {
 		if (this.givenTermStringValue == null) 
 		{
-			Field lsField = this.getStackFrame().thisObject().referenceType().fieldByName(DebugCallStrategy.CURRENTTERMSTRING);
-			Value val = this.getStackFrame().thisObject().getValue(lsField);
+			Field currentTermField = this.thisObject.referenceType().fieldByName(DebugCallStrategy.CURRENTTERMSTRING);
+			Value val = this.thisObject.getValue(currentTermField);
 			
 			this.givenTermStringValue = val;
 		}

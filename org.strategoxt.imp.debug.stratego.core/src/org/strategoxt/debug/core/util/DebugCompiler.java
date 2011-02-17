@@ -150,7 +150,7 @@ public class DebugCompiler {
 		String projectJavaDir = projectDir + "/java";
 		String projectClassDir = projectDir + "/class";
 
-		String strOutputBasedir = projectStrategoDir;
+		//String strOutputBasedir = projectStrategoDir;
 		// strategoSourceBasedir + strategoFilePath is the input stratego file (without debug information)
 		// strOutputBasedir + strategoFilePath will be the output stratego file (with debug information)
 		// TODO: removed , strategoSourceBasedir, strategoFilePath, strOutputBasedir

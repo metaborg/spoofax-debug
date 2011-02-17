@@ -4,7 +4,6 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.debug.core.model.LocationInfo;
 
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.Value;
 
 public interface IEventInfoExtractor {
 
@@ -43,12 +42,5 @@ public interface IEventInfoExtractor {
 	 * @return
 	 */
 	public StackFrame getStackFrame();
-
-	/**
-	 * Returns a Value representation of the Context object.
-	 * @return
-	 */
-	public Value getContextValue();
-
 
 }

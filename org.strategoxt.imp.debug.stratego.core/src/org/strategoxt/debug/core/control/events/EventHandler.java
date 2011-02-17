@@ -8,7 +8,6 @@ import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
 
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.Value;
 
 public abstract class EventHandler {
 	
@@ -63,12 +62,6 @@ public abstract class EventHandler {
 	{
 		return this.getIEventInfoExtractor().getVarname();
 	}
-	
-	public Value getContextValue()
-	{
-		return this.getIEventInfoExtractor().getContextValue();
-	}
-	
 
 	/**
 	 * Returns true if the thread should stay suspended.

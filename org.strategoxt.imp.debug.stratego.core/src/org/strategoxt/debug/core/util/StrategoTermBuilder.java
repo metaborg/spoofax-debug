@@ -273,6 +273,11 @@ public class StrategoTermBuilder {
 			for(InterfaceType it : ct.allInterfaces())
 			{
 				String n = it.name();
+				
+				if (n.equals("org.spoofax.interpreter.terms.IStrategoTerm"))
+				{
+					// value implements IStrategoTerm!
+				}
 				it.implementors();
 			}
 		}
