@@ -150,7 +150,9 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String term = null;
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		term = "[Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
 		vmMonitor.setVMStateTester(vmStateTester);
 		
@@ -217,7 +219,9 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String term = null;
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
+		term = "[Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term)); // value f* should be set
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term)); // value c* should be set
 		vmMonitor.setVMStateTester(vmStateTester);
 		

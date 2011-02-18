@@ -60,8 +60,7 @@ public class StrategyStepHandler extends EventHandler {
 		// the current term on the frame should now be
 		//h.getGiven();
 		
-		/*
-		// OPTIMIZED: only set the current term when we are suspended
+		// TODO: OPTIMIZED: only set the current term when we are suspended
 		// perform smart set
 		if (strategoState.currentFrame().getCurrentTerm() == this.getGiven())
 		{
@@ -77,7 +76,7 @@ public class StrategyStepHandler extends EventHandler {
 		{
 			strategoState.currentFrame().setCurrentTerm(this.getGiven()); 
 		}
-		*/
+		
 		String markName = "PDE_" + this.getEventType();
 		EventProfiler.instance.startMark(markName);
 		

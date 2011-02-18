@@ -77,13 +77,13 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
 		String term = null;
-		term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		term = "\"fname\"";
 		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
-		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\")]";
 		vmStateTester.addStrategoState("find-comment-by-name", termReader.parseFromString(term));
-		term = "Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
+		term = "\"nocomment\"";
 		vmStateTester.addStrategoState("find-comment-match", termReader.parseFromString(term));
-		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
+		term = "[]";
 		vmStateTester.addStrategoState("find-comment-by-name", termReader.parseFromString(term));
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);

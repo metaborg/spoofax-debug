@@ -56,7 +56,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
 		String term = null;
-		term ="Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		term ="[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
 		vmStateTester.addStrategoState("match-comments", termReader.parseFromString(term));
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\")]";
 		vmStateTester.addStrategoState("first", termReader.parseFromString(term));

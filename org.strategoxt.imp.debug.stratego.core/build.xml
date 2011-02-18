@@ -10,8 +10,14 @@
 	<property name="project.eclipse.plugin.core" value="org.strategoxt.imp.debug.core" />
 	<property name="eclipse.lib.dir" value="../${project.eclipse.plugin.core}/lib" />
 
+<!-- build the transformer and the runtime spoofax project -->
+	<target name="build-libraries">
+		<ant antfile="../${project.debug.transformer}/build.main.xml" target="all" dir="../${project.debug.transformer}" />
+		<ant antfile="../${project.debug.runtime}/build.main.xml" target="all" dir="../${project.debug.runtime}" />
+	</target>
+	
 <!-- copy all required jars and other files to the lib folder -->
-	<target name="copy-libraries">
+	<target name="copy-libraries" depends="build-libraries">
 		<copy todir="${basedir}/lib" flatten="true">
 			<resources>
 				<file file="../${project.debug.transformer}/include/stratego-transformer.jar" />

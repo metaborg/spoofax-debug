@@ -166,12 +166,12 @@ public class DebugCompiler {
 		// create lookup table
 		String tableFilename = projectStrategoDir + "/" + projectName + ".table"; // location of the table
 		// the table contains all debug lookup information for all files in the project
-		generateLookupTable(tableFilename, generatedFiles);
+		generateLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
 		
 		// create character offset table
 		// TODO: optimize
 		List<FileLineLengthTable> tables = new ArrayList<FileLineLengthTable>();
-		for(String inputFile : inputFiles)
+		for(String inputFile : inputFiles) // TODO: sort the inputFiles on their path
 		{
 			String basedir = strategoSourceBasedir; // end with '/'
 			if (!basedir.endsWith("/"))
@@ -254,6 +254,7 @@ public class DebugCompiler {
 		String[] basic_args = new String[]{
 				"-i", stratego_input
 				, "--gen-dir", strOutputBasedir
+				, "--base-dir", sourceBasedir 
 			};
 
 		String[] transformer_args = StringUtil.concat(basic_args, debugSessionSettings.getGenerateStrategoExtraArguments());

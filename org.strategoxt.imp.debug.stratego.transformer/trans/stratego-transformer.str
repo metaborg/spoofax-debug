@@ -7,6 +7,8 @@ imports
   lib/editor-common.generated
   trans-str
 
+  traverse-imports
+  	
 rules // Main editor interface (defined by editor/Test-Builders and -References.esv)
  
 
@@ -31,8 +33,13 @@ strategies
 		library-paths* := <get-config-I> // ; debug(!"-I: ")
 		; stratego-input-path := <get-config> "-i" // ; debug(!"-i: ")
 		; output-base-path := <get-config> "--gen-dir" // ; debug(!"--gen-dir: ")
-		; base-path := <dirname> stratego-input-path
-		; stratego-file := <base-filename> stratego-input-path
+		//; base-path := <dirname> stratego-input-path 
+		// let user specify its own base-dir, base-dir is the toplevel directory containing the stratego files (in eclipse it would be the project dir)
+		// if not specified use the directory of stratego-input-path
+		; ((<get-config> "--base-dir") <+ (<dirname> stratego-input-path)) ; ?base-path
+		//; stratego-file := <base-filename> stratego-input-path
+		// make stratego-input-path absolute, and strip the basepath
+		; (parent, stratego-file) := <split-path(|base-path)> stratego-input-path
 		; 
 		  <check-input-file> stratego-input-path // check if the input file exists
 		  <
@@ -52,9 +59,9 @@ strategies
 	external java-timer-print(|)
 
 	create-options =
- 		Option("--option1"
- 			, <set-config> ("--option1", ())
- 			, !"--option1        This is a an example option"
+ 		ArgOption("--base-dir"
+ 			, <set-config> ("--base-dir", <id>)
+ 			, !"--base-dir      Base directory, all paths will be relative to this directory (optional)"
 		)
 		+ Option("--output-rtree"
 			, <set-config> ("--output-rtree", ())

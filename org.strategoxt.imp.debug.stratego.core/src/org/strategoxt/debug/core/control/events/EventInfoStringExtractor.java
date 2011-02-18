@@ -77,7 +77,7 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	
 	private void init()
 	{
-		
+		eventInfoField = null; // TODO: reset after each run
 		String markName = "EXTRACT";
 		EventProfiler.instance.startMark(markName);
 		getStackFrame();

@@ -106,7 +106,10 @@ public class EventTable {
 		
 		for(EventEntry eventEntry : this.eventEntries)
 		{
-			if ((eventEntry.getLocationInfo().getStart_line_num() <= linenumber) && (linenumber <= eventEntry.getLocationInfo().getEnd_line_num())  && eventEntry.getStrategoFilename().equals(filename))
+			int start_line_num = eventEntry.getLocationInfo().getStart_line_num();
+			int end_line_num = eventEntry.getLocationInfo().getEnd_line_num();
+			String strFilename = eventEntry.getStrategoFilename();
+			if ((start_line_num <= linenumber) && (linenumber <= end_line_num)  && strFilename.equals(filename))
 			{
 				matches.add(eventEntry);
 			}

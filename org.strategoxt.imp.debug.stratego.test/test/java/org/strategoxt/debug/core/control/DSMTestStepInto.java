@@ -63,7 +63,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//	definition* -> functions*
 		//	with
 		//		functions* := <filter(?Function(_,_))> definition*
-		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
+		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-enter", 47, 11, 47, 25, term));
 	
 		

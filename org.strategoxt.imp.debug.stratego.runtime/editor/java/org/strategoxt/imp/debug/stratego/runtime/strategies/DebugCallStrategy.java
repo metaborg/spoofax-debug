@@ -114,7 +114,8 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 		this.context = context;
 		this.eventInfo = factory.makeTuple(filename, name, location).toString();
 		this.givenTermString = given.toString();
-		this.varnameString = varname.toString();
+		String s = varname.toString();
+		this.varnameString = s;
 		return current;
 	}
 }
