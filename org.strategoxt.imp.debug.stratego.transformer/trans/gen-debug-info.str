@@ -116,6 +116,53 @@ rules
 		RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r')
 		with r' := <wrap-r(|filename, r-name, a)> r	
 		
+	// TODO: support dynamic rules
+	/*
+	kees : "bar" -> (t, t)
+	SetDynRule(
+      DynRuleId(RDecNoArgs("kees"))
+    , RuleNoCond(
+        NoAnnoList(Str("\"bar\""))
+      , NoAnnoList(Tuple([Var("t"), Var("t")]))
+      )
+    )
+    
+    kees(s) : "bar" -> (t, t)
+		SetDynRule(
+		  DynRuleId(RDec("kees", [DefaultVarDec("s")]))
+		, RuleNoCond(
+		    NoAnnoList(Str("\"bar\""))
+		  , NoAnnoList(Tuple([Var("t"), Var("t")]))
+		  )
+		)
+		
+	kees(s|t) : "bar" -> (t, t)
+      , SetDynRule(
+          DynRuleId(
+            RDecT("kees", [DefaultVarDec("s")], [DefaultVarDec("t")])
+          )
+        , RuleNoCond(
+            NoAnnoList(Str("\"bar\""))
+          , NoAnnoList(Tuple([Var("t"), Var("t")]))
+          )
+        )
+        
+    kees(s|t) : "bar" -> (t, t) with debug(!"kees-foo")	
+                  , SetDynRule(
+                      DynRuleId(
+                        RDecT("kees", [DefaultVarDec("s")], [DefaultVarDec("t")])
+                      )
+                    , Rule(
+                        NoAnnoList(Str("\"bar\""))
+                      , NoAnnoList(Tuple([Var("t"), Var("t")]))
+                      , [WithClause(
+                           Call(SVar("debug"), [Build(NoAnnoList(Str("\"kees-foo\"")))])
+                         )]
+                      )
+                    )
+	*/
+		
+		
 	// current term r is a Rule
 	/*
 	transform 

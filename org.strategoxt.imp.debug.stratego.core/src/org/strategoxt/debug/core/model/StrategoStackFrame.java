@@ -172,9 +172,27 @@ public class StrategoStackFrame {
 		this.dynamicRuleNames = dynamicRuleNames;
 	}
 	
+	/**
+	 * Returns true if we have any active Dynamic rules.
+	 * @return
+	 */
+	public boolean hasDynamicRules()
+	{
+		return this.dynamicRuleNames != null;
+	}
+	
 	public String[] getDynamicRules()
 	{
 		return this.dynamicRuleNames;
+	}
+	
+	/**
+	 * Returns a IStrategoList, each item is a dynamic rule. Show the dynamic rule name and the rule-ast.
+	 * @return
+	 */
+	public IStrategoTerm getDynamicRuleList()
+	{
+		return null; // TODO: implement
 	}
 	
 	/**

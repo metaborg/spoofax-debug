@@ -9,9 +9,9 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
-import org.strategoxt.debug.core.model.StrategoTermValueWrapper;
 import org.strategoxt.debug.core.util.table.FileLineLengthTable;
 import org.strategoxt.debug.core.util.table.LineLengthTable;
 
@@ -63,25 +63,30 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	{		
 		synchronized(lock){
 			List<EStrategoVariable> vars = new ArrayList<EStrategoVariable>();
-			EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm().getIStrategoTerm(), "*current*");
+			EStrategoVariable currentVar = new EStrategoVariable(this.fTarget, this.frameData.getCurrentTerm(), "*current*");
 			currentVar.setValueChanged(true);
 			vars.add(currentVar);
-			for(Map.Entry<String, StrategoTermValueWrapper> entry : this.frameData.getVariables().entrySet())
+			for(Map.Entry<String, IStrategoTerm> entry : this.frameData.getVariables().entrySet())
 			{
-				EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue().getIStrategoTerm(), entry.getKey());
+				EStrategoVariable v = new EStrategoVariable(this.fTarget, entry.getValue(), entry.getKey());
 				v.setValueChanged(true);
 				vars.add(v);
 			}
 			// add dynamic rules
-			if (this.frameData.getDynamicRules() != null)
+			if (this.frameData.hasDynamicRules())
 			{
 				TermFactory factory = new TermFactory();
+				
+				EStrategoMap ruleMap = new EStrategoMap(this.fTarget);
 				for(String dynamicRuleName : this.frameData.getDynamicRules())
 				{
 					EStrategoVariable v = new EStrategoVariable(this.fTarget, factory.makeString("rule contents"), dynamicRuleName);
 					v.setValueChanged(true);
-					vars.add(v);
+					ruleMap.add(v);
 				}
+				
+				EStrategoVariable dynamicRules = new EStrategoVariable(this.fTarget, ruleMap, "*dynamic rules*");
+				vars.add(dynamicRules);
 			}
 			// TODO: use this.frameData to determine if the value was changed
 			fVariables = new IVariable[vars.size()];

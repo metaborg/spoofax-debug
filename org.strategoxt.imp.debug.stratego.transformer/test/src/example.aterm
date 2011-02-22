@@ -1,1 +1,91 @@
-NoAnnoList(Str("12"))
+Module(
+  "localmod/util/utils"
+, [ Imports([Import("localmod/syntax/varsyntax"), Import("localmod/util/subdir/test-empty")])
+  , Strategies(
+      [ SDefNoArgs(
+          "first"
+        , Seq(
+            Call(SVar("debug"), [Build(NoAnnoList(Str("\"first: \"")))])
+          , GuardedLChoice(
+              CallNoArgs(SVar("is-empty"))
+            , CallNoArgs(SVar("build-c"))
+            , CallNoArgs(SVar("last"))
+            )
+          )
+        )
+      , SDefNoArgs(
+          "build-c"
+        , Build(
+            NoAnnoList(
+              Op(
+                "Comment"
+              , [NoAnnoList(Str("\"new\"")), NoAnnoList(Str("\"created!!\""))]
+              )
+            )
+          )
+        )
+      , RDefNoArgs("foo", RuleNoCond(Var("kaas"), Var("kaas")))
+      , RDefNoArgs(
+          "will-redefine-dr"
+        , Rule(
+            Var("t")
+          , Var("t")
+          , [ WhereClause(
+                Call(SVar("debug"), [Build(NoAnnoList(Str("\"start will-redefine-dr: \"")))])
+              )
+            , WithClause(
+                GenDynRules(
+                  [ DynRuleAssign(DynRuleId(RDecNoArgs("baz-rule")), NoAnnoList(Str("\"redefine\"")))
+                  , SetDynRule(
+                      DynRuleId(RDecNoArgs("kees"))
+                    , Rule(
+                        NoAnnoList(Str("\"foo\""))
+                      , Var("t")
+                      , [ WithClause(
+                            Seq(
+                              Call(SVar("debug"), [Build(NoAnnoList(Str("\"kees-foo\"")))])
+                            , Seq(
+                                Build(NoAnnoList(Op("Number", [NoAnnoList(Int("3"))])))
+                              , Seq(
+                                  Build(NoAnnoList(Tuple([RootApp(Id()), RootApp(Id())])))
+                                , Seq(
+                                    Assign(
+                                      Var("f")
+                                    , NoAnnoList(
+                                        Op(
+                                          "Comment"
+                                        , [NoAnnoList(Str("\"name\"")), NoAnnoList(Str("\"text\""))]
+                                        )
+                                      )
+                                    )
+                                  , Call(SVar("debug"), [Build(NoAnnoList(Str("\"comment\"")))])
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        ]
+                      )
+                    )
+                  , SetDynRule(
+                      DynRuleId(
+                        RDecT("kees", [DefaultVarDec("s")], [DefaultVarDec("t")])
+                      )
+                    , Rule(
+                        NoAnnoList(Str("\"bar\""))
+                      , NoAnnoList(Tuple([Var("t"), Var("t")]))
+                      , [WithClause(
+                           Call(SVar("debug"), [Build(NoAnnoList(Str("\"kees-foo\"")))])
+                         )]
+                      )
+                    )
+                  ]
+                )
+              )
+            ]
+          )
+        )
+      ]
+    )
+  ]
+)

@@ -17,3 +17,13 @@ strategies
 
 	foo :
 		kaas -> kaas
+		
+	will-redefine-dr :
+		t -> t 
+		where debug(!"start will-redefine-dr: ")
+		//where print-dr(|"baz-rule")
+		with rules (
+			baz-rule := "redefine"
+			kees : "foo" -> t with debug(!"kees-foo"); !Number(3); !(<id>, <id>); f := Comment("name", "text"); debug(!"comment")
+			kees : "bar" -> (t, t)
+		)

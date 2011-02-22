@@ -7,12 +7,11 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 
 public class EStrategoVariable extends StrategoDebugElement implements IVariable {
 
-	// name & stack frmae
+	// name
 	private String fName;
-	//private EStrategoStackFrame fFrame;
 	
-	private IStrategoTerm term;
-	
+	private IValue termValue = null;
+
 	/**
 	 * Constructs a variable contained in the given stack frame
 	 * with the given name.
@@ -21,12 +20,17 @@ public class EStrategoVariable extends StrategoDebugElement implements IVariable
 	 * @param frame owning stack frame
 	 * @param name variable name
 	 */
+	public EStrategoVariable(StrategoDebugTarget target, IValue termValue, String name) {
+		//super((StrategoDebugTarget) frame.getDebugTarget());
+		super(target);
+		this.termValue = termValue;
+		fName = name;
+	}
+	
 	public EStrategoVariable(StrategoDebugTarget target, IStrategoTerm term, String name) {
 		//super((StrategoDebugTarget) frame.getDebugTarget());
 		super(target);
-		//fFrame = frame;
-		this.term = term;
-		this.fTarget = target;
+		this.termValue = new EStrategoValue(target, term);
 		fName = name;
 	}
 	
@@ -40,8 +44,7 @@ public class EStrategoVariable extends StrategoDebugElement implements IVariable
 	}
 
 	public IValue getValue() throws DebugException {
-		return new EStrategoValue((StrategoDebugTarget)getDebugTarget(), this.term);
-		//return ((StrategoDebugTarget)getDebugTarget()).getVariableValue(this);
+		return termValue;
 	}
 
 	// TODO: proper implement using the StrategoStackFrame and event handlers
@@ -80,6 +83,11 @@ public class EStrategoVariable extends StrategoDebugElement implements IVariable
 	public boolean verifyValue(IValue value) throws DebugException {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public String toString()
+	{
+		return "name="+fName+" value="+termValue;
 	}
 
 }

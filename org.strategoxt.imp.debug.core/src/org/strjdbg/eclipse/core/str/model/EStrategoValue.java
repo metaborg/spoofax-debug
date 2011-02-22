@@ -45,4 +45,8 @@ public class EStrategoValue extends StrategoDebugElement implements IValue {
 		return false;
 	}
 
+	public String toString()
+	{
+		return fValue.toString();
+	}
 }
