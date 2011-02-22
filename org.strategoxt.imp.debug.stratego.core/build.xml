@@ -55,5 +55,12 @@
 		<copy file="${basedir}/lib/stratego-debug-core.tmp.jar" tofile="${eclipse.lib.dir}/stratego-debug-core.jar" />
 		<eclipse.refreshLocal resource="../${project.eclipse.plugin.core}/lib" depth="infinite"/>
 	</target>
+
+	<target name="clean">
+		<!-- clean the lib dir -->
+		  <delete includeemptydirs="true">
+		    <fileset dir="lib" includes="**/*"/>
+		  </delete>
+	</target>
 	
 </project>

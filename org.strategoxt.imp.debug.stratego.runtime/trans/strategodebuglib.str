@@ -75,9 +75,4 @@ rules
     	t -> t
     	//where (<debug(!"s-var: ")> <to-string> (name, loc))
     	where (java-s-var(|filename, name, var-name, loc, t))
-    	
-strategies // strategies to collect the active dynamic rules
-	
-	// returns a list of strings
-	dr-get-key-set = prim("SSL_hashtable_keys",  <dr-rule-sets-hashtable>) //; debug(!"dr-get-key-set:")
 	
