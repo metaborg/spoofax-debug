@@ -18,7 +18,6 @@ import org.strategoxt.debug.core.control.EventProfiler;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Field;
-import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
@@ -267,6 +266,7 @@ public class StrategoTermBuilder {
 		// dispatch to correct builder
 		Type t = value.type();
 		String type = t.name(); // TODO: work with interfaces instead of the internal implementations
+		/*
 		if (t instanceof com.sun.jdi.ClassType)
 		{
 			com.sun.jdi.ClassType ct = (com.sun.jdi.ClassType) t;
@@ -280,7 +280,7 @@ public class StrategoTermBuilder {
 				}
 				it.implementors();
 			}
-		}
+		}*/
 		if ("org.strategoxt.lang.terms.StrategoString".equals(type))
 		{
 			return buildStrategoString(value);
