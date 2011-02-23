@@ -72,14 +72,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
         }
         monitor.beginTask("Launching Stratego program", IProgressMonitor.UNKNOWN);
         
-        // project
-        String project = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROJECT, (String) null);
-        if (project == null)
-        {
-        	abort("Eclipse project unspecified.", null);
-        	return;
-        }
-        
 		// program name
 		String program = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
 		if (program == null) {
@@ -92,6 +84,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			abort(MessageFormat.format("Stratego program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
 			return;
 		}
+		String project = file.getProject().getName();
 		
 		// program arguments
 		List programArguments = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, (List)null);
@@ -106,7 +99,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		//String strategoFilePath = file.getLocation().toOSString(); // full path to the stratego program
 		String strategoFilePath = program;
 		String strategoSourceBasedir = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getLocation().toOSString();
-		//String strategoSourceBasedir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		IFile f = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getFile(strategoFilePath); // path to the stratego file
 		strategoFilePath =  f.getProjectRelativePath().toOSString();
 		IPath projectPath = new Path(project);
@@ -124,34 +116,33 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		DebugCompiler debugCompiler = new DebugCompiler("/tmp");
 		String projectName = DebugCompiler.createProjectName(new File(program));
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create("/tmp", projectName);
-		Bundle b = Activator.getDefault().getBundle();
-		//URL e = b.getEntry("/lib");
 		
+		//find the jar library directory in the eclipse plugin
+		Bundle b = Activator.getDefault().getBundle();
 		IPath path = new Path("/lib");
 		Map override = null;
 		URL url = FileLocator.find(b, path, override);
 		URL fileURL = null;
 		try {
 			fileURL = FileLocator.toFileURL(url);
-			System.out.println("FILE URL:" + fileURL);
+			//System.out.println("FILE URL:" + fileURL);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			abort("Could not find required eclipse jars in directory \"lib\".", e1);
 		}
-		System.out.println("URL: " + fileURL);
+		//System.out.println("URL: " + fileURL);
 		String directory = fileURL.getPath();
+		
 		debugSessionSettings.setJarLibraryDirectory(directory);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
-		//String binBase = debugSessionSettings.getClassDirectory(); // default
 		String binBase = null;
 		try {
 			binBase = prepareProgram(configuration, monitor, mode, debugCompiler, debugSessionSettings);
 		} catch (DebugCompileException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			// TODO: could not compile program: Show error message
+			// could not compile program: Show error message
 			String message = MessageFormat.format("Could not launch Stratego program {0}. Failed to compile the program.", new Object[] { program });
 			this.abort(message, e);
 			return;

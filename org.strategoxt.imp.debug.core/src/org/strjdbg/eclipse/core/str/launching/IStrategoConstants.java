@@ -16,12 +16,6 @@ public interface IStrategoConstants {
 	public static final String ATTR_STRATEGO_PROGRAM = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_PROGRAM";
 	
 	/**
-	 * Launch configuration key. Value is the name of the eclipse project the stratego file is in.
-	 * Value has type String.
-	 */
-	public static final String ATTR_STRATEGO_PROJECT = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_PROJECT";
-	
-	/**
 	 * Launch configuration key. Value is the arguments for the stratego program that will be executed.
 	 * Value has type List<String>.
 	 */

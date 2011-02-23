@@ -228,12 +228,9 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
 			programArguments.add(fulldir + "/run.output");
 
 			boolean recompile = false;
-			String project = file.getProject().getName();
 			wc.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, program);
 			wc.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, programArguments);
 			wc.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, recompile);
-			wc.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROJECT, project);
-			//wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
 			IResource[] rs = new IResource[] {file};
 			wc.setMappedResources(rs);
 			config = wc.doSave();

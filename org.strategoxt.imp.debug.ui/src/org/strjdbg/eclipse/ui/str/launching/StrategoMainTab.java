@@ -50,17 +50,19 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 	 * Checkbox, true if the stratego program needs to be recompiled before every launch.
 	 */
 	private Button fProgramRecompile;
-	
-	/**
-	 * The name of the Project the stratego program is in.
-	 */
-	private Text fProjectText;
 
 	/**
 	 * Browse button
 	 */
 	private Button fProgramButton;
 
+	
+	/*
+	 * GUI: 
+	Program arguments:	| multiline textbox			|
+	Compile arguments:	| multiline textbox			|
+	CB Re-compile before each run
+	 */
 	
 	
 	/**
@@ -77,10 +79,6 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-		
-		createVerticalSpacer(comp, 3);
-		
-		createProjectControl(font, comp);
 		
 		createVerticalSpacer(comp, 3);
 		
@@ -191,25 +189,6 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 
-	private void createProjectControl(Font font, Composite comp) {
-		Label projectLabel = new Label(comp, SWT.NONE);
-		projectLabel.setText("Project:");
-		GridData gdProject= new GridData(GridData.BEGINNING);
-		projectLabel.setLayoutData(gdProject);
-		projectLabel.setFont(font);
-		
-		fProjectText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		
-		gdProject = new GridData(GridData.FILL_HORIZONTAL);
-		fProjectText.setLayoutData(gdProject);
-		fProjectText.setFont(font);
-		fProjectText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-	}
-
 	public String getName() {
 		return "Main";
 	}
@@ -220,13 +199,7 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 	@SuppressWarnings("unchecked")
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			// eclipse project the stratego program is in
-			String project = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROJECT, (String) null);
-			if (project != null)
-			{
-				fProjectText.setText(project);
-			}
-			
+		
 			// stratego program
 			String program = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
 			if (program != null) {
@@ -256,14 +229,11 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
+	/**
+	 * Apply the configuration changes.
+	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		// project name
-		String project = fProjectText.getText().trim();
-		if (project.length() == 0) {
-			project = null;
-		}
-		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROJECT, project);
-		
+	
 		// program location
 		String program = fProgramText.getText().trim();
 		if (program.length() == 0) {
@@ -315,10 +285,16 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		// TODO: single select
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();
-			IFile file = (IFile) files[0];
-			fProgramText.setText(file.getFullPath().toString());
+			if (files != null && files.length > 0)
+			{
+				IFile file = (IFile) files[0];
+				fProgramText.setText(file.getFullPath().toString());
+			}
+
 		}
 		
 	}
+	
+
 
 }
