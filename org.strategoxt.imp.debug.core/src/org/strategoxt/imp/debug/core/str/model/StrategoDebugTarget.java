@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.model;
+package org.strategoxt.imp.debug.core.str.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +38,8 @@ import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.VMLauncherHelper;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
-import org.strjdbg.eclipse.core.Activator;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.core.Activator;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;

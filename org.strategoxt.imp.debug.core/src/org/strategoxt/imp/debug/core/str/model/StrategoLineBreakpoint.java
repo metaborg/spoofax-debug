@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.model;
+package org.strategoxt.imp.debug.core.str.model;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
 
 public class StrategoLineBreakpoint extends LineBreakpoint {
 
@@ -33,7 +33,7 @@ public class StrategoLineBreakpoint extends LineBreakpoint {
 			throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.strjdbg.eclipse.core.str.lineBreakpoint.marker");
+				IMarker marker = resource.createMarker(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL+".str.lineBreakpoint.marker");
 				setMarker(marker);
 				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);

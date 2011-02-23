@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.launching;
+package org.strategoxt.imp.debug.ui.str.launching;
 
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;

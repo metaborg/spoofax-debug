@@ -20,10 +20,6 @@
 
 	<!-- we want a custom package name for the jars, otherwise it will clash with other stratego jars -->
 	<!-- build java library name -->
-	<!--
-	<property name="build.stratego.library.name" value="org.strjdbg.transformer"/>
-	<property name="build.stratego.library.location" value="org/strjdbg/transformer"/>
-	-->
 	<property name="build.stratego.library.name" value="org.strategoxt.imp.debug.stratego.transformer.trans"/>
 	<property name="build.stratego.library.location" value="org/strategoxt/imp/debug/stratego/transformer/trans"/>
 

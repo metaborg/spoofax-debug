@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str;
+package org.strategoxt.imp.debug.ui.str;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;

@@ -4,39 +4,39 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.strjdbg.eclipse.core.str.launching.StrategoLaunchDelegate"
-            id="org.strjdbg.eclipse.core.launchConfigurationType.str"
+            delegate="org.strategoxt.imp.debug.core.str.launching.StrategoLaunchDelegate"
+            id="org.strategoxt.imp.debug.core.launchConfigurationType.str"
             modes="run, debug"
             name="Stratego"
-            sourceLocatorId="org.strjdbg.eclipse.core.sourceLookupDirector.str"
-            sourcePathComputerId="org.strjdbg.eclipse.core.sourcePathComputer.str">
+            sourceLocatorId="org.strategoxt.imp.debug.core.sourceLookupDirector.str"
+            sourcePathComputerId="org.strategoxt.imp.debug.core.sourcePathComputer.str">
       </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
-            class="org.strjdbg.eclipse.core.str.launching.StrategoSourceLookupDirector"
-            id="org.strjdbg.eclipse.core.sourceLookupDirector.str"
+            class="org.strategoxt.imp.debug.core.str.launching.StrategoSourceLookupDirector"
+            id="org.strategoxt.imp.debug.core.sourceLookupDirector.str"
             name="Stratego Source Lookup Director">
       </sourceLocator>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourcePathComputers">
       <sourcePathComputer
-            class="org.strjdbg.eclipse.core.str.launching.StrategoSourcePathComputerDelegate"
-            id="org.strjdbg.eclipse.core.sourcePathComputer.str">
+            class="org.strategoxt.imp.debug.core.str.launching.StrategoSourcePathComputerDelegate"
+            id="org.strategoxt.imp.debug.core.sourcePathComputer.str">
       </sourcePathComputer>
    </extension>
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
-            class="org.strjdbg.eclipse.core.str.model.StrategoLineBreakpoint"
-            id="org.strjdbg.eclipse.core.str.lineBreakpoint"
-            markerType="org.strjdbg.eclipse.core.str.lineBreakpoint.marker">
+            class="org.strategoxt.imp.debug.core.str.model.StrategoLineBreakpoint"
+            id="org.strategoxt.imp.debug.core.str.lineBreakpoint"
+            markerType="org.strategoxt.imp.debug.core.str.lineBreakpoint.marker">
       </breakpoint>
    </extension>
    <extension
-         id="org.strjdbg.eclipse.core.str.lineBreakpoint.marker"
+         id="org.strategoxt.imp.debug.core.str.lineBreakpoint.marker"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.debug.core.lineBreakpointMarker">

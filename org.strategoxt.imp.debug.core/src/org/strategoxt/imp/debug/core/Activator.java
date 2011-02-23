@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core;
+package org.strategoxt.imp.debug.core;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "strj.eclipse.dbg.core";
+	public static final String PLUGIN_ID = "org.strategoxt.imp.debug.core";
 
 	// The shared instance
 	private static Activator plugin;

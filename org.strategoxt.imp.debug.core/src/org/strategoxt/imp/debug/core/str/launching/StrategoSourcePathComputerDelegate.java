@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.launching;
+package org.strategoxt.imp.debug.core.str.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

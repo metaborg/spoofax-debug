@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.launching;
+package org.strategoxt.imp.debug.core.str.launching;
 
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;

@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.model;
+package org.strategoxt.imp.debug.core.str.model;
 
 /**
  * Idea taken from pydev

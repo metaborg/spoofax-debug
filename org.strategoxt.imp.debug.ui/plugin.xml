@@ -4,26 +4,26 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.strjdbg.eclipse.ui.str.launching.StrategoTabGroup"
+            class="org.strategoxt.imp.debug.ui.str.launching.StrategoTabGroup"
             description="Run or debug a Stratego program"
-            id="org.strjdbg.eclipse.ui.launchConfigurationTabGroup.str"
-            type="org.strjdbg.eclipse.core.launchConfigurationType.str">
+            id="org.strategoxt.imp.debug.ui.launchConfigurationTabGroup.str"
+            type="org.strategoxt.imp.debug.core.launchConfigurationType.str">
       </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="org.strjdbg.eclipse.core.launchConfigurationType.str"
+            configTypeID="org.strategoxt.imp.debug.core.launchConfigurationType.str"
             icon="icons/strategoxt_logo_16.png"
-            id="org.strjdbg.eclipse.ui.str.launchConfigurationTypeImage">
+            id="org.strategoxt.imp.debug.ui.str.launchConfigurationTypeImage">
       </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="org.strjdbg.eclipse.ui.str.launching.StrategoLaunchShortcut"
+            class="org.strategoxt.imp.debug.ui.str.launching.StrategoLaunchShortcut"
             icon="icons/strategoxt_logo_16.png"
-            id="org.strjdbg.eclipse.ui.launchShortcut.str"
+            id="org.strategoxt.imp.debug.ui.launchShortcut.str"
             label="Stratego Program"
             modes="run, debug">
 		<description
@@ -48,7 +48,7 @@
         </enablement>
      </contextualLaunch>
      <configurationType
-           id="org.strjdbg.eclipse.core.launchConfigurationType.str">
+           id="org.strategoxt.imp.debug.core.launchConfigurationType.str">
      </configurationType>
             
       </shortcut>
@@ -57,7 +57,7 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.ui.texteditor.ITextEditor"
-            class="org.strjdbg.eclipse.ui.str.model.StrategoBreakpointAdapterFactory">
+            class="org.strategoxt.imp.debug.ui.str.model.StrategoBreakpointAdapterFactory">
          <adapter
                type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
          </adapter>
@@ -66,17 +66,17 @@
    <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
-            class="org.strjdbg.eclipse.ui.str.model.StrategoModelPresentation"
-            id="org.strjdbg.eclipse.core">
+            class="org.strategoxt.imp.debug.ui.str.model.StrategoModelPresentation"
+            id="org.strategoxt.imp.debug.core">
       </debugModelPresentation>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler
-            class="org.strjdbg.eclipse.ui.str.StrategoStatusHandler"
+            class="org.strategoxt.imp.debug.ui.str.StrategoStatusHandler"
             code="0"
-            id="org.strjdbg.eclipse.core.str.launching.statusHandler"
-            plugin="org.strjdbg.eclipse.core">
+            id="org.strategoxt.imp.debug.core.str.launching.statusHandler"
+            plugin="org.strategoxt.imp.debug.core">
       </statusHandler>
    </extension>
 </plugin>

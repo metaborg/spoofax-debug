@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.model;
+package org.strategoxt.imp.debug.core.str.model;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -9,8 +9,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.strjdbg.eclipse.core.Activator;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.core.Activator;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
 
 public abstract class StrategoDebugElement extends PlatformObject implements IDebugElement {
 

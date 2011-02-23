@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.launching;
+package org.strategoxt.imp.debug.core.str.launching;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +37,8 @@ import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
-import org.strjdbg.eclipse.core.Activator;
-import org.strjdbg.eclipse.core.str.model.StrategoDebugTarget;
+import org.strategoxt.imp.debug.core.Activator;
+import org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget;
 
 /**
  * Launches a Stratego program.

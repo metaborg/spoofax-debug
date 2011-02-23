@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.model;
+package org.strategoxt.imp.debug.ui.str.model;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;

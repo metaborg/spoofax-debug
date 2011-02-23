@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.model;
+package org.strategoxt.imp.debug.ui.str.model;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugException;
@@ -24,20 +24,6 @@ public class StrategoModelPresentation extends LabelProvider implements IDebugMo
 
 	public String getText(Object element) {
 		// TODO Implement!
-		/*
-		try {
-			if (element instanceof StrategoThread)
-			{
-					return ((org.strjdbg.eclipse.core.str.model.StrategoThread) element).getName();
-			}
-		} catch (DebugException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("getText(Object element)" + element);
-		//return null;
-		return element.toString();
-		*/
 		return null;
 	}
 

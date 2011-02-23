@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.core.str.launching;
+package org.strategoxt.imp.debug.core.str.launching;
 
 import java.util.Collection;
 import java.util.Iterator;

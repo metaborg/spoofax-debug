@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.launching;
+package org.strategoxt.imp.debug.ui.str.launching;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
-import org.strjdbg.eclipse.ui.Activator;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.ui.Activator;
 
 public class StrategoLaunchShortcut implements ILaunchShortcut {
 

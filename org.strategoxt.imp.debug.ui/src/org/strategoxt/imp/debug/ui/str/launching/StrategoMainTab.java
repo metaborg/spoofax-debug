@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.launching;
+package org.strategoxt.imp.debug.ui.str.launching;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
-import org.strjdbg.eclipse.core.str.launching.CollectionUtils;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.core.str.launching.CollectionUtils;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
 
 public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 

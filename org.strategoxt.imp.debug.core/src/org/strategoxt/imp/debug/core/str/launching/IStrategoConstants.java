@@ -1,12 +1,12 @@
-package org.strjdbg.eclipse.core.str.launching;
+package org.strategoxt.imp.debug.core.str.launching;
 
 public interface IStrategoConstants {
 
 	/**
-	 * Unique identifier for the PDA debug model (value 
-	 * <code>org.eclipse.debug.examples.pda</code>).
+	 * Unique identifier for the Stratego debug model (value 
+	 * <code>org.strategoxt.imp.debug.core</code>).
 	 */
-	public static final String ID_STRATEGO_DEBUG_MODEL = "org.strjdbg.eclipse.core";
+	public static final String ID_STRATEGO_DEBUG_MODEL = "org.strategoxt.imp.debug.core";
 	
 	/**
 	 * Launch configuration key. Value is a path to a stratego

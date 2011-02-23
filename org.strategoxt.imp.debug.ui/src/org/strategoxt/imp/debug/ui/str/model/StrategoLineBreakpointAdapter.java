@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui.str.model;
+package org.strategoxt.imp.debug.ui.str.model;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -6,12 +6,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.strjdbg.eclipse.core.str.launching.IStrategoConstants;
-import org.strjdbg.eclipse.core.str.model.StrategoLineBreakpoint;
+import org.strategoxt.imp.debug.core.str.launching.IStrategoConstants;
+import org.strategoxt.imp.debug.core.str.model.StrategoLineBreakpoint;
 
 public class StrategoLineBreakpointAdapter implements IToggleBreakpointsTarget {
 

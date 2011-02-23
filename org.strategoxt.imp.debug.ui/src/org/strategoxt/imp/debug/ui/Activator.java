@@ -1,4 +1,4 @@
-package org.strjdbg.eclipse.ui;
+package org.strategoxt.imp.debug.ui;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.strjdbg.eclipse.ui";
+	public static final String PLUGIN_ID = "org.strategoxt.imp.debug.ui";
 
 	// The shared instance
 	private static Activator plugin;

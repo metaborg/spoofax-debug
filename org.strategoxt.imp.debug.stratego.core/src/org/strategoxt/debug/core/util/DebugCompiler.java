@@ -244,7 +244,7 @@ public class DebugCompiler {
 		//System.out.println(inputFilePath);
 		//System.out.println(outputFilename);
 		
-		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
+		//the transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
 		context.setStandAlone(true);
 		// TODO: set CustomIOAgent to forward error messages
@@ -351,7 +351,7 @@ public class DebugCompiler {
 	
 	protected void generateLookupTable(String tableFilenameString, Collection<String> strategoDebugFileNames)
 	{
-		//the package org.strjdbg.transformer transform a stratego program to a stratego program with debug information
+		// transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
 		// TODO: Use CustomIOAgent to forward output
 		StrategoTermBuilder builder = new StrategoTermBuilder();
