@@ -8,6 +8,5 @@
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.core/lib/stratego-transformer.jar"/>
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.core/lib/strategoxt.jar"/>
 	<classpathentry kind="lib" path="/org.strategoxt.imp.debug.stratego.core/lib/stratego-transformer-java.jar"/>
-	<classpathentry kind="var" path="JAVA_HOME/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
