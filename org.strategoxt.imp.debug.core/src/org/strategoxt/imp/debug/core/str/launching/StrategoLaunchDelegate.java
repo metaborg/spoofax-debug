@@ -113,9 +113,9 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		String workingDirFolder = wDir.getLocation().toOSString();
 		System.out.println("WORKING DIR: " + workingDirFolder);
 		
-		DebugCompiler debugCompiler = new DebugCompiler("/tmp");
+		DebugCompiler debugCompiler = new DebugCompiler(); // or use a system temp folder
 		String projectName = DebugCompiler.createProjectName(new File(program));
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create("/tmp", projectName);
+		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create(workingDirFolder, projectName);
 		
 		//find the jar library directory in the eclipse plugin
 		Bundle b = Activator.getDefault().getBundle();

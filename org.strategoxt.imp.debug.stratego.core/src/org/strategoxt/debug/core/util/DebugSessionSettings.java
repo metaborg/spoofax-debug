@@ -12,6 +12,7 @@ public class DebugSessionSettings {
 	private String workingDirectory;
 	
 	public DebugSessionSettings(String workingDirectory, String projectName){
+		// TODO: validate project name
 		this.workingDirectory = workingDirectory;
 		this.projectName = projectName;
 	}
@@ -91,6 +92,11 @@ public class DebugSessionSettings {
 	public String getProjectName()
 	{
 		return this.projectName;
+	}
+	
+	public String getProjectDirectory()
+	{
+		return this.getWorkingDirectory() + "/" + getProjectName();
 	}
 	
 	private String strategoSourceBasedir = null;

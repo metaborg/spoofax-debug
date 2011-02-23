@@ -25,20 +25,35 @@ public class DebugCompiler {
 	
 
 	//public static final String WORKING_DIR = "/home/rlindeman/workspace/strj-dbg-app/working";
-	private String workingDir = null;
+	//private String workingDir = null;
 	
 	private DebugCompileProgress debugCompileProgress = null;
 	
-	public DebugCompiler(String workingDir)
+	public DebugCompiler()
 	{
-		this.workingDir = workingDir;
+		//this.workingDir = workingDir;
 		this.debugCompileProgress = new DebugCompileProgress();
 	}
 	
+	private void init(DebugSessionSettings settings)
+	{
+		File projectDir = new File(settings.getProjectDirectory());
+		if (!projectDir.exists())
+		{
+			// create it
+			projectDir.mkdirs();
+		} else if (!projectDir.isDirectory())
+		{
+			// it is not a directory
+			projectDir.mkdirs();
+		}
+	}
+	
+	/*
 	public String getWorkingDir()
 	{
 		return this.workingDir;
-	}
+	}*/
 	
 	/**
 	 * Clear the contents of the given project directory.
@@ -46,12 +61,11 @@ public class DebugCompiler {
 	 * Folders 'stratego', 'java' and 'class' are completely cleaned.
 	 * @param projectName
 	 */
-	public void cleanDirectories(String projectName)
+	public void cleanDirectories(DebugSessionSettings settings)
 	{
-		String projectDir = this.workingDir + "/" + projectName;
-		String projectStrategoDir = projectDir + "/stratego";
-		String projectJavaDir = projectDir + "/java";
-		String projectClassDir = projectDir + "/class";
+		String projectStrategoDir = settings.getStrategoDirectory();
+		String projectJavaDir = settings.getJavaDirectory();
+		String projectClassDir = settings.getClassDirectory();
 		
 		File dir = null;
 		
@@ -80,6 +94,7 @@ public class DebugCompiler {
 	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
 	{
 		// TODO: Use debugsettings
+		init(debugSessionSettings);
 		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
 		String strategoFilePath = debugSessionSettings.getStrategoFilePath();
 		String projectName = debugSessionSettings.getProjectName();
@@ -91,10 +106,10 @@ public class DebugCompiler {
 			throw new FileNotFoundException("Input file '" + absFilePath.getAbsolutePath() + "' does not exists!");
 		}
 		
-		cleanDirectories(projectName); // create directory structure in the working dir
+		cleanDirectories(debugSessionSettings); // create directory structure in the working dir
 		// projectName should be the stratego filename without the dir and the extension		
 		
-		String projectDir = this.workingDir + "/" + projectName;
+		String projectDir = debugSessionSettings.getProjectDirectory();
 		String projectJavaDir = projectDir + "/java"; // save generated java classes in a temp working dir
 		String projectClassDir = projectDir + "/class"; // save generated class files in a temp working dir
 		
@@ -129,6 +144,7 @@ public class DebugCompiler {
 	public String debugCompile(DebugSessionSettings debugSessionSettings) throws FileNotFoundException, DebugCompileException
 	{
 		// TODO: use debug settings
+		init(debugSessionSettings);
 		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
 		String strategoFilePath = debugSessionSettings.getStrategoFilePath();
 		String projectName = debugSessionSettings.getProjectName();
@@ -139,13 +155,13 @@ public class DebugCompiler {
 			throw new FileNotFoundException("Input file '" + absFilePath.getAbsolutePath() + "' does not exists!");
 		}
 		
-		cleanDirectories(projectName); // create directory structure in the working dir
+		cleanDirectories(debugSessionSettings); // create directory structure in the working dir
 		// projectName should be unique, let the caller of this method decide what the name of the project is.
 		
 		Collection<String> libraryPaths = new ArrayList<String>();
 		libraryPaths.add("."); // the "-I" arguments
 		
-		String projectDir = this.workingDir + "/" + projectName;
+		String projectDir = debugSessionSettings.getProjectDirectory();
 		String projectStrategoDir = projectDir + "/stratego";
 		String projectJavaDir = projectDir + "/java";
 		String projectClassDir = projectDir + "/class";

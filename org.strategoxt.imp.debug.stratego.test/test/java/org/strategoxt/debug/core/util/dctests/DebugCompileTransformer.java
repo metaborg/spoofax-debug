@@ -120,7 +120,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
 		
 		String projectName = "transformer_debug";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
@@ -210,7 +210,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
 		
 		String projectName = "transformer_run";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);

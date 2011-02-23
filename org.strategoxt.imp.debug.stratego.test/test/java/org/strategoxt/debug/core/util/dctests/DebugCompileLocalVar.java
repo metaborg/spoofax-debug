@@ -26,7 +26,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
 
 		String projectName = "localvar";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
@@ -77,7 +77,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
 
 		String projectName = "localvar_rtree";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
@@ -128,7 +128,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
 
 		String projectName = "localvar_run";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);

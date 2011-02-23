@@ -6,7 +6,7 @@ import java.util.Map;
 public class DebugCompilerWrapper extends DebugCompiler {
 
 	public DebugCompilerWrapper(String workingDir) {
-		super(workingDir);
+		super();
 		// TODO Auto-generated constructor stub
 	}
 	

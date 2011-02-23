@@ -41,7 +41,7 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
 		
 		String projectName = "transformer_error";
-		DebugCompiler debugCompiler = new DebugCompiler(StrategoFileManager.WORKING_DIR);
+		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
