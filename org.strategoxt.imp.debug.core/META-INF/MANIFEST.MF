@@ -15,10 +15,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.strategoxt.imp.debug.core.str.launching,
  org.strategoxt.imp.debug.core.str.model
-Bundle-ClassPath: .,
- lib/stratego-debug-core.jar,
- lib/stratego-debug-runtime-java.jar,
- lib/stratego-debug-runtime.jar,
- lib/stratego-transformer-java.jar,
- lib/stratego-transformer.jar
+Bundle-ClassPath: .
 Bundle-Vendor: Spoofax.org

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.jdi.Bootstrap;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
@@ -47,8 +46,10 @@ public class VMLauncherHelper {
 	 * @param vmManager
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static LaunchingConnector findCLLaunchingConnector(VirtualMachineManager vmManager) {
-		List<Connector> connectors = Bootstrap.virtualMachineManager().allConnectors();
+		List<Connector> connectors = vmManager.allConnectors();
+		//vmManager.l
 		Iterator<Connector> iter = connectors.iterator();
 		while (iter.hasNext()) {
 			Connector connector = (Connector) iter.next();
@@ -185,7 +186,6 @@ public class VMLauncherHelper {
 		LaunchingConnector connector = null;
 		
 		connector = VMLauncherHelper.findCLLaunchingConnector(this.vmManager);
-		
 		Map<String, ? extends Connector.Argument> arguments = connectorLaunchArguments(connector, mainArgs);
 		try {
 			return connector.launch(arguments);

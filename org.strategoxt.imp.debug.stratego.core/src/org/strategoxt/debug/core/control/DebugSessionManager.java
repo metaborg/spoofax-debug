@@ -84,10 +84,9 @@ public class DebugSessionManager {
 	}
 	
 	/**
-	 * Initialize a new VM. The VM is found using Bootstrap.virtualMachineManager(), in tools.jar (Sun's implementation).
-	 * 
-	 * However if jdi.jar is used (The eclipse implementation) then Bootstrap.virtualMachineManager() returns null.
-	 * In this case we need to get our VM elsewhere...
+	 * Initialize a new VM.
+	 * Use the eclipse org.eclipse.jdi.Bootstrap.virtualMachineManager() method to get a VirtualMachineManager.
+	 * If this method returns null, try to use the Sun implementation via com.sun.jdi.BootStrap.virtualMachineManager().
 	 * @param mainArgs
 	 * @param classpath
 	 */
@@ -98,8 +97,7 @@ public class DebugSessionManager {
 	}
 	
 	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
-		this.log("Use Sun VM");
-		VirtualMachineManager vmManager = DebugSessionManager.getSunVMM();
+		VirtualMachineManager vmManager = DebugSessionManager.getVirtualMachineManager();
 		this.initVM(vmManager, settings, mainArgs, classpath, connectorType);
 	}
 
@@ -335,6 +333,30 @@ public class DebugSessionManager {
 	{
 		VirtualMachineManager vmm = Bootstrap.virtualMachineManager(); // com.sun.jdi.BootStrap
 		return vmm;
+	}
+	
+	public static VirtualMachineManager getEclipseVMM()
+	{
+		VirtualMachineManager vmm = org.eclipse.jdi.Bootstrap.virtualMachineManager();
+		return vmm;
+	}
+	
+	/**
+	 * Try to get the VirtualMachineManager from the eclipse plugin implementation via org.eclipse.jdi.Bootstrap.virtualMachineManager().
+	 * If it is null, try to use the Sun implementation via com.sun.jdi.BootStrap.virtualMachineManager(). 
+	 * @return
+	 */
+	public static VirtualMachineManager getVirtualMachineManager()
+	{
+		VirtualMachineManager vmm = getEclipseVMM();
+		if (vmm != null)
+		{
+			return vmm;
+		}
+		else
+		{
+			return getSunVMM();
+		}
 	}
 
 	private void log(String s)

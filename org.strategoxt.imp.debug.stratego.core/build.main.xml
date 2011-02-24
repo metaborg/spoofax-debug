@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<project name="org.strategoxt.imp.debug.stratego.core" default="deploy-to-eclipse-plugin">
+<project name="org.strategoxt.imp.debug.stratego.core" default="copy-libraries">
 
 	<!-- basedir should point to org.strategoxt.imp.debug.stratego.core -->
 	
@@ -59,7 +59,7 @@
 	<target name="clean">
 		<!-- clean the lib dir -->
 		  <delete includeemptydirs="true">
-		    <fileset dir="lib" includes="**/*"/>
+		    <fileset dir="${basedir}/lib" includes="**/*"/>
 		  </delete>
 	</target>
 	

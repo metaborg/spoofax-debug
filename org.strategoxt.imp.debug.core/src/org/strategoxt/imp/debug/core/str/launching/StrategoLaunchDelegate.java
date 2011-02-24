@@ -1,6 +1,7 @@
 package org.strategoxt.imp.debug.core.str.launching;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
@@ -126,15 +127,21 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		try {
 			fileURL = FileLocator.toFileURL(url);
 			//System.out.println("FILE URL:" + fileURL);
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			abort("Could not find required eclipse jars in directory \"lib\".", e1);
+			e.printStackTrace();
+			abort("Could not find required directory \"lib\".", e);
 		}
 		//System.out.println("URL: " + fileURL);
 		String directory = fileURL.getPath();
 		
 		debugSessionSettings.setJarLibraryDirectory(directory);
+		try {
+			debugSessionSettings.checkJarLibraries();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			abort("Could not find required eclipse jars in directory \"lib\".", e);
+		}
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program

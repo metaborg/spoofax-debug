@@ -1,8 +1,16 @@
 package org.strategoxt.debug.core.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 
 public class DebugSessionSettings {
-
+	
+	public final static String STRATEGOXT_JAR = "strategoxt.jar";
+	public final static String STRATEGO_DEBUG_RUNTIME_JAR = "stratego-debug-runtime.jar";
+	public final static String STRATEGO_DEBUG_RUNTIME_JAVA_JAR = "stratego-debug-runtime-java.jar";
+	public final static String STRATEGODEBUGLIB_RTREE = "strategodebuglib.rtree";
+	
 	private String projectName;
 	
 	/**
@@ -134,15 +142,35 @@ public class DebugSessionSettings {
 		{
 			directory = directory.substring(0, directory.length()-1);
 		}
-		String strategoxt_jar = directory + "/strategoxt.jar";
-		String stratego_debug_runtime_jar = directory + "/stratego-debug-runtime.jar";
-		String stratego_debug_runtime_java_jar = directory + "/stratego-debug-runtime-java.jar";
+		String strategoxt_jar = directory + "/" + STRATEGOXT_JAR;
+		String stratego_debug_runtime_jar = directory + "/"+ STRATEGO_DEBUG_RUNTIME_JAR;
+		String stratego_debug_runtime_java_jar = directory + "/" + STRATEGO_DEBUG_RUNTIME_JAVA_JAR;
 		
 		this.strategoxtJar = strategoxt_jar;
 		this.strategoDebugRuntimeJar = stratego_debug_runtime_jar;
 		this.strategoDebugRuntimeJavaJar = stratego_debug_runtime_java_jar;
 
 		this.strategoDebugLibraryDirectory = directory; // rtree
+	}
+	
+	public void checkJarLibraries() throws FileNotFoundException
+	{
+		String strategodebuglib = getStrategoDebugLibraryDirectory() + "/" + STRATEGODEBUGLIB_RTREE; // should contain strategodebuglib.rtree
+		checkExistance(strategodebuglib);
+		String strategoxtjar = getStrategoxtJar(); // should exist
+		checkExistance(strategoxtjar);
+		String strategodebugruntimejar = getStrategoDebugRuntimeJar(); // should exist
+		checkExistance(strategodebugruntimejar);
+		String strategodebugruntimejavajar = getStrategoDebugRuntimeJavaJar(); // should exist
+		checkExistance(strategodebugruntimejavajar);
+	}
+	
+	protected void checkExistance(String filename) throws FileNotFoundException{
+		File f = new File(filename);
+		if (!f.exists())
+		{
+			throw new FileNotFoundException();
+		}
 	}
 	
 	//private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
