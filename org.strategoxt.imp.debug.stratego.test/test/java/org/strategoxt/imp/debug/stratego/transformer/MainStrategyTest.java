@@ -4,7 +4,6 @@ import org.StrategoFileManager;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
 import org.strategoxt.lang.StrategoExit;
-
 /**
  * Test the main strategy of stratego-transformer.str.
  * The main strategy adds debug information to a stratego program and writes it to an output directory.
@@ -33,12 +32,14 @@ public class MainStrategyTest {
 		IStrategoTerm result = null;
 		try {
 			result = org.strategoxt.imp.debug.stratego.transformer.trans.Main.mainNoExit(l_args);
+			// result = Main.mainNoExit(l_args);
 		} catch(StrategoExit exit)
 		{
 			if (exit.getValue() == StrategoExit.SUCCESS)
 			{
 				System.out.println("SUCCES");
 				result = org.strategoxt.imp.debug.stratego.transformer.strategies.java_store_term_0_0.instance.getStoredTerm();
+				//result = java_store_term_0_0.instance.getStoredTerm();
 				System.out.println(result);
 			}
 		}
