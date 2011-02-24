@@ -23,6 +23,7 @@ public class EventTableTest {
 	{
 		String location = "working/localvar/stratego/localvar.table";
 		EventTable eventTable = EventTable.readEventTable(location);
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 		
 		// 31,1 // 0

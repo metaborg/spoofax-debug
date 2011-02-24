@@ -22,6 +22,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		String utilsFilename = "localmod/util/utils.str";
 		
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/testimports/run.input";
 		String argsForMainClass = "-i " + input;
@@ -37,6 +38,7 @@ public class DSMTestImports extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(69, eventTable.size());
 		
 		// localvar.str # match-comments # 31, 8

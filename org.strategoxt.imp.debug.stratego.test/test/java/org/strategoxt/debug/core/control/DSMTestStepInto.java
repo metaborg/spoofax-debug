@@ -22,9 +22,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -40,6 +38,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?
@@ -85,9 +84,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -103,6 +100,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 
 		// which breakpoints will be hit?

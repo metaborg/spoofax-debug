@@ -16,6 +16,7 @@ public class DSMTestTransformerRun extends AbstractDSMTest {
 		// run the transformer without debug info
 		String projectName = "transformer_run";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 		String output = StrategoFileManager.WORKING_DIR + "/transformer_test_run1";

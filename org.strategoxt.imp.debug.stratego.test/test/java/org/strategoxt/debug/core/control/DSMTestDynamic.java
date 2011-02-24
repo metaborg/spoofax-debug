@@ -20,9 +20,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		String projectName = "dynamic";
 		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/dynamic/run.input";
 		String argsForMainClass = "-i " + input;
@@ -38,6 +36,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(82, eventTable.size());
 		
 		// 78, 8

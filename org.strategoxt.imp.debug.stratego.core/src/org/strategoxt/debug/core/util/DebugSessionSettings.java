@@ -20,6 +20,7 @@ public class DebugSessionSettings {
 	private String workingDirectory;
 	
 	public DebugSessionSettings(String workingDirectory, String projectName){
+		// TODO: check for illegal project name
 		// TODO: validate project name
 		this.workingDirectory = workingDirectory;
 		this.projectName = projectName;
@@ -53,7 +54,7 @@ public class DebugSessionSettings {
 	{
 		if (classDirectory == null)
 		{
-			classDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + CLASS_DIR_NAME;
+			classDirectory = getProjectDirectory() + "/" + CLASS_DIR_NAME;
 		}
 		return classDirectory;
 	}
@@ -66,7 +67,7 @@ public class DebugSessionSettings {
 	{
 		if (strategoDirectory == null)
 		{
-			strategoDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + STRATEGO_DIR_NAME;
+			strategoDirectory = getProjectDirectory() + "/" + STRATEGO_DIR_NAME;
 		}
 		return strategoDirectory;
 	}
@@ -79,7 +80,7 @@ public class DebugSessionSettings {
 	{
 		if (javaDirectory == null)
 		{
-			javaDirectory = getWorkingDirectory() + "/" + getProjectName() + "/" + JAVA_DIR_NAME;
+			javaDirectory = getProjectDirectory() + "/" + JAVA_DIR_NAME;
 		}
 		return javaDirectory;
 	}
@@ -104,7 +105,7 @@ public class DebugSessionSettings {
 	
 	public String getProjectDirectory()
 	{
-		return this.getWorkingDirectory() + "/" + getProjectName();
+		return getWorkingDirectory() + "/" + getProjectName();
 	}
 	
 	private String strategoSourceBasedir = null;

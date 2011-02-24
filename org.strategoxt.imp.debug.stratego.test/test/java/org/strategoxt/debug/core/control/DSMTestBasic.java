@@ -21,8 +21,8 @@ public class DSMTestBasic extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		
+		checkProjectExists(debugSessionSettings);
+
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
@@ -58,8 +58,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -102,9 +101,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -119,6 +116,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 		
 		// 47, 8
@@ -168,9 +166,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -186,6 +182,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 		
 		// 47, 8
@@ -239,8 +236,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		// TODO: project should be compiled with debug info!
 		
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		//String strategoBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/stratego";
+		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
@@ -256,6 +252,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
+		Assert.assertNotNull("EventTable is not initialized, check if the table file exists. ", eventTable);
 		Assert.assertEquals(74, eventTable.size());
 		
 		// find-comment-match s-enter is at 71,7

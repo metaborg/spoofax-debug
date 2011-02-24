@@ -12,8 +12,8 @@ public class DSMLocalvarDebug extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		//String binBase = DebugCompilerTest.WORKING_DIR + "/" + projectName + "/class";
-		
+		checkProjectExists(debugSessionSettings);
+
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";

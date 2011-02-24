@@ -1,5 +1,6 @@
 package org.strategoxt.debug.core.control;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.spoofax.terms.StringTermReader;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
+import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
@@ -123,5 +125,12 @@ public abstract class AbstractDSMTest {
 	{
 		//Assert.fail(message);
 		this.failMessages.add(message);
+	}
+	
+	protected void checkProjectExists(DebugSessionSettings debugSessionSettings)
+	{
+		File f = new File(debugSessionSettings.getProjectDirectory());
+		Assert.assertTrue("Directory does not exist.\nRun DebugCompiler TestSuite.", f.exists());
+		Assert.assertTrue("Not a directory or does not exist.\nRun DebugCompiler TestSuite.", f.isDirectory());
 	}
 }
