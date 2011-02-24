@@ -8,7 +8,6 @@
 	<property name="project.debug.transformer" value="org.strategoxt.imp.debug.stratego.transformer" />
 	<property name="project.debug.test" value="org.strategoxt.imp.debug.stratego.test" />
 	<property name="project.eclipse.plugin.core" value="org.strategoxt.imp.debug.core" />
-	<property name="eclipse.lib.dir" value="../${project.eclipse.plugin.core}/lib" />
 
 <!-- build the transformer and the runtime spoofax project -->
 	<target name="build-libraries">
@@ -33,29 +32,6 @@
 		
 	</target>
 	
-	<!-- 
-		Copy the libraries to the lib dir of the eclipse plugin.
-		And jar the debug.stratego.core project and also copy it to the lib dir of the eclipse plugin
-	 -->
-	<target name="deploy-to-eclipse-plugin" depends="copy-libraries">
-		<copy todir="${eclipse.lib.dir}" flatten="true">
-			<resources>
-				<file file="${basedir}/lib/stratego-transformer.jar" />
-				<file file="${basedir}/lib/stratego-transformer-java.jar" />
-				<file file="${basedir}/lib/stratego-debug-runtime.jar" />
-				<file file="${basedir}/lib/stratego-debug-runtime-java.jar" />
-				<file file="${basedir}/lib/strategodebuglib.rtree" />
-				<!-- TODO: use strategoxt.jar from org.strategoxt.strj, but if we have strategoxt-debug.jar it should also be copied -->
-				<file file="${basedir}/lib/strategoxt.jar" />
-			</resources>
-		</copy>
-		<jar destfile="${basedir}/lib/stratego-debug-core.tmp.jar">
-			<fileset dir="${basedir}/bin" />
-		</jar>
-		<copy file="${basedir}/lib/stratego-debug-core.tmp.jar" tofile="${eclipse.lib.dir}/stratego-debug-core.jar" />
-		<eclipse.refreshLocal resource="../${project.eclipse.plugin.core}/lib" depth="infinite"/>
-	</target>
-
 	<target name="clean">
 		<!-- clean the lib dir -->
 		  <delete includeemptydirs="true">
