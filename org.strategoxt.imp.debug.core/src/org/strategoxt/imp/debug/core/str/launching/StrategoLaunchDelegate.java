@@ -38,7 +38,6 @@ import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
-import org.strategoxt.imp.debug.core.Activator;
 import org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget;
 
 /**
@@ -119,7 +118,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create(workingDirFolder, projectName);
 		
 		//find the jar library directory in the eclipse plugin
-		Bundle b = Activator.getDefault().getBundle();
+		Bundle b = org.strategoxt.debug.core.Activator.getDefault().getBundle();
 		IPath path = new Path("/lib");
 		Map override = null;
 		URL url = FileLocator.find(b, path, override);
@@ -140,7 +139,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			debugSessionSettings.checkJarLibraries();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			abort("Could not find required eclipse jars in directory \"lib\".", e);
+			abort("Could not find required eclipse jars in directory \""+directory+"\".", e);
 		}
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);

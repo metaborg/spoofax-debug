@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
-Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.core
+Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.core;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-ClassPath: core.jar,
  lib/stratego-debug-runtime-java.jar,
@@ -45,6 +45,7 @@ Export-Package: .,
  org.spoofax.terms.io.binary,
  org.spoofax.xlet,
  org.strategoxt,
+ org.strategoxt.debug.core,
  org.strategoxt.debug.core.control,
  org.strategoxt.debug.core.control.events,
  org.strategoxt.debug.core.eventspec,
@@ -87,4 +88,7 @@ Export-Package: .,
 Bundle-Vendor: org.strategoxt.imp.debug.stratego.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.jdt.debug,
- org.eclipse.jdt.core;bundle-version="3.5.2"
+ org.eclipse.jdt.core;bundle-version="3.5.2",
+ org.eclipse.core.runtime
+Bundle-Activator: org.strategoxt.debug.core.Activator
+Bundle-ActivationPolicy: lazy
