@@ -1,9 +1,12 @@
 package org.strategoxt.debug.core.util.table;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.eclipse.core.runtime.IPath;
 
 public class FileLineLengthTable {
 
@@ -33,9 +36,9 @@ public class FileLineLengthTable {
 	}
 	
 	
-	public void create(String baseDir)
+	public void create(IPath baseDir)
 	{
-		String absLocation = baseDir + filename;
+		File absLocation = baseDir.append(filename).toFile();
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(absLocation));

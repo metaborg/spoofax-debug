@@ -129,7 +129,7 @@ public abstract class AbstractDSMTest {
 	
 	protected void checkProjectExists(DebugSessionSettings debugSessionSettings)
 	{
-		File f = new File(debugSessionSettings.getProjectDirectory());
+		File f = debugSessionSettings.getProjectDirectory().toFile();
 		Assert.assertTrue("Directory does not exist.\nRun DebugCompiler TestSuite.", f.exists());
 		Assert.assertTrue("Not a directory or does not exist.\nRun DebugCompiler TestSuite.", f.isDirectory());
 	}

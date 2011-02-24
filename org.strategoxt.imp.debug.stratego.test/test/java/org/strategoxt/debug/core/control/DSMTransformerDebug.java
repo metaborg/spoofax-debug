@@ -24,7 +24,7 @@ public class DSMTransformerDebug extends AbstractDSMTest {
 		String mainClass = "transformer_debug.transformer_debug";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		
-		String cp = debugSessionSettings.getClassDirectory(); // was binBase
+		String cp = debugSessionSettings.getClassDirectory().toOSString(); // was binBase
 		
 		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
 		File f = new File(transformerProject);

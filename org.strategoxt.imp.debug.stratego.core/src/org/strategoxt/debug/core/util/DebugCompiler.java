@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.compiler.CompilationProgress;
 import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
@@ -37,7 +39,7 @@ public class DebugCompiler {
 	
 	private void init(DebugSessionSettings settings)
 	{
-		File projectDir = new File(settings.getProjectDirectory());
+		File projectDir = settings.getProjectDirectory().toFile();
 		if (!projectDir.exists())
 		{
 			// create it
@@ -63,9 +65,9 @@ public class DebugCompiler {
 	 */
 	public void cleanDirectories(DebugSessionSettings settings)
 	{
-		String projectStrategoDir = settings.getStrategoDirectory();
-		String projectJavaDir = settings.getJavaDirectory();
-		String projectClassDir = settings.getClassDirectory();
+		String projectStrategoDir = settings.getStrategoDirectory().toOSString();
+		String projectJavaDir = settings.getJavaDirectory().toOSString();
+		String projectClassDir = settings.getClassDirectory().toOSString();
 		
 		File dir = null;
 		
@@ -91,15 +93,16 @@ public class DebugCompiler {
 	 * @throws IOException
 	 * @throws DebugCompileException 
 	 */
-	public String runCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
+	public IPath runCompile(DebugSessionSettings debugSessionSettings) throws IOException, DebugCompileException
 	{
 		// TODO: Use debugsettings
 		init(debugSessionSettings);
-		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
-		String strategoFilePath = debugSessionSettings.getStrategoFilePath();
+		IPath strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
+		IPath strategoFilePath = debugSessionSettings.getStrategoFilePath();
 		String projectName = debugSessionSettings.getProjectName();
 		// throw exception if completeInputPath does not exist
-		File absFilePath = new File(strategoSourceBasedir, strategoFilePath);
+		
+		File absFilePath = strategoSourceBasedir.append(strategoFilePath).toFile();
 		//File f = new File(strategoFilePath);
 		if (!absFilePath.exists())
 		{
@@ -109,15 +112,15 @@ public class DebugCompiler {
 		cleanDirectories(debugSessionSettings); // create directory structure in the working dir
 		// projectName should be the stratego filename without the dir and the extension		
 		
-		String projectDir = debugSessionSettings.getProjectDirectory();
-		String projectJavaDir = projectDir + "/java"; // save generated java classes in a temp working dir
-		String projectClassDir = projectDir + "/class"; // save generated class files in a temp working dir
+		//String projectDir = debugSessionSettings.getProjectDirectory();
+		IPath projectJavaDir = debugSessionSettings.getJavaDirectory(); // save generated java classes in a temp working dir
+		IPath projectClassDir = debugSessionSettings.getClassDirectory(); // save generated class files in a temp working dir
 		
 		String libraryName = projectName; // will be the packageName
 		String className = projectName;
 		String packageFolder = projectName;
-		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
-		String inputStrategoFilename = strategoSourceBasedir +"/" + strategoFilePath;
+		IPath compiledStrategoFilename = projectJavaDir.append(packageFolder).append(className + ".java"); // packageName + className
+		IPath inputStrategoFilename = strategoSourceBasedir.append(strategoFilePath);
 		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
 		if (!succes)
 		{
@@ -125,9 +128,9 @@ public class DebugCompiler {
 			throw new DebugCompileException("Failed to compile stratego program to java.");
 		}
 		
-		String sourceBasedir = projectJavaDir;
+		IPath sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
-		String binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
+		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;	
 	}
@@ -141,15 +144,15 @@ public class DebugCompiler {
 	 * @throws FileNotFoundException 
 	 * @throws DebugCompileException 
 	 */
-	public String debugCompile(DebugSessionSettings debugSessionSettings) throws FileNotFoundException, DebugCompileException
+	public IPath debugCompile(DebugSessionSettings debugSessionSettings) throws FileNotFoundException, DebugCompileException
 	{
 		// TODO: use debug settings
 		init(debugSessionSettings);
-		String strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
-		String strategoFilePath = debugSessionSettings.getStrategoFilePath();
+		IPath strategoSourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
+		IPath strategoFilePath = debugSessionSettings.getStrategoFilePath();
 		String projectName = debugSessionSettings.getProjectName();
 		
-		File absFilePath = new File(strategoSourceBasedir, strategoFilePath);
+		File absFilePath = strategoSourceBasedir.append(strategoFilePath).toFile();
 		if (!absFilePath.exists())
 		{
 			throw new FileNotFoundException("Input file '" + absFilePath.getAbsolutePath() + "' does not exists!");
@@ -161,18 +164,18 @@ public class DebugCompiler {
 		Collection<String> libraryPaths = new ArrayList<String>();
 		libraryPaths.add("."); // the "-I" arguments
 		
-		String projectDir = debugSessionSettings.getProjectDirectory();
-		String projectStrategoDir = projectDir + "/stratego";
-		String projectJavaDir = projectDir + "/java";
-		String projectClassDir = projectDir + "/class";
+		IPath projectDir = debugSessionSettings.getProjectDirectory();
+		IPath projectStrategoDir = debugSessionSettings.getStrategoFilePath();
+		IPath projectJavaDir = debugSessionSettings.getJavaDirectory();
+		IPath projectClassDir = debugSessionSettings.getClassDirectory();
 
 		//String strOutputBasedir = projectStrategoDir;
 		// strategoSourceBasedir + strategoFilePath is the input stratego file (without debug information)
 		// strOutputBasedir + strategoFilePath will be the output stratego file (with debug information)
 		// TODO: removed , strategoSourceBasedir, strategoFilePath, strOutputBasedir
-		Map<String, String> result = generateStratego(debugSessionSettings, libraryPaths); // str to str (with debug info)
-		Collection<String> inputFiles = result.keySet();
-		Collection<String> generatedFiles = result.values();
+		Map<IPath, IPath> result = generateStratego(debugSessionSettings, libraryPaths); // str to str (with debug info)
+		Collection<IPath> inputFiles = result.keySet();
+		Collection<IPath> generatedFiles = result.values();
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
 		{
@@ -180,50 +183,49 @@ public class DebugCompiler {
 		}
 		
 		// create lookup table
-		String tableFilename = projectStrategoDir + "/" + projectName + ".table"; // location of the table
+		IPath tableFilename = projectStrategoDir.append(projectName + ".table"); // location of the table
 		// the table contains all debug lookup information for all files in the project
 		generateLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
 		
 		// create character offset table
 		// TODO: optimize
 		List<FileLineLengthTable> tables = new ArrayList<FileLineLengthTable>();
-		for(String inputFile : inputFiles) // TODO: sort the inputFiles on their path
+		for(IPath inputFilePath : inputFiles) // TODO: sort the inputFiles on their path
 		{
-			String basedir = strategoSourceBasedir; // end with '/'
-			if (!basedir.endsWith("/"))
-			{
-				basedir += "/";
-			}
-			if (inputFile.startsWith(basedir)) {
-				inputFile = inputFile.substring(basedir.length()); // make relative to the basedir
+			IPath basedir = strategoSourceBasedir; // end with '/'
+			//IPath inputFilePath = new Path(inputFileString);
+			
+			if (basedir.isPrefixOf(inputFilePath)) {
+				//inputFile = inputFile.substring(basedir.length()); // make relative to the basedir
+				inputFilePath = inputFilePath.makeRelativeTo(basedir);
 			}
 			else
 			{
-				System.err.println("inputfile '"+inputFile+"' is not located in the strategoSourceBasedir '"+strategoSourceBasedir+"'");
+				System.err.println("inputfile '"+inputFilePath+"' is not located in the strategoSourceBasedir '"+strategoSourceBasedir+"'");
 			}
-			FileLineLengthTable t = new FileLineLengthTable(inputFile);
+			FileLineLengthTable t = new FileLineLengthTable(inputFilePath.toOSString());
 			t.create(basedir);
 			tables.add(t);
 		}
-		String charOffsetTableFilename = projectStrategoDir + "/" + projectName + ".offset"; // location of the character offset table
+		IPath charOffsetTableFilename = projectStrategoDir.append((projectName + ".offset")); // location of the character offset table
 		LineLengthTable.writeLineLengthTable(charOffsetTableFilename, tables);
 		
 		String libraryName = projectName; // will be the packageName
 		String className = projectName;
 		String packageFolder = projectName;
-		String compiledStrategoFilename = projectJavaDir + "/" + packageFolder + "/" + className + ".java"; // packageName + className
+		IPath compiledStrategoFilename = projectJavaDir.append(packageFolder).append(className + ".java"); // packageName + className
 		//String inputStrategoFilename = strOutputBasedir + "/" + strategoFilePath; // the output of str to str is used as input
-		String foo = debugSessionSettings.getStrategoSourceBasedir() + "/" + debugSessionSettings.getStrategoFilePath();
-		String inputStrategoFilename = result.get(foo); // maps the original input to the generated output
+		IPath foo = debugSessionSettings.getStrategoSourceBasedir().append(debugSessionSettings.getStrategoFilePath());
+		IPath inputStrategoFilename = result.get(foo); // maps the original input to the generated output
 		boolean succes = compileStratego(debugSessionSettings, inputStrategoFilename, libraryName, compiledStrategoFilename); // stratego to java
 		if (!succes)
 		{
 			// TODO: what to do when compile fails... Throw an Exception?
 			throw new DebugCompileException("Failed to compile stratego program to java.");
 		}
-		String sourceBasedir = projectJavaDir;
+		IPath sourceBasedir = projectJavaDir;
 		String mainSourceFilename = packageFolder + "/" + className + ".java";
-		String binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
+		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;
 	}
@@ -246,11 +248,11 @@ public class DebugCompiler {
 	 * @return
 	 * @throws DebugCompileException 
 	 */
-	protected Map<String, String> generateStratego(DebugSessionSettings debugSessionSettings, Collection<String> libraryPaths) throws DebugCompileException
+	protected Map<IPath, IPath> generateStratego(DebugSessionSettings debugSessionSettings, Collection<String> libraryPaths) throws DebugCompileException
 	{
-		String sourceBasedir = debugSessionSettings.getStrategoSourceBasedir();
-		String inputFilePath = debugSessionSettings.getStrategoFilePath();
-		String strOutputBasedir = debugSessionSettings.getStrategoDirectory();
+		String sourceBasedir = debugSessionSettings.getStrategoSourceBasedir().toOSString();
+		String inputFilePath = debugSessionSettings.getStrategoFilePath().toOSString();
+		String strOutputBasedir = debugSessionSettings.getStrategoDirectory().toOSString();
 		// assume f is a valid file
 		File absInput = new File(sourceBasedir, inputFilePath);
 		System.out.println("Adding debug information to " + absInput.getAbsolutePath());
@@ -355,17 +357,17 @@ public class DebugCompiler {
 			throw new DebugCompileException("Adding debug information failed!");
 		}
 		
-		Map<String, String> result = new HashMap<String, String>();
+		Map<IPath, IPath> result = new HashMap<IPath, IPath>();
 		for(int i = 0; i < generatedFiles.size(); i++)
 		{
-			String genFile = generatedFiles.get(i);
-			String inputFile = inputFiles.get(i);
+			IPath genFile = new Path(generatedFiles.get(i));
+			IPath inputFile = new Path(inputFiles.get(i));
 			result.put(inputFile, genFile);
 		}
 		return result;
 	}
 	
-	protected void generateLookupTable(String tableFilenameString, Collection<String> strategoDebugFileNames)
+	protected void generateLookupTable(IPath tableFilenameString, Collection<IPath> strategoDebugFileNames)
 	{
 		// transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
@@ -380,7 +382,7 @@ public class DebugCompiler {
 		// STRATEGO: create-table(|table-filename): inputfilenames* -> table-filename
 		IStrategoTerm current = inputfilenames;
 		TermFactory factory = new TermFactory();
-		IStrategoTerm tableFilename = factory.makeString(tableFilenameString); 
+		IStrategoTerm tableFilename = factory.makeString(tableFilenameString.toOSString()); 
 		long startTime = System.currentTimeMillis();
 		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
 		long finishTime = System.currentTimeMillis();
@@ -402,12 +404,12 @@ public class DebugCompiler {
 	 * @param compiledStrategoFilename
 	 * @throws DebugCompileException 
 	 */
-	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, String inputStrategoFilename, String libraryName, String compiledStrategoFilename) throws DebugCompileException
+	protected boolean compileStratego(DebugSessionSettings debugSessionSettings, IPath inputStrategoFilename, String libraryName, IPath compiledStrategoFilename) throws DebugCompileException
 	{
 		System.out.println("Generated file at " + inputStrategoFilename);
 		System.out.println("Compile str to java...");
 		// compile the stratego file at $outputFilename
-		String strategodebuglib_rtree_dir = debugSessionSettings.getStrategoDebugLibraryDirectory();
+		String strategodebuglib_rtree_dir = debugSessionSettings.getStrategoDebugLibraryDirectory().toOSString();
 		String javaImportName = "org.strategoxt.imp.debug.stratego.runtime.trans"; // was: "org.strategoxt.libstrategodebuglib"
 		// TODO: when compiling we may need extra arguments
 		String[] extra_args = debugSessionSettings.getCompileTimeExtraArguments();
@@ -416,8 +418,8 @@ public class DebugCompiler {
 		//		"-I", "/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.transformer/"
 
 		String[] basic_strj_args = new String[] {
-			"-i", 	inputStrategoFilename
-			, "-o", compiledStrategoFilename // output will be java, so folders should match the library name
+			"-i", 	inputStrategoFilename.toOSString()
+			, "-o", compiledStrategoFilename.toOSString() // output will be java, so folders should match the library name
 			, "-I", strategodebuglib_rtree_dir // location of rtree files
 			, "-p", libraryName // will be the package name
 			//, "--silent"
@@ -488,16 +490,16 @@ public class DebugCompiler {
 	 * @param binBasedir
 	 * @return
 	 */
-	protected String compileJava(DebugSessionSettings debugSessionSettings, String sourceBasedir, String mainSourceFileName, String binBasedir)
+	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath sourceBasedir, String mainSourceFileName, IPath binBasedir)
 	{
 		log("Compiling " + mainSourceFileName);
 		log("Please wait...");
 		// import org.strategoxt.stratego_lib.*;
 		// import org.strategoxt.libstrategodebuglib.*;
 		// import org.strategoxt.lang.*;
-		String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-		String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+		String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+		String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 		
 		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
 		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
@@ -511,7 +513,7 @@ public class DebugCompiler {
 		// http://www.javaworld.com/javatips/jw-javatip131.html
 		String filename = sourceBasedir + "/" + mainSourceFileName;
 		String[] args = new String[] {
-		        "-d", binBasedir,
+		        "-d", binBasedir.toOSString(),
 		         filename,
 		         "-cp", classPath,
 		         "-source", "1.5"

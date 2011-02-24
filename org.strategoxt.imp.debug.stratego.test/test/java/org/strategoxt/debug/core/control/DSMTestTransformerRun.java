@@ -24,7 +24,7 @@ public class DSMTestTransformerRun extends AbstractDSMTest {
 		String mainClass = "transformer_run.transformer_run";
 		String mainArgs = mainClass + " " + argsForMainClass;
 		
-		String cp = debugSessionSettings.getClassDirectory();
+		String cp = debugSessionSettings.getClassDirectory().toOSString();
 		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
 		File f = new File(transformerProject);
 		try {

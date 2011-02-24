@@ -3,6 +3,8 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.junit.Assert;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompileException;
@@ -21,9 +23,9 @@ public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 	public void testCompileInvalidProgram()
 	{
 		String baseInputPath = "src/stratego/invalid-program";
-		String strategoFilePath = "program.str";
-		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
-
+		IPath strategoFilePath = new Path("program.str");
+		IPath strategoSourceBasedir = StrategoFileManager.BASE.append(baseInputPath);
+		
 		String projectName = "invalidprogram1";
 		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
@@ -32,7 +34,7 @@ public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
@@ -61,9 +63,9 @@ public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 			String mainClass = "invalidprogram1.invalidprogram1";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;

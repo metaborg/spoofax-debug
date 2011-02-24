@@ -3,6 +3,8 @@ package org.strategoxt.debug.core.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.eclipse.core.runtime.IPath;
+
 
 public class DebugSessionSettings {
 	
@@ -17,9 +19,9 @@ public class DebugSessionSettings {
 	 * directory without the project name.
 	 * Should not end with a slash
 	 */
-	private String workingDirectory;
+	private IPath workingDirectory;
 	
-	public DebugSessionSettings(String workingDirectory, String projectName){
+	public DebugSessionSettings(IPath workingDirectory, String projectName){
 		// TODO: check for illegal project name
 		// TODO: validate project name
 		this.workingDirectory = workingDirectory;
@@ -42,19 +44,19 @@ public class DebugSessionSettings {
 	public static String JAVA_DIR_NAME = "java";
 	
 	// generated using working directory and the project name
-	private String classDirectory = null;
-	private String strategoDirectory = null;
-	private String javaDirectory = null;
+	private IPath classDirectory = null;
+	private IPath strategoDirectory = null;
+	private IPath javaDirectory = null;
 	
 	/**
 	 * Returns the directory that contains the generated java class files.
 	 * @return
 	 */
-	public String getClassDirectory()
+	public IPath getClassDirectory()
 	{
 		if (classDirectory == null)
 		{
-			classDirectory = getProjectDirectory() + "/" + CLASS_DIR_NAME;
+			classDirectory = getProjectDirectory().append(CLASS_DIR_NAME);
 		}
 		return classDirectory;
 	}
@@ -63,11 +65,11 @@ public class DebugSessionSettings {
 	 * Returns the directory that contains the stratego files with debug information.
 	 * @return
 	 */
-	public String getStrategoDirectory()
+	public IPath getStrategoDirectory()
 	{
 		if (strategoDirectory == null)
 		{
-			strategoDirectory = getProjectDirectory() + "/" + STRATEGO_DIR_NAME;
+			strategoDirectory = getProjectDirectory().append(STRATEGO_DIR_NAME);
 		}
 		return strategoDirectory;
 	}
@@ -76,11 +78,11 @@ public class DebugSessionSettings {
 	 * Returns the directory that contains the generated java files.
 	 * @return
 	 */
-	public String getJavaDirectory()
+	public IPath getJavaDirectory()
 	{
 		if (javaDirectory == null)
 		{
-			javaDirectory = getProjectDirectory() + "/" + JAVA_DIR_NAME;
+			javaDirectory = getProjectDirectory().append(JAVA_DIR_NAME);
 		}
 		return javaDirectory;
 	}
@@ -89,7 +91,7 @@ public class DebugSessionSettings {
 	 * Returns the working directory
 	 * @return
 	 */
-	public String getWorkingDirectory()
+	public IPath getWorkingDirectory()
 	{
 		return this.workingDirectory;
 	}
@@ -103,13 +105,13 @@ public class DebugSessionSettings {
 		return this.projectName;
 	}
 	
-	public String getProjectDirectory()
+	public IPath getProjectDirectory()
 	{
-		return getWorkingDirectory() + "/" + getProjectName();
+		return getWorkingDirectory().append(getProjectName());
 	}
 	
-	private String strategoSourceBasedir = null;
-	private String strategoFilePath = null;
+	private IPath strategoSourceBasedir = null;
+	private IPath strategoFilePath = null;
 	
 	
 	
@@ -117,11 +119,11 @@ public class DebugSessionSettings {
 	 * Returns the directory that is the base-dir containing the source of the stratego program.
 	 * @return
 	 */
-	public String getStrategoSourceBasedir() {
+	public IPath getStrategoSourceBasedir() {
 		return strategoSourceBasedir;
 	}
 
-	public void setStrategoSourceBasedir(String strategoSourceBasedir) {
+	public void setStrategoSourceBasedir(IPath strategoSourceBasedir) {
 		this.strategoSourceBasedir = strategoSourceBasedir;
 	}
 
@@ -129,23 +131,24 @@ public class DebugSessionSettings {
 	 * File location of the stratego program main entry point. The location is relative to the strategoSourceBasedir.
 	 * @return
 	 */
-	public String getStrategoFilePath() {
+	public IPath getStrategoFilePath() {
 		return strategoFilePath;
 	}
 
-	public void setStrategoFilePath(String strategoFilePath) {
+	public void setStrategoFilePath(IPath strategoFilePath) {
 		this.strategoFilePath = strategoFilePath;
 	}
 
-	public void setJarLibraryDirectory(String directory)
+	public void setJarLibraryDirectory(IPath directory)
 	{
+		/*
 		if (directory.endsWith("/"))
 		{
 			directory = directory.substring(0, directory.length()-1);
-		}
-		String strategoxt_jar = directory + "/" + STRATEGOXT_JAR;
-		String stratego_debug_runtime_jar = directory + "/"+ STRATEGO_DEBUG_RUNTIME_JAR;
-		String stratego_debug_runtime_java_jar = directory + "/" + STRATEGO_DEBUG_RUNTIME_JAVA_JAR;
+		}*/
+		IPath strategoxt_jar = directory.append(STRATEGOXT_JAR);
+		IPath stratego_debug_runtime_jar = directory.append(STRATEGO_DEBUG_RUNTIME_JAR);
+		IPath stratego_debug_runtime_java_jar = directory.append(STRATEGO_DEBUG_RUNTIME_JAVA_JAR);
 		
 		this.strategoxtJar = strategoxt_jar;
 		this.strategoDebugRuntimeJar = stratego_debug_runtime_jar;
@@ -156,18 +159,18 @@ public class DebugSessionSettings {
 	
 	public void checkJarLibraries() throws FileNotFoundException
 	{
-		String strategodebuglib = getStrategoDebugLibraryDirectory() + "/" + STRATEGODEBUGLIB_RTREE; // should contain strategodebuglib.rtree
+		IPath strategodebuglib = getStrategoDebugLibraryDirectory().append(STRATEGODEBUGLIB_RTREE); // should contain strategodebuglib.rtree
 		checkExistance(strategodebuglib);
-		String strategoxtjar = getStrategoxtJar(); // should exist
+		IPath strategoxtjar = getStrategoxtJar(); // should exist
 		checkExistance(strategoxtjar);
-		String strategodebugruntimejar = getStrategoDebugRuntimeJar(); // should exist
+		IPath strategodebugruntimejar = getStrategoDebugRuntimeJar(); // should exist
 		checkExistance(strategodebugruntimejar);
-		String strategodebugruntimejavajar = getStrategoDebugRuntimeJavaJar(); // should exist
+		IPath strategodebugruntimejavajar = getStrategoDebugRuntimeJavaJar(); // should exist
 		checkExistance(strategodebugruntimejavajar);
 	}
 	
-	protected void checkExistance(String filename) throws FileNotFoundException{
-		File f = new File(filename);
+	protected void checkExistance(IPath path) throws FileNotFoundException{
+		File f =path.toFile();
 		if (!f.exists())
 		{
 			throw new FileNotFoundException();
@@ -182,7 +185,7 @@ public class DebugSessionSettings {
 	
 	//public static String strategodebuglib_rtree_dir = root + "/org.strategoxt.imp.debug.stratego.runtime/str-lib";
 	
-	private String strategoDebugLibraryDirectory = null;
+	private IPath strategoDebugLibraryDirectory = null;
 	
 	/**
 	 * returns a path to the directory that contains strategodebuglib.rtree.
@@ -190,40 +193,40 @@ public class DebugSessionSettings {
 	 * See /org.strategoxt.imp.debug.stratego.runtime/str-lib how to generate this file.
 	 * @return
 	 */
-	public String getStrategoDebugLibraryDirectory()
+	public IPath getStrategoDebugLibraryDirectory()
 	{
 		return this.strategoDebugLibraryDirectory;
 	}
 	
-	private String strategoxtJar = null;
+	private IPath strategoxtJar = null;
 	
 	/**
 	 * Returns a path to the strategoxt.jar
 	 * @return
 	 */
-	public String getStrategoxtJar()
+	public IPath getStrategoxtJar()
 	{
 		return this.strategoxtJar;
 	}
 	
-	private String strategoDebugRuntimeJar = null;
+	private IPath strategoDebugRuntimeJar = null;
 	
 	/**
 	 * Returns a path to stratego-debug-runtime.jar
 	 * @return
 	 */
-	public String getStrategoDebugRuntimeJar()
+	public IPath getStrategoDebugRuntimeJar()
 	{
 		return this.strategoDebugRuntimeJar;
 	}
 	
-	private String strategoDebugRuntimeJavaJar = null;
+	private IPath strategoDebugRuntimeJavaJar = null;
 	
 	/**
 	 * Returns a path to stratego-debug-runtime-java.jar
 	 * @return
 	 */
-	public String getStrategoDebugRuntimeJavaJar()
+	public IPath getStrategoDebugRuntimeJavaJar()
 	{
 		return this.strategoDebugRuntimeJavaJar;
 	}

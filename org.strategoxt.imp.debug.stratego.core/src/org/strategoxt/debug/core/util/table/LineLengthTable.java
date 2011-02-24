@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
 import org.strategoxt.debug.core.util.StringUtil;
 
 public class LineLengthTable {
@@ -80,11 +81,11 @@ public class LineLengthTable {
 		return lineLengthTable;
 	}
 	
-	public static void writeLineLengthTable(String location, List<FileLineLengthTable> tables)
+	public static void writeLineLengthTable(IPath location, List<FileLineLengthTable> tables)
 	{
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(location));
+			writer = new BufferedWriter(new FileWriter(location.toFile()));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

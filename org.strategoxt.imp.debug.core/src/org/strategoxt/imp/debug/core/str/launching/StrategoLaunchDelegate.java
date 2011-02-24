@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -97,12 +99,12 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		String port = ""+findFreePort();
 		
 		//String strategoFilePath = file.getLocation().toOSString(); // full path to the stratego program
-		String strategoFilePath = program;
-		String strategoSourceBasedir = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getLocation().toOSString();
+		IPath strategoFilePath = new Path(program);
+		IPath strategoSourceBasedir = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getLocation();
 		IFile f = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getFile(strategoFilePath); // path to the stratego file
-		strategoFilePath =  f.getProjectRelativePath().toOSString();
+		strategoFilePath =  f.getProjectRelativePath();
 		IPath projectPath = new Path(project);
-		strategoFilePath = f.getProjectRelativePath().makeRelativeTo(projectPath).toOSString(); // make the stratego file path relative to the project path
+		strategoFilePath = f.getProjectRelativePath().makeRelativeTo(projectPath); // make the stratego file path relative to the project path
 		System.out.println("PROJECT...:" + project);
 		System.out.println("BASEDIR...: " + strategoSourceBasedir);
 		System.out.println("COMPILING...: " + strategoFilePath);
@@ -110,7 +112,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		// now find a suitable temp directory to generate the files in...
 		String w = file.getProject().getFolder("working").getFullPath().toOSString();
 		IFolder wDir = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(w));
-		String workingDirFolder = wDir.getLocation().toOSString();
+		IPath workingDirFolder = wDir.getLocation();
 		System.out.println("WORKING DIR: " + workingDirFolder);
 		
 		DebugCompiler debugCompiler = new DebugCompiler(); // or use a system temp folder
@@ -119,7 +121,8 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		//find the jar library directory in the eclipse plugin
 		Bundle b = org.strategoxt.debug.core.Activator.getDefault().getBundle();
-		IPath path = new Path("/lib");
+		
+		IPath path = new Path("lib");
 		Map override = null;
 		URL url = FileLocator.find(b, path, override);
 		URL fileURL = null;
@@ -132,8 +135,10 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			abort("Could not find required directory \"lib\".", e);
 		}
 		//System.out.println("URL: " + fileURL);
-		String directory = fileURL.getPath();
-		
+		String urlPath = fileURL.getPath();
+		IPath directory = new Path(urlPath);
+		System.out.println(directory.toOSString());
+
 		debugSessionSettings.setJarLibraryDirectory(directory);
 		try {
 			debugSessionSettings.checkJarLibraries();
@@ -144,7 +149,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
-		String binBase = null;
+		IPath binBase = null;
 		try {
 			binBase = prepareProgram(configuration, monitor, mode, debugCompiler, debugSessionSettings);
 		} catch (DebugCompileException e) {
@@ -165,11 +170,11 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		// set up vm arguments
 		String classToLaunch = projectName + "." + projectName;
 		
-		String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-		String debugRuntime = debugSessionSettings.getStrategoDebugRuntimeJar();
-		String debugRuntimeJava = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+		String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+		String debugRuntime = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+		String debugRuntimeJava = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 		
-		String[] classPath = new String[] { binBase, strategoxtjar, debugRuntime, debugRuntimeJava};
+		String[] classPath = new String[] { binBase.toOSString(), strategoxtjar, debugRuntime, debugRuntimeJava};
 		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(classToLaunch, classPath);
 		
 		// setup program arguments
@@ -211,7 +216,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		monitor.done();
 	}
 	
-	private String prepareProgram(ILaunchConfiguration configuration, IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException, CoreException {
+	private IPath prepareProgram(ILaunchConfiguration configuration, IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException, CoreException {
 		// program recompile
 		boolean rebuildBinary = false;
 		rebuildBinary = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, true);
@@ -226,7 +231,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		String[] compileTimeExtraArguments = (String[]) compileArguments.toArray(new String[0]);
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
 		
-		String binBase = debugSessionSettings.getClassDirectory(); // default
+		IPath binBase = debugSessionSettings.getClassDirectory(); // default
 
 		if (rebuildBinary)
 		{
@@ -236,7 +241,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		{
 			// TODO: check if all the necessary files exist in the working dir...
 			// check if binBase contains javafiles
-			IPath binBasePath = new Path(binBase);
+			IPath binBasePath = binBase;
 			File binBaseFile = binBasePath.toFile();
 			if (!binBaseFile.exists())
 			{
@@ -257,13 +262,13 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			}
 			
 			// TODO: check if table file exists
-			IPath strBasePath = new Path(debugSessionSettings.getStrategoDirectory());
-			if (!strBasePath.toFile().exists())
+			File strBase = debugSessionSettings.getStrategoDirectory().toFile();
+			if (!strBase.exists())
 			{
 				System.out.println("Stratego program does not have debug info, compile...");
 				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
 			} else {
-				String[] files = strBasePath.toFile().list();
+				String[] files = strBase.list();
 				if (files == null || files.length == 0)
 				{
 					System.out.println("Stratego program does not have debug info, compile...");
@@ -275,10 +280,10 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		return binBase;
 	}
 
-	private String compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
+	private IPath compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		monitor.subTask("Compiling stratego program");
-		String binBase = null;
+		IPath binBase = null;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
 		{
 			binBase = debugCompile(debugCompiler, debugSessionSettings);
@@ -292,10 +297,10 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		return binBase;
 	}
 	
-	private String debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
+	private IPath debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		// compile for a debug
-		String binBase = null;
+		IPath binBase = null;
 		try {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
 		} catch (IOException e) {
@@ -311,10 +316,10 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		return binBase;
 	}
 	
-	private String runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
+	private IPath runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
 	{
 		// compile for a run
-		String binBase = null;
+		IPath binBase = null;
 		try {
 			binBase = debugCompiler.runCompile(debugSessionSettings);
 		} catch (IOException e) {

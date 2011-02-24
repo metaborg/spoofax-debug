@@ -36,7 +36,7 @@ public class EventSpecManager {
 	private void initializeTable()
 	{
 		String extensionT = "table";
-		List<String> matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory(), extensionT);
+		List<String> matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory().toFile(), extensionT);
 		// TODO: use the first match as we only support one file
 		if (matches.size() > 0)
 		{
@@ -46,7 +46,7 @@ public class EventSpecManager {
 		}
 		
 		String extensionO = "offset";
-		matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory(), extensionO);
+		matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory().toFile(), extensionO);
 		// TODO: use the first match as we only support one file
 		if (matches.size() > 0)
 		{

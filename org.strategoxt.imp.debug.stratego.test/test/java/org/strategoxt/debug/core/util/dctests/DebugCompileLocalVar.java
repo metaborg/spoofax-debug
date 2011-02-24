@@ -3,6 +3,8 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -22,9 +24,8 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 	@Test
 	public void testDebugCompileLocalVar() {
 		String baseInputPath = "src/stratego/localvar";
-		String strategoFilePath = "localvar.str";
-		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
-
+		IPath strategoFilePath = new Path("localvar.str");
+		IPath strategoSourceBasedir = StrategoFileManager.BASE.append(baseInputPath);
 		String projectName = "localvar";
 		DebugCompiler debugCompiler = new DebugCompiler();
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
@@ -33,7 +34,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
@@ -56,9 +57,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar.localvar";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
@@ -73,8 +74,8 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 	@Test
 	public void testDebugCompileLocalVarOutputRtree() {
 		String baseInputPath = "src/stratego/localvar";
-		String strategoFilePath = "localvar.str";
-		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+		IPath strategoFilePath = new Path("localvar.str");
+		IPath strategoSourceBasedir = StrategoFileManager.BASE.append(baseInputPath);
 
 		String projectName = "localvar_rtree";
 		DebugCompiler debugCompiler = new DebugCompiler();
@@ -86,7 +87,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			// strj -i /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/localvar_rtree/stratego/localvar.rtree -o /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/working/localvar_rtree/java/localvar_rtree/localvar_rtree.java -I /home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/../org.strategoxt.imp.debug.stratego.core/lib -p localvar_rtree --clean -la org.strategoxt.imp.debug.stratego.runtime.trans
@@ -110,9 +111,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar_rtree.localvar_rtree";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;
@@ -124,8 +125,8 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 	@Test
 	public void testRunCompileLocalVar() {
 		String baseInputPath = "src/stratego/localvar";
-		String strategoFilePath = "localvar.str";
-		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+		IPath strategoFilePath = new Path("localvar.str");
+		IPath strategoSourceBasedir = StrategoFileManager.BASE.append(baseInputPath);
 
 		String projectName = "localvar_run";
 		DebugCompiler debugCompiler = new DebugCompiler();
@@ -135,7 +136,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.runCompile(debugSessionSettings);
@@ -158,9 +159,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar_run.localvar_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;

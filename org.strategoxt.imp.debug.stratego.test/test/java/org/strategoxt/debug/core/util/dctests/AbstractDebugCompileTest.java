@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Path;
 import org.junit.Assert;
 import org.other.FileTest;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -15,7 +16,7 @@ public class AbstractDebugCompileTest {
 
 	protected void checkOutput(DebugSessionSettings debugSessionSettings)
 	{
-		DebugSessionSettings expected = new DebugSessionSettings("test/expected", debugSessionSettings.getProjectName());
+		DebugSessionSettings expected = new DebugSessionSettings(new Path("test/expected"), debugSessionSettings.getProjectName());
 		
 		String extensionT = "table";
 		List<String> matches = FileUtil.getFilesWithExtension(debugSessionSettings.getStrategoDirectory(), extensionT);
@@ -58,7 +59,7 @@ public class AbstractDebugCompileTest {
 		Assert.assertEquals("The number of generated files should match the number of expected files", expectedStrFiles.size(), generatedStrFiles.size());
 		
 		// loop over all generated files
-		int prefixLength = debugSessionSettings.getStrategoDirectory().length();
+		int prefixLength = debugSessionSettings.getStrategoDirectory().toOSString().length();
 		for(File strFile : generatedStrFiles)
 		{
 			// strip the stratego directory and prepend it with the directory the expected files are in
@@ -73,7 +74,7 @@ public class AbstractDebugCompileTest {
 	
 	private List<File> getStrategoFiles(DebugSessionSettings debugSessionSettings)
 	{
-		File oFile = new File(debugSessionSettings.getStrategoDirectory());
+		File oFile = debugSessionSettings.getStrategoDirectory().toFile();
 		List<File> strFiles = new ArrayList<File>();
 		if (oFile.isDirectory()) {
 			File[] aFiles = oFile.listFiles();

@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -75,7 +76,7 @@ public class DebugSessionManager {
 	public void initVM(VirtualMachineManager vmManager, DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
 		VMLauncherHelper helper = new VMLauncherHelper(vmManager, connectorType);
 		helper.setMainClasspath(classpath);
-		List<String> jars = new ArrayList<String>();
+		List<IPath> jars = new ArrayList<IPath>();
 		jars.add(settings.getStrategoxtJar());
 		jars.add(settings.getStrategoDebugRuntimeJar());
 		jars.add(settings.getStrategoDebugRuntimeJavaJar());

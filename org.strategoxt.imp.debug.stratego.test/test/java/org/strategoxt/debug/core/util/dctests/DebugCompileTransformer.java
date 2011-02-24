@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -105,7 +107,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 	@Test
 	public void testDebugCompileTransformer() {
 		String baseInputPath = "trans";
-		String strategoFilePath = "stratego-transformer.str";
+		IPath strategoFilePath = new Path("stratego-transformer.str");
 
 		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
 		File f = new File(transformerProject);
@@ -117,7 +119,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			e.printStackTrace();
 		}
 		
-		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
+		IPath strategoSourceBasedir = new Path(transformerProject).append(baseInputPath);
 		
 		String projectName = "transformer_debug";
 		DebugCompiler debugCompiler = new DebugCompiler();
@@ -140,7 +142,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
@@ -173,9 +175,9 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
@@ -195,7 +197,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 	@Test
 	public void testRunCompileTransformer() {
 		String baseInputPath = "trans";
-		String strategoFilePath = "stratego-transformer.str";
+		IPath strategoFilePath = new Path("stratego-transformer.str");
 
 		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
 		File f = new File(transformerProject);
@@ -207,7 +209,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			e.printStackTrace();
 		}
 		
-		String strategoSourceBasedir = transformerProject + "/" + baseInputPath;
+		IPath strategoSourceBasedir = new Path(transformerProject).append(baseInputPath);
 		
 		String projectName = "transformer_run";
 		DebugCompiler debugCompiler = new DebugCompiler();
@@ -229,7 +231,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.runCompile(debugSessionSettings);
@@ -253,9 +255,9 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)

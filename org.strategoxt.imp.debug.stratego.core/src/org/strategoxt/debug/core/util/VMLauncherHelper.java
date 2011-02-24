@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
+
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
@@ -222,9 +224,9 @@ public class VMLauncherHelper {
 	}
 	*/
 	
-	private List<String> debugJars;
+	private List<IPath> debugJars;
 	
-	public void setDebugJars(List<String> debugJars)
+	public void setDebugJars(List<IPath> debugJars)
 	{
 		this.debugJars = debugJars;
 	}
@@ -247,9 +249,9 @@ public class VMLauncherHelper {
 	public String getDebugProgramClasspath()
 	{
 		String cp = this.mainClasspath; // should not end with a ':'
-		for(String path : this.debugJars)
+		for(IPath path : this.debugJars)
 		{
-			cp += ":" + path;
+			cp += ":" + path.toOSString();
 		}
 		log("CP: " + cp);
 		return cp;

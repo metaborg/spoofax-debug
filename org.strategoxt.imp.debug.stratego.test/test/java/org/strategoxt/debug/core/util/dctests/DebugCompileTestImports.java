@@ -3,6 +3,8 @@ package org.strategoxt.debug.core.util.dctests;
 import java.io.IOException;
 
 import org.StrategoFileManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -19,8 +21,8 @@ public class DebugCompileTestImports extends AbstractDebugCompileTest {
 	public void testDebugCompileTestImports()
 	{
 		String baseInputPath = "src/stratego/testimports";
-		String strategoFilePath = "localvar.str";
-		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath;
+		IPath strategoFilePath = new Path("localvar.str");
+		IPath strategoSourceBasedir = StrategoFileManager.BASE.append(baseInputPath);
 
 		String projectName = "testimports";
 		DebugCompiler debugCompiler = new DebugCompiler();
@@ -30,7 +32,7 @@ public class DebugCompileTestImports extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		String binBase = null;
+		IPath binBase = null;
 		boolean compileSucces = false;
 		try {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
@@ -53,9 +55,9 @@ public class DebugCompileTestImports extends AbstractDebugCompileTest {
 			String mainClass = "testimports.testimports";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar();
+			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
+			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
+			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 			
 			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
 			String classpath = cp;

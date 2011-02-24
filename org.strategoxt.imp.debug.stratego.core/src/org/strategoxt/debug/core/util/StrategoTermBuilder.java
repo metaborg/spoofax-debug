@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoConstructor;
 import org.spoofax.interpreter.terms.IStrategoInt;
@@ -361,17 +362,17 @@ public class StrategoTermBuilder {
 	}
 	
 	/**
-	 * Converts a Collection<String> to a IStrategoList containing IStrategoString's.
+	 * Converts a Collection<IPath> to a IStrategoList containing IStrategoString's.
 	 * @param collection
 	 * @return
 	 */
-	public IStrategoList convertToIStrategoList(Collection<String> collection)
+	public IStrategoList convertToIStrategoList(Collection<IPath> collection)
 	{
 		TermFactory factory = new TermFactory();
 		Collection<IStrategoTerm> terms = new ArrayList<IStrategoTerm>();
-		for(String item : collection)
+		for(IPath item : collection)
 		{
-			IStrategoTerm t = factory.makeString(item);
+			IStrategoTerm t = factory.makeString(item.toOSString());
 			terms.add(t);
 		}
 		IStrategoList list = f.makeList(terms);

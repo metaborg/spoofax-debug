@@ -5,6 +5,8 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+
 public class FileUtil {
 
 	/**
@@ -26,11 +28,15 @@ public class FileUtil {
 	  return oFile.delete();
 	}
 
-	public static List<String> getFilesWithExtension(String basePath, final String extension) {
+	public static List<String> getFilesWithExtension(IPath basePath, final String extension) {
+		return getFilesWithExtension(basePath.toFile(), extension);
+	}
+	
+	public static List<String> getFilesWithExtension(File basePath, final String extension) {
 		
 		List<String> matches = new ArrayList<String>();
 
-		File oFile = new File(basePath);
+		File oFile = basePath; //new File(basePath);
 		if (oFile.isDirectory()) {
 			// get all files with the matching extension
 			FileFilter filter = new FileFilter() {

@@ -28,7 +28,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
+		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
 		String classpath = cp;
 		
 		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
@@ -90,7 +90,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory(); // was binBase
+		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
 		String classpath = cp;
 		
 		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
