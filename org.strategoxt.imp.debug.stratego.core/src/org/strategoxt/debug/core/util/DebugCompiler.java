@@ -129,7 +129,7 @@ public class DebugCompiler {
 		}
 		
 		IPath sourceBasedir = projectJavaDir;
-		String mainSourceFilename = packageFolder + "/" + className + ".java";
+		IPath mainSourceFilename = new Path(packageFolder).append(className + ".java");
 		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;	
@@ -224,7 +224,7 @@ public class DebugCompiler {
 			throw new DebugCompileException("Failed to compile stratego program to java.");
 		}
 		IPath sourceBasedir = projectJavaDir;
-		String mainSourceFilename = packageFolder + "/" + className + ".java";
+		IPath mainSourceFilename = new Path(packageFolder).append(className + ".java");
 		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;
@@ -490,7 +490,7 @@ public class DebugCompiler {
 	 * @param binBasedir
 	 * @return
 	 */
-	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath sourceBasedir, String mainSourceFileName, IPath binBasedir)
+	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath sourceBasedir, IPath mainSourceFileName, IPath binBasedir)
 	{
 		log("Compiling " + mainSourceFileName);
 		log("Please wait...");
@@ -501,20 +501,20 @@ public class DebugCompiler {
 		String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
 		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
 		
-		String classPath = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + sourceBasedir;
+		String classPath = strategoxtjar + java.io.File.pathSeparatorChar + libstrategodebuglib + java.io.File.pathSeparatorChar + strjdebugruntime + java.io.File.pathSeparatorChar + sourceBasedir;
 		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 		{
 			for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
 			{
-				classPath += ":" + c;
+				classPath += java.io.File.pathSeparatorChar + c;
 			}
 		}
 		//log(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
-		String filename = sourceBasedir + "/" + mainSourceFileName;
+		IPath filename = sourceBasedir.append(mainSourceFileName);
 		String[] args = new String[] {
 		        "-d", binBasedir.toOSString(),
-		         filename,
+		         filename.toOSString(),
 		         "-cp", classPath,
 		         "-source", "1.5"
 		    };
