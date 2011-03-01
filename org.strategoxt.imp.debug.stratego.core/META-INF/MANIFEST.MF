@@ -44,6 +44,6 @@ Require-Bundle: org.eclipse.jdt.debug,
  org.eclipse.jdt.core;bundle-version="3.5.2",
  org.eclipse.core.runtime,
  org.strategoxt.strj,
- org.strategoxt.imp.debug.stratego.runtime
+ strjdbgruntimelib
 Bundle-Activator: org.strategoxt.debug.core.Activator
 Bundle-ActivationPolicy: lazy
