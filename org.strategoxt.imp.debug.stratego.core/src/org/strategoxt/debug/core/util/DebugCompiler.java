@@ -164,7 +164,7 @@ public class DebugCompiler {
 		Collection<String> libraryPaths = new ArrayList<String>();
 		libraryPaths.add("."); // the "-I" arguments
 		
-		IPath projectDir = debugSessionSettings.getProjectDirectory();
+		//IPath projectDir = debugSessionSettings.getProjectDirectory();
 		IPath projectStrategoDir = debugSessionSettings.getStrategoFilePath();
 		IPath projectJavaDir = debugSessionSettings.getJavaDirectory();
 		IPath projectClassDir = debugSessionSettings.getClassDirectory();

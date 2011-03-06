@@ -20,6 +20,7 @@ public class Dump {
         dump(obj, refType, refType);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void dump(ObjectReference obj, ReferenceType refType, ReferenceType refTypeBase) 
     {
     	System.out.println(obj);

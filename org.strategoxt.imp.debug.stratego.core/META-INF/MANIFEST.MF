@@ -3,9 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.stratego.core
 Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.core;singleton:=true
 Bundle-Version: 0.1.1.qualifier
-Bundle-ClassPath: lib/stratego-debug-runtime-java.jar,
- lib/stratego-debug-runtime.jar,
- lib/stratego-transformer.jar,
+Bundle-ClassPath: lib/stratego-transformer.jar,
  lib/strategoxt.jar,
  lib/stratego-transformer-java.jar,
  .
@@ -33,11 +31,7 @@ Export-Package: org.strategoxt.debug.core;uses:="org.eclipse.core.runtime,org.os
    com.sun.jdi.connect,
    com.sun.jdi,
    org.spoofax.interpreter.library",
- org.strategoxt.debug.core.util.table;uses:="org.strategoxt.debug.core.model",
- org.strategoxt.imp.debug.stratego.runtime.strategies;uses:="org.strategoxt.lang,org.spoofax.interpreter.terms,org.spoofax.terms",
- org.strategoxt.imp.debug.stratego.runtime.trans;uses:="org.spoofax.interpreter.core,org.strategoxt.lang,org.spoofax.interpreter.terms",
- org.strategoxt.imp.debug.stratego.transformer.strategies;uses:="org.strategoxt.lang,org.spoofax.interpreter.terms",
- org.strategoxt.imp.debug.stratego.transformer.trans;uses:="org.spoofax.interpreter.core,org.strategoxt.lang,org.spoofax.interpreter.terms"
+ org.strategoxt.debug.core.util.table;uses:="org.strategoxt.debug.core.model"
 Bundle-Vendor: org.strategoxt.imp.debug.stratego.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.jdt.debug,

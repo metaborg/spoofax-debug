@@ -18,5 +18,12 @@ Require-Bundle: org.eclipse.core.runtime,
   org.strategoxt.strj
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.strategoxt.imp.debug.stratego.runtime,
-  org.strategoxt.imp.debug.stratego.runtime.strategies
+Export-Package: org.strategoxt.imp.debug.stratego.runtime;
+  uses:="org.eclipse.imp.preferences,
+   org.eclipse.imp.parser,
+   org.eclipse.imp.runtime,
+   org.strategoxt.imp.runtime.services,
+   org.osgi.framework,
+   org.strategoxt.imp.runtime.dynamicloading",
+ org.strategoxt.imp.debug.stratego.runtime.strategies;uses:="org.strategoxt.lang,org.spoofax.interpreter.terms,org.spoofax.terms",
+ org.strategoxt.imp.debug.stratego.runtime.trans;uses:="org.spoofax.interpreter.core,org.strategoxt.lang,org.spoofax.interpreter.terms"
