@@ -29,7 +29,7 @@
 	
 	<!-- build external strategies defined in java -->
 	<!-- <available file="${build}/strjdebugruntime/strategies/Main.class" property="java.jar.enabled"/> -->
-	<available file="${src-gen}/${build.stratego.external.strategies.location}/Main.java" property="java.jar.enabled"/>
+	<available file="${basedir}/${src-gen}/${build.stratego.external.strategies.location}/Main.java" property="java.jar.enabled"/>
 		
 	<!-- Imports -->
 	<property name="build.sdf.imports" value="" />
