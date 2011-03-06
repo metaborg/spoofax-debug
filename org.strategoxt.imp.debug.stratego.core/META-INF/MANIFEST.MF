@@ -3,9 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.stratego.core
 Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.core;singleton:=true
 Bundle-Version: 0.1.1.qualifier
-Bundle-ClassPath: lib/stratego-transformer.jar,
- lib/strategoxt.jar,
- lib/stratego-transformer-java.jar,
+Bundle-ClassPath: lib/strategoxt.jar,
  .
 Export-Package: org.strategoxt.debug.core;uses:="org.eclipse.core.runtime,org.osgi.framework",
  org.strategoxt.debug.core.control;

@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.strategoxt.imp.debug.stratego.core,
  org.junit4;bundle-version="4.5.0",
  org.strategoxt.strj,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ strj_dbg_transformer,
+ strjdbgruntimelib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: .
