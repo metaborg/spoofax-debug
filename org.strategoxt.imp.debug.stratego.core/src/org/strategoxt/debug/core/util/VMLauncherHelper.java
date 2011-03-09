@@ -16,6 +16,7 @@ import com.sun.jdi.connect.LaunchingConnector;
 import com.sun.jdi.connect.ListeningConnector;
 import com.sun.jdi.connect.VMStartException;
 
+@SuppressWarnings("unchecked")
 public class VMLauncherHelper {
 
 	//  Do we want to watch assignments to fields
@@ -48,7 +49,6 @@ public class VMLauncherHelper {
 	 * @param vmManager
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static LaunchingConnector findCLLaunchingConnector(VirtualMachineManager vmManager) {
 		List<Connector> connectors = vmManager.allConnectors();
 		//vmManager.l

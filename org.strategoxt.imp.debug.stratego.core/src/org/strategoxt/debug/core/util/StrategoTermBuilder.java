@@ -175,6 +175,7 @@ public class StrategoTermBuilder {
         return strategoAppl;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public IStrategoList buildStrategoList(Value value) 
 	{
 		// instance of org.spoofax.interpreter.terms.IStrategoTerm[]
@@ -235,6 +236,7 @@ public class StrategoTermBuilder {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public IStrategoTerm[] buildStrategoTermArray(Value value)
 	{
     	ArrayReference arrayRef = (ArrayReference) value;

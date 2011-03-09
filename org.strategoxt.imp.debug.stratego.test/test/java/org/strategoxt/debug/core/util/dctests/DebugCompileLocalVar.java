@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.StrategoFileManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.Assert;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -45,6 +46,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
+		
 		debugCompiler.getDebugCompileProgress().printStats();
 		checkOutput(debugSessionSettings);
 		
@@ -57,11 +61,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar.localvar";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			String classpath = cp;
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
@@ -99,6 +99,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
+		
 		debugCompiler.getDebugCompileProgress().printStats();
 		checkOutput(debugSessionSettings);
 		
@@ -111,11 +114,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar_rtree.localvar_rtree";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			String classpath = cp;
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}
@@ -147,6 +146,9 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
+		
 		debugCompiler.getDebugCompileProgress().printStats();
 		//checkOutput(debugSessionSettings);
 		
@@ -159,11 +161,7 @@ public class DebugCompileLocalVar extends AbstractDebugCompileTest {
 			String mainClass = "localvar_run.localvar_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			String classpath = cp;
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}

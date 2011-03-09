@@ -150,6 +150,7 @@ public class ThreadEventHandler {
 		return suspendThread;
 	}
 
+	@SuppressWarnings("unchecked")
 	private String[] getDynamicRuleNames(EventHandler h)
 	{
 		Method method = null;

@@ -78,8 +78,8 @@ public class DebugSessionManager {
 		helper.setMainClasspath(classpath);
 		List<IPath> jars = new ArrayList<IPath>();
 		jars.add(settings.getStrategoxtJar());
-		jars.add(settings.getStrategoDebugRuntimeJar());
-		jars.add(settings.getStrategoDebugRuntimeJavaJar());
+		jars.addAll(settings.getRuntimeJars());
+		
 		helper.setDebugJars(jars);
 		this.vm = helper.getTargetVM(mainArgs);
 	}

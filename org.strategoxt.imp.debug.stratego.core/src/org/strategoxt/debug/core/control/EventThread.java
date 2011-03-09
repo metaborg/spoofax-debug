@@ -35,7 +35,6 @@
 package org.strategoxt.debug.core.control;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.strategoxt.debug.core.control.events.EventHandler;
@@ -152,11 +151,6 @@ public class EventThread extends Thread {
 					}
 					// not all threads are suspended
 					log("Not all threads are suspended");
-					List<ThreadReference> refs = vm.allThreads();
-					for(ThreadReference r : refs)
-					{
-						log(r.name() + " " + r.status() + " " + r.isSuspended());
-					}
 				}
 			} catch (InterruptedException exc) {
 				// Ignore

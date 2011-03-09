@@ -22,6 +22,7 @@ import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.MethodExitEvent;
 
+@SuppressWarnings("unchecked")
 public class ValueExtractor implements IEventInfoExtractor {
 
 	// The following object attributes should match the parameters in the invoke-method of the classes java_[r/s]_[enter/exit]_0_{x}

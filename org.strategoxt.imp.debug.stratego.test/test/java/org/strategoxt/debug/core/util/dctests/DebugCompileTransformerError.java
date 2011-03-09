@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.StrategoFileManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.Assert;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -69,10 +70,13 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
 		
-		checkOutput(debugSessionSettings);
+		// should have no output
+		//checkOutput(debugSessionSettings);
 		
-		boolean runjava = true;
+		boolean runjava = false;
 		// run .class
 		if (runjava && compileSucces)
 		{
@@ -82,11 +86,7 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 			String mainClass = "transformer_error.transformer_error";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);

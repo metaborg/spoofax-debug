@@ -128,9 +128,8 @@ public class DebugCompiler {
 			throw new DebugCompileException("Failed to compile stratego program to java.");
 		}
 		
-		IPath sourceBasedir = projectJavaDir;
 		IPath mainSourceFilename = new Path(packageFolder).append(className + ".java");
-		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
+		IPath binBase = compileJava(debugSessionSettings, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;	
 	}
@@ -165,7 +164,7 @@ public class DebugCompiler {
 		libraryPaths.add("."); // the "-I" arguments
 		
 		//IPath projectDir = debugSessionSettings.getProjectDirectory();
-		IPath projectStrategoDir = debugSessionSettings.getStrategoFilePath();
+		IPath projectStrategoDir = debugSessionSettings.getStrategoDirectory();
 		IPath projectJavaDir = debugSessionSettings.getJavaDirectory();
 		IPath projectClassDir = debugSessionSettings.getClassDirectory();
 
@@ -223,9 +222,9 @@ public class DebugCompiler {
 			// TODO: what to do when compile fails... Throw an Exception?
 			throw new DebugCompileException("Failed to compile stratego program to java.");
 		}
-		IPath sourceBasedir = projectJavaDir;
+
 		IPath mainSourceFilename = new Path(packageFolder).append(className + ".java");
-		IPath binBase = compileJava(debugSessionSettings, sourceBasedir, mainSourceFilename, projectClassDir); // java to class
+		IPath binBase = compileJava(debugSessionSettings, mainSourceFilename, projectClassDir); // java to class
 		
 		return binBase;
 	}
@@ -490,18 +489,15 @@ public class DebugCompiler {
 	 * @param binBasedir
 	 * @return
 	 */
-	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath sourceBasedir, IPath mainSourceFileName, IPath binBasedir)
+	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath mainSourceFileName, IPath binBasedir)
 	{
 		log("Compiling " + mainSourceFileName);
 		log("Please wait...");
 		// import org.strategoxt.stratego_lib.*;
 		// import org.strategoxt.libstrategodebuglib.*;
 		// import org.strategoxt.lang.*;
-		String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-		String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-		String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-		
-		String classPath = strategoxtjar + java.io.File.pathSeparatorChar + libstrategodebuglib + java.io.File.pathSeparatorChar + strjdebugruntime + java.io.File.pathSeparatorChar + sourceBasedir;
+		String classPath = debugSessionSettings.getDebugCompileClasspath();
+
 		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 		{
 			for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
@@ -511,7 +507,7 @@ public class DebugCompiler {
 		}
 		//log(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
-		IPath filename = sourceBasedir.append(mainSourceFileName);
+		IPath filename = debugSessionSettings.getJavaDirectory().append(mainSourceFileName);
 		String[] args = new String[] {
 		        "-d", binBasedir.toOSString(),
 		         filename.toOSString(),

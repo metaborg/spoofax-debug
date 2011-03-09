@@ -58,5 +58,38 @@ public class FileUtil {
 		return matches;
 	}
 	
-
+	/**
+	 * Converts to list of IPath's to a single String separated by OS-dependant pathSeparatorChar.
+	 * This String can be used as a classpath.
+	 * @param list
+	 * @return
+	 */
+	public static String convertIPathToClasspath(List<IPath> list)
+	{
+		boolean first = true;
+		StringBuilder builder = new StringBuilder();
+		for(IPath path : list)
+		{
+			if (!first)
+			{
+				builder.append(java.io.File.pathSeparatorChar);
+			}
+			else
+			{
+				first = false;
+			}
+			builder.append(path);
+		}
+		return builder.toString();
+	}
+	
+	public static String[] convertIPathToStringArray(List<IPath> list)
+	{
+		String[] cp = new String[list.size()];
+		for(int i = 0; i < list.size(); i++)
+		{
+			cp[i] = list.get(i).toOSString();
+		}
+		return cp;
+	}
 }

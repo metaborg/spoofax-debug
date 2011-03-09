@@ -116,6 +116,7 @@ public class DebugEventRequestInstaller {
 		*/
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static Location location(ClassType clazz, int linenumber) {
 		Location location = null;
 		try {
@@ -138,6 +139,7 @@ public class DebugEventRequestInstaller {
 		return location;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void createBreakpointEntryRequest(EventRequestManager mgr, ClassType clazz, int linenumber, String eventType)
 	{
 		int suspendPolicy = EventRequest.SUSPEND_EVENT_THREAD;

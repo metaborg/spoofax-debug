@@ -2,6 +2,8 @@ package org.strategoxt.debug.core.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -9,8 +11,7 @@ import org.eclipse.core.runtime.IPath;
 public class DebugSessionSettings {
 	
 	public final static String STRATEGOXT_JAR = "strategoxt.jar";
-	public final static String STRATEGO_DEBUG_RUNTIME_JAR = "stratego-debug-runtime.jar";
-	public final static String STRATEGO_DEBUG_RUNTIME_JAVA_JAR = "stratego-debug-runtime-java.jar";
+
 	public final static String STRATEGODEBUGLIB_RTREE = "strategodebuglib.rtree";
 	
 	private String projectName;
@@ -139,22 +140,33 @@ public class DebugSessionSettings {
 		this.strategoFilePath = strategoFilePath;
 	}
 
+	/**
+	 * All required jars are in this directory...
+	 * @param directory
+	 */
 	public void setJarLibraryDirectory(IPath directory)
 	{
-		/*
-		if (directory.endsWith("/"))
-		{
-			directory = directory.substring(0, directory.length()-1);
-		}*/
 		IPath strategoxt_jar = directory.append(STRATEGOXT_JAR);
-		IPath stratego_debug_runtime_jar = directory.append(STRATEGO_DEBUG_RUNTIME_JAR);
-		IPath stratego_debug_runtime_java_jar = directory.append(STRATEGO_DEBUG_RUNTIME_JAVA_JAR);
 		
 		this.strategoxtJar = strategoxt_jar;
-		this.strategoDebugRuntimeJar = stratego_debug_runtime_jar;
-		this.strategoDebugRuntimeJavaJar = stratego_debug_runtime_java_jar;
 
 		this.strategoDebugLibraryDirectory = directory; // rtree
+	}
+	
+	private List<IPath> runtimeJars = null;
+	
+	public List<IPath> getRuntimeJars()
+	{
+		return runtimeJars;
+	}
+	
+	/**
+	 * Sets the paths to "stratego-debug-runtime.jar" and "stratego-debug-runtime-java.jar"
+	 * @param runtimeJars
+	 */
+	public void setRuntimeJars(List<IPath> runtimeJars)
+	{
+		this.runtimeJars = runtimeJars;
 	}
 	
 	public void checkJarLibraries() throws FileNotFoundException
@@ -163,10 +175,11 @@ public class DebugSessionSettings {
 		checkExistance(strategodebuglib);
 		IPath strategoxtjar = getStrategoxtJar(); // should exist
 		checkExistance(strategoxtjar);
-		IPath strategodebugruntimejar = getStrategoDebugRuntimeJar(); // should exist
-		checkExistance(strategodebugruntimejar);
-		IPath strategodebugruntimejavajar = getStrategoDebugRuntimeJavaJar(); // should exist
-		checkExistance(strategodebugruntimejavajar);
+		
+		for(IPath runtimeJar : this.getRuntimeJars())
+		{
+			checkExistance(runtimeJar);
+		}
 	}
 	
 	protected void checkExistance(IPath path) throws FileNotFoundException{
@@ -175,6 +188,26 @@ public class DebugSessionSettings {
 		{
 			throw new FileNotFoundException();
 		}
+	}
+	
+	public String getDebugCompileClasspath()
+	{
+		List<IPath> cpList = new ArrayList<IPath>();
+		cpList.add(this.getStrategoxtJar());
+		cpList.addAll(this.getRuntimeJars());
+		cpList.add(this.getJavaDirectory());
+		String classPath = FileUtil.convertIPathToClasspath(cpList);
+		return classPath;
+	}
+	
+	public String getRunClasspath()
+	{
+		List<IPath> cpList = new ArrayList<IPath>();
+		cpList.add(this.getStrategoxtJar());
+		cpList.addAll(this.getRuntimeJars());
+		cpList.add(this.getClassDirectory());
+		String classPath = FileUtil.convertIPathToClasspath(cpList);
+		return classPath;
 	}
 	
 	//private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
@@ -208,30 +241,11 @@ public class DebugSessionSettings {
 	{
 		return this.strategoxtJar;
 	}
-	
-	private IPath strategoDebugRuntimeJar = null;
-	
-	/**
-	 * Returns a path to stratego-debug-runtime.jar
-	 * @return
-	 */
-	public IPath getStrategoDebugRuntimeJar()
-	{
-		return this.strategoDebugRuntimeJar;
-	}
-	
-	private IPath strategoDebugRuntimeJavaJar = null;
+
 	
 	/**
-	 * Returns a path to stratego-debug-runtime-java.jar
-	 * @return
+	 * Contains stratego compile time extra arguments.
 	 */
-	public IPath getStrategoDebugRuntimeJavaJar()
-	{
-		return this.strategoDebugRuntimeJavaJar;
-	}
-	
-	
 	private String[] strategoCompileTimeExtraArguments = null;
 	
 	public String[] getCompileTimeExtraArguments() {

@@ -51,6 +51,7 @@ public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertNull(binBase);
 		
 		checkOutput(debugSessionSettings);
 		
@@ -63,11 +64,7 @@ public class DebugCompileInvalidProgramTest extends AbstractDebugCompileTest {
 			String mainClass = "invalidprogram1.invalidprogram1";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			String classpath = cp;
 			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
 		}

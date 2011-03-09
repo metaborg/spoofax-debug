@@ -9,3 +9,50 @@ strategies
 		<debug(!"test-missing-i")> ""
 		; arguments* := ["./transformer"]
 		; main
+		  
+    test-dirname-1 =
+    	path := "/foo/bar/sto"
+    	; dir1 := <dirname> path
+    	; <debug(!"dirname '/foo/bar/sto' of Should be '/foo/bar': ")> dir1
+    	; dir2 := <dirname> dir1
+    	; <debug(!"dirname '/foo/bar' of Should be '/foo': ")> dir2
+    	; if ?"/foo" then
+    	  	debug(!"if true, current term is '/foo': ")
+    	end
+    	
+  test-walk-dirs-1 =
+  	tuple := ("/foo/bar/cheese", "/foo")
+  	;debug(!"tuple: ")
+  	; walk-dirs(check-disable-global-analysis-file)
+  	  
+  test-walk-dirs-2 =
+  	(
+  	tuple := ("/foo/bar/cheese", "/fee")
+  	;debug(!"tuple: ")
+  	; walk-dirs(check-disable-global-analysis-file)
+  	  )
+  	   < debug(!"succes ") + debug(!"fail")
+    	
+  /*
+  	If the current dir contains the file ".disable-global-analysis"
+  	then add the dynamic rule: "NoAnalysis: _" 
+  */
+  check-disable-global-analysis-file:
+  	current-dir -> current-dir
+  
+  /*
+    Walk all parent dirs from start-dir to end-dir
+  */
+  walk-dirs(check-dir-strategy):
+  	(start-dir, end-dir) -> end-dir
+  	with
+  		!start-dir
+  		; check-dir-strategy
+  		; if or(?end-dir, ?"/") then
+  			// exit
+  			<debug(!"finished walk ")> (start-dir, end-dir)
+  		else
+  			<debug(!"check subdir: ")> (start-dir, end-dir)
+  			; parent-dir := <dirname> start-dir
+  			; <walk-dirs(check-dir-strategy)> (parent-dir, end-dir)
+  	    end

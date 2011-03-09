@@ -38,6 +38,7 @@ import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
+import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget;
 
 /**
@@ -130,13 +131,15 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			abort("Could not find required directory \"lib\".", e);
+			//abort("Could not find required directory \"lib\".", e);
 		}
-		//System.out.println("URL: " + fileURL);
+		//System.out.println("URL: " + fileURL)		
+		
 		String urlPath = fileURL.getPath();
 		IPath directory = new Path(urlPath);
 		System.out.println(directory.toOSString());
 
+		
 		debugSessionSettings.setJarLibraryDirectory(directory);
 		try {
 			debugSessionSettings.checkJarLibraries();
@@ -168,11 +171,12 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		// set up vm arguments
 		String classToLaunch = projectName + "." + projectName;
 		
-		String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-		String debugRuntime = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-		String debugRuntimeJava = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
+		List<IPath> cpList = new ArrayList<IPath>();
+		cpList.add(binBase);
+		cpList.add(debugSessionSettings.getStrategoxtJar());
+		cpList.addAll(debugSessionSettings.getRuntimeJars());
 		
-		String[] classPath = new String[] { binBase.toOSString(), strategoxtjar, debugRuntime, debugRuntimeJava};
+		String[] classPath = FileUtil.convertIPathToStringArray(cpList);		
 		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(classToLaunch, classPath);
 		
 		// setup program arguments

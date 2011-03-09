@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.StrategoFileManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.Assert;
 import org.junit.Test;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -162,6 +163,8 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
 		
 		//checkOutput(debugSessionSettings);
 		
@@ -175,11 +178,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 			{
 				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
@@ -242,6 +241,8 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Assert.assertTrue("Debug compiling failed!", compileSucces);
+		Assert.assertNotNull("Bin output directory should be set!", binBase);
 		
 		//checkOutput(debugSessionSettings);
 		
@@ -255,11 +256,7 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String strategoxtjar = debugSessionSettings.getStrategoxtJar().toOSString();
-			String libstrategodebuglib = debugSessionSettings.getStrategoDebugRuntimeJar().toOSString();
-			String strjdebugruntime = debugSessionSettings.getStrategoDebugRuntimeJavaJar().toOSString();
-			
-			String cp = strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + binBase;
+			String cp = debugSessionSettings.getRunClasspath();
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 			{
 				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
