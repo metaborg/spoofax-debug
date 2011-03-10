@@ -33,7 +33,12 @@ public class StrjdbgruntimelibParseControllerGenerated extends DynamicParseContr
     return descriptor;
   }
 
-  private static void createDescriptor()
+  protected static synchronized void setDescriptor(Descriptor descriptor)
+  { 
+    StrjdbgruntimelibParseControllerGenerated.descriptor = descriptor;
+  }
+
+  protected static void createDescriptor()
   { 
     try
     { 

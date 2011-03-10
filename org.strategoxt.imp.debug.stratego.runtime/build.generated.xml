@@ -25,6 +25,9 @@
         <condition property="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter">
             <isset property="eclipse.running"/>
         </condition>
+        <condition property="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter">
+            <available classname="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        </condition>
         <condition property="externaljarflags" value="${externaljarflags}" else="">
             <isset property="externaljarflags"/>
         </condition>
@@ -309,9 +312,10 @@
         <!-- Aster to Stratego -->
         <target name="stratego.aster">
             <available file="${trans}/${strmodule}.rtree" property="aster-output.available"/>
-            <pathconvert property="aster-input" setonempty="false" pathsep=" ">
-                <path><fileset dir="${basedir}" includes="*.astr"/></path>
-            </pathconvert>
+            <fileset dir="${basedir}" id="aster-input-set">
+              <include name="**/*.astr"/>
+            </fileset>
+            <pathconvert pathsep=" " setonempty="false" property="aster-input" refid="aster-input-set"/>
             <dependset>
                 <srcfileset dir="${basedir}">
                     <include name="**/*.astr"/>
@@ -331,9 +335,7 @@
         <target name="stratego.aster.helper" if="aster-input" unless="aster-output.uptodate">
             <java classname="org.strategoxt.aster.Main" failonerror="true">
                 <arg value="-i"/>
-                <fileset dir="${basedir}">
-                    <include name="**/*.astr"/>
-                </fileset>
+                <arg line="${aster-input}"/>
             </java>
         </target>
         

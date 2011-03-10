@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.stratego.test
 Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.1.qualifier
 Require-Bundle: org.strategoxt.imp.debug.stratego.core,
  org.junit4;bundle-version="4.5.0",
  org.strategoxt.strj,
  org.eclipse.core.runtime,
- strj_dbg_transformer,
- strjdbgruntimelib
+ org.strategoxt.imp.debug.stratego.runtime,
+ org.strategoxt.imp.debug.stratego.transformer
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: .
