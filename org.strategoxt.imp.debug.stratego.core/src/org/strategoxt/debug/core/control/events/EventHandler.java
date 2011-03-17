@@ -237,6 +237,11 @@ public abstract class EventHandler {
 		
 	}
 	
+	/**
+	 * Create an actual breakpoint from the current state.
+	 * @param currentState
+	 * @return
+	 */
 	protected abstract BreakPoint createBreakPoint(StrategoState currentState);
 
 	public abstract String getEventType();

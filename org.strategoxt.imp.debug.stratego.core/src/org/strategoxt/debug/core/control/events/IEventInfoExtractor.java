@@ -42,5 +42,10 @@ public interface IEventInfoExtractor {
 	 * @return
 	 */
 	public StackFrame getStackFrame();
+	
+	/**
+	 * Call this method if the event info has changed in the debuggee.
+	 */
+	public void updateContents();
 
 }

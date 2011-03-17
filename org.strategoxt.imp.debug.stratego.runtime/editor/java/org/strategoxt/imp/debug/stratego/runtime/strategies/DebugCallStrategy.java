@@ -1,13 +1,15 @@
 package org.strategoxt.imp.debug.stratego.runtime.strategies;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.spoofax.terms.StringTermReader;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.lang.Context;
 import org.strategoxt.stratego_lib.dr_rule_sets_hashtable_0_0;
 
 public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 
-	protected TermFactory factory = new TermFactory();
+	public static TermFactory factory = new TermFactory();
+	public static StringTermReader termReader = new StringTermReader(factory);
 	
 	/**
 	 * Name of the variable that contains the eventInfo. The type of the variable should be String.
@@ -110,6 +112,7 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 		this.context = context;
 		this.eventInfo = factory.makeTuple(filename, name, location).toString();
 		this.givenTermString = given.toString();
+		this.current = current;
 		return current;
 	}
 	
@@ -119,6 +122,18 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 		this.givenTermString = given.toString();
 		String s = varname.toString();
 		this.varnameString = s;
+		this.current = current;
 		return current;
+	}
+	
+	protected IStrategoTerm current = null;
+	
+	public static String SETCURRENTTERM = "setCurrentTerm";
+	
+	public void setCurrentTerm(String termString)
+	{
+		IStrategoTerm newCurrent = termReader.parseFromString(termString);
+		this.current = newCurrent;
+		this.givenTermString = termString;
 	}
 }

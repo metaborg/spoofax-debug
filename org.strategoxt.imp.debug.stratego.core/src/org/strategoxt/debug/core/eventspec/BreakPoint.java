@@ -8,6 +8,11 @@ public abstract class BreakPoint {
 	private int startTokenPosition;
 	
 	/**
+	 * True if the breakpoint contains wildcards and cannot be mapped to a single program state.
+	 */
+	private boolean isVirtual = false;
+	
+	/**
 	 * Represents a BreakPoint at the given linenumber (1-based) and given startTokenPosition (1-based).
 	 * The startTokenPosition should be used when multiple statements can be placed at a single line and the debugger is able to distinguish between them.
 	 * @param name
@@ -54,4 +59,31 @@ public abstract class BreakPoint {
 	public void setStartTokenPosition(int startTokenPosition) {
 		this.startTokenPosition = startTokenPosition;
 	}
+	
+	/**
+	 * Returns true if the breakpoint contains a wildcard.
+	 * @return
+	 */
+	public boolean isVirtual() {
+		return isVirtual;
+	}
+	
+	public void setVirtual(boolean isVirtual) {
+		this.isVirtual = isVirtual;
+	}
+	
+	
+	
+	/**
+	 * Returns true if the given breakpoint matches this breakpoint.
+	 * The given breakpoint should be a 'real' breakpoint, no wildcards!
+	 * @param breakPoint
+	 * @return
+	 */
+	public abstract boolean match(BreakPoint breakPoint);
+	
+	public abstract boolean isEnter();
+	
+	public abstract boolean isExit();
+
 }

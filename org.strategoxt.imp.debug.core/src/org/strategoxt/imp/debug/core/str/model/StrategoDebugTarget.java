@@ -335,7 +335,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 						IPath breakPointPath = marker.getResource().getFullPath(); // path to the file in which the breakpoint was set
 						IPath subProjectPath = new Path(parent.getAbsolutePath()); // the dir in which the program is
 						System.out.println("subProjectPath: " + subProjectPath.toOSString());
-						System.out.println("breakPointPath: " + breakPointPath.toOSString());
+						System.out.println("breakPointPath: " + breakPointPath.toOSString() + " " + marker.getAttribute(IMarker.LINE_NUMBER));
 						boolean isPrefix = subProjectPath.isPrefixOf(breakPointPath);
 						return isPrefix;
 					}

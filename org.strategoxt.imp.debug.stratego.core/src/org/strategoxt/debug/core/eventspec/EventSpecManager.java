@@ -57,18 +57,31 @@ public class EventSpecManager {
 	}
 
 	/**
-	 * Returns true if the given RuleBreakPoint should suspend the vm.
-	 * @param ruleBreakPoint
+	 * Returns true if the given BreakPoint should suspend the vm.
+	 * BreakPoint current should not be a virtual breakpoint (should not contain wildcards).
+	 * @param current
 	 * @return
 	 */
-	public boolean match(BreakPoint b) {
-		boolean match = false;
-		if (this.eventSpecList.contains(b))
+	public boolean match(BreakPoint current) {
+		if (current == null)
 		{
-			// the given breakpoint matches one of the defined breakpoints
-			match = true;
+			return false;
 		}
-		return match;
+		else if (current.isVirtual())
+		{
+			// The current breakpoint cannot be virtual.
+			return false;
+		}
+		for(BreakPoint definedBreakPoint : this.eventSpecList.getBreakPoints())
+		{
+			// defined breakpoint may have wildcards
+			boolean isMatch = definedBreakPoint.match(current);
+			if (isMatch)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void add(BreakPoint bp) {

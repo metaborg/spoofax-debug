@@ -1,5 +1,6 @@
 package org.strategoxt.imp.debug.stratego.runtime;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class ClasspathHandler {
 
 	public final static String STRATEGO_DEBUG_RUNTIME_JAR_NAME = "stratego-debug-runtime.jar";
 	public final static String STRATEGO_DEBUG_RUNTIME_JAVA_JAR_NAME = "stratego-debug-runtime-java.jar";
+	
+	private final static String RUNTIME_PROJECT_LOCATION = "org.strategoxt.imp.debug.stratego.runtime";
 	
 	public final static String STRATEGO_DEBUG_RUNTIME_JAR_ENTRY = "/include/" + STRATEGO_DEBUG_RUNTIME_JAR_NAME;
 	public final static String STRATEGO_DEBUG_RUNTIME_JAVA_JAR_ENTRY = "/include/" + STRATEGO_DEBUG_RUNTIME_JAVA_JAR_NAME;
@@ -33,6 +36,27 @@ public class ClasspathHandler {
 	public static IPath getPathFromBundle(String pathInBundle)
 	{
 		org.strategoxt.imp.debug.stratego.runtime.Activator runtimeActivator = org.strategoxt.imp.debug.stratego.runtime.Activator.getInstance();
+		if (runtimeActivator == null)
+		{
+			System.out.println("NO RUNTIME ACTIVATOR...");
+		}
+		if (runtimeActivator.getBundle() == null)
+		{
+			System.out.println("NO BUNDLE... " + pathInBundle);
+			String path2lib = "../" + RUNTIME_PROJECT_LOCATION + pathInBundle;
+			System.out.println("try to get from: " + path2lib);
+			File f = new File(path2lib);
+			String resolved = null;
+			try {
+				resolved = f.getCanonicalPath();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Resolved to: " + resolved);
+			IPath path = new Path(resolved);
+			return path;
+		}
 		URL pathInBundleURL = runtimeActivator.getBundle().getEntry(pathInBundle);
 		System.out.println("RUNTIME: " + pathInBundleURL);
 		URL fileURL = null;

@@ -3,11 +3,19 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.stratego.test
 Bundle-SymbolicName: org.strategoxt.imp.debug.stratego.test
 Bundle-Version: 0.1.1.qualifier
-Require-Bundle: org.strategoxt.imp.debug.stratego.core,
- org.junit4;bundle-version="4.5.0",
- org.strategoxt.strj,
- org.eclipse.core.runtime,
+Require-Bundle: org.strategoxt.strj,
+ org.strategoxt.imp.debug.stratego.core,
  org.strategoxt.imp.debug.stratego.runtime,
- org.strategoxt.imp.debug.stratego.transformer
+ org.strategoxt.imp.debug.stratego.transformer,
+ org.strategoxt.imp.debug.ui,
+ org.strategoxt.imp.debug.core,
+ org.eclipse.jdt.launching,
+ org.eclipse.jdt.debug,
+ org.eclipse.jdt.core,
+ org.eclipse.debug.ui,
+ org.eclipse.debug.core,
+ org.eclipse.core.runtime,
+ org.junit4;bundle-version="4.5.0",
+ org.eclipse.jdt.debug.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: .

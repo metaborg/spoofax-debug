@@ -37,42 +37,42 @@ rules
 	loc-to-string:
 		LocationInfo(start-line-num, start-token-pos, end-line-num, end-token-pos) -> <concat-strings> [start-line-num, ",", start-token-pos, ",", end-line-num, ",", end-token-pos]
 		
-	to-string:
+	name-loc-to-string:
 		(name, loc) -> <concat-strings> [name, <loc-to-string> loc]
 	
 	// strategy enter
     s-enter(|filename, s-name, loc) :
-    	t -> t
+    	t -> t'
     	//where (<debug(!"s-enter: ")> <to-string> (s-name, loc))
-    	where (java-s-enter(|filename, s-name, loc, t))
+    	where (t' := <java-s-enter(|filename, s-name, loc, t)>)
     
     // strategy exit
     s-exit(|filename, s-name, loc) :
-    	t -> t
+    	t -> t'
     	//where (<debug(!"s-exit: ")> <to-string> (s-name, loc))
-    	where (java-s-exit(|filename, s-name, loc, t))
+    	where (t' := <java-s-exit(|filename, s-name, loc, t)>)
     	
     // rule enter
     r-enter(|filename, r-name, loc) :
-    	t -> t
+    	t -> t'
     	//where (<debug(!"r-enter : ")> <to-string> (r-name, loc))
-    	where (java-r-enter(|filename, r-name, loc, t))
+    	where (t' := <java-r-enter(|filename, r-name, loc, t)>)
     
     // rule exit
     r-exit(|filename, r-name, loc) :
-    	t -> t
+    	t -> t'
     	//where (<debug(!"r-exit: ")> <to-string> (r-name, loc))
-    	where (java-r-exit(|filename, r-name, loc, t))
+    	where (t' := <java-r-exit(|filename, r-name, loc, t)>)
     	
     // step
     s-step(|filename, name, loc) :
-    	t -> t
+    	t -> t'
     	//where (<debug(!"s-step: ")> <to-string> (name, loc))
-    	where (java-s-step(|filename, name, loc, t))
+    	where (t' := <java-s-step(|filename, name, loc, t)>)
     	
     // variable assignment
     s-var(|filename, name, var-name, loc):
-    	t -> t
+    	t -> t'
     	//where (<debug(!"s-var: ")> <to-string> (name, loc))
-    	where (java-s-var(|filename, name, var-name, loc, t))
+    	where (t' := <java-s-var(|filename, name, var-name, loc, t)>)
 	

@@ -49,4 +49,28 @@ public class StrategyStepBreakPoint extends BreakPoint {
 			return false;
 		return true;
 	}
+
+	@Override
+	public boolean match(BreakPoint breakPoint) {
+		if (breakPoint.isVirtual())
+		{
+			return false;
+		}
+		else
+		{
+			// TODO: if this is virtual, check for wildcards
+			// else just use equals
+			return this.equals(breakPoint);
+		}
+	}
+
+	@Override
+	public boolean isEnter() {
+		return false;
+	}
+
+	@Override
+	public boolean isExit() {
+		return false;
+	}
 }

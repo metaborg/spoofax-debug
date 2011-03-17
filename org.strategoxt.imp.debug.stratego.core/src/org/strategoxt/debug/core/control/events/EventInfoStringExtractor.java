@@ -271,4 +271,13 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 
 		return this.varnameStringValue;
 	}
+
+	public void updateContents() {
+		// TODO Auto-generated method stub
+		this.stackFrame = null;
+		this.eventInfoStringValue = null;
+		this.givenTermStringValue = null;
+		this.varnameStringValue = null;
+		init();
+	}
 }

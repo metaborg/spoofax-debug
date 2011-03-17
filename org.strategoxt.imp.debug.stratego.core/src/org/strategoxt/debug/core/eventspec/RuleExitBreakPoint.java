@@ -1,11 +1,26 @@
 package org.strategoxt.debug.core.eventspec;
 
-public class RuleExitBreakPoint extends BreakPoint {
+public class RuleExitBreakPoint extends ExitBreakPoint {
 	
 	public RuleExitBreakPoint(String filename, String name, int lineNumber, int startTokenPosition) {
 		super(filename, name, lineNumber, startTokenPosition);
 	}
 
+	@Override
+	public boolean match(BreakPoint breakPoint) {
+		if (breakPoint.isVirtual())
+		{
+			return false;
+		}
+		else
+		{
+			// TODO: if this is virtual, check for wildcards
+			// else just use equals
+			return this.equals(breakPoint);
+		}
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 37;

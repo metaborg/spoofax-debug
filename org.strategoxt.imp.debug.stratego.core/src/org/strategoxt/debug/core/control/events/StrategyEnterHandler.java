@@ -21,6 +21,7 @@ public class StrategyEnterHandler extends EventHandler {
 		LocationInfo locationInfo = getLocationInfo();
 		
 		StrategyEnterBreakPoint b = new StrategyEnterBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		b.setVirtual(false);
 		return b;
 	}
 

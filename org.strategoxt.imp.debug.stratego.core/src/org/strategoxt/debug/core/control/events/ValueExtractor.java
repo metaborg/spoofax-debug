@@ -583,4 +583,9 @@ public class ValueExtractor implements IEventInfoExtractor {
 		}
 		return varname;
 	}
+
+	public void updateContents() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -23,6 +23,7 @@ public class RuleExitHandler extends EventHandler {
 		LocationInfo locationInfo = getLocationInfo();
 		
 		RuleExitBreakPoint b = new RuleExitBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		b.setVirtual(false);
 		return b;
 	}
 

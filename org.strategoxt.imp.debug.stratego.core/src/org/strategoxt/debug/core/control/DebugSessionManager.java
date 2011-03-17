@@ -233,6 +233,18 @@ public class DebugSessionManager {
 	}
 	
 	/**
+	 * Replaces the current term with the given term.
+	 * @param term
+	 */
+	public void changeCurrentTerm(String term)
+	{
+		// only possible when suspended
+		ThreadEventHandler handler = eventThread.getMainThreadHandler();
+		handler.setCurrentTerm(term);
+		// do not resume automagically!
+	}
+	
+	/**
 	 * Terminate the Stratego VM. Exits with exitcode 1, abnormal termination.
 	 */
 	public void terminateVM()

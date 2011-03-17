@@ -144,7 +144,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		try {
 			debugSessionSettings.checkJarLibraries();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			abort("Could not find required eclipse jars in directory \""+directory+"\".", e);
 		}
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
@@ -328,12 +327,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		/*
-		catch (DebugCompileException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			abort("Could not compile stratego program.", e);
-		}*/
+		// do not catch the DebugCompileException here...
 		return binBase;
 	}
 	

@@ -436,6 +436,7 @@ public class DebugCompiler {
 		try {
 			// TODO: can we forward the error log messages?
 			org.strategoxt.strj.Main.mainNoExit(c, strj_args);
+			succes = true; // also succes, the program did not call the exit strategy
 		}
 		catch(StrategoExit e)
 		{

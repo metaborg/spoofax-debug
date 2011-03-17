@@ -22,6 +22,7 @@ public class StrategyExitHandler extends EventHandler {
 		
 		LocationInfo locationInfo = getLocationInfo();
 		StrategyExitBreakPoint b = new StrategyExitBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		b.setVirtual(false);
 		return b;
 	}
 

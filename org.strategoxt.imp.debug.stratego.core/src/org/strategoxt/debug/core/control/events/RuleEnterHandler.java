@@ -19,6 +19,7 @@ public class RuleEnterHandler extends EventHandler {
 		String filename = this.getFilename(); // the filename of the stratego file in which we want to set a breakpoint
 		LocationInfo locationInfo = getLocationInfo();
 		RuleEnterBreakPoint b = new RuleEnterBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
+		b.setVirtual(false);
 		return b;
 	}
 

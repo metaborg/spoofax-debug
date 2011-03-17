@@ -1,0 +1,26 @@
+module setinput
+
+imports
+  libstrategolib
+
+
+signature
+  constructors
+  	
+  	Var		: String -> Expression
+  	Number	: Int -> Expression
+  	Add		: Expression * Expression -> Expression
+  	Sub		: Expression * Expression -> Expression
+  	
+  	Print	: Expression -> Statement
+  	Assign	: String * Expression -> Statement
+  	
+  	Function : String * List(Statement) -> Definition
+  	
+  	Comment : String * String -> Definition
+  	
+  	Program : String * List(Definition) -> Program
+  	
+strategies
+	
+	main = debug(!"CURRENT: "); ?Program(progname, def-list); <debug(!"PROGNAME: ")> progname

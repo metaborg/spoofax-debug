@@ -13,6 +13,9 @@ public class EventSpecList {
 	
 	private List<BreakPoint> breakPoints = null;
 	
+	/**
+	 * Creates a new EventSpecList, it contains the active breakpoints.
+	 */
 	public EventSpecList()
 	{
 		this.breakPoints = new ArrayList<BreakPoint>();
@@ -30,6 +33,11 @@ public class EventSpecList {
 	
 	public boolean contains(BreakPoint b) {
 		return this.breakPoints.contains(b);
+	}
+	
+	public List<BreakPoint> getBreakPoints()
+	{
+		return this.breakPoints;
 	}
 
 }

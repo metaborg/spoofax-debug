@@ -34,7 +34,7 @@ public class StrategyStepHandler extends EventHandler {
 		//long b3 = System.nanoTime();
 		//EventProfiler.instance.mark("createBreakPoint", "B3", b3 - b2);
 		StrategyStepBreakPoint b = new StrategyStepBreakPoint(filename, name, locationInfo.getStart_line_num(), locationInfo.getStart_token_pos());
-		
+		b.setVirtual(false);
 		//long b4 = System.nanoTime();
 		//EventProfiler.instance.mark("createBreakPoint", "B4", b4 - b3);
 		return b;

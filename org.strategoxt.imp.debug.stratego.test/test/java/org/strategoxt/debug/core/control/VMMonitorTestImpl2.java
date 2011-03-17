@@ -16,9 +16,10 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 	public final static String STEP_RETURN = "STEP_RETURN";
 	public final static String RESUME = "RESUME";
 	public final static String TERMINATE = "TERMINATE";
+	public final static String CHANGE = "CHANGE:";
 	
-	private DebugSessionManager debugSessionManager;
-	private VMStateTester vmStateTester;
+	private DebugSessionManager debugSessionManager = null;
+	private VMStateTester vmStateTester = null;
 	
 	private AbstractDSMTest callback = null;
 	
@@ -64,34 +65,37 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		System.out.println("state changed");
 		// catch any exception
 		boolean stateMismatch = false; // true if the current state does not match the expected state
-		try
+		if (vmStateTester != null)
 		{
-			if (vmStateTester.hasNext())
+			try
 			{
-				vmStateTester.next();
-				boolean expected = vmStateTester.compareState(state);
-				String message = "State #" + vmStateTester.getIndex()+ ": Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
-				Assert.assertTrue(message, expected);
-				System.out.println("current: " + state.currentFrame().getCurrentTerm());
-				for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+				if (vmStateTester.hasNext())
 				{
-					System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+					vmStateTester.next();
+					boolean expected = vmStateTester.compareState(state);
+					String message = "State #" + vmStateTester.getIndex()+ ": Hit " + state.currentFrame() + ", but expected to hit " + vmStateTester.current().currentFrame();
+					Assert.assertTrue(message, expected);
+					System.out.println("current: " + state.currentFrame().getCurrentTerm());
+					for ( Entry<String, IStrategoTerm> entry : state.currentFrame().getVariables().entrySet() )
+					{
+						System.out.println("variable entry " + entry.getKey() + " # " + entry.getValue());
+					}
 				}
-			}
-			else
+				else
+				{
+					String message = "State changed but we did not expect anymore state changes...";
+					Assert.fail(message);
+				}
+				
+			} catch(Exception e)
 			{
-				String message = "State changed but we did not except anymore state changes...";
-				Assert.fail(message);
+				caughtThrowable(e);
+				stateMismatch = true;
+			} catch (AssertionError e)
+			{
+				caughtThrowable(e);
+				stateMismatch = true;
 			}
-			
-		} catch(Exception e)
-		{
-			caughtThrowable(e);
-			stateMismatch = true;
-		} catch (AssertionError e)
-		{
-			caughtThrowable(e);
-			stateMismatch = true;
 		}
 		if (!stateMismatch)
 		{
@@ -152,6 +156,13 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		else if (TERMINATE.equals(action))
 		{
 			this.debugSessionManager.terminateVM();
+		}
+		else if (action.startsWith(CHANGE))
+		{
+			String term = action.substring(CHANGE.length());
+			this.debugSessionManager.changeCurrentTerm(term);
+			// also execute the next action
+			this.nextAction();
 		}
 		else
 		{

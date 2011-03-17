@@ -14,7 +14,7 @@ public class java_s_var_0_5 extends DebugCallStrategy {
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename,	IStrategoTerm name, IStrategoTerm varname, IStrategoTerm location, IStrategoTerm given) {
 		super.invoke(context, current, filename, name, varname, location, given);
 		nothing();
-		return current;
+		return this.current;
 	}
 	
 	public static String getFullClassName()

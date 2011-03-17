@@ -24,7 +24,7 @@ public class java_s_step_0_4 extends DebugCallStrategy {
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename,	IStrategoTerm name, IStrategoTerm location, IStrategoTerm given) {
 		super.invoke(context, current, filename, name, location, given);
 		nothing();
-		return current;
+		return this.current;
 	}
 	
 	public static String getFullClassName()

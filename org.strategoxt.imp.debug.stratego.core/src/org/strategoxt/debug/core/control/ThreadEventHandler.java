@@ -22,6 +22,7 @@ import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.BreakpointEvent;
@@ -94,14 +95,16 @@ public class ThreadEventHandler {
 			this.pendingExit = null;
 		}
 	}
-
+	
+	private IEventInfoExtractor extractor = null;
+	
 	protected boolean breakpointEvent(BreakpointEvent event, EventSpecManager eventSpecManager)
 	{
 		executePendingExit();
 		long start = System.nanoTime(); // profile internal
 		boolean suspendThread = false;
 		String eventType = (String) event.request().getProperty("event-type");
-		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
+		this.extractor = new EventInfoStringExtractor(event);
 		long extractorEnd = System.nanoTime();
 		EventHandler h = EventHandlerFactory.createEventHandler(extractor, eventType);
 		if (h.isEnter())
@@ -119,6 +122,9 @@ public class ThreadEventHandler {
 		long suspendCheckEnd = System.nanoTime();
 		if (suspendThread)
 		{
+			System.out.println("suspend");
+			// FIXME: get current term
+			System.out.println(this.strategoState.currentFrame().getCurrentTerm());
 			String[] dynamicRuleNames = getDynamicRuleNames(h);
 			if (dynamicRuleNames != null) {
 				this.strategoState.currentFrame().setDynamicRuleNames(dynamicRuleNames);
@@ -149,12 +155,57 @@ public class ThreadEventHandler {
 		EventProfiler.instance.internalProfile(eventType, start-start, extractorEnd-start, processStart-extractorEnd, processEnd-processStart, suspendCheckEnd-processEnd, end-suspendCheckEnd);
 		return suspendThread;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void setCurrentTerm(String term)
+	{
+		StackFrame fr = null;
+		try {
+			fr = thread.frame(0); // get current frame
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace(); // thread should be suspended
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace(); // invalid index
+		}
+		if (fr == null)
+		{
+			System.out.println("Could not get thread!");
+		}
+		List<Method> methodsC = fr.thisObject().referenceType().methodsByName(DebugCallStrategy.SETCURRENTTERM);
+		Method mCurrent = methodsC.get(0);
+		Value outputCurrent = null; // will be a string representation of an IStrategoTerm, IStrategoList, containing the names of the active dynamic rules
+		try {
+			Value arg = thread.virtualMachine().mirrorOf(term);
+			List<Value> argumentsC = new ArrayList<Value>();
+			argumentsC.add(arg);
+			outputCurrent = fr.thisObject().invokeMethod(thread, mCurrent, argumentsC, ThreadReference.INVOKE_SINGLE_THREADED);
+			this.extractor.updateContents();
+		} catch (InvalidTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(outputCurrent);
+		IStrategoTerm t = this.extractor.getGiven();
+		//System.out.println("BEFORE: " + this.strategoState.currentFrame().getCurrentTerm());
+		this.strategoState.currentFrame().setCurrentTerm(t);
+		//System.out.println("AFTER: " + this.strategoState.currentFrame().getCurrentTerm());
+	}
 
 	@SuppressWarnings("unchecked")
 	private String[] getDynamicRuleNames(EventHandler h)
 	{
 		Method method = null;
 		List<Value> arguments = new ArrayList<Value>();
+		
 		// java method "getDRKeySetString" calls a stratego strategy and returns a list of strings for each dynamic rule
 		List<Method> methods = h.getStackFrame().thisObject().referenceType().methodsByName(DebugCallStrategy.GETDRKEYSETSTRING);
 		// should be only one method!

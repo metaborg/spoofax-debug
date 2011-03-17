@@ -1,14 +1,2 @@
 name	count	sum duration
-find-comments	1	48
-find-functions	1	70
-match-f-and-c	1	449
-is-empty	2	32
-first	2	115
-build-c	1	7
-get-function-name	2	15
-find-comment-by-name	2	271
-main	1	0
-match-comments	1	644
-find-comment-match	2	371
-execute	1	698
-try-find-comment-by-name	2	408
+main	1	76
