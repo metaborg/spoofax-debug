@@ -243,6 +243,17 @@ public class DebugSessionManager {
 		handler.setCurrentTerm(term);
 		// do not resume automagically!
 	}
+
+	/**
+	 * Check if the given expression is parsable.
+	 * @param expression
+	 * @return
+	 */
+	public boolean verifyValue(String expression)
+	{
+		ThreadEventHandler handler = eventThread.getMainThreadHandler();
+		return handler.verifyValue(expression);
+	}
 	
 	/**
 	 * Terminate the Stratego VM. Exits with exitcode 1, abnormal termination.

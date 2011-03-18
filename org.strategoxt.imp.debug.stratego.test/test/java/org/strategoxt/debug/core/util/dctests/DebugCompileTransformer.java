@@ -149,7 +149,8 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			binBase = debugCompiler.debugCompile(debugSessionSettings);
 			compileSucces = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		} catch(StackOverflowError e) {
 			// change jvm arguments
 			/*
@@ -159,9 +160,10 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			-XX:MaxPermSize=256m
 			-server
 			*/
+			Assert.fail(e.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		Assert.assertTrue("Debug compiling failed!", compileSucces);
 		Assert.assertNotNull("Bin output directory should be set!", binBase);
@@ -235,11 +237,15 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 		try {
 			binBase = debugCompiler.runCompile(debugSessionSettings);
 			compileSucces = true;
+		} catch (StackOverflowError e)
+		{
+			Assert.fail(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		Assert.assertTrue("Debug compiling failed!", compileSucces);
 		Assert.assertNotNull("Bin output directory should be set!", binBase);

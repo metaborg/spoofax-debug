@@ -1,10 +1,11 @@
 package org.strategoxt.debug.core.control;
 
-import static org.junit.Assert.*;
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.junit.Test;
+import org.strategoxt.debug.core.control.actions.ActionFactory;
+import org.strategoxt.debug.core.control.actions.IAction;
 import org.strategoxt.debug.core.eventspec.EnterBreakPoint;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -20,7 +21,7 @@ public class DSMTestSetInput extends AbstractDSMTest {
 		// continue
 		
 		String projectName = "setinput";
-		String strategoFilename = "setinput.str";
+		//String strategoFilename = "setinput.str";
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
 		checkProjectExists(debugSessionSettings);
 		
@@ -54,18 +55,31 @@ public class DSMTestSetInput extends AbstractDSMTest {
 		
 		String term;
 		term = "[\"setinput\",\"-i\",\"/home/rlindeman/Documents/TU/strategoxt/spoofax-imp/source/org.strategoxt.imp.debug.stratego.test/src/stratego/setinput/run.input\"]";
-		vmStateTester.addStrategoState(VMStateTester.createState("setinput.str", "main", "s-enter", 26, 2, 26, 91, term)); // match-comments[localvar.str]@(47,4)47 39
+		vmStateTester.addStrategoState(VMStateTester.createState("setinput.str", "main", "s-enter", 26, 2, 26, 106, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		// TODO: implement change current term action
-		String action = VMMonitorTestImpl2.CHANGE + "\"theNewCurrentTerm\"";
+		// change current term action
+		String actionName = ActionFactory.CHANGE + "\"theNewCurrentTerm\"";
+		vmMonitor.addAction(actionName);
+		// remove the breakpoint
+		IAction action = new IAction() {
+			
+			@Override
+			public void execute(DebugSessionManager dsm) {
+				dsm.getEventSpecManager().clear();
+			}
+			
+			@Override
+			public boolean fireNext() {
+				return true;
+			}
+		};
 		vmMonitor.addAction(action);
-		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		
 		term = "\"theNewCurrentTerm\"";
 		vmStateTester.addStrategoState(VMStateTester.createState("setinput.str", "main", "s-step", 26, 9, 26, 28, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		vmMonitor.addAction(VMMonitorTestImpl2.RESUME);
+		vmMonitor.addAction(ActionFactory.RESUME);
 		
 		// run
 		vmStateTester.initialize();

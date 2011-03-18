@@ -39,5 +39,10 @@ public class EventSpecList {
 	{
 		return this.breakPoints;
 	}
+	
+	public void clear()
+	{
+		this.breakPoints.clear();
+	}
 
 }

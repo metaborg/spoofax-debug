@@ -93,6 +93,14 @@ public class EventSpecManager {
 		return this.eventSpecList.remove(bp);
 	}
 	
+	/**
+	 * Removes all breakpoints.
+	 */
+	public void clear()
+	{
+		this.eventSpecList.clear();
+	}
+	
 	// StackFrame in which the step was started
 	private StrategoStackFrame stepFrame = null;
 	

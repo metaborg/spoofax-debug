@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control;
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
+import org.strategoxt.debug.core.control.actions.ActionFactory;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
@@ -55,7 +56,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		// perform a STEP_OVER, will hit
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
@@ -65,7 +66,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 11, 47, 25, term)); // match-comments[localvar.str]@(48,6) 48,40
 		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		eventType = "s-step";
 		//this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 		term = "[Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
@@ -123,7 +124,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		// perform a STEP_OVER, will hit
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
@@ -135,7 +136,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 47, 11, 47, 25, term)); // match-comments[localvar.str]@(48,6) 48,40
 		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		// perform a STEP_OVER, will hit
 		// 49, 8
 		// out := <match-f-and-c> (f*, c*)
@@ -146,11 +147,11 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "[Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40, term)); // match-comments[localvar.str]@(49,6) 49 37
 	
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 13, 48, 26, term)); // match-comments[localvar.str]@(49,6) 49 37
 		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\")]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 49, 6, 49, 37, term)); // match-comments[localvar.str]@(49,6) 49 37
 		
@@ -216,7 +217,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term));
 		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		// perform a STEP_OVER, should hit
 		// 48, 8
 		// c* := <find-comments> definitions* // find comments
@@ -225,7 +226,7 @@ public class DSMTestStepping extends AbstractDSMTest {
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 11, 47, 25, term));
 		
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_OVER);
+		vmMonitor.addAction(ActionFactory.STEP_OVER);
 		// next s-step is (s-step(| "localvar.str", "match-comments", LocationInfo("48", "6", "48", "40"))
 		// for call ; c* := <s-step(| "localvar.str", "match-comments", LocationInfo("48", "13", "48", "26")); find-comments> definitions*
 

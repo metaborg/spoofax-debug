@@ -60,24 +60,35 @@ public class EStrategoVariable extends StrategoDebugElement implements IVariable
 		this.hasValueChanged = hasValueChanged;
 	}
 
+	/**
+	 * Changes the value of this variable.
+	 */
 	public void setValue(String expression) throws DebugException {
-		// TODO Auto-generated method stub
-		
+		System.out.println("setValue= " + expression);
+		StrategoDebugTarget target = (StrategoDebugTarget) this.getDebugTarget();
+		// TODO: implement proper variable change
+		// currently it just replaces the current term while infact this variable could be the child of some of value.
+		target.getDebugSessionManager().changeCurrentTerm(expression);
 	}
 
 	public void setValue(IValue value) throws DebugException {
 		// TODO Auto-generated method stub
-		
+		System.out.println("setValue = " + value);
 	}
 
+	/**
+	 * Support value modification
+	 */
 	public boolean supportsValueModification() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * Returns true if the given expression can be parsed as an IStrategoTerm.
+	 */
 	public boolean verifyValue(String expression) throws DebugException {
-		// TODO Auto-generated method stub
-		return false;
+		StrategoDebugTarget target = (StrategoDebugTarget) this.getDebugTarget();
+		return target.getDebugSessionManager().verifyValue(expression);
 	}
 
 	public boolean verifyValue(IValue value) throws DebugException {

@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Assert;
 import org.junit.Test;
+import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
@@ -59,20 +60,27 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 		// mkdir localvar/stratego in workingdir
 		// mkdir localvar/java
 		// mkdir localvar/class
-		IPath binBase = null;
+		//IPath binBase = null;
 		boolean compileSucces = false;
+		boolean failed = false;
 		try {
-			binBase = debugCompiler.runCompile(debugSessionSettings);
+			debugCompiler.runCompile(debugSessionSettings);
 			compileSucces = true;
+		} catch(DebugCompileException e)
+		{
+			failed = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
+		Assert.assertTrue("Should have thrown DebugCompileException!", failed);
+		/*
 		Assert.assertTrue("Debug compiling failed!", compileSucces);
 		Assert.assertNotNull("Bin output directory should be set!", binBase);
-		
+		*/
 		// should have no output
 		//checkOutput(debugSessionSettings);
 		

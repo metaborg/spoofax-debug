@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control;
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
+import org.strategoxt.debug.core.control.actions.ActionFactory;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
@@ -56,7 +57,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_RETURN);
+		vmMonitor.addAction(ActionFactory.STEP_RETURN);
 		// perform a STEP_RETURN, will hit s-exit of execute
 		// 37, 3
 		//  execute:
@@ -129,7 +130,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		eventType = "s-step";
 		this.addBP(dsm, strategoFilename, lineNumber, startTokenPosition, eventType);
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_RETURN);
+		vmMonitor.addAction(ActionFactory.STEP_RETURN);
 		// perform a STEP_RETURN, will hit breakpoint on line 48
 		term = "[Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", eventType, 48, 6, 48, 40, term)); // match-comments[localvar.str]@(48,6) 48,40

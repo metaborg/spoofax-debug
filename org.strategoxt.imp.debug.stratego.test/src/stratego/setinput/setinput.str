@@ -23,4 +23,6 @@ signature
   	
 strategies
 	
-	main = debug(!"CURRENT: "); ?Program(progname, def-list); <debug(!"PROGNAME: ")> progname
+	main = debug(!"CURRENT: "); function-call; ?Program(progname, def-list); <debug(!"PROGNAME: ")> progname
+	
+	function-call = debug(!"function call")

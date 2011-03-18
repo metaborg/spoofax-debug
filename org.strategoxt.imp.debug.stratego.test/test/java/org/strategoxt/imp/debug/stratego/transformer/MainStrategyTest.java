@@ -20,7 +20,7 @@ public class MainStrategyTest {
 		//m4();
 	}
 
-	private static void m1() {
+	public static void m1() {
 		String baseInputPath = "src/stratego/localvardebug";
 		String strategoFilePath = "localvar.str";
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath + "/" + strategoFilePath;
@@ -47,7 +47,7 @@ public class MainStrategyTest {
 	}
 
 
-	private static void m1b() {
+	public static void m1b() {
 		String baseInputPath = "src/stratego/localvardebug";
 		String strategoFilePath = "localvar.str";
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath + "/" + strategoFilePath;
@@ -74,7 +74,7 @@ public class MainStrategyTest {
 		}
 	}
 	
-	private static void m2() {
+	public static void m2() {
 		String baseInputPath = "src/stratego/testimports";
 		String strategoFilePath = "localvar.str";
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath + "/" + strategoFilePath;
@@ -97,7 +97,7 @@ public class MainStrategyTest {
 		}
 	}
 	
-	private static void m3() {
+	public static void m3() {
 		// output rtree files
 		// TODO: check for rtree output
 		String baseInputPath = "src/stratego/localvardebug";
@@ -126,7 +126,7 @@ public class MainStrategyTest {
 		}
 	}
 	
-	private static void m4() {
+	public static void m4() {
 		// TODO Auto-generated method stub
 		/*
 		String baseInputPath = "src/stratego/localvardebug";

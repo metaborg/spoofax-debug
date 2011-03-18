@@ -7,25 +7,20 @@ import java.util.Map.Entry;
 import junit.framework.Assert;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.strategoxt.debug.core.control.actions.ActionFactory;
+import org.strategoxt.debug.core.control.actions.IAction;
 import org.strategoxt.debug.core.model.StrategoState;
 
 public class VMMonitorTestImpl2 implements VMMonitor {
-	
-	public final static String STEP_INTO = "STEP_INTO";
-	public final static String STEP_OVER = "STEP_OVER";
-	public final static String STEP_RETURN = "STEP_RETURN";
-	public final static String RESUME = "RESUME";
-	public final static String TERMINATE = "TERMINATE";
-	public final static String CHANGE = "CHANGE:";
 	
 	private DebugSessionManager debugSessionManager = null;
 	private VMStateTester vmStateTester = null;
 	
 	private AbstractDSMTest callback = null;
 	
-	// list contains String encoded actions: e.g. RESUME, STEP
+	// list contains IAction objects
 	// This action should be performed after a state change, if no actions are in the list left, do a RESUME
-	private List<String> afterStateChangeActions = null;
+	private List<IAction> afterStateChangeActions = null;
 	private int actionIndex = -1;
 	
 	public VMMonitorTestImpl2(AbstractDSMTest callback) {
@@ -104,7 +99,7 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		else
 		{
 			// test failed, stop VM
-			performAction(TERMINATE);
+			this.debugSessionManager.terminateVM();
 		}
 	}
 
@@ -122,53 +117,24 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		}
 	}
 	
-	public void addAction(String action)
+	public void addAction(String actionName)
+	{
+		IAction action = ActionFactory.createAction(actionName);
+		getAfterStateChangeActions().add(action);
+	}
+	
+	public void addAction(IAction action)
+	{
+		getAfterStateChangeActions().add(action);
+	}
+	
+	private List<IAction> getAfterStateChangeActions()
 	{
 		if (this.afterStateChangeActions == null)
 		{
-			this.afterStateChangeActions = new ArrayList<String>();
+			this.afterStateChangeActions = new ArrayList<IAction>();
 		}
-		this.afterStateChangeActions.add(action);
-	}
-	
-	/**
-	 * Performs the given action on the Stratego VM.
-	 * @param action
-	 */
-	private void performAction(String action)
-	{
-		if (RESUME.equals(action))
-		{
-			this.debugSessionManager.resumeVM();
-		}
-		else if (STEP_INTO.equals(action))
-		{
-			this.debugSessionManager.stepInto();
-		}
-		else if (STEP_OVER.equals(action))
-		{
-			this.debugSessionManager.stepOver();
-		}
-		else if (STEP_RETURN.equals(action))
-		{
-			this.debugSessionManager.stepReturn();
-		}
-		else if (TERMINATE.equals(action))
-		{
-			this.debugSessionManager.terminateVM();
-		}
-		else if (action.startsWith(CHANGE))
-		{
-			String term = action.substring(CHANGE.length());
-			this.debugSessionManager.changeCurrentTerm(term);
-			// also execute the next action
-			this.nextAction();
-		}
-		else
-		{
-			// action unknown, just do a resume
-			this.debugSessionManager.resumeVM();
-		}
+		return this.afterStateChangeActions;
 	}
 	
 	/**
@@ -179,8 +145,12 @@ public class VMMonitorTestImpl2 implements VMMonitor {
 		actionIndex++;
 		if (afterStateChangeActions != null && actionIndex < afterStateChangeActions.size())
 		{
-			String action = afterStateChangeActions.get(actionIndex);
-			performAction(action);
+			IAction action = afterStateChangeActions.get(actionIndex);
+			action.execute(this.debugSessionManager);
+			if (action.fireNext())
+			{
+				this.nextAction();
+			}
 		}
 		else
 		{

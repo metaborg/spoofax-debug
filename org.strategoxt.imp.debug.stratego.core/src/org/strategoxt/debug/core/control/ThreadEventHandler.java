@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.spoofax.terms.ParseError;
 import org.spoofax.terms.StringTermReader;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.control.events.EventHandler;
@@ -154,6 +155,26 @@ public class ThreadEventHandler {
 		long end = System.nanoTime(); // profile internal
 		EventProfiler.instance.internalProfile(eventType, start-start, extractorEnd-start, processStart-extractorEnd, processEnd-processStart, suspendCheckEnd-processEnd, end-suspendCheckEnd);
 		return suspendThread;
+	}
+	
+	/**
+	 * Returns true if the value can be parsed to an IStrategoTerm.
+	 * @param expression
+	 * @return
+	 */
+	public boolean verifyValue(String expression)
+	{
+		// can the expressionbe converted to an IStrategoTerm
+		StringTermReader termReader = EventInfoStringExtractor.termReader;
+		IStrategoTerm term = null;
+		try {
+			term = termReader.parseFromString(expression);
+		}
+		catch(ParseError error)
+		{
+			// RuntimeException
+		}
+		return term != null;
 	}
 	
 	@SuppressWarnings("unchecked")

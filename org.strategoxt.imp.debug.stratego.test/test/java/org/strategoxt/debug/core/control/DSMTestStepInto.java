@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control;
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
+import org.strategoxt.debug.core.control.actions.ActionFactory;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
@@ -55,7 +56,7 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		term = "Program(\"progname\",[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])])";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "match-comments", "s-step", 47, 4, 47, 39, term)); // match-comments[localvar.str]@(47,4)47 39
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
+		vmMonitor.addAction(ActionFactory.STEP_INTO);
 		// perform a STEP_INTO, will hit
 		// 52, 3
 		//find-functions:
@@ -117,11 +118,11 @@ public class DSMTestStepInto extends AbstractDSMTest {
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "s-step", 55, 4, 55, 54, term)); // find-functions[localvar.str]@(55,4,55,54)
 
-		vmMonitor.addAction(VMMonitorTestImpl2.STEP_INTO);
+		vmMonitor.addAction(ActionFactory.STEP_INTO);
 		// perform a STEP_INTO, but current statement cannot be stepped into. a STEP_OVER will occur
 		term = "[Comment(\"fname\",\"laalalalalalalalalal\"),Comment(\"this\",\"this text\"),Comment(\"that\",\"that text\"),Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")]),Function(\"nocomment\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])]";
 		vmStateTester.addStrategoState(VMStateTester.createState("localvar.str", "find-functions", "r-exit", 55, 19, 55, 41, term)); // Frame 3 @ find-functions[localvar.str]@(52,2,55,54)
-		vmMonitor.addAction(VMMonitorTestImpl2.RESUME);
+		vmMonitor.addAction(ActionFactory.RESUME);
 		
 		vmStateTester.initialize();
 		vmMonitor.setVMStateTester(vmStateTester);
