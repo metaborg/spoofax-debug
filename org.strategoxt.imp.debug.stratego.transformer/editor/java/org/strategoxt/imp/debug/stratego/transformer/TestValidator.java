@@ -1,12 +1,6 @@
 package org.strategoxt.imp.debug.stratego.transformer;
 
-import org.strategoxt.imp.runtime.dynamicloading.Descriptor;
-import org.strategoxt.imp.runtime.services.MetaFileLanguageValidator;
-
-public class TestValidator extends MetaFileLanguageValidator 
+public class TestValidator 
 { 
-  @Override public Descriptor getDescriptor()
-  { 
-    return TestParseController.getDescriptor();
-  }
+
 }

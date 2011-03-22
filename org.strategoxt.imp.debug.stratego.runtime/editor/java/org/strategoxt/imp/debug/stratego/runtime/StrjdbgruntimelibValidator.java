@@ -1,12 +1,6 @@
 package org.strategoxt.imp.debug.stratego.runtime;
 
-import org.strategoxt.imp.runtime.dynamicloading.Descriptor;
-import org.strategoxt.imp.runtime.services.MetaFileLanguageValidator;
-
-public class StrjdbgruntimelibValidator extends MetaFileLanguageValidator 
+public class StrjdbgruntimelibValidator 
 { 
-  @Override public Descriptor getDescriptor()
-  { 
-    return StrjdbgruntimelibParseController.getDescriptor();
-  }
+
 }
