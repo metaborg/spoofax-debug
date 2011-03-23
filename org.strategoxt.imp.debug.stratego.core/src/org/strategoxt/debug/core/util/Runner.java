@@ -1,5 +1,8 @@
 package org.strategoxt.debug.core.util;
 
+import java.util.List;
+
+import org.eclipse.core.runtime.IPath;
 import org.strategoxt.debug.core.control.DebugSessionManager;
 
 
@@ -28,11 +31,10 @@ public class Runner {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public static void run(DebugSessionSettings debugSessionSettings, String mainArgs, String classpath)
+	public static void run(String mainArgs, List<IPath> classpaths, IPath tableDirectory)
 	{
-		//DebugSessionSettings debugSessionSettings = new DebugSessionSettings("/tmp", projectName);
-		DebugSessionManager manager = new DebugSessionManager(debugSessionSettings, null);
-		manager.initVM(manager.getDebugSessionSettings(), mainArgs, classpath);
+		DebugSessionManager manager = new DebugSessionManager();
+		manager.initVM(mainArgs, classpaths, tableDirectory);
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		System.out.println("RUN");

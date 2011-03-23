@@ -2,6 +2,7 @@ package org.strategoxt.debug.core.util.dctests;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.StrategoFileManager;
 import org.eclipse.core.runtime.IPath;
@@ -93,11 +94,13 @@ public class DebugCompileTransformerError extends AbstractDebugCompileTest {
 			String argsForMainClass = "-i " + input;// + " -o " + output;
 			String mainClass = "transformer_error.transformer_error";
 			String mainArgs = mainClass + " " + argsForMainClass;
-			
-			String cp = debugSessionSettings.getRunClasspath();
-			String classpath = cp;
+
+			// TODO: strategoxt.jar, runtime.jars, application directory
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
+			List<IPath> classpaths = null;
+			IPath tableDirectory = null;
+			Assert.assertNotNull(classpaths);
+			org.strategoxt.debug.core.util.Runner.run(mainArgs, classpaths, tableDirectory);
 		}
 	}
 }

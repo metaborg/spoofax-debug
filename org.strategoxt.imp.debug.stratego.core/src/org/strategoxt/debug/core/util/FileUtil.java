@@ -2,10 +2,16 @@ package org.strategoxt.debug.core.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.osgi.framework.Bundle;
 
 public class FileUtil {
 
@@ -28,10 +34,24 @@ public class FileUtil {
 	  return oFile.delete();
 	}
 
+	/**
+	 * Returns the filenames (excluding the path) of the files that are in the given directory and have the given extension.
+	 * Subdirectories will not be traversed.
+	 * @param basePath
+	 * @param extension
+	 * @return
+	 */
 	public static List<String> getFilesWithExtension(IPath basePath, final String extension) {
 		return getFilesWithExtension(basePath.toFile(), extension);
 	}
 	
+	/**
+	 * Returns the filenames (excluding the path) of the files that are in the given directory and have the given extension.
+	 * Subdirectories will not be traversed.
+	 * @param basePath
+	 * @param extension
+	 * @return
+	 */
 	public static List<String> getFilesWithExtension(File basePath, final String extension) {
 		
 		List<String> matches = new ArrayList<String>();
@@ -83,6 +103,11 @@ public class FileUtil {
 		return builder.toString();
 	}
 	
+	/**
+	 * Converts the given List<IPath> to a String[]. the toOSString-method is used to generate a String from the IPath.
+	 * @param list
+	 * @return
+	 */
 	public static String[] convertIPathToStringArray(List<IPath> list)
 	{
 		String[] cp = new String[list.size()];
@@ -91,5 +116,30 @@ public class FileUtil {
 			cp[i] = list.get(i).toOSString();
 		}
 		return cp;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static IPath getLibDirectory()
+	{
+		//find the jar library directory in the eclipse plugin
+		Bundle b = org.strategoxt.debug.core.Activator.getDefault().getBundle();
+		
+		IPath path = new Path("lib");
+		Map override = null;
+		URL url = FileLocator.find(b, path, override);
+		URL fileURL = null;
+		try {
+			fileURL = FileLocator.toFileURL(url);
+			//System.out.println("FILE URL:" + fileURL);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			//abort("Could not find required directory \"lib\".", e);
+		}
+		//System.out.println("URL: " + fileURL)		
+		
+		String urlPath = fileURL.getPath();
+		IPath directory = new Path(urlPath);
+		return directory;
 	}
 }

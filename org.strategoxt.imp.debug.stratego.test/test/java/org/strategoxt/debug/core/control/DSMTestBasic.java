@@ -8,8 +8,6 @@ import org.StrategoFileManager;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
 import org.strategoxt.debug.core.eventspec.RuleEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
 
@@ -20,20 +18,15 @@ public class DSMTestBasic extends AbstractDSMTest {
 	public void testDSM1()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		createDebugSessionSettings(projectName);
 
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
-		
+		DebugSessionManager dsm = createDebugSessionManager();
+
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
 		String term = "Function(\"fname\",[Assign(\"var_foo\",Add(Number(2),Number(7))),Print(\"var_foo\")])";
@@ -49,7 +42,7 @@ public class DSMTestBasic extends AbstractDSMTest {
 		
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 	
 	// stratego program should already be compiled
@@ -57,19 +50,14 @@ public class DSMTestBasic extends AbstractDSMTest {
 	public void testDSM2()
 	{
 		String projectName = "localvar";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		createDebugSessionSettings(projectName);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		// which breakpoints will be hit?
 		VMStateTester vmStateTester = new VMStateTester(VMStateTesterCompareType.Name);
@@ -92,27 +80,25 @@ public class DSMTestBasic extends AbstractDSMTest {
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 	
 	@org.junit.Test
 	public void testBreakPointAtS_Step()
 	{
 		String projectName = "localvar";
+		createDebugSessionSettings(projectName);
+
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass; // Arguments when program is run
-		String mainClasspath = debugSessionSettings.getClassDirectory().toOSString(); // classpath when program is run
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
-		
+
+		// create DSM
+		DebugSessionManager dsm = createDebugSessionManager();
+
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
 		EventTable eventTable = dsm.getEventSpecManager().getEventTable();
@@ -157,27 +143,23 @@ public class DSMTestBasic extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, mainClasspath);
+		start(dsm, mainArgs);
 	}
-	
+
 	@org.junit.Test
 	public void testStepVarBreakPoint()
 	{
 		String projectName = "localvar";
+		createDebugSessionSettings(projectName);
+		
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
 		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -225,29 +207,24 @@ public class DSMTestBasic extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 	
 	@org.junit.Test
 	public void testBreakpointLookup()
 	{
-		String projectName = "localvar";
-		String strategoFilename = "localvar.str";
 		// TODO: project should be compiled with debug info!
-		
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		String projectName = "localvar";
+		createDebugSessionSettings(projectName);
+
+		String strategoFilename = "localvar.str";
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -284,6 +261,6 @@ public class DSMTestBasic extends AbstractDSMTest {
 		dsm.getEventSpecManager().add(bp);
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 }

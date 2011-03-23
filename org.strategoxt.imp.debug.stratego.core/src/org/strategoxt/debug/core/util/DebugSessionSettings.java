@@ -169,6 +169,10 @@ public class DebugSessionSettings {
 		this.runtimeJars = runtimeJars;
 	}
 	
+	/**
+	 * Check if all the required jars can be found.
+	 * @throws FileNotFoundException
+	 */
 	public void checkJarLibraries() throws FileNotFoundException
 	{
 		IPath strategodebuglib = getStrategoDebugLibraryDirectory().append(STRATEGODEBUGLIB_RTREE); // should contain strategodebuglib.rtree
@@ -200,6 +204,7 @@ public class DebugSessionSettings {
 		return classPath;
 	}
 	
+	/*
 	public String getRunClasspath()
 	{
 		List<IPath> cpList = new ArrayList<IPath>();
@@ -208,7 +213,7 @@ public class DebugSessionSettings {
 		cpList.add(this.getClassDirectory());
 		String classPath = FileUtil.convertIPathToClasspath(cpList);
 		return classPath;
-	}
+	}*/
 	
 	//private static String root = "/home/rlindeman/Documents/TU/webdsl/spoofax-imp/source";
 	//public static String strategoxtjar = root+"/org.strategoxt.imp.debug.stratego.transformer/utils/strategoxt.jar";
@@ -273,13 +278,27 @@ public class DebugSessionSettings {
 	/**
 	 * Classpath entry may be used when the stratego program references external strategies defined in java.
 	 */
-	public String[] javaCompileExtraClasspath = null;
+	public IPath[] javaCompileExtraClasspath = null;
 	
-	public void setJavaCompileExtraClasspath(String[] javaCompileExtraClasspath) {
+	public void setJavaCompileExtraClasspath(IPath[] javaCompileExtraClasspath) {
 		this.javaCompileExtraClasspath = javaCompileExtraClasspath;
 	}
 	
-	public String[] getJavaCompileExtraClasspath() {
+	public IPath[] getJavaCompileExtraClasspath() {
 		return javaCompileExtraClasspath;
+	}
+
+	private IPath tableDirectory = null;
+	
+	public void setTableDirectory(IPath tableDirectory) {
+		this.tableDirectory = tableDirectory;
+	}
+	
+	/**
+	 * This directory contains table and offset files
+	 * @return
+	 */
+	public IPath getTableDirectory() {
+		return tableDirectory;
 	}
 }

@@ -184,30 +184,12 @@ public class DebugCompiler {
 		// create lookup table
 		IPath tableFilename = projectStrategoDir.append(projectName + ".table"); // location of the table
 		// the table contains all debug lookup information for all files in the project
-		generateLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
+		generateBreakpointLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
 		
-		// create character offset table
-		// TODO: optimize
-		List<FileLineLengthTable> tables = new ArrayList<FileLineLengthTable>();
-		for(IPath inputFilePath : inputFiles) // TODO: sort the inputFiles on their path
-		{
-			IPath basedir = strategoSourceBasedir; // end with '/'
-			//IPath inputFilePath = new Path(inputFileString);
-			
-			if (basedir.isPrefixOf(inputFilePath)) {
-				//inputFile = inputFile.substring(basedir.length()); // make relative to the basedir
-				inputFilePath = inputFilePath.makeRelativeTo(basedir);
-			}
-			else
-			{
-				System.err.println("inputfile '"+inputFilePath+"' is not located in the strategoSourceBasedir '"+strategoSourceBasedir+"'");
-			}
-			FileLineLengthTable t = new FileLineLengthTable(inputFilePath.toOSString());
-			t.create(basedir);
-			tables.add(t);
-		}
 		IPath charOffsetTableFilename = projectStrategoDir.append((projectName + ".offset")); // location of the character offset table
-		LineLengthTable.writeLineLengthTable(charOffsetTableFilename, tables);
+		generateOffsetTable(charOffsetTableFilename, strategoSourceBasedir, inputFiles);
+
+		debugSessionSettings.setTableDirectory(projectStrategoDir);
 		
 		String libraryName = projectName; // will be the packageName
 		String className = projectName;
@@ -366,7 +348,43 @@ public class DebugCompiler {
 		return result;
 	}
 	
-	protected void generateLookupTable(IPath tableFilenameString, Collection<IPath> strategoDebugFileNames)
+	/**
+	 * Creates a table with the length per line, so we can convert a linenumber+token_line_offset to a token_file_offset
+	 */
+	protected void generateOffsetTable(IPath charOffsetTableFilename, IPath strategoSourceBasedir, Collection<IPath> inputFiles)
+	{
+		// create character offset table
+		// TODO: optimize
+		List<FileLineLengthTable> tables = new ArrayList<FileLineLengthTable>();
+		for(IPath inputFilePath : inputFiles) // TODO: sort the inputFiles on their path
+		{
+			IPath basedir = strategoSourceBasedir; // end with '/'
+			//IPath inputFilePath = new Path(inputFileString);
+			
+			if (basedir.isPrefixOf(inputFilePath)) {
+				//inputFile = inputFile.substring(basedir.length()); // make relative to the basedir
+				inputFilePath = inputFilePath.makeRelativeTo(basedir);
+			}
+			else
+			{
+				System.err.println("inputfile '"+inputFilePath+"' is not located in the strategoSourceBasedir '"+strategoSourceBasedir+"'");
+			}
+			FileLineLengthTable t = new FileLineLengthTable(inputFilePath.toOSString());
+			t.create(basedir);
+			tables.add(t);
+		}
+		
+		LineLengthTable.writeLineLengthTable(charOffsetTableFilename, tables);
+	}
+	
+	/**
+	 * Creates a table that contains the ranges (linenumber and token offset) for each breakpoint.
+	 * 
+	 * This table makes it easier to find out what breakpoint to set using a given linenumber and token-offset.
+	 * @param tableFilenameString
+	 * @param strategoDebugFileNames
+	 */
+	protected void generateBreakpointLookupTable(IPath tableFilenameString, Collection<IPath> strategoDebugFileNames)
 	{
 		// transform a stratego program to a stratego program with debug information
 		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
@@ -497,15 +515,18 @@ public class DebugCompiler {
 		// import org.strategoxt.stratego_lib.*;
 		// import org.strategoxt.libstrategodebuglib.*;
 		// import org.strategoxt.lang.*;
-		String classPath = debugSessionSettings.getDebugCompileClasspath();
+		// TODO: need strategoxt.jar runtime jars java-directory
+		//String classPath = debugSessionSettings.getDebugCompileClasspath();
 
+		List<IPath> classpaths = new ArrayList<IPath>();
 		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 		{
-			for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+			for(IPath c : debugSessionSettings.getJavaCompileExtraClasspath())
 			{
-				classPath += java.io.File.pathSeparatorChar + c;
+				classpaths.add(c);
 			}
 		}
+		String classPath = FileUtil.convertIPathToClasspath(classpaths);
 		//log(classPath);
 		// http://www.javaworld.com/javatips/jw-javatip131.html
 		IPath filename = debugSessionSettings.getJavaDirectory().append(mainSourceFileName);

@@ -2,9 +2,6 @@ package org.strategoxt.imp.debug.core.str.launching;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +12,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +29,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.osgi.framework.Bundle;
 import org.strategoxt.debug.core.util.DebugCompileException;
 import org.strategoxt.debug.core.util.DebugCompiler;
 import org.strategoxt.debug.core.util.DebugSessionSettings;
@@ -94,9 +89,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			programArguments = new ArrayList<String>();
 		}
 				
-		// the started wm will wait for a debugger to connect to this port
-		String port = ""+findFreePort();
-		
 		//String strategoFilePath = file.getLocation().toOSString(); // full path to the stratego program
 		IPath strategoFilePath = new Path(program);
 		IPath strategoSourceBasedir = ResourcesPlugin.getWorkspace().getRoot().getProject(project).getLocation();
@@ -118,40 +110,15 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		String projectName = DebugCompiler.createProjectName(new File(program));
 		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create(workingDirFolder, projectName);
 		
-		//find the jar library directory in the eclipse plugin
-		Bundle b = org.strategoxt.debug.core.Activator.getDefault().getBundle();
-		
-		IPath path = new Path("lib");
-		Map override = null;
-		URL url = FileLocator.find(b, path, override);
-		URL fileURL = null;
-		try {
-			fileURL = FileLocator.toFileURL(url);
-			//System.out.println("FILE URL:" + fileURL);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			//abort("Could not find required directory \"lib\".", e);
-		}
-		//System.out.println("URL: " + fileURL)		
-		
-		String urlPath = fileURL.getPath();
-		IPath directory = new Path(urlPath);
-		System.out.println(directory.toOSString());
 
+		initJarLocations(debugSessionSettings);
 		
-		debugSessionSettings.setJarLibraryDirectory(directory);
-		try {
-			debugSessionSettings.checkJarLibraries();
-		} catch (FileNotFoundException e) {
-			abort("Could not find required eclipse jars in directory \""+directory+"\".", e);
-		}
 		debugSessionSettings.setStrategoSourceBasedir(strategoSourceBasedir);
 		debugSessionSettings.setStrategoFilePath(strategoFilePath);
 		// compile the stratego program
 		IPath binBase = null;
 		try {
-			binBase = prepareProgram(configuration, monitor, mode, debugCompiler, debugSessionSettings);
+			binBase = StrategoLaunchUtil.prepareProgram(configuration, monitor, mode, debugCompiler, debugSessionSettings);
 		} catch (DebugCompileException e) {
 			// could not compile program: Show error message
 			String message = MessageFormat.format("Could not launch Stratego program {0}. Failed to compile the program.", new Object[] { program });
@@ -160,12 +127,6 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		}
 		
 		monitor.subTask("Starting Stratego VM");
-		// Initialize the VMRunner
-		IVMInstall defaultInstall = JavaRuntime.getDefaultVMInstall();
-		System.out.println("default: " + defaultInstall.getName());
-		//IVMRunner vmRunner = defaultInstall.getVMRunner(mode);
-		IVMRunner vmRunner = defaultInstall.getVMRunner(ILaunchManager.RUN_MODE); // always use RUN, so we can control the debug parameters of the VM
-
 		
 		// set up vm arguments
 		String classToLaunch = projectName + "." + projectName;
@@ -175,19 +136,42 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		cpList.add(debugSessionSettings.getStrategoxtJar());
 		cpList.addAll(debugSessionSettings.getRuntimeJars());
 		
-		String[] classPath = FileUtil.convertIPathToStringArray(cpList);		
-		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(classToLaunch, classPath);
+		String[] classPath = FileUtil.convertIPathToStringArray(cpList);	
+		
+		
+		
 		
 		// setup program arguments
 		System.out.println("Args: " + programArguments);
 		String[] programArgsArray = new String[programArguments.size()];
 		programArgsArray = (String[]) programArguments.toArray(programArgsArray);
-		vmRunnerConfiguration.setProgramArguments(programArgsArray);
-
-
 		
-		// if we arein DEBUG_MODE also set the debugging parameters for the VM as we previously created an IVMRunner in RUN_MODE
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+		
+		LaunchSettings ls = new LaunchSettings();
+		ls.classToLaunch = classToLaunch;
+		ls.classpath = classPath;
+		ls.programArguments = programArgsArray;
+		ls.mode = mode;
+		
+		launchVM(monitor, ls, debugSessionSettings, launch);
+
+		monitor.done();
+	}
+	
+	private void launchVM(IProgressMonitor monitor, LaunchSettings ls, DebugSessionSettings debugSessionSettings, ILaunch launch) throws CoreException
+	{
+		// Initialize the VMRunner
+		IVMInstall defaultInstall = JavaRuntime.getDefaultVMInstall();
+		IVMRunner vmRunner = defaultInstall.getVMRunner(ILaunchManager.RUN_MODE); // always use RUN, so we can control the debug parameters of the VM
+		
+		VMRunnerConfiguration vmRunnerConfiguration = new VMRunnerConfiguration(ls.classToLaunch, ls.classpath);
+		vmRunnerConfiguration.setProgramArguments(ls.programArguments);
+		
+		// the started wm will wait for a debugger to connect to this port
+		String port = ""+StrategoLaunchUtil.findFreePort();
+		
+		// if we are in DEBUG_MODE also set the debugging parameters for the VM as we previously created an IVMRunner in RUN_MODE
+		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			// socket attach
 			//String[] realVMargs = new String[] { "-Xdebug", "-Xrunjdwp:transport=dt_socket,address="+port+",server=y,suspend=y" };
 			// socket listen
@@ -197,9 +181,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			vmRunnerConfiguration.setVMArguments(realVMargs);
 		}
 		
-
-		
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
 			StrategoDebugTarget target = new StrategoDebugTarget(debugSessionSettings, launch, port);
 			//(launch,p,requestPort,eventPort );
@@ -213,124 +195,50 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		System.out.println("RUN");
 		vmRunner.run(vmRunnerConfiguration, launch, monitor);
 		monitor.worked(1);
+	}
+	
+
+
+	class LaunchSettings {
+		public String classToLaunch;
+		public String[] classpath;
 		
-		monitor.done();
-	}
-	
-	private IPath prepareProgram(ILaunchConfiguration configuration, IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException, CoreException {
-		// program recompile
-		boolean rebuildBinary = false;
-		rebuildBinary = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, true);
-
-
-		// program arguments
-		List compileArguments = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_COMPILE_ARGUMENTS, (List)null);
-		if (compileArguments == null) {
-			//abort("Stratego program unspecified.", null);
-			compileArguments = new ArrayList<String>();
-		}
-		String[] compileTimeExtraArguments = (String[]) compileArguments.toArray(new String[0]);
-		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
+		public String[] programArguments;
 		
-		IPath binBase = debugSessionSettings.getClassDirectory(); // default
-
-		if (rebuildBinary)
-		{
-			binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-		}
-		else
-		{
-			// TODO: check if all the necessary files exist in the working dir...
-			// check if binBase contains javafiles
-			IPath binBasePath = binBase;
-			File binBaseFile = binBasePath.toFile();
-			if (!binBaseFile.exists())
-			{
-				// did not compile to class files
-				// try to compile it
-				System.out.println("Class files not found, compile...");
-				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-			}
-			else
-			{
-				// check if dir is empty
-				String[] files = binBaseFile.list();
-				if (files == null || files.length == 0)
-				{
-					System.out.println("Class files not found, compile...");
-					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-				}
-			}
-			
-			// TODO: check if table file exists
-			File strBase = debugSessionSettings.getStrategoDirectory().toFile();
-			if (!strBase.exists())
-			{
-				System.out.println("Stratego program does not have debug info, compile...");
-				binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-			} else {
-				String[] files = strBase.list();
-				if (files == null || files.length == 0)
-				{
-					System.out.println("Stratego program does not have debug info, compile...");
-					binBase = compile(monitor, mode, debugCompiler, debugSessionSettings);
-				}
-			}
-			
-		}
-		return binBase;
-	}
-
-	private IPath compile(IProgressMonitor monitor, String mode, DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
-	{
-		monitor.subTask("Compiling stratego program");
-		IPath binBase = null;
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
-		{
-			binBase = debugCompile(debugCompiler, debugSessionSettings);
-
-		}
-		else if (mode.equals(ILaunchManager.RUN_MODE))
-		{
-			binBase = runCompile(debugCompiler, debugSessionSettings);
-		}
-		monitor.worked(3);
-		return binBase;
+		public String mode;
 	}
 	
-	private IPath debugCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
-	{
-		// compile for a debug
-		IPath binBase = null;
+
+	
+	/**
+	 * This method tries to set the path to the jars and then will validate if they exist.
+	 * @param debugSessionSettings
+	 * @throws CoreException 
+	 */
+	private void initJarLocations(DebugSessionSettings debugSessionSettings) throws CoreException {
+
+		IPath directory = FileUtil.getLibDirectory();
+		
+		debugSessionSettings.setJarLibraryDirectory(directory);
 		try {
-			binBase = debugCompiler.debugCompile(debugSessionSettings);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		/*
-		catch (DebugCompileException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			abort("Could not compile stratego program.", e);
-		}*/
-		return binBase;
+			debugSessionSettings.checkJarLibraries();
+		} catch (FileNotFoundException e) {
+			abort("Could not find required eclipse jars in directory \""+directory+"\".", e);
+		}	
 	}
-	
-	private IPath runCompile(DebugCompiler debugCompiler, DebugSessionSettings debugSessionSettings) throws DebugCompileException
-	{
-		// compile for a run
-		IPath binBase = null;
-		try {
-			binBase = debugCompiler.runCompile(debugSessionSettings);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		// do not catch the DebugCompileException here...
-		return binBase;
-	}
-	
+
+
+
+
+
+
+
+
+	/**
+	 * Show debug info about the IVMInstall and the VMRunnerConfiguration.
+	 * @param defaultInstall
+	 * @param vmRunnerConfiguration
+	 */
 	public static void showDebugInfo(IVMInstall defaultInstall, VMRunnerConfiguration vmRunnerConfiguration)
 	{
 		// show debug info
@@ -402,26 +310,5 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		}
 	}
 	
-	/**
-	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 * 
-	 * @return a free port number on localhost, or -1 if unable to find a free port
-	 */
-	public static int findFreePort() {
-		ServerSocket socket= null;
-		try {
-			socket= new ServerSocket(0);
-			return socket.getLocalPort();
-		} catch (IOException e) { 
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return -1;		
-	}
-	
+
 }

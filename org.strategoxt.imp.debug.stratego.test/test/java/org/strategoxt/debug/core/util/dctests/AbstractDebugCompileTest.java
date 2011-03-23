@@ -155,10 +155,11 @@ public class AbstractDebugCompileTest {
 			String argsForMainClass = "-i " + input;
 			//String mainClass = "dynamic.dynamic"; // TODO: java files cannot contain "-", the name may be converted
 			String mainArgs = mainClass + " " + argsForMainClass;
-			
-			String cp = debugSessionSettings.getRunClasspath();
-			String classpath = cp;
-			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
+			// require strategoxt.jar runtime.jar and runtime-java.jar and the classpath of the actual application
+
+			List<IPath> classpaths = null;
+			Assert.assertNotNull(classpaths);
+			org.strategoxt.debug.core.util.Runner.run(mainArgs, classpaths, debugSessionSettings.getTableDirectory());
 		}
 	}
 	

@@ -32,4 +32,10 @@ public interface IStrategoConstants {
 	 * If the value is false then the application won't get recompiled. Launching may fail if the compiled binaries are not present.
 	 */
 	public static final String ATTR_STRATEGO_PROGRAM_RECOMPILE = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_PROGRAM_RECOMPILE";
+
+	public static final String ATTR_STRATEGO_STRATEGY_NAME = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_STRATEGY_NAME";
+
+	public static final String ATTR_STRATEGO_REQUIRED_JARS = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_REQUIRED_JARS";
+
+	public static final String ATTR_STRATEGO_CLASSPATH = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_CLASSPATH";
 }

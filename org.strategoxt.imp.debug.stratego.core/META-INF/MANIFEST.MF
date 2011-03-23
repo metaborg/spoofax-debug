@@ -42,3 +42,4 @@ Require-Bundle: org.eclipse.jdt.debug,
  org.strategoxt.imp.debug.stratego.transformer
 Bundle-Activator: org.strategoxt.debug.core.Activator
 Bundle-ActivationPolicy: lazy
+Import-Package: com.ibm.icu.text;version="4.2.1.1"

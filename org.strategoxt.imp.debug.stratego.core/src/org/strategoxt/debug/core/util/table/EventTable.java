@@ -1,6 +1,7 @@
 package org.strategoxt.debug.core.util.table;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class EventTable {
 	 * @param location
 	 * @return
 	 */
-	public static EventTable readEventTable(String location)
+	public static EventTable readEventTable(File location)
 	{
 		EventTable eventTable = null; // return value
 		

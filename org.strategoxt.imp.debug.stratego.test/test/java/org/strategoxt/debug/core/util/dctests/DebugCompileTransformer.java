@@ -2,6 +2,8 @@ package org.strategoxt.debug.core.util.dctests;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.StrategoFileManager;
 import org.eclipse.core.runtime.IPath;
@@ -135,8 +137,8 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 				, "-la", "org.strategoxt.imp.debug.stratego.transformer.strategies"
 		                                          };
 		
-		String[] javaCompileExtraClasspath = new String[] {
-				transformerProject + "/" + "include/stratego-transformer-java.jar"
+		IPath[] javaCompileExtraClasspath = new IPath[] {
+				new Path(transformerProject + "/" + "include/stratego-transformer-java.jar")
 		};
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
 		debugSessionSettings.setJavaCompileExtraClasspath(javaCompileExtraClasspath);
@@ -180,17 +182,19 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_debug.transformer_debug";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String cp = debugSessionSettings.getRunClasspath();
+			List<IPath> classpaths = new ArrayList<IPath>();
+			// TODO: add strategoxt, add runtime jars, add application classpath
+			//String cp = debugSessionSettings.getRunClasspath();
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 			{
-				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+				for(IPath c : debugSessionSettings.getJavaCompileExtraClasspath())
 				{
-					cp += ":" + c;
+					classpaths.add(c);
 				}
 			}
-			String classpath = cp;
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
+			IPath tableDirectory = null;
+			org.strategoxt.debug.core.util.Runner.run(mainArgs, classpaths, tableDirectory);
 		}
 		debugCompiler.getDebugCompileProgress().printStats();
 	}
@@ -224,8 +228,8 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 				, "-la", "strc"
 				, "-la", "org.strategoxt.imp.debug.stratego.transformer.strategies"
 		                                          };
-		String[] javaCompileExtraClasspath = new String[] {
-				transformerProject + "/" + "include/stratego-transformer-java.jar"
+		IPath[] javaCompileExtraClasspath = new IPath[] {
+				new Path(transformerProject + "/" + "include/stratego-transformer-java.jar")
 		};
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
 		debugSessionSettings.setJavaCompileExtraClasspath(javaCompileExtraClasspath);
@@ -262,17 +266,20 @@ public class DebugCompileTransformer extends AbstractDebugCompileTest {
 			String mainClass = "transformer_run.transformer_run";
 			String mainArgs = mainClass + " " + argsForMainClass;
 			
-			String cp = debugSessionSettings.getRunClasspath();
+			List<IPath> classpaths = new ArrayList<IPath>();
+			// TODO: add strategoxt, add runtime jars, add application classpath
+			//String cp = debugSessionSettings.getRunClasspath();
 			if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 			{
-				for(String c : debugSessionSettings.getJavaCompileExtraClasspath())
+				for(IPath c : debugSessionSettings.getJavaCompileExtraClasspath())
 				{
-					cp += ":" + c;
+					classpaths.add(c);
 				}
 			}
-			String classpath = cp;
+
 			System.out.println("ARGS: " + mainArgs);
-			org.strategoxt.debug.core.util.Runner.run(debugSessionSettings, mainArgs, classpath);
+			IPath tableDirectory = debugSessionSettings.getTableDirectory();
+			org.strategoxt.debug.core.util.Runner.run(mainArgs, classpaths, tableDirectory);
 		}
 		debugCompiler.getDebugCompileProgress().printStats();
 	}

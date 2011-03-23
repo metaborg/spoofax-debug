@@ -1,11 +1,12 @@
 package org.strategoxt.debug.core.eventspec;
 
+import java.io.File;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.debug.core.util.table.EventTable;
 import org.strategoxt.debug.core.util.table.LineLengthTable;
@@ -19,38 +20,42 @@ public class EventSpecManager {
 	
 	private LineLengthTable lineLengthTable = null;
 	
-	private DebugSessionSettings debugSessionSettings = null;
+	//private DebugSessionSettings debugSessionSettings = null;
+	/**
+	 * A path to the directory that contains the offset and table files.
+	 * Offset is used to convert a linenumber + token_line_offset (relative to the line) to a token_file_offset (relative to the start of the file).
+	 * Table is used to find a breakpoint that is applicable to the given linenumber +token_line_offset. 
+	 */
+	//private IPath tableDirectory = null;
 	
 	// a list of active breakpoints
 	private EventSpecList eventSpecList = null;
 
-	public EventSpecManager(DebugSessionSettings debugSessionSettings) {
+	public EventSpecManager() {
 		eventSpecList = new EventSpecList();
-		this.debugSessionSettings = debugSessionSettings;
-		initializeTable();
 	}
 	
 	/**
 	 * Initializes the EventTable and the LineLengthTable
 	 */
-	private void initializeTable()
+	public void initializeTable(IPath tableDirectory)
 	{
 		String extensionT = "table";
-		List<String> matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory().toFile(), extensionT);
+		List<String> matches = FileUtil.getFilesWithExtension(tableDirectory.toFile(), extensionT);
 		// TODO: use the first match as we only support one file
 		if (matches.size() > 0)
 		{
-			String location = this.debugSessionSettings.getStrategoDirectory() + "/" + matches.get(0);
+			File location = tableDirectory.append(matches.get(0)).toFile();
 			//String location ="/tmp/localvar_str/stratego/localvar.table";
 			this.eventTable = EventTable.readEventTable(location);
 		}
 		
 		String extensionO = "offset";
-		matches = FileUtil.getFilesWithExtension(this.debugSessionSettings.getStrategoDirectory().toFile(), extensionO);
+		matches = FileUtil.getFilesWithExtension(tableDirectory.toFile(), extensionO);
 		// TODO: use the first match as we only support one file
 		if (matches.size() > 0)
 		{
-			String location = this.debugSessionSettings.getStrategoDirectory() + "/" + matches.get(0);
+			File location = tableDirectory.append(matches.get(0)).toFile();
 			//String location ="/tmp/localvar_str/stratego/localvar.table";
 			this.lineLengthTable = LineLengthTable.readLineLengthTable(location);
 		}

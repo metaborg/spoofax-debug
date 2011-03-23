@@ -9,6 +9,12 @@
             id="org.strategoxt.imp.debug.ui.launchConfigurationTabGroup.str"
             type="org.strategoxt.imp.debug.core.launchConfigurationType.str">
       </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.strategoxt.imp.debug.ui.str.launching.HybridInterpreterTabGroup"
+            description="Run or debug a Stratego program with the HybridInterpreter"
+            id="org.strategoxt.imp.debug.ui.launchConfigurationTabGroup.hybridinterpreter"
+            type="org.strategoxt.imp.debug.core.launchConfigurationType.hybridinterpreter">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">

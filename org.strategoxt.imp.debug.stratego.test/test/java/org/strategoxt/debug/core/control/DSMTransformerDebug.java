@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.StrategoFileManager;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class DSMTransformerDebug extends AbstractDSMTest {
 
@@ -15,16 +15,13 @@ public class DSMTransformerDebug extends AbstractDSMTest {
 	{
 		// run the transformer with debug info
 		String projectName = "transformer_debug";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		createDebugSessionSettings(projectName);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/localvar.str"; // program that will be debug transformed
 		String output = StrategoFileManager.WORKING_DIR + "/transformer_test_debug1";
 		String argsForMainClass = "-i " + input + " --gen-dir " + output; // + " --output-rtree";
 		String mainClass = "transformer_debug.transformer_debug";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		
-		String cp = debugSessionSettings.getClassDirectory().toOSString(); // was binBase
 		
 		String transformerProject = "../org.strategoxt.imp.debug.stratego.transformer";
 		File f = new File(transformerProject);
@@ -35,12 +32,13 @@ public class DSMTransformerDebug extends AbstractDSMTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		IPath transformerPath = new Path(transformerProject);
+		IPath strategoTransformerJavaJarPath = transformerPath.append("include").append("stratego-transformer-java.jar");
+		// the transformer requires the external strategies defined in stratego-transformer-java.jar
+		this.addToClasspath(strategoTransformerJavaJarPath);
+
 		
-		String classpath = cp + ":" + transformerProject + "/" + "include/stratego-transformer-java.jar";;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		/*
 		// TODO: test breakpoints
@@ -61,6 +59,6 @@ public class DSMTransformerDebug extends AbstractDSMTest {
 		//String connectorType = "LAUNCH";
 		//String connectorType = "LISTEN";
 		//String connectorType = "ATTACH"; // attach to VM that is suspended
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 }

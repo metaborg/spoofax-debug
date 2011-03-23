@@ -33,18 +33,24 @@ public class ClasspathHandler {
 		return jars;
 	}
 	
+	/**
+	 * Tries to get the path from the bundle using the runtime plugin activator.
+	 * If the activator is null, use the ../RUNTIME_PROJECT_LOCATION path.
+	 * @param pathInBundle
+	 * @return
+	 */
 	public static IPath getPathFromBundle(String pathInBundle)
 	{
 		org.strategoxt.imp.debug.stratego.runtime.Activator runtimeActivator = org.strategoxt.imp.debug.stratego.runtime.Activator.getInstance();
 		if (runtimeActivator == null)
 		{
-			System.out.println("NO RUNTIME ACTIVATOR...");
+			//System.out.println("NO RUNTIME ACTIVATOR...");
 		}
 		if (runtimeActivator.getBundle() == null)
 		{
-			System.out.println("NO BUNDLE... " + pathInBundle);
+			//System.out.println("NO BUNDLE... " + pathInBundle);
 			String path2lib = "../" + RUNTIME_PROJECT_LOCATION + pathInBundle;
-			System.out.println("try to get from: " + path2lib);
+			//System.out.println("try to get from: " + path2lib);
 			File f = new File(path2lib);
 			String resolved = null;
 			try {
@@ -53,12 +59,12 @@ public class ClasspathHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("Resolved to: " + resolved);
+			//System.out.println("Resolved to: " + resolved);
 			IPath path = new Path(resolved);
 			return path;
 		}
 		URL pathInBundleURL = runtimeActivator.getBundle().getEntry(pathInBundle);
-		System.out.println("RUNTIME: " + pathInBundleURL);
+		//System.out.println("RUNTIME: " + pathInBundleURL);
 		URL fileURL = null;
 		try {
 			fileURL = FileLocator.toFileURL(pathInBundleURL);
@@ -69,7 +75,7 @@ public class ClasspathHandler {
 		
 		String urlPath = fileURL.getPath();
 		IPath path = new Path(urlPath);
-		System.out.println("OSSTRING: " + path.toOSString());
+		//System.out.println("OSSTRING: " + path.toOSString());
 		return path;
 	}
 }

@@ -11,6 +11,14 @@
             sourceLocatorId="org.strategoxt.imp.debug.core.sourceLookupDirector.str"
             sourcePathComputerId="org.strategoxt.imp.debug.core.sourcePathComputer.str">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.strategoxt.imp.debug.core.str.launching.HybridInterpreterLaunchDelegate"
+            id="org.strategoxt.imp.debug.core.launchConfigurationType.hybridinterpreter"
+            modes="run, debug"
+            name="Hybrid Interpreter"
+            sourceLocatorId="org.strategoxt.imp.debug.core.sourceLookupDirector.str"
+            sourcePathComputerId="org.strategoxt.imp.debug.core.sourcePathComputer.str">
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">

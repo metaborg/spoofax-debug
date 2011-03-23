@@ -3,8 +3,6 @@ package org.strategoxt.debug.core.control;
 import junit.framework.Assert;
 
 import org.StrategoFileManager;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestDynamic extends AbstractDSMTest {
@@ -18,20 +16,16 @@ public class DSMTestDynamic extends AbstractDSMTest {
 	public void testStepBreakPoint()
 	{
 		String projectName = "dynamic";
+		createDebugSessionSettings(projectName);
+
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/dynamic/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "dynamic.dynamic";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+	
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -90,7 +84,7 @@ public class DSMTestDynamic extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 	}
 	
 

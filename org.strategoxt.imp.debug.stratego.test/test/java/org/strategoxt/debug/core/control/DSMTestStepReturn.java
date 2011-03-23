@@ -4,8 +4,6 @@ import junit.framework.Assert;
 
 import org.StrategoFileManager;
 import org.strategoxt.debug.core.control.actions.ActionFactory;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestStepReturn extends AbstractDSMTest {
@@ -22,19 +20,14 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 	{
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		createDebugSessionSettings(projectName);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -76,7 +69,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 		System.out.println("EXIT");
 	}
 	
@@ -87,19 +80,14 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 		// the step should be cancelled
 		String projectName = "localvar";
 		String strategoFilename = "localvar.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
+		createDebugSessionSettings(projectName);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/localvar/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "localvar.localvar";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -146,7 +134,7 @@ public class DSMTestStepReturn extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 		System.out.println("EXIT");
 	}
 }

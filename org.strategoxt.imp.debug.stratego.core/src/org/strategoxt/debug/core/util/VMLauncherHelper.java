@@ -127,7 +127,7 @@ public class VMLauncherHelper {
 		
 		//System.out.println("CP:" + classpath);
 		Connector.Argument opts = (Connector.Argument) arguments.get("options");
-		String classpath = this.getDebugProgramClasspath();
+		String classpath = FileUtil.convertIPathToClasspath(this.getClasspaths());
 		String optionValue = "-Xss8m -Xms256m -Xmx1024m -XX:MaxPermSize=256m -server " + "-classpath " + classpath;
 		opts.setValue(optionValue);
 		
@@ -215,50 +215,29 @@ public class VMLauncherHelper {
 		}
 		
 	}
-
-
-	/*
-	public void setDefaultClasspath() {
-		String cp = this.defaultClasspath + ":" + this.defaultJars;
-		this.classpath = cp;
-	}
-	*/
-	
-	private List<IPath> debugJars;
-	
-	public void setDebugJars(List<IPath> debugJars)
-	{
-		this.debugJars = debugJars;
-	}
-
-
-	private String mainClasspath = null;
 	
 	/**
-	 * Set the classpath needed for the main java program (set the debug jars using the setJars() method)
+	 * The VM will use this classpath.
+	 */
+	private List<IPath> classpaths = null;
+	
+	/**
+	 * Set the classpath that will be used when launching the VM. 
+	 * 
+	 * All required jars should be on the classpath (strategoxt.jar, runtime.jar, application-directory)
 	 * @param cp
 	 */
-	public void setMainClasspath(String mainClasspath) {
-		this.mainClasspath = mainClasspath;
+	public void setClasspaths(List<IPath> classpaths) {
+		this.classpaths = classpaths;
 	}
 	
 	/**
-	 * Returns the classpath that contains the main java application plus the additional jars needed for debugging.
+	 * Returns all classpaths for the VM.
 	 * @return
 	 */
-	public String getDebugProgramClasspath()
-	{
-		String cp = this.mainClasspath; // should not end with a ':'
-		for(IPath path : this.debugJars)
-		{
-			cp += ":" + path.toOSString();
-		}
-		log("CP: " + cp);
-		return cp;
+	public List<IPath> getClasspaths() {
+		return classpaths;
 	}
 	
-	private void log(String message)
-	{
-		System.out.println();
-	}
+
 }

@@ -184,7 +184,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		
 
 		
-		manager = new DebugSessionManager(debugSessionSettings, fEventDispatch);
+		manager = new DebugSessionManager(fEventDispatch);
 		
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 		// we have to know when we get removed, so that we can shut off the debugger

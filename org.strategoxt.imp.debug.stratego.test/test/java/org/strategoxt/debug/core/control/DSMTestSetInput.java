@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.strategoxt.debug.core.control.actions.ActionFactory;
 import org.strategoxt.debug.core.control.actions.IAction;
 import org.strategoxt.debug.core.eventspec.EnterBreakPoint;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
-import org.strategoxt.debug.core.util.DebugSessionSettingsFactory;
 import org.strategoxt.debug.core.util.table.EventTable;
 
 public class DSMTestSetInput extends AbstractDSMTest {
@@ -21,20 +19,16 @@ public class DSMTestSetInput extends AbstractDSMTest {
 		// continue
 		
 		String projectName = "setinput";
+		createDebugSessionSettings(projectName);
+
 		//String strategoFilename = "setinput.str";
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.createTest(StrategoFileManager.WORKING_DIR, projectName);
-		checkProjectExists(debugSessionSettings);
 		
 		String input = StrategoFileManager.BASE + "/src/stratego/setinput/run.input";
 		String argsForMainClass = "-i " + input;
 		String mainClass = "setinput.setinput";
 		String mainArgs = mainClass + " " + argsForMainClass;
-		String cp = /*strategoxtjar + ":" + libstrategodebuglib + ":" + strjdebugruntime + ":" + */ debugSessionSettings.getClassDirectory().toOSString(); // was binBase
-		String classpath = cp;
-		
-		VMMonitorTestImpl2 vmMonitor = new VMMonitorTestImpl2(this);
-		DebugSessionManager dsm = new DebugSessionManager(debugSessionSettings, vmMonitor);
-		vmMonitor.setDSM(dsm);
+
+		DebugSessionManager dsm = createDebugSessionManager();
 		
 		//String location = debugSessionSettings.getStrategoDirectory() + "/" + projectName + ".table";
 		//EventTable eventTable = EventTable.readEventTable(location);
@@ -88,7 +82,7 @@ public class DSMTestSetInput extends AbstractDSMTest {
 
 		System.out.println("RUN");
 		// start the debug session
-		start(dsm, mainArgs, classpath);
+		start(dsm, mainArgs);
 		System.out.println("EXIT");
 	}
 }

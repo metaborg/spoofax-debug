@@ -1,12 +1,10 @@
 package org.strategoxt.debug.core.control;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.StreamRedirectThread;
 import org.strategoxt.debug.core.util.VMLauncherHelper;
 
@@ -55,15 +53,33 @@ public class DebugSessionManager {
 	// e.g. thread suspended
 	private VMMonitor vmMonitor = null;
 	
-	private DebugSessionSettings debugSessionSettings = null;
+	//private DebugSessionSettings debugSessionSettings = null;
 	
-	public DebugSessionManager(DebugSessionSettings debugSessionSettings, VMMonitor vmMonitor)
+	/**
+	 * Create a new DebugSessionManager.
+	 * 
+	 * Any debug events will be reported to the VMMonitor.
+	 * 
+	 * @param debugSessionSettings
+	 * @param vmMonitor
+	 */
+	public DebugSessionManager(VMMonitor vmMonitor)
 	{
-		this.debugSessionSettings = debugSessionSettings;
-		this.eventSpecManager = new EventSpecManager(debugSessionSettings);
+		this.eventSpecManager = new EventSpecManager();
 		this.vmMonitor = vmMonitor;
 	}
 	
+	/**
+	 * Creates a new DebugSessionManager.
+	 * 
+	 * @param debugSessionSettings
+	 */
+	public DebugSessionManager()
+	{
+		//this.debugSessionSettings = debugSessionSettings;
+		this.eventSpecManager = new EventSpecManager();
+		this.vmMonitor = null;
+	}
 
 	
 	/**
@@ -73,14 +89,10 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(VirtualMachineManager vmManager, DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
+	public void initVM(VirtualMachineManager vmManager, String mainArgs, List<IPath> classpaths, IPath tableDirectory, String connectorType) {
+		this.eventSpecManager.initializeTable(tableDirectory); // read table and offset files from the directory
 		VMLauncherHelper helper = new VMLauncherHelper(vmManager, connectorType);
-		helper.setMainClasspath(classpath);
-		List<IPath> jars = new ArrayList<IPath>();
-		jars.add(settings.getStrategoxtJar());
-		jars.addAll(settings.getRuntimeJars());
-		
-		helper.setDebugJars(jars);
+		helper.setClasspaths(classpaths);
 		this.vm = helper.getTargetVM(mainArgs);
 	}
 	
@@ -91,15 +103,15 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath)
+	public void initVM(String mainArgs, List<IPath> classpaths, IPath tableDirectory)
 	{
 		// use default launch
-		this.initVM(settings, mainArgs, classpath, "LAUNCH");
+		this.initVM(mainArgs, classpaths, tableDirectory, "LAUNCH");
 	}
 	
-	public void initVM(DebugSessionSettings settings, String mainArgs, String classpath, String connectorType) {
+	public void initVM(String mainArgs, List<IPath> classpaths, IPath tableDirectory, String connectorType) {
 		VirtualMachineManager vmManager = DebugSessionManager.getVirtualMachineManager();
-		this.initVM(vmManager, settings, mainArgs, classpath, connectorType);
+		this.initVM(vmManager, mainArgs, classpaths, tableDirectory, connectorType);
 	}
 
 	/**
@@ -333,10 +345,11 @@ public class DebugSessionManager {
 		return this.eventSpecManager;
 	}
 
+	/*
 	public DebugSessionSettings getDebugSessionSettings()
 	{
 		return this.debugSessionSettings;
-	}
+	}*/
 	
 	/**
 	 * Returns the StrategoState of Stratego program. 

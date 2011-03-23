@@ -2,6 +2,7 @@ package org.strategoxt.debug.core.util.table;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,7 +32,7 @@ public class LineLengthTable {
 		return tablesPerFile.get(filename);
 	}
 	
-	public static LineLengthTable readLineLengthTable(String location)
+	public static LineLengthTable readLineLengthTable(File location)
 	{
 		LineLengthTable lineLengthTable = null; // return value
 		
