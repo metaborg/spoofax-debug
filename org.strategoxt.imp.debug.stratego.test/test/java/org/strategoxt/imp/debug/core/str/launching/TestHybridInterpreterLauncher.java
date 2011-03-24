@@ -1,5 +1,9 @@
 package org.strategoxt.imp.debug.core.str.launching;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.StrategoFileManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -13,6 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -22,21 +27,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget;
 import org.strategoxt.imp.debug.core.str.model.StrategoLineBreakpoint;
+import org.strategoxt.imp.debug.stratego.runtime.ClasspathHandler;
 import org.strategoxt.imp.debug.ui.str.launching.StrategoLaunchShortcut;
 
-/**
- * Inspiration from org.eclipse.jdt.debug.tests.launching.LaunchTests
- * 
- * @author rlindeman
- *
- */
-public class TestStrategoLauncher extends AbstractDebugTest implements ILaunchListener {
+public class TestHybridInterpreterLauncher extends AbstractDebugTest implements ILaunchListener {
+
 
 	private boolean added = false; // true if a launch was added
 	private boolean removed = false; // true if a launch was removed
 	private boolean terminated = false; // true if a launch was terminated
 	
-	public TestStrategoLauncher(String name) {
+	
+	
+	public TestHybridInterpreterLauncher(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
@@ -53,7 +56,7 @@ public class TestStrategoLauncher extends AbstractDebugTest implements ILaunchLi
 		}
 		// remove existing launch configs
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL+".launchConfigurationType.str"); 
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL+".launchConfigurationType.hybridinterpreter"); 
 		ILaunchConfiguration[] configurations =  manager.getLaunchConfigurations(type);
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];
@@ -103,7 +106,45 @@ public class TestStrategoLauncher extends AbstractDebugTest implements ILaunchLi
 		*/
 		
 		// create the config
-		ILaunchConfiguration config = LaunchUtils.createStrategoLaunchConfiguration(strFile); // can throw CoreException
+		// find HybridInterpreter launch config
+		ILaunchConfigurationWorkingCopy configWC = LaunchUtils.createHybridInterpreterLaunchConfigurationWorkingCopy();
+		if (configWC == null)
+		{
+			System.err.println("No config working copy!");
+		}
+		// set the required attributes
+		
+		// strategy name
+		// IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME
+		String name = "foo";
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME, name);
+		
+		// required jars
+		// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
+		//String strategoXTJar = StrategoFileManager.getStrategoXTJar();
+		List<IPath> paths = ClasspathHandler.getClasspathEntries();
+		List list = new ArrayList();
+		for(IPath p : paths)
+		{
+			list.add(p.toOSString());
+		}
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, list);
+		
+		// classpath
+		// IStrategoConstants.ATTR_STRATEGO_CLASSPATH
+		
+		
+		// and save
+		ILaunchConfiguration config = null;
+		try {
+			config = configWC.doSave();
+			//config.launch(ILaunchManager.DEBUG_MODE, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		getLaunchManager().addLaunchListener(this); // listen to launch events
 		// the testcase will sleep a few seconds and will wake up when a launch event occurred.
 		IProgressMonitor monitor = null;
@@ -153,7 +194,7 @@ public class TestStrategoLauncher extends AbstractDebugTest implements ILaunchLi
 
 	}
 	
-	@Test
+	//Test
 	public void testBreakpoint() throws Exception {
 		// /stratego-resources/src-str/test/localvar/localvar.str
 		IFile strFile = getFile("src-str/test/localvar/localvar.str");

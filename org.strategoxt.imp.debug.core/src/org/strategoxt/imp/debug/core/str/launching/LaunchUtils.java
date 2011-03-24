@@ -30,6 +30,19 @@ public class LaunchUtils {
 	}
 	
 	/**
+	 * Returns the type of the HybridInterpreterLaunchConfiguration.
+	 * @return
+	 */
+	public static ILaunchConfigurationType getHybridInterpreterLaunchConfigurationType()
+	{
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		
+		//LaunchConfigurationType[] types = manager.getLaunchConfigurationTypes();
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL + ".launchConfigurationType.hybridinterpreter");
+		return type;
+	}
+	
+	/**
 	 * Creates and returns a new configuration based on the specified type.
 	 * 
 	 * Copied from org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
@@ -40,7 +53,7 @@ public class LaunchUtils {
 	 * @throws CoreException 
 	 */
 	@SuppressWarnings("deprecation")
-	public static ILaunchConfiguration createConfiguration(IFile file) throws CoreException {
+	public static ILaunchConfiguration createStrategoLaunchConfiguration(IFile file) throws CoreException {
 		ILaunchConfiguration config = null;
 
 		ILaunchConfigurationType configType = getStrategoLaunchConfigurationType();
@@ -71,6 +84,31 @@ public class LaunchUtils {
 		config = wc.doSave();
 
 		return config;
+	}
+	
+	/**
+	 * Create a LaunchConfig for a HybridInterpreterLaunch. The caller of this method should set the appropriate attributes.
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	public static ILaunchConfigurationWorkingCopy createHybridInterpreterLaunchConfigurationWorkingCopy()
+	{
+		//ILaunchConfiguration config = null;
+		ILaunchConfigurationType configType = getHybridInterpreterLaunchConfigurationType();
+		
+		String namePrefix = "spoofax launchh";
+		String name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(namePrefix);
+
+		ILaunchConfigurationWorkingCopy wc = null;
+		try {
+			wc = configType.newInstance(null, name);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// the attributes should be set in the caller of this method!
+		
+		return wc;
 	}
 	
 	/**

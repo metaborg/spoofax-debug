@@ -177,7 +177,7 @@ public class StrategoLaunchShortcut implements ILaunchShortcut {
 	public static ILaunchConfiguration createConfiguration(IFile file) {
 		ILaunchConfiguration config = null;
 		try {
-			config = LaunchUtils.createConfiguration(file);
+			config = LaunchUtils.createStrategoLaunchConfiguration(file);
 		} catch (CoreException ce) {
 			MessageDialog.openError(getShell(), "Error"/*LauncherMessages.JavaLaunchShortcut_3*/, ce.getStatus().getMessage());	
 		}

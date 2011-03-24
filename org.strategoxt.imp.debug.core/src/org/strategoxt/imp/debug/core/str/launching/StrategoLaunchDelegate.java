@@ -153,12 +153,12 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		ls.programArguments = programArgsArray;
 		ls.mode = mode;
 		
-		launchVM(monitor, ls, debugSessionSettings, launch);
+		launchVM(monitor, ls, launch);
 
 		monitor.done();
 	}
 	
-	private void launchVM(IProgressMonitor monitor, LaunchSettings ls, DebugSessionSettings debugSessionSettings, ILaunch launch) throws CoreException
+	private void launchVM(IProgressMonitor monitor, LaunchSettings ls, ILaunch launch) throws CoreException
 	{
 		// Initialize the VMRunner
 		IVMInstall defaultInstall = JavaRuntime.getDefaultVMInstall();
@@ -183,7 +183,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
-			StrategoDebugTarget target = new StrategoDebugTarget(debugSessionSettings, launch, port);
+			StrategoDebugTarget target = new StrategoDebugTarget(launch, port);
 			//(launch,p,requestPort,eventPort );
 			launch.addDebugTarget(target);
 			monitor.worked(1);

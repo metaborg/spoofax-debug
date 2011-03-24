@@ -40,6 +40,11 @@ public class EventSpecManager {
 	 */
 	public void initializeTable(IPath tableDirectory)
 	{
+		if (tableDirectory == null)
+		{
+			System.err.println("No table directory...");
+			return;
+		}
 		String extensionT = "table";
 		List<String> matches = FileUtil.getFilesWithExtension(tableDirectory.toFile(), extensionT);
 		// TODO: use the first match as we only support one file

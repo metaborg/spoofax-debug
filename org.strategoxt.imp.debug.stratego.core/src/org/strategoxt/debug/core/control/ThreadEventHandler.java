@@ -3,6 +3,7 @@ package org.strategoxt.debug.core.control;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdi.TimeoutException;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.ParseError;
 import org.spoofax.terms.StringTermReader;
@@ -249,11 +250,15 @@ public class ThreadEventHandler {
 		} catch (InvocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (TimeoutException e) {
+			// TODO: what happened in the debuggee?
+			// something took too long....
+			e.printStackTrace();
 		}
 		//Value output = thread.invokeMethod(thread, method, arguments, ThreadReference.INVOKE_SINGLE_THREADED);
 		if (output == null)
 		{
-			return null;
+			return new String[0];
 		}
 		StrategoTermBuilder builder = new StrategoTermBuilder();
 		String s = builder.buildString(output); // instance of String
@@ -386,6 +391,19 @@ public class ThreadEventHandler {
 		//System.out.println(event.exception());
 		// Step to the catch
 		EventRequestManager mgr = event.virtualMachine().eventRequestManager();
+		com.sun.jdi.ObjectReference ref = event.exception();
+		com.sun.jdi.ReferenceType refType =ref.referenceType();
+		for(Object obj : refType.allFields())
+		{
+			//System.out.println(obj.toString());
+		}
+		com.sun.jdi.Field field1 = refType.fieldByName("stackTrace");
+		com.sun.jdi.Field field2 = refType.fieldByName("detailMessage");
+		//com.sun.jdi.Value val1 = refType.getValue(field1);
+		//com.sun.jdi.Value val2 = refType.getValue(field2);
+		//System.out.println(val1.toString());
+		//System.out.println(val2.toString());
+		
 		StepRequest req = mgr.createStepRequest(thread, StepRequest.STEP_MIN,
 				StepRequest.STEP_INTO);
 		req.addCountFilter(1); // next step only

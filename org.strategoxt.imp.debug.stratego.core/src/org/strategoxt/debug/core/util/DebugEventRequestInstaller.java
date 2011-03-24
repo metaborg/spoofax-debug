@@ -18,6 +18,7 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.ExceptionRequest;
 import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.ThreadDeathRequest;
@@ -40,6 +41,8 @@ public class DebugEventRequestInstaller {
 	
 	public static final boolean useBreakpoints = true;
 	
+	public static final boolean useExceptionRequests = true;
+	
 	public static void installDebugEventRequests(VirtualMachine vm, boolean watchFields, String[] excludes)
 	{
 		EventRequestManager mgr = vm.eventRequestManager();
@@ -54,11 +57,13 @@ public class DebugEventRequestInstaller {
 			str_cpr.enable();
 		}
 		// want all exceptions 
-		/*
-		ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
-		excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-		excReq.enable();*/
-
+		
+		if (useExceptionRequests)
+		{
+			ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
+			excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+			excReq.enable();
+		}
 
 		
 		if (useMethodRequests)

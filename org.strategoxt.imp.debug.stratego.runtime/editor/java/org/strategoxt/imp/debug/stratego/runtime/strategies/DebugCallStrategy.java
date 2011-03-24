@@ -113,6 +113,7 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 		this.eventInfo = factory.makeTuple(filename, name, location).toString();
 		this.givenTermString = given.toString();
 		this.current = current;
+		System.out.println("TEST " + name.toString() + " D:"+getDRKeySetString()); // adding this will prevent a TimeoutException (I think because it will trigger a ClassLoad...)
 		return current;
 	}
 	
@@ -123,6 +124,7 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 		String s = varname.toString();
 		this.varnameString = s;
 		this.current = current;
+		System.out.println("TEST " + name.toString() + " D:"+getDRKeySetString()); // adding this will prevent a TimeoutException (I think because it will trigger a ClassLoad...)
 		return current;
 	}
 	

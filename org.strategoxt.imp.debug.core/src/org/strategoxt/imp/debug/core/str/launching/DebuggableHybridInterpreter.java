@@ -5,6 +5,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.spoofax.interpreter.core.InterpreterErrorExit;
 import org.spoofax.interpreter.core.InterpreterException;
 import org.spoofax.interpreter.core.InterpreterExit;
@@ -46,6 +50,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 	 */
 	public DebuggableHybridInterpreter(HybridInterpreter interpreter, String... reuseRegistries) {
 		
+		super(interpreter, reuseRegistries);
 	}
 	
 	private List<URL> loadJars = new ArrayList<URL>();
@@ -60,6 +65,17 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 			loadJars.add(jarURL);
 		}
 
+		super.loadJars(parentClassLoader, jars);
+	}
+	
+	private List<String> getLoadJarsAsList()
+	{
+		List<String> list = new ArrayList<String>();
+		for(URL jarURL : this.loadJars)
+		{
+			list.add(jarURL.getPath());
+		}
+		return list;
 	}
 	
 	/**
@@ -75,11 +91,43 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 			// launch a JVM
 			// http://www.eclipse.org/articles/Article-Java-launch/launching-java.html
 			
-			// TODO: find HybridInterpreter launch config
+			// find HybridInterpreter launch config
+			ILaunchConfigurationWorkingCopy configWC = LaunchUtils.createHybridInterpreterLaunchConfigurationWorkingCopy();
+			if (configWC == null)
+			{
+				System.err.println("No config working copy!");
+			}
 			// set the required attributes
-			// and launch
 			
-			return super.invoke(name);
+			// strategy name
+			// IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME
+			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME, name);
+			
+			// required jars
+			// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
+			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, getLoadJarsAsList());
+			
+			// also set the path to the project, breakpoints 
+			// IStrategoConstants.ATTR_STRATEGO_PROGRAM
+			// TODO: set the project path, so we can filter breakpoints limited to this project
+			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String) null);
+			//org.example.lang1
+			// classpath
+			// IStrategoConstants.ATTR_STRATEGO_CLASSPATH
+			
+			
+			// and launch
+			try {
+				ILaunchConfiguration config = configWC.doSave();
+				config.launch(ILaunchManager.DEBUG_MODE, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			// TODO: wait for launch to finish
+			boolean result = super.invoke(name);
+			return result;
 		} catch (StrategoErrorExit e) {
 			throw new InterpreterErrorExit(e.getMessage(), e.getTerm(), e);
         } catch (StrategoExit e) {

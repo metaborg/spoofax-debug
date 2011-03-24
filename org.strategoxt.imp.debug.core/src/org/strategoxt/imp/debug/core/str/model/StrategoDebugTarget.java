@@ -29,12 +29,12 @@ import org.eclipse.debug.core.model.IThread;
 import org.strategoxt.debug.core.control.DebugSessionManager;
 import org.strategoxt.debug.core.control.VMMonitor;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
+import org.strategoxt.debug.core.eventspec.LineBreakPoint;
 import org.strategoxt.debug.core.eventspec.RuleEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
 import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
-import org.strategoxt.debug.core.util.DebugSessionSettings;
 import org.strategoxt.debug.core.util.VMLauncherHelper;
 import org.strategoxt.debug.core.util.table.EventEntry;
 import org.strategoxt.debug.core.util.table.EventTable;
@@ -154,7 +154,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 	}
 	
 	
-	public StrategoDebugTarget(DebugSessionSettings debugSessionSettings, ILaunch launch, final String port) throws CoreException {
+	public StrategoDebugTarget(ILaunch launch, final String port) throws CoreException {
 		super(null);
 		this.fLaunch = launch;
 		// running threads
@@ -323,22 +323,29 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (breakpoint.getModelIdentifier().equals(IStrategoConstants.ID_STRATEGO_DEBUG_MODEL)) {
 			try {
-				String program = getLaunch().getLaunchConfiguration().getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
+				//if (getLaunch() instanceof StrategoL)
+				ILaunch launch = getLaunch();
+				String program = launch.getLaunchConfiguration().getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
 				// program-dir = get the dir of the program
 				// library-dirs = get the "-I" paths
 				// the given breakpoint should be a resource in a subdir of program-dir or one of the library-dirs
+				IMarker marker = breakpoint.getMarker();
+				IPath breakPointPath = marker.getResource().getFullPath(); // path to the file in which the breakpoint was set
 				if (program != null) {
-					IMarker marker = breakpoint.getMarker();
 					if (marker != null) {
 						IPath programPath = new Path(program);
 						File parent = programPath.toFile().getParentFile();
-						IPath breakPointPath = marker.getResource().getFullPath(); // path to the file in which the breakpoint was set
 						IPath subProjectPath = new Path(parent.getAbsolutePath()); // the dir in which the program is
 						System.out.println("subProjectPath: " + subProjectPath.toOSString());
 						System.out.println("breakPointPath: " + breakPointPath.toOSString() + " " + marker.getAttribute(IMarker.LINE_NUMBER));
 						boolean isPrefix = subProjectPath.isPrefixOf(breakPointPath);
 						return isPrefix;
 					}
+				}
+				else
+				{
+					// if launch did not define a program path, we have a HybridInterpreter launch, just except the breakpoint
+					return true;
 				}
 				// TODO: implement -I directories
 			} catch (CoreException e) {
@@ -451,6 +458,13 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		
 		// returns the type of events (s-step/r-enter/s-enter/s-exit/r-exit) can occur at the given linenumber
 		// the event type determines the breakpoint type
+		if ( this.manager.getEventSpecManager().getEventTable() == null)
+		{
+			// the table and offset files were not found
+			// just use a line breakpoint.
+			return new LineBreakPoint(filename, "", linenumber, -1);
+			
+		}
 		List<EventEntry> entries = this.manager.getEventSpecManager().getEventTable().getEventEntries(filename, linenumber);
 
 		// prefer s-step over enter/exit breakpoints

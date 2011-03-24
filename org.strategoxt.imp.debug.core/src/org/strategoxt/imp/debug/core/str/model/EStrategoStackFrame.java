@@ -99,6 +99,10 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 		// convert linenumber and offset relative to the line to the total character offset
 		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
 		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		if (t == null)
+		{
+			return -1;
+		}
 		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
 		int linenumber = frameData.getCurrentLocationInfo().getEnd_line_num(); // one-based index
 		int end_token_pos = frameData.getCurrentLocationInfo().getEnd_token_pos();
@@ -110,6 +114,10 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	public int getCharStart() throws DebugException {
 		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
 		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		if (t == null)
+		{
+			return -1;
+		}
 		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
 		int linenumber = frameData.getCurrentLocationInfo().getStart_line_num(); // one-based index
 		int start_token_pos = frameData.getCurrentLocationInfo().getStart_token_pos();
