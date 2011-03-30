@@ -14,21 +14,25 @@ public class StrategoSourcePathComputerDelegate implements ISourcePathComputerDe
 	 */
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		// TODO: does this work?
+		String project = configuration.getAttribute(IStrategoConstants.ATTR_PROJECT_DIRECTORY, (String) null);
 		//String path = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String)null);
 		ISourceContainer sourceContainer = null;
-		/*
-		if (path != null) {
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
+		
+		if (project != null) {
+			org.eclipse.core.resources.IResource resource = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().findMember(new org.eclipse.core.runtime.Path(project).lastSegment());
 			if (resource != null) {
-				IContainer container = resource.getParent();
-				if (container.getType() == IResource.PROJECT) {
-					sourceContainer = new ProjectSourceContainer((IProject)container, false);
-				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container, false);
+				//org.eclipse.core.resources.IContainer container = resource.getParent();
+				if (resource.getType() == org.eclipse.core.resources.IResource.PROJECT) {
+					sourceContainer = new org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer((org.eclipse.core.resources.IProject)resource, false);
 				}
+				/*
+				else if (container.getType() == org.eclipse.core.resources.IResource.FOLDER) {
+					sourceContainer = new org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer(container, false);
+				}
+				*/
 			}
 		}
-		*/
+		
 		if (sourceContainer == null) {
 			sourceContainer = new WorkspaceSourceContainer();
 		}

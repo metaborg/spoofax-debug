@@ -391,6 +391,7 @@ public class ThreadEventHandler {
 		//System.out.println(event.exception());
 		// Step to the catch
 		EventRequestManager mgr = event.virtualMachine().eventRequestManager();
+		/*
 		com.sun.jdi.ObjectReference ref = event.exception();
 		com.sun.jdi.ReferenceType refType =ref.referenceType();
 		for(Object obj : refType.allFields())
@@ -403,6 +404,7 @@ public class ThreadEventHandler {
 		//com.sun.jdi.Value val2 = refType.getValue(field2);
 		//System.out.println(val1.toString());
 		//System.out.println(val2.toString());
+		*/
 		
 		StepRequest req = mgr.createStepRequest(thread, StepRequest.STEP_MIN,
 				StepRequest.STEP_INTO);

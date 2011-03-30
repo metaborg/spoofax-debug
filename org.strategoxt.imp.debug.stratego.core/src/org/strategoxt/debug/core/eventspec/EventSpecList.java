@@ -1,7 +1,8 @@
 package org.strategoxt.debug.core.eventspec;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Contains current breakpoints
@@ -12,13 +13,14 @@ import java.util.List;
 public class EventSpecList {
 	
 	private List<BreakPoint> breakPoints = null;
+	//private Collection<BreakPoint> bp = null;
 	
 	/**
 	 * Creates a new EventSpecList, it contains the active breakpoints.
 	 */
 	public EventSpecList()
 	{
-		this.breakPoints = new ArrayList<BreakPoint>();
+		this.breakPoints = new CopyOnWriteArrayList<BreakPoint>();
 	}
 
 	public void add(BreakPoint b)
@@ -35,7 +37,7 @@ public class EventSpecList {
 		return this.breakPoints.contains(b);
 	}
 	
-	public List<BreakPoint> getBreakPoints()
+	public Collection<BreakPoint> getBreakPoints()
 	{
 		return this.breakPoints;
 	}

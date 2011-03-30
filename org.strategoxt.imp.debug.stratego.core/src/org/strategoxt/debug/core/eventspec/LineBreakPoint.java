@@ -16,7 +16,8 @@ public class LineBreakPoint extends BreakPoint {
 		else
 		{
 			boolean onSameLine = breakPoint.getLineNumber() == this.getLineNumber();
-			return onSameLine;
+			boolean sameFile = breakPoint.getFilename().equals(this.getFilename());
+			return onSameLine && sameFile;
 		}
 	}
 

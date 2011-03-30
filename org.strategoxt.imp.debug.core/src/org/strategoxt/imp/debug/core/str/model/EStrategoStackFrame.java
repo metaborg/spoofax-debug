@@ -12,8 +12,8 @@ import org.eclipse.debug.core.model.IVariable;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
-import org.strategoxt.debug.core.util.table.FileLineLengthTable;
-import org.strategoxt.debug.core.util.table.LineLengthTable;
+import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.FileLineLengthTable;
+import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 

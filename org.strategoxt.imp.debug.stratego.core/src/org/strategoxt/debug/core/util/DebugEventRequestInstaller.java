@@ -60,6 +60,7 @@ public class DebugEventRequestInstaller {
 		
 		if (useExceptionRequests)
 		{
+			//createExceptionRequest(ReferenceType refType, boolean notifyCaught, boolean notifyUncaught)
 			ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
 			excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 			excReq.enable();

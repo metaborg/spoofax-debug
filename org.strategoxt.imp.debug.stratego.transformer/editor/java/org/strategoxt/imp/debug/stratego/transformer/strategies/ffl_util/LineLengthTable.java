@@ -1,4 +1,4 @@
-package org.strategoxt.debug.core.util.table;
+package org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.runtime.IPath;
-import org.strategoxt.debug.core.util.StringUtil;
 
 public class LineLengthTable {
 
@@ -62,9 +59,9 @@ public class LineLengthTable {
 					System.err.println("Row " + i + " does not have 4 cells...");
 				}
 				String filename = cells[0];
-				String linenumberString = StringUtil.trimQuotes(cells[1]);
-				String lineLengthString = StringUtil.trimQuotes(cells[2]);
-				String lineOffsetString = StringUtil.trimQuotes(cells[3]);
+				String linenumberString = trimQuotes(cells[1]);
+				String lineLengthString = trimQuotes(cells[2]);
+				String lineOffsetString = trimQuotes(cells[3]);
 
 				int linenumber = Integer.parseInt(linenumberString);
 				int lineLength = Integer.parseInt(lineLengthString);
@@ -82,11 +79,11 @@ public class LineLengthTable {
 		return lineLengthTable;
 	}
 	
-	public static void writeLineLengthTable(IPath location, List<FileLineLengthTable> tables)
+	public static void writeLineLengthTable(File location, List<FileLineLengthTable> tables)
 	{
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(location.toFile()));
+			writer = new BufferedWriter(new FileWriter(location));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -123,5 +120,31 @@ public class LineLengthTable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Trims the quotes.
+	 * <p>
+	 * For example,
+	 * <ul>
+	 * <li>("a.b") => a.b
+	 * <li>("a.b) => "a.b
+	 * <li>(a.b") => a.b"
+	 * <li>(""a.b"") => "a.b"
+	 * </ul>
+	 * 
+	 * @param value
+	 *            the string may have quotes
+	 * @return the string without quotes
+	 */
+	public static String trimQuotes(String value) {
+		if (value == null)
+			return value;
+
+		value = value.trim();
+		if (value.startsWith("\"") && value.endsWith("\""))
+			return value.substring(1, value.length() - 1);
+
+		return value;
 	}
 }

@@ -14,8 +14,8 @@ import org.strategoxt.lang.StrategoExit;
 public class MainStrategyTest {
 	public static void main(String[] args) {
 		//m1();
-		m1b();
-		//m2();
+		//m1b();
+		m2();
 		//m3();
 		//m4();
 	}
@@ -53,10 +53,11 @@ public class MainStrategyTest {
 		String strategoSourceBasedir = StrategoFileManager.BASE + "/" + baseInputPath + "/" + strategoFilePath;
 
 		String stratego_input = strategoSourceBasedir;
-		String output_base_dir = StrategoFileManager.WORKING_DIR + "/" + "java_main_test1";
+		String output_base_dir = StrategoFileManager.WORKING_DIR + "/" + "java_main_test1b";
 		String[] l_args = new String[]{
 				"-i", stratego_input
-				, "--gen-dir", output_base_dir};
+				, "--gen-dir", output_base_dir
+				, "--charoffset-converter"};
 		IStrategoTerm result = null;
 		try {
 			//result = org.strategoxt.imp.debug.stratego.transformer.trans.Main.mainNoExit(l_args);
@@ -83,7 +84,8 @@ public class MainStrategyTest {
 		String output_base_dir = StrategoFileManager.WORKING_DIR + "/" + "java_main_test2";
 		String[] l_args = new String[]{
 				"-i", stratego_input
-				, "--gen-dir", output_base_dir};
+				, "--gen-dir", output_base_dir
+				, "--charoffset-converter"};
 		IStrategoTerm result = null;
 		try {
 			result = org.strategoxt.imp.debug.stratego.transformer.trans.Main.mainNoExit(l_args);

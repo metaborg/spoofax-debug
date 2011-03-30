@@ -34,7 +34,8 @@ public class Runner {
 	public static void run(String mainArgs, List<IPath> classpaths, IPath tableDirectory)
 	{
 		DebugSessionManager manager = new DebugSessionManager();
-		manager.initVM(mainArgs, classpaths, tableDirectory);
+		manager.init(tableDirectory); // read table and offset files from the directory
+		manager.initVM(mainArgs, classpaths);
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		System.out.println("RUN");

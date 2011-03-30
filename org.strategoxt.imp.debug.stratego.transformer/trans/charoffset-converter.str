@@ -1,0 +1,43 @@
+module charoffset-converter
+
+imports 
+	libstratego-lib
+
+imports stratego-transformer
+
+strategies
+	
+	// use a java strategy to read multiple files and create an offset-table
+	// every filepath in input-files should have base-dir as prefix path
+	// output will be saved in table-filename
+	create-file-line-length-table(/*|table-filename, base-dir, input-files**/) =
+		?transformer-result* // [ (status, generated-filename, input-filename), ...]
+		; base-dir := <get-base-path>
+		; output-base-path := <get-config> "--gen-dir"
+		; table-filename := $[[output-base-path]/linelength.offset]
+		; <debug(!"transformer-result: ")> transformer-result*
+		; input-files* := <map(
+		  	debug
+		  	/*; ?(status, generated-filename, input-filename)*/
+		  	; Third 
+		  	  //; !input-filename
+		  	)> transformer-result*
+		; <debug(!"table-filename: ")> table-filename
+		; <debug(!"base-dir: ")> base-dir
+		; <debug(!"input-files*: ")> input-files*
+		; java-create-fll-table(|table-filename, base-dir, input-files*)
+
+	external java-create-fll-table(|table-filename, base-dir, input-files*)
+	
+	// only create if option "--charoffset-converter" is set	
+	// current term = [ (status, generated-filename, input-filename), ...]
+	file-line-length-table-helper =
+		?transformer-result
+	  	; (
+	  	(<get-config> "--charoffset-converter")
+	  		<
+	  			// create charoffset-table
+	  			<create-file-line-length-table> transformer-result // success, make charoffset-table
+	  		+
+	  			id //fail, skip
+	  	)

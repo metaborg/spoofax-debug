@@ -386,6 +386,30 @@ public class EventThread extends Thread {
 		if (trace != null) { // only want threads we care about
 			trace.exceptionEvent(event); // Forward event
 		}
+		/*
+		try {
+			int count = event.thread().frameCount();
+			if (count > 0)
+			{
+				com.sun.jdi.StackFrame sf = event.thread().frame(0);
+				java.util.List visVars = sf.visibleVariables();
+				if (visVars != null && visVars.size() > 0)
+				{
+					LocalVariable lv = (LocalVariable) visVars.get(0);
+					com.sun.jdi.Value val = sf.getValue(lv);
+					System.out.println("VAL: " + val);
+				}
+				//java.util.List list = event.thread().frames();
+				//System.out.println("exception");
+			}
+		} catch (IncompatibleThreadStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AbsentInformationException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		*/
 		return false; // resume thread
 	}
 

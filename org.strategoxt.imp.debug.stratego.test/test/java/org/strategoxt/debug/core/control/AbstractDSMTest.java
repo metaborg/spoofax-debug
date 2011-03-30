@@ -47,10 +47,10 @@ public abstract class AbstractDSMTest {
 	protected DebugSessionManager createDebugSessionManager() {
 		this.vmMonitor = new VMMonitorTestImpl2(this);
 		DebugSessionManager dsm = new DebugSessionManager(vmMonitor);
+		dsm.init(this.debugSessionSettings.getTableDirectory());
 		vmMonitor.setDSM(dsm);
 
 		Assert.assertNotNull(this.debugSessionSettings);
-		dsm.getEventSpecManager().initializeTable(this.debugSessionSettings.getTableDirectory());
 		return dsm;
 	}
 	
@@ -96,7 +96,8 @@ public abstract class AbstractDSMTest {
 		Assert.assertNotNull(tableDirectory);
 		
 		long start = System.currentTimeMillis();
-		manager.initVM(mainArgs, classpaths, tableDirectory, connectorType);
+		manager.initVM(mainArgs, classpaths, connectorType);
+		manager.init(tableDirectory); // read table and offset files from the directory
 		manager.setupEventListeners();
 		manager.redirectOutput();
 		manager.runVM();

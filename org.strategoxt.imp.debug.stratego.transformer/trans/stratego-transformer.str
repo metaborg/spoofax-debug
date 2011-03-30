@@ -9,6 +9,8 @@ imports
 
   traverse-imports
   	
+  charoffset-converter // convert line-based offsets to file-based offsets
+  	
 rules // Main editor interface (defined by editor/Test-Builders and -References.esv)
  
 
@@ -28,6 +30,13 @@ strategies
 	
 	execute-wrap = java-monitor-start(|"execute"); execute ; java-monitor-end(|"execute"); java-monitor-end(|"main"); java-timer-print
 	
+	// let user specify its own base-dir, base-dir is the toplevel directory containing the stratego files (in eclipse it would be the project dir)
+	// if not specified use the directory of stratego-input-path
+	get-base-path =  
+	(<get-config> "--base-dir") 
+		< (<get-config> "--base-dir")
+		+ (stratego-input-path := <get-config> "-i";<dirname> stratego-input-path)
+	
 	execute =
 		//check-options ; 
 		library-paths* := <get-config-I> // ; debug(!"-I: ")
@@ -36,14 +45,16 @@ strategies
 		//; base-path := <dirname> stratego-input-path 
 		// let user specify its own base-dir, base-dir is the toplevel directory containing the stratego files (in eclipse it would be the project dir)
 		// if not specified use the directory of stratego-input-path
-		; ((<get-config> "--base-dir") <+ (<dirname> stratego-input-path)) ; ?base-path
+		; get-base-path ; ?base-path
+		; debug(!"base-path:")
+		; <debug(!"stratego-input-path:")> stratego-input-path
 		//; stratego-file := <base-filename> stratego-input-path
 		// make stratego-input-path absolute, and strip the basepath
 		; (parent, stratego-file) := <split-path(|base-path)> stratego-input-path
 		; 
 		  <check-input-file> stratego-input-path // check if the input file exists
 		  <
-		  	 !(base-path, output-base-path, stratego-file) ; apply-debug-project(|library-paths*); java-store-term
+		  	 !(base-path, output-base-path, stratego-file) ; apply-debug-project(|library-paths*); java-store-term; file-line-length-table-helper
 		  + 
 		  	debug(!"Failure: Cannot add debug information! ")
 		  	
@@ -88,6 +99,11 @@ strategies
 		+ ArgOption("-I"
 			, where(<extend-config> ("-I", [<id>]))
  			, !"-I directory     Stratego files in this external directory will also be debug-transformed when they are used as imports by the main stratego program."
+		)
+		+ Option("--charoffset-converter"
+			, <set-config> ("--charoffset-converter", ())
+			, !"--charoffset-converter     Create line offset table."
+			
 		)
   get-config-I =
     <get-config> "-I" <+ ![]

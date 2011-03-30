@@ -54,6 +54,22 @@ public class HybridInterpreterLaunchDelegate implements
 			return;
 		}*/
 		
+		// get name of the directory that contains metadata (such as charoffset.table)
+		//String metadataDirectory = configuration.getAttribute(IStrategoConstants.ATTR_METADATA_DIRECTORY, (String)null);
+		//if (metadataDirectory == null) {
+			//abort("Strategy name unspecified.", null);
+			//return;
+		//}
+		
+		// get the project path
+		String projectPath = configuration.getAttribute(IStrategoConstants.ATTR_PROJECT_DIRECTORY, (String) null);
+		String metadataDirectory = null;
+		if (projectPath != null)
+		{
+			IPath p = new Path(projectPath);
+			metadataDirectory = p.append("trans-debug").toOSString();
+		}
+		
 		//String flatJarList = "";
 		List<IPath> jarPaths = new ArrayList<IPath>();
 		Iterator iter = requiredJars.iterator();
@@ -89,6 +105,7 @@ public class HybridInterpreterLaunchDelegate implements
 		
 		ls.programArguments = StringUtil.concat(jarArray, args);
 		ls.mode = ILaunchManager.DEBUG_MODE;
+		ls.metadataDirectory = metadataDirectory;
 		
 		launchVM(monitor, launch, ls);
 		//String cp = "" + jar + ":" + javaJar; // + ":" + utilsDir+"/strategoxt.jar";
@@ -115,6 +132,8 @@ public class HybridInterpreterLaunchDelegate implements
 		public String[] programArguments;
 		
 		public String mode;
+		
+		public String metadataDirectory;
 	}
 	
 	private void launchVM(IProgressMonitor monitor, ILaunch launch, LaunchSettings ls) throws CoreException
@@ -142,7 +161,7 @@ public class HybridInterpreterLaunchDelegate implements
 		
 		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
-			StrategoDebugTarget target = new StrategoDebugTarget(launch, port);
+			StrategoDebugTarget target = new StrategoDebugTarget(launch, port, ls.metadataDirectory);
 			//(launch,p,requestPort,eventPort );
 			launch.addDebugTarget(target);
 			monitor.worked(1);

@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.launching;bundle-version="3.5.0",
  org.strategoxt.strj,
  org.eclipse.jdt.core;bundle-version="3.5.0",
- org.strategoxt.imp.debug.stratego.core
+ org.strategoxt.imp.debug.stratego.core,
+ org.strategoxt.imp.debug.stratego.transformer
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.strategoxt.imp.debug.core.str.launching,

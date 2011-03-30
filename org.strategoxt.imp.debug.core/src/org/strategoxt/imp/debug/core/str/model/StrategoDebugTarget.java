@@ -154,7 +154,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 	}
 	
 	
-	public StrategoDebugTarget(ILaunch launch, final String port) throws CoreException {
+	public StrategoDebugTarget(ILaunch launch, final String port, String metadataDirectory) throws CoreException {
 		super(null);
 		this.fLaunch = launch;
 		// running threads
@@ -185,6 +185,10 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 
 		
 		manager = new DebugSessionManager(fEventDispatch);
+		if (metadataDirectory != null)
+		{
+			manager.init(new Path(metadataDirectory));
+		}
 		
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 		// we have to know when we get removed, so that we can shut off the debugger

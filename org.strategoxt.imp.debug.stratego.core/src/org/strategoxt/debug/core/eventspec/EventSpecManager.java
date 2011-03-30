@@ -9,7 +9,7 @@ import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.debug.core.util.table.EventTable;
-import org.strategoxt.debug.core.util.table.LineLengthTable;
+import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
 
 public class EventSpecManager {
 

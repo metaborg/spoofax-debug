@@ -80,6 +80,17 @@ public class DebugSessionManager {
 		this.eventSpecManager = new EventSpecManager();
 		this.vmMonitor = null;
 	}
+	
+	/**
+	 * This directory contains metadata such as the "linelength.offset" file
+	 */
+	private IPath metadataDirectory = null;
+	
+	public void init(IPath metadataDirectory)
+	{
+		this.metadataDirectory = metadataDirectory;
+		this.eventSpecManager.initializeTable(this.metadataDirectory);
+	}
 
 	
 	/**
@@ -89,8 +100,8 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(VirtualMachineManager vmManager, String mainArgs, List<IPath> classpaths, IPath tableDirectory, String connectorType) {
-		this.eventSpecManager.initializeTable(tableDirectory); // read table and offset files from the directory
+	public void initVM(VirtualMachineManager vmManager, String mainArgs, List<IPath> classpaths, String connectorType) {
+
 		VMLauncherHelper helper = new VMLauncherHelper(vmManager, connectorType);
 		helper.setClasspaths(classpaths);
 		this.vm = helper.getTargetVM(mainArgs);
@@ -103,15 +114,15 @@ public class DebugSessionManager {
 	 * @param mainArgs
 	 * @param classpath
 	 */
-	public void initVM(String mainArgs, List<IPath> classpaths, IPath tableDirectory)
+	public void initVM(String mainArgs, List<IPath> classpaths)
 	{
 		// use default launch
-		this.initVM(mainArgs, classpaths, tableDirectory, "LAUNCH");
+		this.initVM(mainArgs, classpaths, "LAUNCH");
 	}
 	
-	public void initVM(String mainArgs, List<IPath> classpaths, IPath tableDirectory, String connectorType) {
+	public void initVM(String mainArgs, List<IPath> classpaths, String connectorType) {
 		VirtualMachineManager vmManager = DebugSessionManager.getVirtualMachineManager();
-		this.initVM(vmManager, mainArgs, classpaths, tableDirectory, connectorType);
+		this.initVM(vmManager, mainArgs, classpaths, connectorType);
 	}
 
 	/**

@@ -25,4 +25,5 @@ Export-Package: org.strategoxt.imp.debug.stratego.transformer;
    org.osgi.framework,
    org.strategoxt.imp.runtime.dynamicloading",
  org.strategoxt.imp.debug.stratego.transformer.strategies;uses:="org.strategoxt.lang,org.spoofax.interpreter.terms",
+ org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util,
  org.strategoxt.imp.debug.stratego.transformer.trans;uses:="org.spoofax.interpreter.core,org.strategoxt.lang,org.spoofax.interpreter.terms"

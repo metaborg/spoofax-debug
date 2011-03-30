@@ -18,8 +18,6 @@ import org.spoofax.interpreter.terms.IStrategoList;
 import org.spoofax.interpreter.terms.IStrategoString;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.TermFactory;
-import org.strategoxt.debug.core.util.table.FileLineLengthTable;
-import org.strategoxt.debug.core.util.table.LineLengthTable;
 import org.strategoxt.lang.Context;
 import org.strategoxt.lang.StrategoExit;
 
@@ -187,7 +185,7 @@ public class DebugCompiler {
 		generateBreakpointLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
 		
 		IPath charOffsetTableFilename = projectStrategoDir.append((projectName + ".offset")); // location of the character offset table
-		generateOffsetTable(charOffsetTableFilename, strategoSourceBasedir, inputFiles);
+		//generateOffsetTable(charOffsetTableFilename, strategoSourceBasedir, inputFiles);
 
 		debugSessionSettings.setTableDirectory(projectStrategoDir);
 		
@@ -254,6 +252,7 @@ public class DebugCompiler {
 				"-i", stratego_input
 				, "--gen-dir", strOutputBasedir
 				, "--base-dir", sourceBasedir 
+				, "--charoffset-converter" // create charoffset table
 			};
 
 		String[] transformer_args = StringUtil.concat(basic_args, debugSessionSettings.getGenerateStrategoExtraArguments());
@@ -295,11 +294,11 @@ public class DebugCompiler {
 			{
 				if (subterm.getTermType() == IStrategoTerm.TUPLE)
 				{
-					// should be a tuple: (status, filename)
+					// should be a tuple: (status, generated-filename, input-filename)
 					IStrategoTerm[] tupleTerms = subterm.getAllSubterms();
 					if (tupleTerms.length != 3)
 					{
-						// tuple should have two items
+						// tuple should have three items
 						System.err.println("ERROR, has no three items!");
 					}
 					else
@@ -346,35 +345,6 @@ public class DebugCompiler {
 			result.put(inputFile, genFile);
 		}
 		return result;
-	}
-	
-	/**
-	 * Creates a table with the length per line, so we can convert a linenumber+token_line_offset to a token_file_offset
-	 */
-	protected void generateOffsetTable(IPath charOffsetTableFilename, IPath strategoSourceBasedir, Collection<IPath> inputFiles)
-	{
-		// create character offset table
-		// TODO: optimize
-		List<FileLineLengthTable> tables = new ArrayList<FileLineLengthTable>();
-		for(IPath inputFilePath : inputFiles) // TODO: sort the inputFiles on their path
-		{
-			IPath basedir = strategoSourceBasedir; // end with '/'
-			//IPath inputFilePath = new Path(inputFileString);
-			
-			if (basedir.isPrefixOf(inputFilePath)) {
-				//inputFile = inputFile.substring(basedir.length()); // make relative to the basedir
-				inputFilePath = inputFilePath.makeRelativeTo(basedir);
-			}
-			else
-			{
-				System.err.println("inputfile '"+inputFilePath+"' is not located in the strategoSourceBasedir '"+strategoSourceBasedir+"'");
-			}
-			FileLineLengthTable t = new FileLineLengthTable(inputFilePath.toOSString());
-			t.create(basedir);
-			tables.add(t);
-		}
-		
-		LineLengthTable.writeLineLengthTable(charOffsetTableFilename, tables);
 	}
 	
 	/**

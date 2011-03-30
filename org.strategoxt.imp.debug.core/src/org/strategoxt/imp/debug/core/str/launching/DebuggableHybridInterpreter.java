@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -32,6 +33,8 @@ import org.strategoxt.lang.StrategoExit;
  */
 public class DebuggableHybridInterpreter extends HybridInterpreter {
 
+	private String projectpath = null;
+	
 	public DebuggableHybridInterpreter(ITermFactory termFactory) {
 		super(termFactory);
 	}
@@ -88,41 +91,9 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 			throws InterpreterErrorExit, InterpreterExit, UndefinedStrategyException, InterpreterException {
 		
 		try {
-			// launch a JVM
-			// http://www.eclipse.org/articles/Article-Java-launch/launching-java.html
-			
-			// find HybridInterpreter launch config
-			ILaunchConfigurationWorkingCopy configWC = LaunchUtils.createHybridInterpreterLaunchConfigurationWorkingCopy();
-			if (configWC == null)
+			if (name.startsWith("test"))
 			{
-				System.err.println("No config working copy!");
-			}
-			// set the required attributes
-			
-			// strategy name
-			// IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME
-			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME, name);
-			
-			// required jars
-			// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
-			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, getLoadJarsAsList());
-			
-			// also set the path to the project, breakpoints 
-			// IStrategoConstants.ATTR_STRATEGO_PROGRAM
-			// TODO: set the project path, so we can filter breakpoints limited to this project
-			configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String) null);
-			//org.example.lang1
-			// classpath
-			// IStrategoConstants.ATTR_STRATEGO_CLASSPATH
-			
-			
-			// and launch
-			try {
-				ILaunchConfiguration config = configWC.doSave();
-				config.launch(ILaunchManager.DEBUG_MODE, null);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				tryLaunch(name);
 			}
 			
 			// TODO: wait for launch to finish
@@ -138,5 +109,62 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
             throw new InterpreterException(e);
         }
 		//return false;
+	}
+	
+	private void tryLaunch(String name)
+	{
+		// launch a JVM
+		// http://www.eclipse.org/articles/Article-Java-launch/launching-java.html
+		
+		// find HybridInterpreter launch config
+		ILaunchConfigurationWorkingCopy configWC = LaunchUtils.createHybridInterpreterLaunchConfigurationWorkingCopy();
+		if (configWC == null)
+		{
+			System.err.println("No config working copy!");
+		}
+		// set the required attributes
+		
+		// strategy name
+		// IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_STRATEGY_NAME, name);
+		
+		// required jars
+		// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, getLoadJarsAsList());
+		
+		// also set the path to the project, breakpoints 
+		// IStrategoConstants.ATTR_STRATEGO_PROGRAM
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, (String) null);
+		//org.example.lang1
+		// classpath
+		// IStrategoConstants.ATTR_STRATEGO_CLASSPATH
+		
+		// set the project path, so we can filter breakpoints limited to this project
+		configWC.setAttribute(IStrategoConstants.ATTR_PROJECT_DIRECTORY, this.getProjectpath());
+
+		// set metadata directory
+		configWC.setAttribute(IStrategoConstants.ATTR_METADATA_DIRECTORY, (String) null);
+
+		// and launch
+		try {
+			ILaunchConfiguration config = configWC.doSave();
+			// TODO: only launch if we have breakpoints
+			// Use the Descriptor
+			// We also need EditorIOAgent
+			config.launch(ILaunchManager.DEBUG_MODE, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	public String getProjectpath() {
+		return projectpath;
+	}
+
+
+	public void setProjectpath(String projectpath) {
+		this.projectpath = projectpath;
 	}
 }

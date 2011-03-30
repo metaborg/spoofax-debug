@@ -183,7 +183,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
-			StrategoDebugTarget target = new StrategoDebugTarget(launch, port);
+			StrategoDebugTarget target = new StrategoDebugTarget(launch, port, null);
 			//(launch,p,requestPort,eventPort );
 			launch.addDebugTarget(target);
 			monitor.worked(1);

@@ -1,12 +1,10 @@
-package org.strategoxt.debug.core.util.table;
+package org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
-import org.eclipse.core.runtime.IPath;
 
 public class FileLineLengthTable {
 
@@ -36,9 +34,10 @@ public class FileLineLengthTable {
 	}
 	
 	
-	public void create(IPath baseDir)
+	public void create(File baseDir)
 	{
-		File absLocation = baseDir.append(filename).toFile();
+		new File(baseDir, filename);
+		File absLocation = new File(baseDir, filename);
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(absLocation));
