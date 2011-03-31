@@ -171,7 +171,7 @@ public class DebugCompiler {
 		// strOutputBasedir + strategoFilePath will be the output stratego file (with debug information)
 		// TODO: removed , strategoSourceBasedir, strategoFilePath, strOutputBasedir
 		Map<IPath, IPath> result = generateStratego(debugSessionSettings, libraryPaths); // str to str (with debug info)
-		Collection<IPath> inputFiles = result.keySet();
+		//Collection<IPath> inputFiles = result.keySet();
 		Collection<IPath> generatedFiles = result.values();
 		// TODO check if files are actually created!
 		if (generatedFiles == null || generatedFiles.isEmpty())
@@ -184,7 +184,8 @@ public class DebugCompiler {
 		// the table contains all debug lookup information for all files in the project
 		generateBreakpointLookupTable(tableFilename, generatedFiles); // TODO: sort the filenames on their path
 		
-		IPath charOffsetTableFilename = projectStrategoDir.append((projectName + ".offset")); // location of the character offset table
+		// create in the generateStratego
+		//IPath charOffsetTableFilename = projectStrategoDir.append((projectName + ".offset")); // location of the character offset table
 		//generateOffsetTable(charOffsetTableFilename, strategoSourceBasedir, inputFiles);
 
 		debugSessionSettings.setTableDirectory(projectStrategoDir);

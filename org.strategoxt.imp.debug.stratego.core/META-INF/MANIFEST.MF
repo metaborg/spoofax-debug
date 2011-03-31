@@ -7,7 +7,7 @@ Bundle-ClassPath: lib/strategoxt.jar,
  .
 Export-Package: org.strategoxt.debug.core;uses:="org.eclipse.core.runtime,org.osgi.framework",
  org.strategoxt.debug.core.control;
-  uses:="org.strategoxt.debug.core.util,
+  uses:="org.eclipse.core.runtime,
    com.sun.jdi.event,
    org.strategoxt.debug.core.eventspec,
    com.sun.jdi,
@@ -20,16 +20,17 @@ Export-Package: org.strategoxt.debug.core;uses:="org.eclipse.core.runtime,org.os
    com.sun.jdi,
    org.strategoxt.debug.core.eventspec,
    org.strategoxt.debug.core.model",
- org.strategoxt.debug.core.eventspec;uses:="org.strategoxt.debug.core.util,org.strategoxt.debug.core.util.table,org.strategoxt.debug.core.model",
+ org.strategoxt.debug.core.eventspec;uses:="org.eclipse.core.runtime,org.strategoxt.debug.core.util.table,org.strategoxt.debug.core.model",
  org.strategoxt.debug.core.model;uses:="org.spoofax.interpreter.terms",
  org.strategoxt.debug.core.util;
   uses:="com.sun.jdi.request,
+   org.eclipse.core.runtime,
    org.spoofax.interpreter.terms,
    org.eclipse.jdt.core.compiler,
    com.sun.jdi.connect,
    com.sun.jdi,
    org.spoofax.interpreter.library",
- org.strategoxt.debug.core.util.table;uses:="org.strategoxt.debug.core.model"
+ org.strategoxt.debug.core.util.table;uses:="org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util,org.strategoxt.debug.core.model"
 Bundle-Vendor: org.strategoxt.imp.debug.stratego.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.jdt.debug,

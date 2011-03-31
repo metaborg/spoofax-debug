@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -33,6 +32,12 @@ import org.strategoxt.lang.StrategoExit;
  */
 public class DebuggableHybridInterpreter extends HybridInterpreter {
 
+	/**
+	 * If true calling invoke will launch a debug session.
+	 * If false calling invoke will just return the result (no debug JVM is started)
+	 */
+	private boolean isDebugLaunchEnabled = false;
+	
 	private String projectpath = null;
 	
 	public DebuggableHybridInterpreter(ITermFactory termFactory) {
@@ -91,8 +96,9 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 			throws InterpreterErrorExit, InterpreterExit, UndefinedStrategyException, InterpreterException {
 		
 		try {
-			if (name.startsWith("test"))
+			if (this.isDebugLaunchEnabled())
 			{
+				// TODO: limit the number of simultaneous launches...
 				tryLaunch(name);
 			}
 			
@@ -166,5 +172,13 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 
 	public void setProjectpath(String projectpath) {
 		this.projectpath = projectpath;
+	}
+	
+	public boolean isDebugLaunchEnabled() {
+		return isDebugLaunchEnabled;
+	}
+	
+	public void setDebugLaunchEnabled(boolean isDebugLaunchEnabled) {
+		this.isDebugLaunchEnabled = isDebugLaunchEnabled;
 	}
 }

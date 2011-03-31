@@ -9,6 +9,7 @@ import org.strategoxt.debug.core.model.StrategoStackFrame;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.FileUtil;
 import org.strategoxt.debug.core.util.table.EventTable;
+import org.strategoxt.debug.core.util.table.OffsetTable;
 import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
 
 public class EventSpecManager {
@@ -227,9 +228,19 @@ public class EventSpecManager {
 		return this.eventTable;
 	}
 	
-	public LineLengthTable getLineLengthTable()
+	private LineLengthTable getLineLengthTable()
 	{
 		return this.lineLengthTable;
+	}
+	
+	private OffsetTable offsetTable = null;
+	
+	public OffsetTable getOffsetTable(){
+		if (this.offsetTable == null)
+		{
+			this.offsetTable = new OffsetTable(getLineLengthTable());
+		}
+		return this.offsetTable;
 	}
 	
 	private void log(String message){

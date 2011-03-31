@@ -10,11 +10,27 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.launching;bundle-version="3.5.0",
  org.strategoxt.strj,
  org.eclipse.jdt.core;bundle-version="3.5.0",
- org.strategoxt.imp.debug.stratego.core,
- org.strategoxt.imp.debug.stratego.transformer
+ org.strategoxt.imp.debug.stratego.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.strategoxt.imp.debug.core.str.launching,
- org.strategoxt.imp.debug.core.str.model
+Export-Package: org.strategoxt.imp.debug.core.str.launching;
+  uses:="org.eclipse.debug.core,
+   org.eclipse.debug.core.sourcelookup,
+   org.eclipse.core.runtime,
+   org.eclipse.jdt.launching,
+   org.strategoxt.debug.core.util,
+   org.strategoxt,
+   org.eclipse.core.resources,
+   org.spoofax.interpreter.terms,
+   org.eclipse.debug.core.model",
+ org.strategoxt.imp.debug.core.str.model;
+  uses:="org.eclipse.debug.core,
+   org.eclipse.core.runtime,
+   org.eclipse.core.runtime.jobs,
+   org.spoofax.interpreter.terms,
+   org.eclipse.core.resources,
+   org.strategoxt.debug.core.control,
+   org.eclipse.debug.core.model,
+   org.strategoxt.debug.core.model"
 Bundle-ClassPath: .
 Bundle-Vendor: Spoofax.org

@@ -12,8 +12,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
-import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.FileLineLengthTable;
-import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
+import org.strategoxt.debug.core.util.table.OffsetTable;
 
 public class EStrategoStackFrame extends StrategoDebugElement implements IStackFrame {
 
@@ -98,32 +97,31 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	public int getCharEnd() throws DebugException {
 		// convert linenumber and offset relative to the line to the total character offset
 		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
-		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		OffsetTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getOffsetTable();
 		if (t == null)
 		{
 			return -1;
 		}
-		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
 		int linenumber = frameData.getCurrentLocationInfo().getEnd_line_num(); // one-based index
+		int lineOffset = t.getLineOffset(this.frameData.getFilename(), linenumber - 1); // convert linenumber to zero-based index
+
 		int end_token_pos = frameData.getCurrentLocationInfo().getEnd_token_pos();
-		int lineOffset = ft.getLineOffset(linenumber - 1); // convert linenumber to zero-based index
 		int charEnd = lineOffset + end_token_pos - 1; // convert charoffset to zero-based index
 		return charEnd;
 	}
 
 	public int getCharStart() throws DebugException {
 		// NOTE: take care with 0-based and 1-based indices, also newlines are counted as characters
-		LineLengthTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getLineLengthTable();
+		OffsetTable t = this.fTarget.getDebugSessionManager().getEventSpecManager().getOffsetTable();
 		if (t == null)
 		{
 			return -1;
 		}
-		FileLineLengthTable ft = t.getFileLineLengthTable(this.frameData.getFilename());
 		int linenumber = frameData.getCurrentLocationInfo().getStart_line_num(); // one-based index
+		int lineOffset = t.getLineOffset(this.frameData.getFilename(), linenumber - 1); // convert linenumber to zero-based index
+
 		int start_token_pos = frameData.getCurrentLocationInfo().getStart_token_pos();
-		int lineOffset = ft.getLineOffset(linenumber - 1); // convert linenumber to zero-based index
 		int charStart = lineOffset + start_token_pos - 1; // convert charoffset to zero-based index
-		System.out.println("asd");
 		return charStart;
 	}
 
