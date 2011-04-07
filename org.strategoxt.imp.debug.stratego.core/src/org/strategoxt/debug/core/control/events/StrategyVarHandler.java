@@ -2,12 +2,13 @@ package org.strategoxt.debug.core.control.events;
 
 import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
+import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyVarHandler extends EventHandler {
 
-	public StrategyVarHandler(IEventInfoExtractor extractor) {
-		super(extractor);
+	public StrategyVarHandler(IEventInfoExtractor extractor, EventSpecManager eventSpecManager) {
+		super(extractor, eventSpecManager);
 	}
 	
 	

@@ -12,6 +12,12 @@ import org.strategoxt.debug.core.util.table.EventTable;
 import org.strategoxt.debug.core.util.table.OffsetTable;
 import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
 
+/**
+ * Tracks all breakpoints, stepping, linelength table. Actions that should occur.
+ * 
+ * @author rlindeman
+ *
+ */
 public class EventSpecManager {
 
 	/**
@@ -236,7 +242,7 @@ public class EventSpecManager {
 	private OffsetTable offsetTable = null;
 	
 	public OffsetTable getOffsetTable(){
-		if (this.offsetTable == null)
+		if (this.offsetTable == null && getLineLengthTable() != null)
 		{
 			this.offsetTable = new OffsetTable(getLineLengthTable());
 		}
@@ -245,6 +251,23 @@ public class EventSpecManager {
 	
 	private void log(String message){
 		System.out.println(message);
+	}
+
+	/**
+	 * If set, this term should be the current term before calling the invoke of the HybridInterpreter.
+	 */
+	private String inputTerm = null;
+	
+	/**
+	 * This will be the current term that will be used as input for the strategy
+	 * @param term
+	 */
+	public void setInputTerm(String term) {
+		this.inputTerm = term;
+	}
+	
+	public String getInputTerm() {
+		return inputTerm;
 	}
 
 }

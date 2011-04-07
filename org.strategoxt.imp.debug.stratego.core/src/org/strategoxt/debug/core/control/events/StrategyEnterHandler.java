@@ -2,6 +2,7 @@ package org.strategoxt.debug.core.control.events;
 
 import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
+import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.eventspec.StrategyEnterBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoStackFrame;
@@ -9,9 +10,9 @@ import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyEnterHandler extends EventHandler {
 
-	public StrategyEnterHandler(IEventInfoExtractor extractor)
+	public StrategyEnterHandler(IEventInfoExtractor extractor, EventSpecManager eventSpecManager)
 	{
-		super(extractor);
+		super(extractor, eventSpecManager);
 	}
 	
 	@Override

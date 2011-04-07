@@ -490,6 +490,10 @@ public class DebugCompiler {
 		//String classPath = debugSessionSettings.getDebugCompileClasspath();
 
 		List<IPath> classpaths = new ArrayList<IPath>();
+		classpaths.addAll(debugSessionSettings.getRuntimeJars());
+		classpaths.add(debugSessionSettings.getStrategoxtJar());
+		classpaths.add(debugSessionSettings.getJavaDirectory());
+		
 		if (debugSessionSettings.getJavaCompileExtraClasspath() != null)
 		{
 			for(IPath c : debugSessionSettings.getJavaCompileExtraClasspath())

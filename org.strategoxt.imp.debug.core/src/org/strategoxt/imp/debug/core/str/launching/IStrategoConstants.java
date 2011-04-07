@@ -39,7 +39,15 @@ public interface IStrategoConstants {
 
 	public static final String ATTR_STRATEGO_CLASSPATH = ID_STRATEGO_DEBUG_MODEL + ".ATTR_STRATEGO_CLASSPATH";
 	
+	/**
+	 * Points to metadata directory, contains offsettable
+	 */
 	public static final String ATTR_METADATA_DIRECTORY = ID_STRATEGO_DEBUG_MODEL + ".ATTR_METADATA_DIRECTORY";
 	
 	public static final String ATTR_PROJECT_DIRECTORY = ID_STRATEGO_DEBUG_MODEL + ".ATTR_PROJECT_DIRECTORY";
+	
+	/**
+	 * The current term will be replaced by this value, it will be parsed as an IStrategoTerm.
+	 */
+	public static final String ATTR_CURRENT_TERM = ID_STRATEGO_DEBUG_MODEL + ".ATTR_CURRENT_TERM";
 }

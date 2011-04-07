@@ -4,7 +4,7 @@
 
 	<target name="spoofaximp.default" depends="spoofaximp.default.ctree" />
     <target name="spoofaximp.default.ctree" depends="check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.ctree,sdf2imp,refresh"/>
-    <target name="spoofaximp.default.jar" depends="check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.jar,  sdf2imp,refresh"/>
+    <target name="spoofaximp.default.jar" depends="utils-files,check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.jar,  sdf2imp,refresh"/>
 
 	<!-- Initialization -->
 	<!--<available file="${build}/org/strategoxt/imp/debug/stratego/runtime/strategies/Main.class" property="java.jar.enabled"/>-->

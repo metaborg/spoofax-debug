@@ -63,6 +63,12 @@ public abstract class StrategoDebugElement extends PlatformObject implements IDe
 		return super.getAdapter(adapter);
 	}
 	
+	/**
+	 * Throws a new DebugException, subclasses should use this when they want to throw exceptions.
+	 * @param message
+	 * @param e
+	 * @throws DebugException
+	 */
 	protected void abort(String message, Throwable e) throws DebugException {
 		// was DebugExamplesPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 		// deprecated: getDescriptor().getUniqueIdentifier()

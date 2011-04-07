@@ -41,6 +41,7 @@ import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.model.StrategoState;
 import org.strategoxt.debug.core.util.DebugEventRequestInstaller;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.HybridInterpreterDebugRuntime;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_enter_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_exit_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_enter_0_4;
@@ -99,7 +100,7 @@ public class EventThread extends Thread {
 	// e.g. current linenumber
 	private StrategoState strategoState = null;
 	
-	EventThread(VirtualMachine vm, String[] excludes, EventSpecManager eventSpecManager, VMMonitor vmMonitor) {
+	public EventThread(VirtualMachine vm, String[] excludes, EventSpecManager eventSpecManager, VMMonitor vmMonitor) {
 		super("event-handler");
 		if (vm != null)
 		{
@@ -287,7 +288,7 @@ public class EventThread extends Thread {
 
 	// Forward event for thread specific processing
 	private boolean methodExitEvent(MethodExitEvent event) {
-		getThreadEventHandler(event.thread()).methodExitEvent(event);
+		getThreadEventHandler(event.thread()).methodExitEvent(event, eventSpecManager);
 		return false; // resume thread
 	}
 
@@ -320,6 +321,7 @@ public class EventThread extends Thread {
 		String name = event.referenceType().name();
 		//System.out.println(name);
 		// if the name matches on of the predefined strategies implemented in java (e.g.: s-enter, s-step) we should add a breakpoint
+		System.out.println("Load " + name);
 		if (java_s_enter_0_4.getFullClassName().equals(name))
 		{
             if (event.referenceType() instanceof ClassType) {
@@ -362,6 +364,15 @@ public class EventThread extends Thread {
             	int l = java_r_exit_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_EXIT);
 			}
+		} else if (HybridInterpreterDebugRuntime.class.getName().equals(name))
+		{
+			if (event.referenceType() instanceof ClassType) {
+				System.out.println();
+				ClassType clazz = (ClassType) event.referenceType();
+				//int l = 136; // inside the main method. interpreter is a local variable
+				int l = 32; //HybridInterpreterDebugRuntime.BEFORE_INVOKE; // inside the invoke method, "this" is an interpreter
+				DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.INTERPRETER_LOADED);
+			}
 		}
 		
 		// TODO: if watchFields is true
@@ -386,30 +397,31 @@ public class EventThread extends Thread {
 		if (trace != null) { // only want threads we care about
 			trace.exceptionEvent(event); // Forward event
 		}
-		/*
+		
 		try {
 			int count = event.thread().frameCount();
 			if (count > 0)
 			{
 				com.sun.jdi.StackFrame sf = event.thread().frame(0);
+				@SuppressWarnings("rawtypes")
 				java.util.List visVars = sf.visibleVariables();
 				if (visVars != null && visVars.size() > 0)
 				{
-					LocalVariable lv = (LocalVariable) visVars.get(0);
+					com.sun.jdi.LocalVariable lv = (com.sun.jdi.LocalVariable) visVars.get(0);
 					com.sun.jdi.Value val = sf.getValue(lv);
 					System.out.println("VAL: " + val);
 				}
 				//java.util.List list = event.thread().frames();
 				//System.out.println("exception");
 			}
-		} catch (IncompatibleThreadStateException e) {
+		} catch (com.sun.jdi.IncompatibleThreadStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (AbsentInformationException e) {
+		} catch (com.sun.jdi.AbsentInformationException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 		}
-		*/
+		
 		return false; // resume thread
 	}
 

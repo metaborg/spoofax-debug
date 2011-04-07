@@ -52,9 +52,7 @@ public class DebugSessionManager {
 	// any changes to the VM are reported to this monitor
 	// e.g. thread suspended
 	private VMMonitor vmMonitor = null;
-	
-	//private DebugSessionSettings debugSessionSettings = null;
-	
+
 	/**
 	 * Create a new DebugSessionManager.
 	 * 
@@ -142,9 +140,9 @@ public class DebugSessionManager {
 		vm.setDebugTraceMode(debugTraceMode);
 		this.eventThread = new EventThread(vm, excludes, eventSpecManager, vmMonitor);
 		this.eventThread.setEventRequests(watchFields); // install the debug events
-		this.eventThread.start();
+		this.eventThread.start(); // only start when it is connected
 	}
-	
+
 	public void redirectOutput() {
 		Process process = vm.process();
 		if (process != null)
@@ -257,14 +255,23 @@ public class DebugSessionManager {
 	
 	/**
 	 * Replaces the current term with the given term.
+	 * The program should be suspended at a stratego event or the JVM is not started.
+	 * 
+	 * If the JVM is not started and the HybridIntepreter is used the current term is changed to the given term before the strategy is invoked.
 	 * @param term
 	 */
 	public void changeCurrentTerm(String term)
 	{
-		// only possible when suspended
-		ThreadEventHandler handler = eventThread.getMainThreadHandler();
-		handler.setCurrentTerm(term);
-		// do not resume automagically!
+		if (this.eventThread != null)
+		{
+			// only possible when suspended
+			ThreadEventHandler handler = eventThread.getMainThreadHandler();
+			handler.setCurrentTerm(term);
+			// do not resume automagically!
+		} else {
+			// or when not initialized
+			this.eventSpecManager.setInputTerm(term);
+		}
 	}
 
 	/**

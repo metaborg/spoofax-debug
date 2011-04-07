@@ -82,19 +82,19 @@ public class ValueExtractor implements IEventInfoExtractor {
 	protected StrategoTermBuilder builder = new StrategoTermBuilder();
 	
 	
-	public ValueExtractor(MethodEntryEvent event)
+	protected ValueExtractor(MethodEntryEvent event)
 	{
 		this.entry_event = event;
 		this.initLocalVariables();
 	}
 	
-	public ValueExtractor(MethodExitEvent event)
+	protected ValueExtractor(MethodExitEvent event)
 	{
 		this.exit_event = event;
 		this.initLocalVariables();
 	}
 	
-	public ValueExtractor(BreakpointEvent event)
+	protected ValueExtractor(BreakpointEvent event)
 	{
 		this.breakpoint_event = event;
 		this.initLocalVariables();

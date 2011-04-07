@@ -1,5 +1,6 @@
 package org.strategoxt.imp.debug.core.str.launching;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +91,7 @@ public class HybridInterpreterLaunchDelegate implements
 		String invokeStrategy = name; // this strategy will be executed
 		String invokeStrategyArguments = name; // the arguments for the strategy
 		
-		String mainClass = "org.strategoxt.HybridInterpreter";
+		String mainClass = "org.strategoxt.imp.debug.stratego.runtime.strategies.HybridInterpreterDebugRuntime";
 
 		String[] jarArray = FileUtil.convertIPathToStringArray(jarPaths); // + invokeStrategy + " " + invokeStrategyArguments;
 		String[] args = new String[] { invokeStrategy, invokeStrategyArguments };
@@ -108,21 +109,6 @@ public class HybridInterpreterLaunchDelegate implements
 		ls.metadataDirectory = metadataDirectory;
 		
 		launchVM(monitor, launch, ls);
-		//String cp = "" + jar + ":" + javaJar; // + ":" + utilsDir+"/strategoxt.jar";
-		//String classpath = cp;
-		
-		/*
-		DebugSessionSettings debugSessionSettings = DebugSessionSettingsFactory.create(new Path("workingdirectory"), "projectname");
-		IPath libDir = FileUtil.getLibDirectory(); // contains the rtree
-		debugSessionSettings.setJarLibraryDirectory(libDir);
-		DebugSessionManager dsm = new DebugSessionManager();
-
-		IPath tableDirectory = null;
-		dsm.initVM(mainArgs, classpaths, tableDirectory, "LAUNCH");
-		dsm.setupEventListeners();
-		dsm.redirectOutput();
-		dsm.runVM();
-		*/
 	}
 	
 	class LaunchSettings {
@@ -171,6 +157,11 @@ public class HybridInterpreterLaunchDelegate implements
 		// using attach, run before the StrategoDebugTarget is initialized
 		// using listen, run after the StrategoDebugTarget is initialized
 		System.out.println("RUN");
+		boolean showCommandLine = true;
+		if (showCommandLine)
+		{
+			debugCommandLine(defaultInstall, vmRunnerConfiguration);
+		}
 		vmRunner.run(vmRunnerConfiguration, launch, monitor);
 		monitor.worked(1);
 	}
@@ -194,5 +185,51 @@ public class HybridInterpreterLaunchDelegate implements
 			Object result = handler.handleStatus(status, null);
 			System.out.println(result);
 		}
+	}
+	
+	/**
+	 * Prints the commandline that can be used to launch the JVM.
+	 * @param defaultInstall
+	 * @param vmRunnerConfiguration
+	 */
+	private void debugCommandLine(IVMInstall defaultInstall, VMRunnerConfiguration vmRunnerConfiguration)
+	{
+		String line = "";
+		// java location
+		try {
+			line += defaultInstall.getInstallLocation().getCanonicalPath() + "/bin/java";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// java VM arguments
+		for(String s : vmRunnerConfiguration.getVMArguments())
+		{
+			line += " " + s;
+			
+		}
+		// classpath
+		line += " -Xss8m -Xms256m -Xmx1024m -XX:MaxPermSize=256m -server -Dvisualvm.display.name=FooBar -classpath ";
+		boolean isFirst = true;
+		for(String c : vmRunnerConfiguration.getClassPath())
+		{
+			if (!isFirst)
+			{
+;				line += ":";
+			} else
+			{
+				isFirst = false;
+			}
+			line += c;
+			
+		}
+		// main class
+		line += " " + vmRunnerConfiguration.getClassToLaunch();
+		// arguments
+		for(String a : vmRunnerConfiguration.getProgramArguments())
+		{
+			line += " " + a;
+		}
+		System.out.println(line);
 	}
 }

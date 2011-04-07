@@ -1,7 +1,5 @@
 package org.strategoxt.debug.core.control;
 
-import static org.junit.Assert.*;
-
 import org.eclipse.core.runtime.Path;
 import org.junit.Test;
 import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;

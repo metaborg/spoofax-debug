@@ -57,19 +57,19 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	protected MethodExitEvent exit_event = null;
 	protected BreakpointEvent breakpoint_event = null;
 	
-	public EventInfoStringExtractor(MethodEntryEvent event)
+	protected EventInfoStringExtractor(MethodEntryEvent event)
 	{
 		this.entry_event = event;
 		this.init();
 	}
 	
-	public EventInfoStringExtractor(MethodExitEvent event)
+	protected EventInfoStringExtractor(MethodExitEvent event)
 	{
 		this.exit_event = event;
 		this.init();
 	}
 	
-	public EventInfoStringExtractor(BreakpointEvent event)
+	protected EventInfoStringExtractor(BreakpointEvent event)
 	{
 		this.breakpoint_event = event;
 		this.init();
@@ -220,7 +220,7 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	 */
 	private Value getEventInfoStringValue()
 	{
-		if (this.eventInfoStringValue == null)
+		if (this.eventInfoStringValue == null && this.thisObject != null)
 		{
 			//Field eventInfoField = this.thisObject.referenceType().fieldByName(DebugCallStrategy.EVENTINFO);
 			
@@ -237,7 +237,7 @@ public class EventInfoStringExtractor implements IEventInfoExtractor {
 	
 	private Field getEventInfoField()
 	{
-		if (eventInfoField == null)
+		if (eventInfoField == null && this.thisObject != null)
 		{
 			eventInfoField = this.thisObject.referenceType().fieldByName(DebugCallStrategy.EVENTINFO);
 		}

@@ -78,6 +78,8 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 	 */
 	class EventDispatchJob extends Job implements VMMonitor {
 		
+		private boolean fShutdown = false;
+		
 		public EventDispatchJob() {
 			super("Stratego Event Dispatch");
 			setSystem(true);
@@ -151,6 +153,21 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 			}
 		}
 		
+		/**
+		 * Shutdown this event dispatcher - i.e. causes this Job to
+		 * The thread associated with this runnable
+		 * will exit.
+		 */
+		public void shutdown() {
+		    fShutdown= true;
+		    // remove the event dispatcher VMMonitor reference from the DebugSessionManager to stop receiving events.
+		}
+		
+		protected boolean isShutdown()
+		{
+			return this.fShutdown;
+		}
+		
 	}
 	
 	
@@ -163,7 +180,7 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		
 		// handle events fired by the VM
 		fEventDispatch = new EventDispatchJob();
-		fEventDispatch.schedule();
+		//fEventDispatch.schedule();
 		
 		//VirtualMachine vm = this.setupAttacher(port); // when suspended at this line the debug target has time to setup the socket
 		// TODO: Use SocketListen (wait for VM to connect) instead of SocketAttach (connect to existing VM)
@@ -188,6 +205,12 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		if (metadataDirectory != null)
 		{
 			manager.init(new Path(metadataDirectory));
+		}
+		
+		String term = launch.getLaunchConfiguration().getAttribute(IStrategoConstants.ATTR_CURRENT_TERM, (String) null);
+		if (term != null)
+		{
+			manager.changeCurrentTerm(term);
 		}
 		
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
@@ -217,7 +240,9 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
     public void launchRemoved(ILaunch launch) {
         // shut down the remote debugger when parent launch
         if (launch == this.fLaunch) {
-            DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);;
+        	// TODO: cancel jobs?
+        	System.out.println("Launch removed");
+            DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         }
     }
 	
@@ -700,4 +725,69 @@ public class StrategoDebugTarget extends StrategoDebugElement implements IDebugT
 		throw new DebugException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), 
 				DebugPlugin.INTERNAL_ERROR, message, e));
 	}
+
+	/**
+	 * The stratego debug plugin is shutting down.
+	 * 
+	 * Shutdown the event dispatcher and do local cleanup.
+	 * 
+	 * Inspired by JDIDebugTarget.shutdown()
+	 */
+	public void shutdown() {
+		//EventDispatcher dispatcher = ((StrategoDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (this.fEventDispatch != null) {
+			this.fEventDispatch.shutdown();
+		}
+		// TODO: terminate or disconnect
+		/*
+		try {
+		    if (supportsTerminate()) {
+		        terminate();
+		    } else if (supportsDisconnect()) {
+		        disconnect();
+		    }
+		} catch (DebugException e) {
+		    //JDIDebugPlugin.log(e);
+		}
+		*/
+		cleanup();
+	}
+
+	/** 
+	 * Cleans up the internal state of this debug
+	 * target as a result of a session ending with a
+	 * VM (as a result of a disconnect or termination of
+	 * the VM).
+	 * <p>
+	 * All threads are removed from this target.
+	 * This target is removed as a breakpoint listener,
+	 * and all breakpoints are removed from this target.
+	 * </p>
+	 */
+	protected void cleanup() {
+		/*
+		// TODO: implement
+	    removeAllThreads();
+	    DebugPlugin plugin = DebugPlugin.getDefault();
+	    plugin.getBreakpointManager().removeBreakpointListener(this);
+	    plugin.getLaunchManager().removeLaunchListener(this);
+	    plugin.getBreakpointManager().removeBreakpointManagerListener(this);
+	    plugin.removeDebugEventListener(this);
+	    removeAllBreakpoints();
+	    fOutOfSynchTypes.clear();
+	    if (fEngines != null) {
+	        Iterator   engines = fEngines.values().iterator();
+	        while (engines.hasNext()) {
+	            IAstEvaluationEngine engine = (IAstEvaluationEngine)engines.next();
+	            engine.dispose();
+	        }
+	        fEngines.clear();
+	    }
+	    fVirtualMachine= null;
+	    setThreadStartHandler(null);
+	    setEventDispatcher(null);
+	    setStepFilters(new String  [0]);
+	    */
+	}
+
 }

@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.spoofax.interpreter.core.InterpreterErrorExit;
 import org.spoofax.interpreter.core.InterpreterException;
 import org.spoofax.interpreter.core.InterpreterExit;
 import org.spoofax.interpreter.core.UndefinedStrategyException;
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.ITermFactory;
 import org.strategoxt.HybridInterpreter;
 import org.strategoxt.IncompatibleJarException;
@@ -27,10 +30,13 @@ import org.strategoxt.lang.StrategoExit;
  * This DebuggableHybridInterpreter extends the HybridInterpreter so that it can provide debugging support.
  * It will execute the stratego code in a separate JVM.
  * 
+ * DebuggableHybridInterpreter does not extend HybridInterpreterDebugRuntime, because we have full control over the HybridInterpreter here.
+ * 
+ * Use the HybridInterpreterDebugRuntime when it should be controllable from another JVM.
  * @author rlindeman
  *
  */
-public class DebuggableHybridInterpreter extends HybridInterpreter {
+public class DebuggableHybridInterpreter extends HybridInterpreter implements ILaunchListener {
 
 	/**
 	 * If true calling invoke will launch a debug session.
@@ -44,6 +50,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 		super(termFactory);
 	}
 
+	public static int counter = 0;
 	
 	/**
 	 * Creates an interpreter that bases its definition scope on an existing instance.
@@ -151,13 +158,23 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 		// set metadata directory
 		configWC.setAttribute(IStrategoConstants.ATTR_METADATA_DIRECTORY, (String) null);
 
+		// set current term
+		IStrategoTerm term = this.current();
+		if (term != null)
+		{
+			configWC.setAttribute(IStrategoConstants.ATTR_CURRENT_TERM, term.toString());
+		}
+		
 		// and launch
 		try {
 			ILaunchConfiguration config = configWC.doSave();
 			// TODO: only launch if we have breakpoints
 			// Use the Descriptor
 			// We also need EditorIOAgent
-			config.launch(ILaunchManager.DEBUG_MODE, null);
+			//config.launch(ILaunchManager.DEBUG_MODE, null);
+			config.launch(ILaunchManager.DEBUG_MODE, null, false, true);
+			//boolean build,
+            //boolean register
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -181,4 +198,21 @@ public class DebuggableHybridInterpreter extends HybridInterpreter {
 	public void setDebugLaunchEnabled(boolean isDebugLaunchEnabled) {
 		this.isDebugLaunchEnabled = isDebugLaunchEnabled;
 	}
+
+	// ILaunchListener interface
+	public void launchRemoved(ILaunch launch) {
+		// TODO Auto-generated method stub
+		System.out.println("removed");
+	}
+	
+	public void launchAdded(ILaunch launch) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void launchChanged(ILaunch launch) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

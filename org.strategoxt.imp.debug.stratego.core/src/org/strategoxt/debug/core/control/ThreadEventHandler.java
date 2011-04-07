@@ -12,6 +12,7 @@ import org.strategoxt.debug.core.control.events.EventHandler;
 import org.strategoxt.debug.core.control.events.EventHandlerFactory;
 import org.strategoxt.debug.core.control.events.EventInfoStringExtractor;
 import org.strategoxt.debug.core.control.events.IEventInfoExtractor;
+import org.strategoxt.debug.core.control.events.IEventInfoExtractorFactory;
 import org.strategoxt.debug.core.control.events.RuleExitHandler;
 import org.strategoxt.debug.core.control.events.StrategyExitHandler;
 import org.strategoxt.debug.core.eventspec.EventSpecManager;
@@ -106,9 +107,10 @@ public class ThreadEventHandler {
 		long start = System.nanoTime(); // profile internal
 		boolean suspendThread = false;
 		String eventType = (String) event.request().getProperty("event-type");
-		this.extractor = new EventInfoStringExtractor(event);
+
+		this.extractor = IEventInfoExtractorFactory.createExtractor(event);
 		long extractorEnd = System.nanoTime();
-		EventHandler h = EventHandlerFactory.createEventHandler(extractor, eventType);
+		EventHandler h = EventHandlerFactory.createEventHandler(eventType, extractor, eventSpecManager);
 		if (h.isEnter())
 		{
 			// current stack frame should be pushed, this is done in processDebugEvent
@@ -119,7 +121,7 @@ public class ThreadEventHandler {
 		long processStart = System.nanoTime();
 		h.processDebugEvent(this.strategoState);
 		long processEnd = System.nanoTime();
-		suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
+		suspendThread = h.shouldSuspend(this.strategoState);
 		// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended
 		long suspendCheckEnd = System.nanoTime();
 		if (suspendThread)
@@ -293,8 +295,8 @@ public class ThreadEventHandler {
 		}
 		
 		EventHandler h = null;
-		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
-		h = EventHandlerFactory.createEventHandler(extractor, eventType);
+		IEventInfoExtractor extractor = IEventInfoExtractorFactory.createExtractor(event);
+		h = EventHandlerFactory.createEventHandler(eventType, extractor, eventSpecManager);
 		
 		if (h != null)
 		{
@@ -306,7 +308,7 @@ public class ThreadEventHandler {
 			try {
 				h.processDebugEvent(this.strategoState);
 				
-				suspendThread = h.shouldSuspend(this.strategoState, eventSpecManager);
+				suspendThread = h.shouldSuspend(this.strategoState);
 				// if the thread will be suspended, update the Dynamic Rules. But first get it from the vm while it is suspended
 
 
@@ -344,7 +346,7 @@ public class ThreadEventHandler {
 		return suspendThread;
 	}
 
-	void methodExitEvent(MethodExitEvent event) {
+	void methodExitEvent(MethodExitEvent event, EventSpecManager eventSpecManager) {
 		String eventType = (String) event.request().getProperty("event-type");
 		//System.out.println(eventType);
 		
@@ -359,14 +361,14 @@ public class ThreadEventHandler {
 		}
 		
 		EventHandler h = null;
-		IEventInfoExtractor extractor = new EventInfoStringExtractor(event);
+		IEventInfoExtractor extractor = IEventInfoExtractorFactory.createExtractor(event);
 		if (EventHandler.R_ENTER.equals(eventType))
 		{
 			//h = new RuleEnterHandler(event);
 		}
 		else if (EventHandler.R_EXIT.equals(eventType))
 		{
-			h = new RuleExitHandler(extractor);
+			h = new RuleExitHandler(extractor, eventSpecManager);
 			this.exitStrategoStackFrame(h);
 		}
 		else if (EventHandler.S_ENTER.equals(eventType))
@@ -375,7 +377,7 @@ public class ThreadEventHandler {
 		}
 		else if (EventHandler.S_EXIT.equals(eventType))
 		{
-			h = new StrategyExitHandler(extractor);
+			h = new StrategyExitHandler(extractor, eventSpecManager);
 			this.exitStrategoStackFrame(h);
 		}
 	}

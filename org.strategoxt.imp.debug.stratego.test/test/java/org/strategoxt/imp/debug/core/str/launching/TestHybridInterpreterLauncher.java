@@ -3,7 +3,6 @@ package org.strategoxt.imp.debug.core.str.launching;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.StrategoFileManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -97,7 +96,8 @@ public class TestHybridInterpreterLauncher extends AbstractDebugTest implements 
 	@Test
 	public void testLaunch() throws Exception {
 		// /stratego-resources/src-str/test/localvar/localvar.str
-		IFile strFile = getFile("src-str/test/localvar/localvar.str");
+		//IFile strFile = getFile("src-str/test/localvar/localvar.str");
+		
 		/*
 		// create breakpoint
 		StrategoLineBreakpoint lineBreakpoint = new StrategoLineBreakpoint(strFile, 48); // 1-based linenumber
@@ -123,7 +123,7 @@ public class TestHybridInterpreterLauncher extends AbstractDebugTest implements 
 		// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
 		//String strategoXTJar = StrategoFileManager.getStrategoXTJar();
 		List<IPath> paths = ClasspathHandler.getClasspathEntries();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for(IPath p : paths)
 		{
 			list.add(p.toOSString());

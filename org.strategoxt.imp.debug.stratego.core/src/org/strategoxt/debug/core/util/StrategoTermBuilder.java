@@ -46,6 +46,10 @@ public class StrategoTermBuilder {
 	 */
 	public String buildString(Value value)
 	{
+		if (value == null)
+		{
+			return "";
+		}
 		// value should be a string
 		String s = value.toString();
 		// strip surrounding quotes

@@ -2,14 +2,15 @@ package org.strategoxt.debug.core.control.events;
 
 import org.strategoxt.debug.core.control.EventProfiler;
 import org.strategoxt.debug.core.eventspec.BreakPoint;
+import org.strategoxt.debug.core.eventspec.EventSpecManager;
 import org.strategoxt.debug.core.eventspec.StrategyStepBreakPoint;
 import org.strategoxt.debug.core.model.LocationInfo;
 import org.strategoxt.debug.core.model.StrategoState;
 
 public class StrategyStepHandler extends EventHandler {
 
-	public StrategyStepHandler(IEventInfoExtractor extractor) {
-		super(extractor);
+	public StrategyStepHandler(IEventInfoExtractor extractor, EventSpecManager eventSpecManager) {
+		super(extractor, eventSpecManager);
 	}
 
 	@Override

@@ -19,14 +19,26 @@ public abstract class EventHandler {
 	public static String R_EXIT = "r_exit";
 	public static String S_STEP = "s_step";
 	public static String S_VAR = "s_var";
-
 	
+	/**
+	 * Name of the event that occurs just before the strategy is invoked from the HybridInterpreter.
+	 * When suspended at this breakpoint, we can change the current term, before the main strategy is called.
+	 */
+	public static String INTERPRETER_LOADED = "interpreter_loaded";
+
+	private EventSpecManager eventSpecManager = null;
 	
 	private IEventInfoExtractor extractor = null;
 	
-	public EventHandler(IEventInfoExtractor extractor)
+	public EventHandler(IEventInfoExtractor extractor, EventSpecManager eventSpecManager)
 	{
 		this.extractor = extractor;
+		this.eventSpecManager = eventSpecManager;
+	}
+	
+	protected EventSpecManager getEventSpecManager()
+	{
+		return this.eventSpecManager;
 	}
 	
 	public IEventInfoExtractor getIEventInfoExtractor() {
@@ -80,7 +92,7 @@ public abstract class EventHandler {
 	 * </ul>
 	 * @return
 	 */
-	public boolean shouldSuspend(StrategoState currentState, EventSpecManager eventSpecManager){
+	public boolean shouldSuspend(StrategoState currentState){
 		String markName = "SS_" + this.getEventType();
 		EventProfiler.instance.startMark(markName);
 		
@@ -140,7 +152,7 @@ public abstract class EventHandler {
 							|| this.getEventType().equals(EventHandler.S_STEP)))
 			{
 				// what if the current stackframe level is smaller that the stepFrameLevel? We must have missed an r-exit/s-exit
-				// stop at the first s-step, s-exit, s-enter, r-exit, r-enter (s-var is ingnored)
+				// stop at the first s-step, s-exit, s-enter, r-exit, r-enter (s-var is ignored)
 				log("Missed step over curLevel="+currentState.getCurrentFrameLevel() + " stepOverInLevel="+eventSpecManager.getStepFrameLevel());
 				shouldSuspend = true;
 				eventSpecManager.resetStep(currentState); // reset step

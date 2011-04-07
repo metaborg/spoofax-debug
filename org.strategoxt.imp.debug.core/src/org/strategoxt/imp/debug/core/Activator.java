@@ -1,7 +1,11 @@
 package org.strategoxt.imp.debug.core;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.osgi.framework.BundleContext;
+import org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -29,13 +33,35 @@ public class Activator extends Plugin {
 		plugin = this;
 	}
 
-	/*
+	/**
+	 * The plugin is shutting down, stop all jobs in each StrategoDebugTarget.
+	 * 
+	 * Method is inspired by JDIDebugPlugin.stop(BundleContext context)
+	 * org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget$EventDispatchJob.
+	 * 
+	 * 
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
+		// TODO: Shutdown jobs from org.strategoxt.imp.debug.core.str.model.StrategoDebugTarget$EventDispatchJob
+		try {
+			// find all StrategoDebugTarget
+			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+			IDebugTarget[] targets= launchManager.getDebugTargets();
+			for (int i= 0 ; i < targets.length; i++) {
+				IDebugTarget target= targets[i];
+				if (target instanceof StrategoDebugTarget) {
+					((StrategoDebugTarget)target).shutdown();
+				}
+			}
+			
+		} finally
+		{
+			// always stop
+			plugin = null;
+			super.stop(context);
+		}
 	}
 
 	/**

@@ -43,6 +43,8 @@ public class DebugEventRequestInstaller {
 	
 	public static final boolean useExceptionRequests = true;
 	
+	public static final boolean changeCurrentTermInHybridInterpreter = true;
+	
 	public static void installDebugEventRequests(VirtualMachine vm, boolean watchFields, String[] excludes)
 	{
 		EventRequestManager mgr = vm.eventRequestManager();
@@ -61,7 +63,9 @@ public class DebugEventRequestInstaller {
 		if (useExceptionRequests)
 		{
 			//createExceptionRequest(ReferenceType refType, boolean notifyCaught, boolean notifyUncaught)
-			ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true); // suspend so we can step 
+			boolean notifyCaught = false;
+			boolean notifyUncaught = true;
+			ExceptionRequest excReq = mgr.createExceptionRequest(null, notifyCaught, notifyUncaught); // suspend so we can step 
 			excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 			excReq.enable();
 		}
@@ -111,7 +115,7 @@ public class DebugEventRequestInstaller {
 			cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 			cpr.enable();
 		}
-		
+
 		/*
 		// exception request
 		ReferenceType refType = null; // report all exceptions

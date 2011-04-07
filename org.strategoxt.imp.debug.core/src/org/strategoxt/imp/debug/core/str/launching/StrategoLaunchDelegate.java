@@ -152,6 +152,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		ls.classpath = classPath;
 		ls.programArguments = programArgsArray;
 		ls.mode = mode;
+		ls.metadataDirectory = debugSessionSettings.getStrategoDirectory().toOSString();
 		
 		launchVM(monitor, ls, launch);
 
@@ -183,7 +184,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		
 		if (ls.mode.equals(ILaunchManager.DEBUG_MODE)) {
 			monitor.subTask("Attaching to the Stratego VM");
-			StrategoDebugTarget target = new StrategoDebugTarget(launch, port, null);
+			StrategoDebugTarget target = new StrategoDebugTarget(launch, port, ls.metadataDirectory);
 			//(launch,p,requestPort,eventPort );
 			launch.addDebugTarget(target);
 			monitor.worked(1);
@@ -206,6 +207,8 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		public String[] programArguments;
 		
 		public String mode;
+		
+		public String metadataDirectory;
 	}
 	
 
