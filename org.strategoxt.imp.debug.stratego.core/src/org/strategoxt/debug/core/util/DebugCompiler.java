@@ -254,6 +254,7 @@ public class DebugCompiler {
 				, "--gen-dir", strOutputBasedir
 				, "--base-dir", sourceBasedir 
 				, "--charoffset-converter" // create charoffset table
+				, "--fail-catch" // catch fail in where/with in rules
 			};
 
 		String[] transformer_args = StringUtil.concat(basic_args, debugSessionSettings.getGenerateStrategoExtraArguments());
@@ -478,8 +479,9 @@ public class DebugCompiler {
 	 * @param mainSourceFileName
 	 * @param binBasedir
 	 * @return
+	 * @throws DebugCompileException 
 	 */
-	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath mainSourceFileName, IPath binBasedir)
+	protected IPath compileJava(DebugSessionSettings debugSessionSettings, IPath mainSourceFileName, IPath binBasedir) throws DebugCompileException
 	{
 		log("Compiling " + mainSourceFileName);
 		log("Please wait...");
@@ -514,17 +516,18 @@ public class DebugCompiler {
 		// TODO: get extra compiler arguments from debugSessionSettings
 		FileOutputStream outStream = null;
 		FileOutputStream errorStream = null;
+		String logFileLocation = "";
 		try {
 			File outFile = new File("out.log");
 			File errorFile = new File("error.log");
 			outStream = new FileOutputStream(outFile, false);
 			errorStream = new FileOutputStream(errorFile, false);
-			
-			log("Logfile: " + outFile.getAbsolutePath());
+			logFileLocation =  outFile.getAbsolutePath();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		log("Logfile: " + logFileLocation);
 		PrintWriter outWriter = null;
 		PrintWriter errWriter = null;
 		
@@ -552,6 +555,10 @@ public class DebugCompiler {
 		//boolean result = main.compile(args);
 		boolean result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(args, outWriter, errWriter, compilationProgress);
 		log("Compile result: " + result);
+		if (!result)
+		{
+			throw new DebugCompileException("Could not compile java files, see " + logFileLocation);
+		}
 		//org.eclipse.jdt.internal.compiler.batch.Main.main(args);
 		
 		/*

@@ -19,6 +19,7 @@ public abstract class EventHandler {
 	public static String R_EXIT = "r_exit";
 	public static String S_STEP = "s_step";
 	public static String S_VAR = "s_var";
+	public static String S_FAIL = "s_fail";
 	
 	/**
 	 * Name of the event that occurs just before the strategy is invoked from the HybridInterpreter.
@@ -244,6 +245,14 @@ public abstract class EventHandler {
 		EventProfiler.instance.subMark(markName, "D-1");
 		
 		strategoState.currentFrame().setCurrentLocationInfo(locationInfo, this.getEventType());
+		
+		// assert we are still in the same file
+		String currentFilename = strategoState.currentFrame().getFilename();
+		String eventFilename = this.getIEventInfoExtractor().getFilename();
+		if (!currentFilename.equals(eventFilename))
+		{
+			System.out.println("StackFrame Filename changed, maybe we lost an enter or exit event...");
+		}
 		
 		EventProfiler.instance.subMark(markName, "D-2");
 		

@@ -16,6 +16,7 @@ public class InteropRegisterer extends JavaInteropRegisterer {
 				, java_r_exit_0_4.instance // rule exit
 				, java_s_step_0_4.instance // step
 				, java_s_var_0_5.instance // var assignment
+				, java_s_fail_0_4.instance // where/with clause fails
 				});
 	}
 }

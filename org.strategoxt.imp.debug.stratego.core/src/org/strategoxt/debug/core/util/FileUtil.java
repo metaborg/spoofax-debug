@@ -118,6 +118,10 @@ public class FileUtil {
 		return cp;
 	}
 	
+	/**
+	 * Find the lib directory 
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	public static IPath getLibDirectory()
 	{

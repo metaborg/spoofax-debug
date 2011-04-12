@@ -31,9 +31,16 @@ public class EventHandlerFactory {
 		{
 			h = new StrategyVarHandler(extractor, eventSpecManager);
 		}
+		else if (EventHandler.S_FAIL.equals(eventType))
+		{
+			h = new StrategyFailHandler(extractor, eventSpecManager);
+		}
 		else if (EventHandler.INTERPRETER_LOADED.equals(eventType))
 		{
 			h = new InterpreterLoadedHandler(extractor, eventSpecManager);
+		} else
+		{
+			System.err.println("Event Type: " + eventType + " unknown!");
 		}
 		return h;
 	}

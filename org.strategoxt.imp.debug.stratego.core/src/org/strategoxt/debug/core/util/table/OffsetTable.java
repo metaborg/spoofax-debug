@@ -13,7 +13,7 @@ public class OffsetTable {
 	}
 	
 	/**
-	 * 
+	 * Returns the line offset for the given linenumber(zero-based), if the linenumber out of bound return -1;
 	 * @param filename
 	 * @param i i is a zero-based index
 	 * @return

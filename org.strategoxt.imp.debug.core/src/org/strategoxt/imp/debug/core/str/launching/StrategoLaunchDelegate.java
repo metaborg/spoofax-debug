@@ -135,6 +135,20 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 		cpList.add(binBase);
 		cpList.add(debugSessionSettings.getStrategoxtJar());
 		cpList.addAll(debugSessionSettings.getRuntimeJars());
+		// add additional classpath
+		
+		// java runtime classpath
+		List runtimeClasspath = configuration.getAttribute(IStrategoConstants.ATTR_JAVA_RUNTIME_CLASSPATH_LIST, (List)null);
+		if (runtimeClasspath == null) {
+			runtimeClasspath = new ArrayList<String>();
+		}
+		for(Object o : runtimeClasspath)
+		{
+			if (o instanceof String)
+			{
+				cpList.add(new Path((String) o));
+			}
+		}
 		
 		String[] classPath = FileUtil.convertIPathToStringArray(cpList);	
 		
@@ -176,7 +190,7 @@ public class StrategoLaunchDelegate extends AbstractJavaLaunchConfigurationDeleg
 			// socket attach
 			//String[] realVMargs = new String[] { "-Xdebug", "-Xrunjdwp:transport=dt_socket,address="+port+",server=y,suspend=y" };
 			// socket listen
-			String[] realVMargs = new String[] { "-Xdebug", "-Xrunjdwp:transport=dt_socket,address="+port+",suspend=y" };
+			String[] realVMargs = new String[] { "-Xdebug", "-Xrunjdwp:transport=dt_socket,address="+port+",suspend=y", "-Xss8m" };
 		//String[] realVMargs = new String[] { "-Xrunjdwp:transport=dt_socket,address=9000,server=y,suspend=y" };
 		//String[] realVMargs = new String[] { "-Xdebug" };
 			vmRunnerConfiguration.setVMArguments(realVMargs);

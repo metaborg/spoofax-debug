@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.strategoxt.debug.core.util.DebugCompileException;
@@ -74,6 +75,24 @@ public class StrategoLaunchUtil {
 		}
 		String[] compileTimeExtraArguments = (String[]) compileArguments.toArray(new String[0]);
 		debugSessionSettings.setCompileTimeExtraArguments(compileTimeExtraArguments);
+		
+		// java compile extra classpath
+		List javaCompileClasspath = configuration.getAttribute(IStrategoConstants.ATTR_JAVA_COMPILE_CLASSPATH_LIST, (List) null);
+		if (javaCompileClasspath == null) {
+			javaCompileClasspath = new ArrayList<String>();
+		}
+		List<IPath> paths = new ArrayList<IPath>();
+		for(Object o : javaCompileClasspath)
+		{
+			if (o instanceof String)
+			{
+				IPath path = new Path((String) o);
+				paths.add(path);
+			}
+		}
+		IPath[] javaCompileClasspathArray = (IPath[]) paths.toArray(new IPath[0]);
+		debugSessionSettings.setJavaCompileExtraClasspath(javaCompileClasspathArray);
+		
 		
 		IPath binBase = debugSessionSettings.getClassDirectory(); // default
 

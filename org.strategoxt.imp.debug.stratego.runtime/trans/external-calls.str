@@ -15,3 +15,5 @@ strategies
 	external java-s-step(|filename, name, location, given)
 	// var-name is the name of the variable that the term given is assigned to
 	external java-s-var(|filename, name, var-name, location, given)
+	// occurs when a where or with clause fails for a rule
+	external java-s-fail(|filename, name, location, given)

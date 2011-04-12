@@ -46,6 +46,7 @@ import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_enter_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_r_exit_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_enter_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_exit_0_4;
+import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_fail_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_step_0_4;
 import org.strategoxt.imp.debug.stratego.runtime.strategies.java_s_var_0_5;
 
@@ -363,6 +364,13 @@ public class EventThread extends Thread {
 				ClassType clazz = (ClassType) event.referenceType();
             	int l = java_r_exit_0_4.breakpointLinenumber;
             	DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.R_EXIT);
+			}
+		} else if (java_s_fail_0_4.getFullClassName().equals(name))
+		{
+			if (event.referenceType() instanceof ClassType) {
+				ClassType clazz = (ClassType) event.referenceType();
+				int l = java_s_fail_0_4.breakpointLinenumber;
+				DebugEventRequestInstaller.createBreakpointEntryRequest(mgr, clazz, l, EventHandler.S_FAIL);
 			}
 		} else if (HybridInterpreterDebugRuntime.class.getName().equals(name))
 		{

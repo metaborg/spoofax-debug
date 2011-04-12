@@ -46,6 +46,10 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	private Text fCompileArgumentsText; // multi-line textbox, every argument should be placed on a line
 	
+	private Text fJavaCompileExtraClasspath;
+	
+	private Text fJavaRuntimeExtraClasspath;
+	
 	/**
 	 * Checkbox, true if the stratego program needs to be recompiled before every launch.
 	 */
@@ -61,6 +65,7 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 	 * GUI: 
 	Program arguments:	| multiline textbox			|
 	Compile arguments:	| multiline textbox			|
+	Java classpath args:| multiline textbox			|
 	CB Re-compile before each run
 	 */
 	
@@ -91,6 +96,14 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 3);
 
 		createCompileArgumentsControl(font, comp);
+		
+		createVerticalSpacer(comp, 3);
+		
+		createJavaCompileExtraClasspathControl(font, comp);
+		
+		createVerticalSpacer(comp, 3);
+		
+		createJavaRuntimeExtraClasspathControl(font, comp);
 		
 		createVerticalSpacer(comp, 3);
 
@@ -134,6 +147,48 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		fCompileArgumentsText.setLayoutData(gdArg);
 		fCompileArgumentsText.setFont(font);
 		fCompileArgumentsText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+	
+	private void createJavaCompileExtraClasspathControl(Font font, Composite comp)
+	{
+		Label classpathLabel = new Label(comp, SWT.NONE);
+		classpathLabel.setText("Java compile classpath:");
+		GridData gdArg = new GridData(GridData.BEGINNING);
+		classpathLabel.setLayoutData(gdArg);
+		classpathLabel.setFont(font);
+		
+		fJavaCompileExtraClasspath = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL); // a multi line text box, every argument should be placed on its own line
+		gdArg = new GridData(GridData.FILL_HORIZONTAL);
+		gdArg.horizontalSpan = 2;
+		gdArg.verticalSpan = 5;
+		fJavaCompileExtraClasspath.setLayoutData(gdArg);
+		fJavaCompileExtraClasspath.setFont(font);
+		fJavaCompileExtraClasspath.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+	
+	private void createJavaRuntimeExtraClasspathControl(Font font, Composite comp)
+	{
+		Label classpathLabel = new Label(comp, SWT.NONE);
+		classpathLabel.setText("Java runtime classpath:");
+		GridData gdArg = new GridData(GridData.BEGINNING);
+		classpathLabel.setLayoutData(gdArg);
+		classpathLabel.setFont(font);
+		
+		fJavaRuntimeExtraClasspath = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL); // a multi line text box, every argument should be placed on its own line
+		gdArg = new GridData(GridData.FILL_HORIZONTAL);
+		gdArg.horizontalSpan = 2;
+		gdArg.verticalSpan = 5;
+		fJavaRuntimeExtraClasspath.setLayoutData(gdArg);
+		fJavaRuntimeExtraClasspath.setFont(font);
+		fJavaRuntimeExtraClasspath.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -220,6 +275,19 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 				fCompileArgumentsText.setText(flatString);
 			}
 			
+			// java compile classpath
+			List javaCompileClasspath = configuration.getAttribute(IStrategoConstants.ATTR_JAVA_COMPILE_CLASSPATH_LIST, (List) null);
+			if (javaCompileClasspath != null) {
+				String flatString = CollectionUtils.join(javaCompileClasspath, Text.DELIMITER);
+				fJavaCompileExtraClasspath.setText(flatString);
+			}
+			// java runtime classpath
+			List javaRuntimeClasspath = configuration.getAttribute(IStrategoConstants.ATTR_JAVA_RUNTIME_CLASSPATH_LIST, (List) null);
+			if (javaRuntimeClasspath != null) {
+				String flatString = CollectionUtils.join(javaRuntimeClasspath, Text.DELIMITER);
+				fJavaRuntimeExtraClasspath.setText(flatString);
+			}
+			
 			// recompile stratego program before each launch
 			boolean recompileSelected = configuration.getAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_RECOMPILE, (boolean) true);
 			fProgramRecompile.setSelection(recompileSelected);
@@ -241,7 +309,7 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM, program);
 		
-		// runtime arguments
+		// stratego program arguments
 		String runtimeArguments = fProgramArgumentsText.getText().trim();
 		if (runtimeArguments.length() == 0) {
 			runtimeArguments = null;
@@ -254,7 +322,7 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		List<String> runtimeArgumentsList = Arrays.asList(runtimeArgumentsArray);
 		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_PROGRAM_ARGUMENTS, runtimeArgumentsList);
 		
-		// runtime arguments
+		// stratego compile arguments (str->java)
 		String compileArguments = fCompileArgumentsText.getText().trim();
 		if (compileArguments.length() == 0) {
 			compileArguments = null;
@@ -266,6 +334,32 @@ public class StrategoMainTab extends AbstractLaunchConfigurationTab {
 		}
 		List<String> compileArgumentsList = Arrays.asList(compileArgumentsArray);
 		configuration.setAttribute(IStrategoConstants.ATTR_STRATEGO_COMPILE_ARGUMENTS, compileArgumentsList);
+		
+		// java compile extra classpath (java->class)
+		String javaCompileClasspath = fJavaCompileExtraClasspath.getText().trim();
+		if (javaCompileClasspath.length() == 0) {
+			javaCompileClasspath = null;
+		}
+		String[] javaCompileClasspathArray = new String[0];
+		if (javaCompileClasspath != null)
+		{
+			javaCompileClasspathArray = javaCompileClasspath.split(Text.DELIMITER);
+		}
+		List<String> javaCompileClasspathList = Arrays.asList(javaCompileClasspathArray);
+		configuration.setAttribute(IStrategoConstants.ATTR_JAVA_COMPILE_CLASSPATH_LIST, javaCompileClasspathList);
+		
+		// java runtime extra classpath
+		String javaRuntimeClasspath = fJavaRuntimeExtraClasspath.getText().trim();
+		if (javaRuntimeClasspath.length() == 0) {
+			javaRuntimeClasspath = null;
+		}
+		String[] javaRuntimeClasspathArray = new String[0];
+		if (javaRuntimeClasspath != null)
+		{
+			javaRuntimeClasspathArray = javaRuntimeClasspath.split(Text.DELIMITER);
+		}
+		List<String> javaRuntimeClasspathList = Arrays.asList(javaRuntimeClasspathArray);
+		configuration.setAttribute(IStrategoConstants.ATTR_JAVA_RUNTIME_CLASSPATH_LIST, javaRuntimeClasspathList);
 		
 		// recompile
 		boolean reCompileSelected = fProgramRecompile.getSelection();

@@ -46,7 +46,7 @@ public class EStrategoStackFrame extends StrategoDebugElement implements IStackF
 	 */
 	private void init(StrategoStackFrame data) {
 		this.frameData = data;
-		fName = data.getName();
+		fName = data.getName()+":"+data.getFilename();
 		extractVariablesFromFrame();
 	}
 	

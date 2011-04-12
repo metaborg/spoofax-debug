@@ -103,6 +103,7 @@ public class ThreadEventHandler {
 	
 	protected boolean breakpointEvent(BreakpointEvent event, EventSpecManager eventSpecManager)
 	{
+
 		executePendingExit();
 		long start = System.nanoTime(); // profile internal
 		boolean suspendThread = false;
@@ -111,6 +112,12 @@ public class ThreadEventHandler {
 		this.extractor = IEventInfoExtractorFactory.createExtractor(event);
 		long extractorEnd = System.nanoTime();
 		EventHandler h = EventHandlerFactory.createEventHandler(eventType, extractor, eventSpecManager);
+		if (h == null)
+		{
+			// eventType not implemented
+			System.err.println("Event type '"+eventType+"' not implemented!");
+			return false;
+		}
 		if (h.isEnter())
 		{
 			// current stack frame should be pushed, this is done in processDebugEvent

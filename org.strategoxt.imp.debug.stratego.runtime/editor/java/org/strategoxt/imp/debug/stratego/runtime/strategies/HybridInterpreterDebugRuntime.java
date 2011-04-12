@@ -49,7 +49,7 @@ public class HybridInterpreterDebugRuntime extends HybridInterpreter {
 	 *         returns false.
 	 */
 	public boolean setCurrentTerm(String term) {
-		System.out.println("hi setCurrent begin");
+		//System.out.println("hi setCurrent begin");
 		StringTermReader termReader = new StringTermReader(this.getFactory());
 		try {
 			IStrategoTerm strategoTerm = termReader.parseFromString(term);
@@ -64,7 +64,7 @@ public class HybridInterpreterDebugRuntime extends HybridInterpreter {
 	}
 
 	public static void main(String... args) {
-		System.out.println("Main");
+		//System.out.println("Main");
 		if (args == null || args.length < 1) {
 			System.out.println(USAGE);
 			System.exit(127);

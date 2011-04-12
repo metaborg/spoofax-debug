@@ -75,4 +75,9 @@ rules
     	t -> t'
     	//where (<debug(!"s-var: ")> <to-string> (name, loc))
     	where (t' := <java-s-var(|filename, name, var-name, loc, t)>)
+    	
+    // where or with clause fails in rule
+    s-fail(|filename, name, loc):
+    	t -> t'
+    		where (t' := <java-s-fail(|filename, name, loc, t)>)
 	
