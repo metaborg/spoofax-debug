@@ -48,7 +48,7 @@ Term "->" Term RuleCond+	    		-> Rule {cons("Rule"), avoid}
 	// current term is not a list of WhereClause or WithClause terms
     // current term can be a Strategy
 	add-block-to-conditions(|filename, r-name) :
-			s{a} -> s'
+			s{a} -> s'{a}
 		where not(<is-list> s)
 		with
 			s' := <create-block(|filename, r-name, a)> s
@@ -61,12 +61,12 @@ Term "->" Term RuleCond+	    		-> Rule {cons("Rule"), avoid}
 		  
 	
 	add-block-to-clause(|filename, r-name) :
-		WhereClause(s){a} -> WhereClause(s')
+		WhereClause(s){a} -> WhereClause(s'){a}
 		with
 			s' := <create-block(|filename, r-name, a)> s
 			
 	add-block-to-clause(|filename, r-name) :
-		WithClause(s){a} -> WithClause(s')
+		WithClause(s){a} -> WithClause(s'){a}
 		with
 			s' := <create-block(|filename, r-name, a)> s
 			

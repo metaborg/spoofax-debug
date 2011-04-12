@@ -164,7 +164,6 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
-		System.out.println("ECLIPSE STEP INTO");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepInto();
 	}
@@ -181,7 +180,6 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
-		System.out.println("ECLIPSE STEP OVER");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepOver();
 	}
@@ -198,7 +196,6 @@ public class StrategoThread extends StrategoDebugElement implements IThread {
 				return;
 			}
 		}
-		System.out.println("ECLIPSE STEP RETURN");
 		// TODO: the jdi eclipse plugin uses scheduling and such
 		((StrategoDebugTarget)getDebugTarget()).getDebugSessionManager().stepReturn();
 	}

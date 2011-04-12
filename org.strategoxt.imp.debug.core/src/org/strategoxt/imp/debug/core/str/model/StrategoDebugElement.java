@@ -89,7 +89,6 @@ public abstract class StrategoDebugElement extends PlatformObject implements IDe
 	 * Fires a <code>CREATE</code> event for this element.
 	 */
 	protected void fireCreationEvent() {
-		System.out.println("fireCreationEvent");
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}	
 	

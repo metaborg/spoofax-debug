@@ -30,7 +30,29 @@ public class EventSpecList {
 	
 	public boolean remove(BreakPoint b)
 	{
-		return this.breakPoints.remove(b);
+		boolean ret = true;
+		if (this.breakPoints.contains(b))
+		{
+			this.breakPoints.remove(b);
+		} else
+		{
+			BreakPoint pbRemove = null;
+			for(BreakPoint bp : this.breakPoints)
+			{
+				boolean sameFile = bp.getFilename().equals(b.getFilename());
+				boolean sameLine = bp.getLineNumber() == b.getLineNumber();
+				if (sameFile && sameLine)
+				{
+					pbRemove = bp;
+				}
+			}
+			boolean removed = this.breakPoints.remove(pbRemove);
+			if (!removed)
+			{
+				System.out.println("Second remove also failed!");
+			}
+		}
+		return ret;
 	}
 	
 	public boolean contains(BreakPoint b) {
