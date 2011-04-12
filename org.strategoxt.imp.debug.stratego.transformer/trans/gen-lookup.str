@@ -12,12 +12,12 @@ rules
 	// current term should be a list of inputfilenames each pointing to a stratego file
 	// output is the location of the table
 	create-table(|table-filename): inputfilenames* -> table-filename
-	where(debug(!"create-table"))
-	where(
+	//where(debug(!"create-table"))
+	where
 		table-file-handle := <get-file-handle(|table-filename)>
 		; <map(create-table-for-input(|table-file-handle))> inputfilenames* // writes the table contents of each inputfilename to table-file-handle
 		; close-file-handle(|table-file-handle)
-	)
+	
 	/*
 	get-anno-ast(|inputfilename)
   	; assert-module

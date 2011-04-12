@@ -290,224 +290,224 @@ rules
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@GenDynRules(_){a1} -> s'
+		s@GenDynRules(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Call(_, _){a1} -> s'
+		s@Call(_, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@ScopeDefault(_){a1} -> s'
+		s@ScopeDefault(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Rec(_,_){a1} -> s'
+		s@Rec(_,_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Not(_){a1} -> s'
+		s@Not(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Where(_){a1} -> s'
+		s@Where(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@With(_){a1} -> s'
+		s@With(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Test(_){a1} -> s'
+		s@Test(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@PrimNoArgs(_){a1} -> s'
+		s@PrimNoArgs(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Prim(_, _){a1} -> s'
+		s@Prim(_, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 	
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@CallNoArgs(_){a1} -> s'
+		s@CallNoArgs(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@LRule(_){a1} -> s'
+		s@LRule(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@SRule(_){a1} -> s'
+		s@SRule(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@ProceedNoArgs(){a1} -> s'
+		s@ProceedNoArgs(){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Proceed(_){a1} -> s'
+		s@Proceed(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@AM(_,_){a1} -> s'
+		s@AM(_,_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  			  			  			  		  			  		  			  			  			  			  			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Assign(_,_){a1} -> s'
+		s@Assign(_,_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Let(_,_){a1} -> s'
+		s@Let(_,_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@CallT(_,_, _){a1} -> s'
+		s@CallT(_,_, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@CallDynamic(_,_, _){a1} -> s'
+		s@CallDynamic(_,_, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Fail(){a1} -> s'
+		s@Fail(){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Id(){a1} -> s'
+		s@Id(){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)		
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@ProceedT(_,_){a1} -> s'
+		s@ProceedT(_,_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@ProceedNoArgs(){a1} -> s'
+		s@ProceedNoArgs(){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Match(_){a1} -> s'
+		s@Match(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 
 	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Build(_){a1} -> s'
+		s@Build(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Scope(_, _){a1} -> s'
+		s@Scope(_, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@PrimT(_, _, _){a1} -> s'
+		s@PrimT(_, _, _){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@Some(_){a1} -> s'
+		s@Some(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@One(_){a1} -> s'
+		s@One(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@All(_){a1} -> s'
+		s@All(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)	
 			  
  	// does not have child strategies
 	add-step-to-strategy(|filename, name):
-		s@ImportTerm(_){a1} -> s'
+		s@ImportTerm(_){a1} -> s'{a1}
 		with
 			s-step := <create-step-call(|filename, name, a1)>
 			; s' := Seq(s-step, s)

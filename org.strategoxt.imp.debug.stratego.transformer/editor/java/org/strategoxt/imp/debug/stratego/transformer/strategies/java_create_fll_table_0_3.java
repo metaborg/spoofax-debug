@@ -19,7 +19,7 @@ public class java_create_fll_table_0_3 extends Strategy {
 	
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm table_filename, IStrategoTerm base_dir, IStrategoTerm input_files)
 	{
-		System.out.println("CREATE FLL");
+		//System.out.println("CREATE FLL");
 		String tf = table_filename.toString();
 		File charOffsetTableFilename = new File(LineLengthTable.trimQuotes(tf));
 		

@@ -129,17 +129,36 @@ public class FileLineLengthTable {
 	}
 	
 	/**
-	 * Use a zero based linenumber.
+	 * Use a zero based linenumber to get the line length.
+	 * If the linenumber is out of bounds then return -1;
+	 * 
+	 * TODO: fix -1 errors.
 	 * @param linenumber
 	 * @return
 	 */
 	public int getLineLength(int linenumber)
 	{
+		if (linenumber >= this.lengthPerLine.length)
+		{
+			return -1;
+		}
 		return this.lengthPerLine[linenumber];
 	}
 	
+	/**
+	 * Returns the lineoffset for the given linenumber (zero-based).
+	 * If the linenumber is out of bounds then return -1;
+	 * 
+	 * TODO: fix -1 errors.
+	 * @param linenumber
+	 * @return
+	 */
 	public int getLineOffset(int linenumber)
 	{
+		if (linenumber >= this.characterOffsetPerLine.length)
+		{
+			return -1;
+		}
 		return this.characterOffsetPerLine[linenumber];
 	}
 	
