@@ -103,8 +103,20 @@ strategies
 		+ Option("--charoffset-converter"
 			, <set-config> ("--charoffset-converter", ())
 			, !"--charoffset-converter     Create line offset table."
-			
+		) + Option("--fail-catch"
+			, <set-config> ("--fail-catch", ())
+			, !"--fail-catch     try to catch fails in where clauses."
+		) + Option("--no-step"
+			, <set-config> ("--no-step", ())
+			, !"--no-step        do not generate s-step events."
+		) + Option("--no-var"
+			, <set-config> ("--no-var", ())
+			, !"--no-var         do not generate s-var events."
+		) + Option("--no-entry-exit"
+			, <set-config> ("--no-entry-exit", ())
+			, !"--no-entry-exit  do not generate s/r-entry/exit events."
 		)
+		
   get-config-I =
     <get-config> "-I" <+ ![]
 
@@ -112,13 +124,12 @@ strategies
       
  create-usage =
  default-system-usage(
- 	!"Usage: option-demo [options]"
+ 	!"Usage: stratego-transformer [options]"
   , !
-"   This is a test program to demonstrate use of
-    parse-options and  generation of usage info
-    from option and switch specificatios. These
-    now contain usage info as additional third 
-    argument."
+"   Adds debug information to a stratego program.
+    The program outputs a stratego program that 
+    depends on stratego-debug-runtime.jar and
+    stratego-debug-runtime-java.jar."
      )
 
 	

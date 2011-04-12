@@ -18,10 +18,26 @@ rules
 
 	// a should be a String, thus "12"
 	create-arg:
-		a -> NoAnnoList(Str(a))
-		where(<is-string> a)
-		
+		a -> NoAnnoList(s)
+		with 
+			if <is-string> a then
+				// wrap around Str
+				!Str(a)
+			else
+				if <is-int> a then
+					!Str(<int-to-string> a)
+				else
+					// it is not an int and not a string, what is it?
+					// should never happen
+					!Str(a)
+				end
+			
+			end
+			; ?s
+
+/*
 	create-arg:
 		a -> NoAnnoList(Str(<int-to-string> a))
 		where(<is-int> a)
+*/
 // ===============	

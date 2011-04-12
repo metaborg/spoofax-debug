@@ -7,6 +7,7 @@ imports
   gen-debug-step // add step debug information
   gen-debug-var // add local var debug information
   gen-debug-entry // add rule/strategy enter/exit debug information
+  gen-debug-fail-catch // add catch blocks around where and with clauses
   location-util
   
 //
@@ -52,13 +53,28 @@ strategies
 	
 strategies
 	
+	fail-catch-enabled =  
+		<get-config> "--fail-catch"
+	
+	step-disabled =
+		<get-config> "--no-step"
+		
+	var-disabled =
+		<get-config> "--no-var"
+		
+	entry-exit-disabled =
+		<get-config> "--no-entry-exit"
+	
+	
 	// main rule for adding debug information
 	add-debug-info(|filename) = 
-		add-step-statements(|filename) // step statements, each strategy statement s will be replaced by Seq(step-s, s)
-		; 
-		  add-var-statements(|filename) // local var statements, add them after step statements are added
-		; add-s-entry-and-exit-calls(|filename) // s-enter, s-exit
-		; add-r-entry-and-exit-calls(|filename) // r-enter, r-exit
+		if not(step-disabled) then add-step-statements(|filename) end // step statements, each strategy statement s will be replaced by Seq(step-s, s)
+		; if fail-catch-enabled then  add-fail-catch-blocks(|filename) end // add catch blocks around where and with clauses (catch a failure and send an event)
+		; if not(var-disabled) then add-var-statements(|filename) end // local var statements, add them after step statements are added
+		; if not(entry-exit-disabled) then 
+			add-s-entry-and-exit-calls(|filename) // s-enter, s-exit
+			; add-r-entry-and-exit-calls(|filename) // r-enter, r-exit
+		end
 		; add-s-debug-import // add import for debug library
 	
 	// current term should be a module
@@ -294,5 +310,7 @@ strategies
     
     create-s-exit-call(|filename, s-name, a) = !CallT(SVar("s-exit"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(s-name)), <location-to-term> a])
     
+    create-s-fail-call(|filename, name, a) = !CallT(SVar("s-fail"), [], [NoAnnoList(Str(filename)), NoAnnoList(Str(name)), <location-to-term> a])
+ 
     create-fail = !Fail()
 	

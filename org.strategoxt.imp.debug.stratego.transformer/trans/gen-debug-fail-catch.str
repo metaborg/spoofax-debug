@@ -1,0 +1,83 @@
+module gen-debug-fail-catch
+
+// A rule can have where and with clauses that can can the rule to fail
+// catch a fail and fire a r-exit event
+
+imports
+  libstratego-lib
+  include/Test
+  assert
+  gen-debug-info
+  
+strategies
+	
+
+
+	
+	add-fail-catch-blocks(|filename) = topdown(try(find-rdef(|filename)))
+		
+	find-rdef(|filename):
+		RDefNoArgs(r-name, r){a} -> RDefNoArgs(r-name, r'){a}
+		with r' := <add-fail-catch-block-to-rule(|filename, r-name)> r
+		//with r' := r
+	find-rdef(|filename):
+		RDef(r-name, s-args, r){a} -> RDef(r-name, s-args, r'){a}
+		with r' := <add-fail-catch-block-to-rule(|filename, r-name)> r
+	find-rdef(|filename):
+		RDefT(r-name, s-args, t-args, r){a} -> RDefT(r-name, s-args, t-args, r'){a}
+		with r' := <add-fail-catch-block-to-rule(|filename, r-name)> r
+
+	add-fail-catch-block-to-rule(|filename, r-name) :
+		Rule(match-term, build-term, rule-cond){a} -> Rule(match-term, build-term, rule-cond'*){a}
+		with
+			// walk over rule-conditions
+			rule-cond'* := <add-block-to-conditions(|filename, r-name)> rule-cond
+
+	// no conditions
+	add-fail-catch-block-to-rule(|filename, r-name) :
+		RuleNoCond(match-term, build-term){a} -> RuleNoCond(match-term, build-term){a}
+
+/*
+Term "->" Term "where" Strategy 		-> Rule {cons("Rule")}       %% backward comp.
+Term "->" Term RuleCond+	    		-> Rule {cons("Rule"), avoid}
+
+"where" Strategy 						-> RuleCond {cons("WhereClause")}
+"with"  Strategy 						-> RuleCond {cons("WithClause")}
+*/
+
+	// current term is not a list of WhereClause or WithClause terms
+    // current term can be a Strategy
+	add-block-to-conditions(|filename, r-name) :
+			s{a} -> s'
+		where not(<is-list> s)
+		with
+			s' := <create-block(|filename, r-name, a)> s
+		
+	// current term can be a list with WhereClause and WithClause terms
+	add-block-to-conditions(|filename, r-name) :
+		clause-list* -> clause-list'*
+		where <is-list> clause-list*
+		; clause-list'* := <map(add-block-to-clause(|filename, r-name))> clause-list*
+		  
+	
+	add-block-to-clause(|filename, r-name) :
+		WhereClause(s{a}) -> WhereClause(s')
+		with
+			s' := <create-block(|filename, r-name, a)> s
+			
+	add-block-to-clause(|filename, r-name) :
+		WithClause(s){a} -> WithClause(s')
+		with
+			s' := <create-block(|filename, r-name, a)> s
+			
+	create-block(|filename, r-name, a) = 
+		?s
+		; failed-call := <create-fail-exit(|filename, r-name, a)>
+		; !LChoice(s, failed-call)
+	
+	// fire exit-event
+	create-fail-exit(|filename, r-name, a) = 
+		fail-event-call := <create-s-fail-call(|filename, r-name, a)>
+		; exit-event-call := <create-r-exit-call(|filename, r-name, a)>
+		; fail-call := <create-fail>
+		; !Seq(Seq(fail-event-call, exit-event-call), fail-call)
