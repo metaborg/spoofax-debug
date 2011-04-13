@@ -133,9 +133,6 @@ public class ThreadEventHandler {
 		long suspendCheckEnd = System.nanoTime();
 		if (suspendThread)
 		{
-			System.out.println("suspend");
-			// FIXME: get current term
-			System.out.println(this.strategoState.currentFrame().getCurrentTerm());
 			String[] dynamicRuleNames = getDynamicRuleNames(h);
 			if (dynamicRuleNames != null) {
 				this.strategoState.currentFrame().setDynamicRuleNames(dynamicRuleNames);
@@ -204,7 +201,7 @@ public class ThreadEventHandler {
 		}
 		List<Method> methodsC = fr.thisObject().referenceType().methodsByName(DebugCallStrategy.SETCURRENTTERM);
 		Method mCurrent = methodsC.get(0);
-		Value outputCurrent = null; // will be a string representation of an IStrategoTerm, IStrategoList, containing the names of the active dynamic rules
+		Value outputCurrent = null;
 		try {
 			Value arg = thread.virtualMachine().mirrorOf(term);
 			List<Value> argumentsC = new ArrayList<Value>();
@@ -224,7 +221,10 @@ public class ThreadEventHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(outputCurrent);
+		if (outputCurrent == null)
+		{
+			// failed
+		}
 		IStrategoTerm t = this.extractor.getGiven();
 		//System.out.println("BEFORE: " + this.strategoState.currentFrame().getCurrentTerm());
 		this.strategoState.currentFrame().setCurrentTerm(t);

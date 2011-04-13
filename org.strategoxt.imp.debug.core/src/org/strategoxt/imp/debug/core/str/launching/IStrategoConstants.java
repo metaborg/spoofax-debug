@@ -67,4 +67,10 @@ public interface IStrategoConstants {
 	 * The current term will be replaced by this value, it will be parsed as an IStrategoTerm.
 	 */
 	public static final String ATTR_CURRENT_TERM = ID_STRATEGO_DEBUG_MODEL + ".ATTR_CURRENT_TERM";
+	
+	/**
+	 * The id of the HybridIntepreter launch type.
+	 */
+	public static final String HYBRID_INTERPRETER_LAUNCH_TYPE = ID_STRATEGO_DEBUG_MODEL + ".launchConfigurationType.hybridinterpreter";
+
 }

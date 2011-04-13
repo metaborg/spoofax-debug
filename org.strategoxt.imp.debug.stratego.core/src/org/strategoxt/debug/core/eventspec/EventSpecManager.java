@@ -266,6 +266,10 @@ public class EventSpecManager {
 		this.inputTerm = term;
 	}
 	
+	/**
+	 * If the value is set, the current term of the HybridInterpreter should be changed to this term before the "invoke" is executed.
+	 * @return
+	 */
 	public String getInputTerm() {
 		return inputTerm;
 	}

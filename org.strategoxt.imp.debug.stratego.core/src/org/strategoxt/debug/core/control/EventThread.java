@@ -320,9 +320,8 @@ public class EventThread extends Thread {
 		EventRequestManager mgr = vm.eventRequestManager();
 
 		String name = event.referenceType().name();
-		//System.out.println(name);
 		// if the name matches on of the predefined strategies implemented in java (e.g.: s-enter, s-step) we should add a breakpoint
-		System.out.println("Load " + name);
+		//System.out.println("Load " + name);
 		if (java_s_enter_0_4.getFullClassName().equals(name))
 		{
             if (event.referenceType() instanceof ClassType) {

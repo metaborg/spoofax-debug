@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -46,11 +48,21 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	
 	private String projectpath = null;
 	
+	/**
+	 * Keep track of the number of simultaneous launches.
+	 */
+	public static int counter = 0;
+	
+	
+	/**
+	 * Creates a new interpreter
+	 * @param termFactory
+	 */
 	public DebuggableHybridInterpreter(ITermFactory termFactory) {
 		super(termFactory);
+		initLaunchListener();
 	}
 
-	public static int counter = 0;
 	
 	/**
 	 * Creates an interpreter that bases its definition scope on an existing instance.
@@ -63,9 +75,17 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	 * @param reuseRegistries	The names of operator registries that should not be re-created,
 	 *                       	but can be reused from the old instance.
 	 */
-	public DebuggableHybridInterpreter(HybridInterpreter interpreter, String... reuseRegistries) {
-		
+	public DebuggableHybridInterpreter(HybridInterpreter interpreter, String... reuseRegistries) 
+	{
 		super(interpreter, reuseRegistries);
+		initLaunchListener();
+	}
+	
+	private void initLaunchListener()
+	{
+		// connect to the eclipse launch manager and listen to launches.
+		// so we can keep track of the number of simultaneous HybridInterpreter launches.
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 	
 	private List<URL> loadJars = new ArrayList<URL>();
@@ -83,6 +103,10 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 		super.loadJars(parentClassLoader, jars);
 	}
 	
+	/**
+	 * Returns a list of strings with paths to jars that are dynamically loaded by the HybridInterpreter.
+	 * @return
+	 */
 	private List<String> getLoadJarsAsList()
 	{
 		List<String> list = new ArrayList<String>();
@@ -124,6 +148,10 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 		//return false;
 	}
 	
+	/**
+	 * Tries to launch a debug HybridInterpreter session that will invoke the given strategy name.
+	 * @param name
+	 */
 	private void tryLaunch(String name)
 	{
 		// launch a JVM
@@ -172,7 +200,10 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 			// Use the Descriptor
 			// We also need EditorIOAgent
 			//config.launch(ILaunchManager.DEBUG_MODE, null);
-			config.launch(ILaunchManager.DEBUG_MODE, null, false, true);
+			IProgressMonitor monitor = null;
+			boolean build = false;
+			boolean register = true;
+			config.launch(ILaunchManager.DEBUG_MODE, monitor, build, register);
 			//boolean build,
             //boolean register
 		} catch (CoreException e) {
@@ -182,6 +213,10 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	}
 
 
+	/**
+	 * Points to the spoofax project this HybridInterpreter is loaded for.
+	 * @return
+	 */
 	public String getProjectpath() {
 		return projectpath;
 	}
@@ -215,4 +250,9 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 		System.out.println("Launch changed");
 	}
 
+	@Override
+	public void uninit() {
+		// called by StrategoObserver.uninitialize()
+		super.uninit();
+	}
 }

@@ -47,16 +47,15 @@ public class InterpreterLoadedHandler extends EventHandler {
 	
 	@Override
 	public void processDebugEvent(StrategoState strategoState) {
-		//super.processDebugEvent(strategoState);
-		// TODO: we may want to change the current term before calling the strategy
+		// we may want to change the current term before the intpreter is started
 		if (this.getEventSpecManager().getInputTerm() != null)
 		{
 			// change the input term
 			ObjectReference ref = this.getStackFrame().thisObject(); // get the stackframe
-			// check if it is an HybridInterpreter
+			// TODO: check if it is an HybridInterpreter
 			if (ref != null)
 			{
-				// HybridInterpreter.public boolean invoke(String name)
+				// current method: HybridInterpreter.public boolean invoke(String name)
 				@SuppressWarnings("unchecked")
 				List<Method> methods = ref.referenceType().methodsByName(HybridInterpreterDebugRuntime.SET_CURRENT_TERM);
 				Method method = null;
@@ -87,9 +86,12 @@ public class InterpreterLoadedHandler extends EventHandler {
 					// something took too long....
 					e.printStackTrace();
 				}
-				System.out.println("SET_CURRENT_TERM succes? " + output);
+				if (output == null)
+				{
+					System.err.println("Changing current term failed...");
+				}
 			}
-			// call setCurrent() method
+
 		}
 	}
 
