@@ -72,6 +72,7 @@ public class HybridInterpreterLaunchDelegate implements
 		}
 		
 		//String flatJarList = "";
+		// convert List to List<Path>
 		List<IPath> jarPaths = new ArrayList<IPath>();
 		Iterator iter = requiredJars.iterator();
 		while(iter.hasNext())
@@ -99,7 +100,7 @@ public class HybridInterpreterLaunchDelegate implements
 		List<IPath> classpaths = jarPaths;
 		// also add strategoxt.jar
 		classpaths.add(new Path(StrategoJarAntPropertyProvider.getStrategoJarPath()));
-		
+
 		LaunchSettings ls = new LaunchSettings();
 		ls.classToLaunch = mainClass;
 		ls.classpath = FileUtil.convertIPathToStringArray(classpaths);

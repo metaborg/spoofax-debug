@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -107,12 +109,22 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	 * Returns a list of strings with paths to jars that are dynamically loaded by the HybridInterpreter.
 	 * @return
 	 */
-	private List<String> getLoadJarsAsList()
+	public List<String> getLoadJarsAsStringList()
 	{
 		List<String> list = new ArrayList<String>();
 		for(URL jarURL : this.loadJars)
 		{
 			list.add(jarURL.getPath());
+		}
+		return list;
+	}
+	
+	public List<IPath> getLoadJarsAsIPathList()
+	{
+		List<IPath> list = new ArrayList<IPath>();
+		for(URL jarURL : this.loadJars)
+		{
+			list.add(new Path(jarURL.getFile()));
 		}
 		return list;
 	}
@@ -171,7 +183,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 		
 		// required jars
 		// IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS
-		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, getLoadJarsAsList());
+		configWC.setAttribute(IStrategoConstants.ATTR_STRATEGO_REQUIRED_JARS, getLoadJarsAsStringList());
 		
 		// also set the path to the project, breakpoints 
 		// IStrategoConstants.ATTR_STRATEGO_PROGRAM

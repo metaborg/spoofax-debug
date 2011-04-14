@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Path;
 public class StrategoDebugRuntimeJarsAntPropertyProvider implements IAntPropertyValueProvider {
 
 	private static String INCLUDE = "include";
-	private static String STR_LIB = "str-lib";
+
 	
 	public static String RUNTIME_JAR = "stratego-debug-runtime.jar";
 	public static String RUNTIME_JAVA_JAR = "stratego-debug-runtime-java.jar";
@@ -38,12 +38,12 @@ public class StrategoDebugRuntimeJarsAntPropertyProvider implements IAntProperty
 		return null;
 	}
 	
+	/**
+	 * The str-lib folder in the debug.stratego.runtime plugin should contain the strategodebuglib.rtree file.
+	 * @return
+	 */
 	private String getStrategoDebugLibFolderPath() {
-		// loc points to the basedit of the plugin
-		URL loc = StrategoDebugRuntimeJarsAntPropertyProvider.class.getProtectionDomain().getCodeSource().getLocation();
-		IPath p = new Path(loc.getPath());
-		p = p.append(STR_LIB); 
-		return p.toOSString();
+		return ClasspathHandler.getStrLibDirectory().toOSString();
 	}
 
 	private String getRuntimeJarPath()

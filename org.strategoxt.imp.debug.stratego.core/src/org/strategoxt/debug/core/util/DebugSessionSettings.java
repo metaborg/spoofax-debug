@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.strategoxt.imp.debug.stratego.runtime.ClasspathHandler;
 
 
 public class DebugSessionSettings {
@@ -149,8 +150,6 @@ public class DebugSessionSettings {
 		IPath strategoxt_jar = directory.append(STRATEGOXT_JAR);
 		
 		this.strategoxtJar = strategoxt_jar;
-
-		this.strategoDebugLibraryDirectory = directory; // rtree
 	}
 	
 	private List<IPath> runtimeJars = null;
@@ -233,6 +232,10 @@ public class DebugSessionSettings {
 	 */
 	public IPath getStrategoDebugLibraryDirectory()
 	{
+		if (this.strategoDebugLibraryDirectory == null)
+		{
+			this.strategoDebugLibraryDirectory = ClasspathHandler.getStrLibDirectory();
+		}
 		return this.strategoDebugLibraryDirectory;
 	}
 	
