@@ -222,7 +222,7 @@ public class StrategoTermBuilder {
 
 	        if (headValue == null)
 	        {
-	        	return TermFactory.EMPTY_LIST;
+	        	return f.makeList();
 	        }
 	        else
 	        {
