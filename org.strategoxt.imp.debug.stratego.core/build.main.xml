@@ -28,8 +28,11 @@
 				<file file="../${project.debug.transformer}/utils/strategoxt.jar" />
 			</resources>
 		</copy>
+		<antcall target="refresh-lib"/>
+	</target>
+
+	<target name="refresh-lib" if="eclipse.running">
 		<eclipse.refreshLocal resource="${basedir}/lib" depth="infinite" />
-		
 	</target>
 	
 	<target name="clean">
