@@ -75,8 +75,14 @@ public class TimeMonitor {
 		this.timeMonitors.put(name, totalDuration);
 	}
 	
+	public static boolean TIME_MONITOR_ENABLED = false;
+	
 	public void print()
 	{
+		if (!TIME_MONITOR_ENABLED)
+		{
+			return;
+		}
 		for(String key : this.timeMonitors.keySet())
 		{
 			System.out.println("NANO " + key + ":" + this.timeMonitorsN.get(key));
