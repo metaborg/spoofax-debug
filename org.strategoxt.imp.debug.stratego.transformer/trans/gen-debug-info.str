@@ -103,7 +103,6 @@ rules
 		
 		
 	// current term s is a Strategy
-	// it is transformed to s-enter; s; s-exit
 	// s-enter ; s < s-exit + (s-exit; fail)
 	// if the strategy s fail, when can still call s-exit and throw a fail afterwards!
 	// TODO: when we want the debugger to catch 'fail' we should probably call a specific before re-throwing fail
