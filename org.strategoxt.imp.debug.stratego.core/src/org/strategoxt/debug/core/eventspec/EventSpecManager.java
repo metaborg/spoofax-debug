@@ -1,6 +1,7 @@
 package org.strategoxt.debug.core.eventspec;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -274,4 +275,20 @@ public class EventSpecManager {
 		return inputTerm;
 	}
 
+	private HashMap<String, Object> properties = new HashMap<String, Object>();
+	
+	public Object getProperty(String key)
+	{
+		if (properties.containsKey(key))
+		{
+			return properties.get(key);
+		} else {
+			return null;
+		}
+	}
+	
+	public void setProperty(String key, Object value)
+	{
+		this.properties.put(key, value);
+	}
 }
