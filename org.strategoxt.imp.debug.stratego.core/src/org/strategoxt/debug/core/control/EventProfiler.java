@@ -21,6 +21,7 @@ public class EventProfiler {
 	 */
 	public static EventProfiler instance = new EventProfiler();
 	
+	public static boolean ENABLE_EVENT_PROFILER = false;
 	
 	private EventProfiler()
 	{
@@ -91,7 +92,7 @@ public class EventProfiler {
 	}
 	
 	
-	public void writeInternal() throws IOException
+	private void writeInternal() throws IOException
 	{
 		File file = new File("internalcount.tsv");
 		BufferedWriter w = new BufferedWriter(new FileWriter(file));
@@ -115,7 +116,7 @@ public class EventProfiler {
 		w.close();
 	}
 	
-	public void writeStratego() throws IOException
+	private void writeStratego() throws IOException
 	{
 		File file = new File("count.tsv");
 		BufferedWriter w = new BufferedWriter(new FileWriter(file));
@@ -141,6 +142,10 @@ public class EventProfiler {
 	
 	public void write()
 	{
+		if (!ENABLE_EVENT_PROFILER)
+		{
+			return;
+		}
 		try {
 			writeStratego();
 		} catch (IOException e) {
