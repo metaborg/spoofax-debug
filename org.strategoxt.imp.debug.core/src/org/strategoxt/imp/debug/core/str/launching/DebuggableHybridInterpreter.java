@@ -249,17 +249,17 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	// ILaunchListener interface
 	public void launchRemoved(ILaunch launch) {
 		// TODO Auto-generated method stub
-		System.out.println("Launch removed");
+		// System.out.println("Launch removed");
 	}
 	
 	public void launchAdded(ILaunch launch) {
 		// TODO Auto-generated method stub
-		System.out.println("Launch added");
+		// System.out.println("Launch added");
 	}
 	
 	public void launchChanged(ILaunch launch) {
 		// TODO Auto-generated method stub
-		System.out.println("Launch changed");
+		// System.out.println("Launch changed");
 	}
 
 	@Override
