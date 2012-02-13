@@ -264,7 +264,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 
 	@Override
 	public void uninit() {
-		// called by StrategoObserver.uninitialize()
 		super.uninit();
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 }
