@@ -10,10 +10,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.spoofax.interpreter.core.InterpreterErrorExit;
 import org.spoofax.interpreter.core.InterpreterException;
@@ -40,7 +38,7 @@ import org.strategoxt.lang.StrategoExit;
  * @author rlindeman
  *
  */
-public class DebuggableHybridInterpreter extends HybridInterpreter implements ILaunchListener {
+public class DebuggableHybridInterpreter extends HybridInterpreter {
 
 	/**
 	 * If true calling invoke will launch a debug session.
@@ -49,6 +47,11 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	private boolean isDebugLaunchEnabled = false;
 	
 	private String projectpath = null;
+	
+	/**
+	 * What language is under execution when debugging this stratego program.
+	 */
+	private String languageName = null;
 	
 	/**
 	 * Keep track of the number of simultaneous launches.
@@ -77,17 +80,17 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	 * @param reuseRegistries	The names of operator registries that should not be re-created,
 	 *                       	but can be reused from the old instance.
 	 */
-	public DebuggableHybridInterpreter(HybridInterpreter interpreter, String... reuseRegistries) 
-	{
+	public DebuggableHybridInterpreter(HybridInterpreter interpreter,
+			String... reuseRegistries) {
 		super(interpreter, reuseRegistries);
 		initLaunchListener();
 	}
 	
-	private void initLaunchListener()
-	{
-		// connect to the eclipse launch manager and listen to launches.
-		// so we can keep track of the number of simultaneous HybridInterpreter launches.
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	private void initLaunchListener() {
+		// TODO: connect to the eclipse launch manager and listen to launches.
+		// so we can keep track of the number of simultaneous HybridInterpreter
+		// launches.
+		// DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new StrategoLaunchListener(this));
 	}
 	
 	private List<URL> loadJars = new ArrayList<URL>();
@@ -97,8 +100,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	throws SecurityException, NoInteropRegistererJarException, IncompatibleJarException, IOException {
 
 		// save the locations of the jar, so we can load the in the other VM
-		for(URL jarURL : jars)
-		{
+		for(URL jarURL : jars) {
 			loadJars.add(jarURL);
 		}
 
@@ -109,21 +111,21 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	 * Returns a list of strings with paths to jars that are dynamically loaded by the HybridInterpreter.
 	 * @return
 	 */
-	public List<String> getLoadJarsAsStringList()
-	{
+	public List<String> getLoadJarsAsStringList() {
 		List<String> list = new ArrayList<String>();
-		for(URL jarURL : this.loadJars)
-		{
+		for (URL jarURL : this.loadJars) {
 			list.add(jarURL.getPath());
 		}
 		return list;
 	}
 	
-	public List<IPath> getLoadJarsAsIPathList()
-	{
+	/**
+	 * Returns a list of IPaths with paths to jars that are dynamically loaded by the HybridInterpreter.
+	 * @return
+	 */
+	public List<IPath> getLoadJarsAsIPathList() {
 		List<IPath> list = new ArrayList<IPath>();
-		for(URL jarURL : this.loadJars)
-		{
+		for (URL jarURL : this.loadJars) {
 			list.add(new Path(jarURL.getFile()));
 		}
 		return list;
@@ -139,8 +141,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 			throws InterpreterErrorExit, InterpreterExit, UndefinedStrategyException, InterpreterException {
 		
 		try {
-			if (this.isDebugLaunchEnabled())
-			{
+			if (this.isDebugLaunchEnabled()) {
 				// TODO: limit the number of simultaneous launches...
 				tryLaunch(name);
 			}
@@ -164,15 +165,13 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	 * Tries to launch a debug HybridInterpreter session that will invoke the given strategy name.
 	 * @param name
 	 */
-	private void tryLaunch(String name)
-	{
+	private void tryLaunch(String name) {
 		// launch a JVM
 		// http://www.eclipse.org/articles/Article-Java-launch/launching-java.html
 		
 		// find HybridInterpreter launch config
 		ILaunchConfigurationWorkingCopy configWC = LaunchUtils.createHybridInterpreterLaunchConfigurationWorkingCopy();
-		if (configWC == null)
-		{
+		if (configWC == null) {
 			System.err.println("No config working copy!");
 		}
 		// set the required attributes
@@ -200,8 +199,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 
 		// set current term
 		IStrategoTerm term = this.current();
-		if (term != null)
-		{
+		if (term != null) {
 			configWC.setAttribute(IStrategoConstants.ATTR_CURRENT_TERM, term.toString());
 		}
 		
@@ -220,7 +218,7 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
             //boolean register
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//Environment.logException("Error running scheduled analysis", e);
 		}
 	}
 
@@ -234,37 +232,40 @@ public class DebuggableHybridInterpreter extends HybridInterpreter implements IL
 	}
 
 
+	/**
+	 * Sets the path to the project this interpreter is loaded for.
+	 * @param projectpath
+	 */
 	public void setProjectpath(String projectpath) {
 		this.projectpath = projectpath;
 	}
 	
+	/**
+	 * Set the language name.
+	 * @param languageName
+	 */
+	public void setLanguageName(String languageName) {
+		this.languageName = languageName;
+	}
+	
+	/**
+	 * Returns whether debug launching is enabled.
+	 * @return
+	 */
 	public boolean isDebugLaunchEnabled() {
 		return isDebugLaunchEnabled;
 	}
 	
+	/**
+	 * Enable or disable the debug launch
+	 * @param isDebugLaunchEnabled
+	 */
 	public void setDebugLaunchEnabled(boolean isDebugLaunchEnabled) {
 		this.isDebugLaunchEnabled = isDebugLaunchEnabled;
 	}
 
-	// ILaunchListener interface
-	public void launchRemoved(ILaunch launch) {
-		// TODO Auto-generated method stub
-		// System.out.println("Launch removed");
-	}
-	
-	public void launchAdded(ILaunch launch) {
-		// TODO Auto-generated method stub
-		// System.out.println("Launch added");
-	}
-	
-	public void launchChanged(ILaunch launch) {
-		// TODO Auto-generated method stub
-		// System.out.println("Launch changed");
-	}
-
 	@Override
 	public void uninit() {
-		// called by StrategoObserver.uninitialize()
 		super.uninit();
 	}
 }
