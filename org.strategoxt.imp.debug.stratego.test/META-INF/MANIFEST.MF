@@ -15,7 +15,7 @@ Require-Bundle: org.strategoxt.strj,
  org.eclipse.debug.ui,
  org.eclipse.debug.core,
  org.eclipse.core.runtime,
- org.junit4;bundle-version="4.5.0",
- org.eclipse.jdt.debug.ui
+ org.eclipse.jdt.debug.ui,
+ org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
