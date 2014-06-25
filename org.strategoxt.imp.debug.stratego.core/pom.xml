@@ -23,14 +23,12 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>process-classes</id>
-						<phase>process-classes</phase>
+						<id>copy-libraries</id>
+						<phase>generate-sources</phase>
 						<configuration>
-							<tasks>
-								<echo>Running ant script</echo>
-								<ant antfile="build.main.xml" inheritRefs="true">
-								</ant>
-							</tasks>
+							<target>
+								<ant antfile="build.main.xml" inheritRefs="true" />
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
