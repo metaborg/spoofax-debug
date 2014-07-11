@@ -16,7 +16,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench.texteditor,
  org.spoofax.jsglr,
  org.strategoxt.strj,
- org.eclipse.ant.core
+ org.eclipse.ant.core,
+ org.spoofax.terms,
+ org.spoofax.interpreter.core,
+ org.spoofax.interpreter.externaldeps
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.strategoxt.imp.debug.stratego.transformer;uses:="org.eclipse.imp.preferences,org.eclipse.imp.runtime,org.osgi.framework",

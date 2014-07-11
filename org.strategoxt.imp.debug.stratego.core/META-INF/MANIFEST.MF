@@ -40,6 +40,7 @@ Require-Bundle: org.eclipse.jdt.debug,
  org.eclipse.imp.runtime,
  org.eclipse.ui.workbench,
  org.strategoxt.imp.debug.stratego.runtime,
- org.strategoxt.imp.debug.stratego.transformer
+ org.strategoxt.imp.debug.stratego.transformer,
+ org.spoofax.terms
 Bundle-Activator: org.strategoxt.debug.core.Activator
 Bundle-ActivationPolicy: lazy

@@ -8,9 +8,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.jdt.debug;bundle-version="3.5.0",
  org.eclipse.jdt.launching;bundle-version="3.5.0",
- org.strategoxt.strj,
  org.eclipse.jdt.core;bundle-version="3.5.0",
- org.strategoxt.imp.debug.stratego.core
+ org.strategoxt.imp.debug.stratego.core,
+ org.strategoxt.jarprovider,
+ org.spoofax.terms,
+ org.spoofax.interpreter.core,
+ org.strategoxt.strj
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.strategoxt.imp.debug.core.str.launching;
