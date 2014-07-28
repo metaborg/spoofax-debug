@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.strategoxt.imp.debug.core
 Bundle-SymbolicName: org.strategoxt.imp.debug.core;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.strategoxt.imp.debug.core.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.5.0",
  org.strategoxt.imp.debug.stratego.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.strategoxt.imp.debug.core.str.launching;
   uses:="org.eclipse.debug.core,
    org.eclipse.debug.core.sourcelookup,
