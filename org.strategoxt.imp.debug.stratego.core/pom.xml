@@ -4,6 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.strategoxt.imp.debug.stratego.core</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<description>Stratego debugger core API</description>
+	<url>https://github.com/metaborg/spoofax-debug</url>
 
 	<parent>
 		<groupId>org.metaborg</groupId>
@@ -36,4 +38,13 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<developers>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:metaborg/spoofax-debug.git</connection>
+		<developerConnection>scm:git:git@github.com:metaborg/spoofax-debug.git</developerConnection>
+		<url>https://github.com/metaborg/spoofax-debug</url>
+	</scm>
 </project>

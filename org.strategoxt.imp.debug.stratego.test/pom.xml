@@ -4,6 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.strategoxt.imp.debug.stratego.test</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<description>Tests for Stratego debugger</description>
+	<url>https://github.com/metaborg/spoofax-debug</url>
 
 	<parent>
 		<groupId>org.metaborg</groupId>
@@ -16,4 +18,13 @@
 		<sourceDirectory>src/java</sourceDirectory>
 		<testSourceDirectory>test/java</testSourceDirectory>
 	</build>
+
+	<developers>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:metaborg/spoofax-debug.git</connection>
+		<developerConnection>scm:git:git@github.com:metaborg/spoofax-debug.git</developerConnection>
+		<url>https://github.com/metaborg/spoofax-debug</url>
+	</scm>
 </project>
