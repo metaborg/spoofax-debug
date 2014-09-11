@@ -73,6 +73,16 @@
 	<build>
 		<sourceDirectory>editor/java</sourceDirectory>
 		<plugins>
+			<!-- Reference install and deploy plugin to use settings from parent POM. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+			</plugin>
+
 			<!-- Unpack generator JARs and native executables to project directory, to prepare for Ant build. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -114,6 +124,11 @@
 				<dependencies>
 					<dependency>
 						<groupId>org.metaborg</groupId>
+						<artifactId>org.strategoxt.imp.generator</artifactId>
+						<version>${metaborg-version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.metaborg</groupId>
 						<artifactId>aster-jar</artifactId>
 						<version>${metaborg-version}</version>
 					</dependency>
@@ -124,18 +139,8 @@
 					</dependency>
 					<dependency>
 						<groupId>org.metaborg</groupId>
-						<artifactId>sdf2imp-jar</artifactId>
-						<version>${metaborg-version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.metaborg</groupId>
 						<artifactId>make-permissive-jar</artifactId>
 						<version>${metaborg-version}</version>
-					</dependency>
-					<dependency>
-						<groupId>jline</groupId>
-						<artifactId>jline</artifactId>
-						<version>${jline-version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
