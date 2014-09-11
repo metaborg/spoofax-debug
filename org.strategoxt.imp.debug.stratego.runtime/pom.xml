@@ -73,16 +73,6 @@
 	<build>
 		<sourceDirectory>editor/java</sourceDirectory>
 		<plugins>
-			<!-- Reference install and deploy plugin to use settings from parent POM. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-			</plugin>
-
 			<!-- Unpack generator JARs and native executables to project directory, to prepare for Ant build. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
