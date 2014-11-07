@@ -1,0 +1,13 @@
+module editor/Strj-dbg-runtime-lib-Outliner
+
+imports
+  
+  include/Strj-dbg-runtime-lib
+  lib/runtime/editor/outline-library
+  lib/runtime/editor/origins
+  editor/Strj-dbg-runtime-lib-Outliner.generated
+
+rules
+  
+  to-outline-label = fail
+  

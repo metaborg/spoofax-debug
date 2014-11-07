@@ -4,7 +4,7 @@
 
 	<target name="spoofaximp.default" depends="spoofaximp.default.ctree" />
 	<target name="spoofaximp.default.ctree" depends="check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.ctree,sdf2imp,refresh" />
-	<target name="spoofaximp.default.jar" depends="utils-files,check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.jar,  sdf2imp,refresh"/>
+	<target name="spoofaximp.default.jar" depends="utils-files,check-classpath,init,sdf2table,meta-sdf2table,ppgen,pppack,stratego.aster,java.jar,stratego.jar,  sdf2imp,refresh" />
 
 	<!-- Initialization -->
 	<!--<available file="${build}/org/strategoxt/imp/debug/stratego/transformer/strategies/Main.class" property="java.jar.enabled"/>-->
@@ -23,6 +23,9 @@
 	</condition>
 	<condition property="externaljarimport" value=":${externaljar}" else="">
 		<isset property="externaljar" />
+	</condition>
+	<condition property="externaljarimport2" value=":${externaljarx}" else="">
+		<isset property="externaljarx" />
 	</condition>
 	<condition property="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter">
 		<isset property="eclipse.running" />
@@ -43,7 +46,8 @@
 	<mkdir dir="${syntax}" />
 
 	<!-- <target name="sdf2imp" depends="sdf2table,sdf2imp.eclipse,sdf2imp.standalone" /> -->
-	<target name="sdf2imp" /> <!-- skip sdf2imp generation -->
+	<target name="sdf2imp" />
+	<!-- skip sdf2imp generation -->
 
 	<target name="sdf2imp.eclipse" if="eclipse.running" depends="sdf2rtg">
 		<java classname="org.strategoxt.imp.metatooling.building.AntDescriptorBuilder" failonerror="true">
@@ -53,11 +57,11 @@
 
 	<target name="refresh" if="eclipse.running">
 		<eclipse.convertPath fileSystemPath="${basedir}" property="projectdir" />
-		<eclipse.convertPath fileSystemPath="${syntax}" property="syntaxdir"/>
-		<eclipse.convertPath fileSystemPath="${lib}" property="libdir"/>
-		<eclipse.refreshLocal resource="${libdir}" depth="infinite"/>
-		<eclipse.refreshLocal resource="${syntaxdir}/${sdfmodule}.pp.generated" depth="infinite"/>
-		<eclipse.refreshLocal resource="${libdir}/editor-common.generated.str" depth="infinite"/>
+		<eclipse.convertPath fileSystemPath="${syntax}" property="syntaxdir" />
+		<eclipse.convertPath fileSystemPath="${lib}" property="libdir" />
+		<eclipse.refreshLocal resource="${libdir}" depth="infinite" />
+		<eclipse.refreshLocal resource="${syntaxdir}/${sdfmodule}.pp.generated" depth="infinite" />
+		<eclipse.refreshLocal resource="${libdir}/editor-common.generated.str" depth="infinite" />
 		<eclipse.refreshLocal resource="${projectdir}/build.generated.xml" depth="infinite" />
 		<eclipse.refreshLocal resource="${projectdir}/editor/${sdfmodule}-Builders.generated.esv" depth="infinite" />
 		<eclipse.refreshLocal resource="${projectdir}/editor/${sdfmodule}-Colorer.generated.esv" depth="infinite" />
@@ -91,7 +95,7 @@
 	<target name="init" if="eclipse.running">
 		<!-- refresh one file/dir in the project to trigger an Ant rebuild with the next build command -->
 		<java classname="org.strategoxt.imp.metatooling.building.AntForceRefreshScheduler" failonerror="false">
-		<arg value="${include}"/>
+			<arg value="${include}" />
 		</java>
 	</target>
 
@@ -153,21 +157,22 @@
 		</java>
 	</target>
 
-	<target name="utils-files"> <!-- only useful for builds outside of Eclipse -->
-		<mkdir dir="utils" />
-		<copy file="${eclipse.spoofaximp.jars}/make_permissive.jar" todir="utils" failonerror="false" />
-		<copy file="${eclipse.spoofaximp.jars}/sdf2imp.jar" todir="utils" failonerror="false" />
-		<copy file="${eclipse.spoofaximp.jars}/aster.jar" todir="utils" failonerror="false" />
-		<copy file="${eclipse.spoofaximp.strategojar}" todir="utils" failonerror="false" />
-	</target>
+  <target name="utils-files">
+    <mkdir dir="utils" />
+    <copy file="${eclipse.spoofaximp.jars}/make_permissive.jar" tofile="utils/make_permissive.jar" failonerror="false" />
+    <copy file="${eclipse.spoofaximp.jars}/sdf2imp.jar" tofile="utils/sdf2imp.jar" failonerror="false" />
+    <copy file="${eclipse.spoofaximp.jars}/aster.jar" tofile="utils/aster.jar" failonerror="false" />
+    <copy file="${eclipse.spoofaximp.jars}/StrategoMix.def" tofile="utils/StrategoMix.def" failonerror="false" />
+    <copy file="${eclipse.spoofaximp.strategojar}" tofile="utils/strategoxt.jar" failonerror="false" />
+  </target>
 
 	<target name="pack-sdf" unless="externaldef">
 		<dependset>
-        	<srcfileset dir="${basedir}">
-				<include name="**/*.sdf"/>
+			<srcfileset dir="${basedir}">
+				<include name="**/*.sdf" />
 			</srcfileset>
 			<srcfileset dir="${lib}">
-				<include name="**/*.def"/>
+				<include name="**/*.def" />
 			</srcfileset>
 			<targetfileset file="${include}/${sdfmodule}.def" />
 		</dependset>
@@ -265,10 +270,10 @@
 			<arg value="org.strategoxt.tools.main-ppgen" />
 			<arg value="-i" />
 			<arg value="${include}/${sdfmodule}.def" />
-                <arg value="-t"/>
-                <arg value="-b"/>
-                <arg value="-o"/>
-                <arg value="${include}/${sdfmodule}.generated.pp.af"/>
+			<arg value="-t" />
+			<arg value="-b" />
+			<arg value="-o" />
+			<arg value="${include}/${sdfmodule}.generated.pp.af" />
 		</java>
 		<java classname="run" failonerror="false">
 			<arg value="org.strategoxt.tools.main-pp-pp-table" />
@@ -313,7 +318,9 @@
 	<target name="stratego.aster">
 		<available file="${trans}/${strmodule}.rtree" property="aster-output.available" />
 		<pathconvert property="aster-input" setonempty="false" pathsep=" ">
-			<path><fileset dir="${basedir}" includes="*.astr" /></path>
+			<path>
+				<fileset dir="${basedir}" includes="*.astr" />
+			</path>
 		</pathconvert>
 		<dependset>
 			<srcfileset dir="${basedir}">
@@ -345,7 +352,7 @@
 	-->
 	<path id="plugin.dependencies.classpath">
 
-		<fileset dir="${eclipse.home}/plugins">
+		<fileset dir="${eclipse.home}/plugins" erroronmissingdir="false">
 			<include name="**/*.jar" />
 			<!--
 			<include name="org.eclipse.osgi_3.5.1.R35x_v20090827.jar" />
@@ -369,7 +376,7 @@
 		<delete>
 			<fileset dir="${build}" includes="${build.stratego.external.name}/**" />
 		</delete>
-		<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${java.jar.classpath}" classpathref="plugin.dependencies.classpath" srcdir="${src-gen}" includes="${build.stratego.external.name}/**" destdir="${build}" source="1.5" target="1.5" debug="on" />
+		<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${externaljarimport2}${java.jar.classpath}" classpathref="plugin.dependencies.classpath" srcdir="${src-gen}" includes="${build.stratego.external.name}/**" destdir="${build}" source="1.7" target="1.7" debug="on" />
 		<!-- <jar basedir="${build}" excludes="trans/**" update="true" destfile="${include}/${strmodule}-java.jar"/> -->
 		<jar basedir="${build}" includes="${build.stratego.external.name}/**" update="no" destfile="${include}/${strmodule}-java.jar" />
 	</target>
@@ -409,11 +416,11 @@
 			<param name="build.stratego.outputfile" value="${src-gen}/${build.stratego.library.location}/Main.java" />
 			<param name="build.stratego.extraargs" value="-la java-front ${java.jar.import}" />
 		</antcall>
-		<!--<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${java.jar.classpath}" srcdir="${src-gen}" includes="trans/**" destdir="${build}" source="1.5" target="1.5" debug="on"/>-->
+		<!--<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${java.jar.classpath}" srcdir="${src-gen}" includes="trans/**" destdir="${build}" source="1.7" target="1.7" debug="on"/>-->
 		<delete>
 			<fileset dir="${build}" includes="${build.stratego.library.location}/**" />
 		</delete>
-		<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${java.jar.classpath}" srcdir="${src-gen}" includes="${build.stratego.library.location}/**" destdir="${build}" source="1.5" target="1.5" debug="on" />
+		<javac classpath="utils/strategoxt.jar:${src-gen}${externaljarimport}${externaljarimport2}${java.jar.classpath}" srcdir="${src-gen}" includes="${build.stratego.library.location}/**" destdir="${build}" source="1.7" target="1.7" debug="on" />
 		<!-- copy imported terms -->
 		<copy todir="${build}/trans">
 			<fileset dir="${src-gen}/${build.stratego.library.location}" excludes="**/*.java" />
@@ -480,8 +487,10 @@
 	</target>
 
 	<target name="clean" description="clean up">
+    <delete dir=".cache" />
+		<delete dir="utils" />
 		<delete dir="${build}" />
-        <delete file="${include}/${sdfmodule}.def"/>
-        <delete dir="${src-gen}/trans"/>
+		<delete file="${include}/${sdfmodule}.def" />
+		<delete dir="${src-gen}/${build.stratego.library.location}" />
 	</target>
 </project>
