@@ -2,6 +2,7 @@ package org.strategoxt.imp.debug.stratego.runtime.strategies;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.StrategyCollector;
 
 /**
  * Called right before the rule returns a new term.
@@ -10,9 +11,14 @@ import org.strategoxt.lang.Context;
  * 
  */
 public class java_r_exit_0_4 extends DebugCallStrategy {
-	public static java_r_exit_0_4 instance = new java_r_exit_0_4();
+	protected static java_r_exit_0_4 instance = new java_r_exit_0_4();
 
 	public static int breakpointLinenumber = 20;
+	
+	@Override
+	public void registerImplementators(StrategyCollector collector) {
+		collector.registerStrategyImplementator("r_exit_0_4", instance);
+	}
 	
 	@Override
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename,	IStrategoTerm name, IStrategoTerm location, IStrategoTerm given) {

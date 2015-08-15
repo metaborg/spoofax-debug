@@ -4,9 +4,8 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.terms.StringTermReader;
 import org.spoofax.terms.TermFactory;
 import org.strategoxt.lang.Context;
-import org.strategoxt.stratego_lib.dr_rule_sets_hashtable_0_0;
 
-public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
+public abstract class DebugCallStrategy extends org.strategoxt.lang.RegisteringStrategy {
 
 	public static TermFactory factory = new TermFactory();
 	public static StringTermReader termReader = new StringTermReader(factory);
@@ -71,7 +70,7 @@ public abstract class DebugCallStrategy extends org.strategoxt.lang.Strategy {
 	public IStrategoTerm getDRKeySet()
 	{
 		IStrategoTerm term = null; // the current term, can this be null?
-		term = dr_rule_sets_hashtable_0_0.instance.invoke(context, term);
+		term = context.getStrategyCollector().getStrategyExecutor("dr_rule_sets_hashtable_0_0").invoke(context, term);
 		if (term == null)
 			return null;
 		term = context.invokePrimitive("SSL_hashtable_keys", null, org.strategoxt.lang.Term.NO_STRATEGIES, new IStrategoTerm[]{term});

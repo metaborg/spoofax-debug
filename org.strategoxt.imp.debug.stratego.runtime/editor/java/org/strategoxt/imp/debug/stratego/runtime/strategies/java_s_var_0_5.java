@@ -2,13 +2,19 @@ package org.strategoxt.imp.debug.stratego.runtime.strategies;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.lang.Context;
+import org.strategoxt.lang.StrategyCollector;
 
 public class java_s_var_0_5 extends DebugCallStrategy {
 
 	
-	public static java_s_var_0_5 instance = new java_s_var_0_5();
+	protected static java_s_var_0_5 instance = new java_s_var_0_5();
 
 	public static int breakpointLinenumber = 16;
+	
+	@Override
+	public void registerImplementators(StrategyCollector collector) {
+		collector.registerStrategyImplementator("s_var_0_5", instance);
+	}
 	
 	@Override
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm filename,	IStrategoTerm name, IStrategoTerm varname, IStrategoTerm location, IStrategoTerm given) {
