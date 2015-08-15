@@ -36,6 +36,9 @@
 	<condition property="metasdfmodule.available" value="1">
 		<available file="${syntax}/${metasdfmodule}.sdf" />
 	</condition>
+	
+	<taskdef classpath="${eclipse.spoofaximp.strategojar}" resource="org/strategoxt/antcontrib/strategoxt-antlib.xml"/>
+	<taskdef classpath="${eclipse.spoofaximp.strategojar}" resource="net/sf/antcontrib/antlib.xml"/>
 
 	<fail unless="build" message="Please use build.main.xml to build this project or configure the required properties manually" />
 	<mkdir dir="${build}" />
