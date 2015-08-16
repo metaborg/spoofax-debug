@@ -6,11 +6,13 @@ module gen-debug-var
 // Term ":=" Term -> Strategy {cons("Assign")}
 imports
   libstratego-lib
-  include/Test
+  Test
   assert
   location-util
   gen-debug-var-arg
   str-reader
+  
+imports libstrc
   
 rules
 	

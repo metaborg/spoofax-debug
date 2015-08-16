@@ -5,9 +5,10 @@ module gen-debug-entry
 
 imports
   libstratego-lib
-  include/Test
+  Test
   assert
   location-util
+ 
   
   
 // Rule sort is used in:

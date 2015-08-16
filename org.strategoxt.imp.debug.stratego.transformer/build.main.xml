@@ -41,6 +41,7 @@
                         --library
                         -I &quot;${trans}&quot;
                         -I &quot;${basedir}&quot;
+		                -la org.strategoxt.imp.debug.stratego.transformer.strategies;
                         -la stratego-lib -la stratego-sglr -la stratego-gpp -la stratego-xtc -la stratego-aterm -la strc" />
 
 	<!-- External .def and .jar locations -->

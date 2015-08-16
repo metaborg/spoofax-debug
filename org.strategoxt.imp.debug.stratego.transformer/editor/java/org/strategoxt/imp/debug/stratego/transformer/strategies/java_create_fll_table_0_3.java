@@ -11,11 +11,17 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.FileLineLengthTable;
 import org.strategoxt.imp.debug.stratego.transformer.strategies.ffl_util.LineLengthTable;
 import org.strategoxt.lang.Context;
-import org.strategoxt.lang.Strategy;
+import org.strategoxt.lang.RegisteringStrategy;
+import org.strategoxt.lang.StrategyCollector;
 
-public class java_create_fll_table_0_3 extends Strategy {
+public class java_create_fll_table_0_3 extends RegisteringStrategy {
 
-	public static java_create_fll_table_0_3 instance = new java_create_fll_table_0_3();
+	protected static java_create_fll_table_0_3 instance = new java_create_fll_table_0_3();
+	
+	@Override
+	public void registerImplementators(StrategyCollector collector) {
+		collector.registerStrategyImplementator("java_create_fll_table_0_3", instance);
+	}
 	
 	public IStrategoTerm invoke(Context context, IStrategoTerm current,	IStrategoTerm table_filename, IStrategoTerm base_dir, IStrategoTerm input_files)
 	{

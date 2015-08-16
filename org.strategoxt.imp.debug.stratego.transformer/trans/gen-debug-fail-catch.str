@@ -5,9 +5,11 @@ module gen-debug-fail-catch
 
 imports
   libstratego-lib
-  include/Test
+  Test
   assert
   gen-debug-info
+
+imports libstrc
   
 strategies
 	

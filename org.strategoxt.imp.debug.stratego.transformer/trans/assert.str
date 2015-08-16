@@ -1,7 +1,8 @@
 module assert
 
 // util module to assert that the current term matches what we expect
-imports include/Test
+imports Test
+imports libstrc // Includes stratego ast
   
 strategies
 	  

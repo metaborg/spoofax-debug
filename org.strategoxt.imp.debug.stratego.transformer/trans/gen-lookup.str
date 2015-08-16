@@ -1,10 +1,12 @@
 module gen-lookup
 
 imports
-	include/Test
+	Test
 	str-reader
 	assert
 	trans-str
+	
+imports libstrc
 	  
 // parse the given stratego file and create a lookup file containing all debug-calls and their linenumbers
 rules

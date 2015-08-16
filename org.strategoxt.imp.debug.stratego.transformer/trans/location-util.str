@@ -2,7 +2,9 @@ module location-util
 
 imports
   libstratego-lib
-  include/Test
+  Test
+  
+imports libstrc
   
 rules
 // ===============

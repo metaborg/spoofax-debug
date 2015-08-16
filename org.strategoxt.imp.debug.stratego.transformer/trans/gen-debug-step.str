@@ -4,9 +4,11 @@ module gen-debug-step
 
 imports
   libstratego-lib
-  include/Test
+  Test
   assert
   location-util
+  
+imports libstrc
 
 rules
 // add step statements in with/where blocks in rules and in strategies
