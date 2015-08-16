@@ -4,7 +4,7 @@ imports
   libstratego-lib
   libstratego-gpp
   libstratego-aterm
-  include/Strj-dbg-runtime-lib
+  Strj-dbg-runtime-lib
   lib/editor-common.generated
 
   strategodebuglib

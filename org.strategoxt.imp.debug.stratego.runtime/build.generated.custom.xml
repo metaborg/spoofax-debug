@@ -451,7 +451,7 @@
 				<arg line="${build.stratego.extraargs}" />
 				<arg line="${externaljarflags}" />
 				<arg line="${externaldefimport}" />
-				<arg line="-I &quot;${lib}&quot; --cache-dir &quot;${basedir}/.cache&quot;" />
+				<arg line="-I &quot;${include}&quot; --cache-dir &quot;${basedir}/.cache&quot;" />
 			</strjargs>
 		</strj>	
 		<delete file="${include}/${strmodule}.rtree" failonerror="false" />
