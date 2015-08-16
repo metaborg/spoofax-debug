@@ -1,4 +1,6 @@
 module external-calls
+
+imports strj_dbg_runtime_lib
 /*
 This module contains the external strategies
 */
