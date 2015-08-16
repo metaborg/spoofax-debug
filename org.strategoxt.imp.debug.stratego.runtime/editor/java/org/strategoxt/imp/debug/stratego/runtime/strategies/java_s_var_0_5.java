@@ -13,7 +13,7 @@ public class java_s_var_0_5 extends DebugCallStrategy {
 	
 	@Override
 	public void registerImplementators(StrategyCollector collector) {
-		collector.registerStrategyImplementator("s_var_0_5", instance);
+		collector.registerStrategyImplementator("java_s_var_0_5", instance);
 	}
 	
 	@Override

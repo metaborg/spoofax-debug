@@ -17,7 +17,7 @@ public class java_s_enter_0_4 extends DebugCallStrategy {
 	
 	@Override
 	public void registerImplementators(StrategyCollector collector) {
-		collector.registerStrategyImplementator("s_enter_0_4", instance);
+		collector.registerStrategyImplementator("java_s_enter_0_4", instance);
 	}
 	
 	@Override

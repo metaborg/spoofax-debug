@@ -23,7 +23,7 @@ public class java_s_step_0_4 extends DebugCallStrategy {
 	
 	@Override
 	public void registerImplementators(StrategyCollector collector) {
-		collector.registerStrategyImplementator("s_step_0_4", instance);
+		collector.registerStrategyImplementator("java_s_step_0_4", instance);
 	}
 	
 	@Override
