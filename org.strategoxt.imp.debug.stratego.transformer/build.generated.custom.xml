@@ -445,7 +445,6 @@
 		<mkdir dir="${src-gen}/${build.stratego.library.location}" />
 		<strj input="${trans}/${strmodule}.str" output="${build.stratego.outputfile}" package="${build.stratego.library.name}">
 			<strjargs>
-				<arg value="--library" />
 				<arg value="--clean" />
 				<arg line="${build.stratego.args}" />
 				<arg line="${build.stratego.extraargs}" />
