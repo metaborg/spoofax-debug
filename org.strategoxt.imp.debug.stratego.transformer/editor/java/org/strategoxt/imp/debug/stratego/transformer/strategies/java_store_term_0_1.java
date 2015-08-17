@@ -11,7 +11,7 @@ import org.strategoxt.lang.StrategyCollector;
 
 public class java_store_term_0_1 extends RegisteringStrategy {
 
-	protected static java_store_term_0_1 instance = new java_store_term_0_1();
+	public static java_store_term_0_1 instance = new java_store_term_0_1();
 	
 	private Map<String, IStrategoTerm> storedTerms = new HashMap<String, IStrategoTerm>();
 	

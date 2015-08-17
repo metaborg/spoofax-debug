@@ -7,7 +7,7 @@ import org.strategoxt.lang.StrategyCollector;
 
 public class java_store_term_0_0 extends RegisteringStrategy {
 
-	protected static java_store_term_0_0 instance = new java_store_term_0_0();
+	public static java_store_term_0_0 instance = new java_store_term_0_0();
 	
 	@Override
 	public void registerImplementators(StrategyCollector collector) {

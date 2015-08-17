@@ -243,7 +243,7 @@ public class DebugCompiler {
 		//System.out.println(outputFilename);
 		
 		//the transform a stratego program to a stratego program with debug information
-		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.stratego_transformer.stratego_transformer.init();
 		context.setStandAlone(true);
 		// TODO: set CustomIOAgent to forward error messages
 		
@@ -263,7 +263,7 @@ public class DebugCompiler {
 		long startTime = System.currentTimeMillis();
 		//term = org.strategoxt.imp.debug.stratego.transformer.trans.apply_debug_project_0_1.instance.invoke(context, input, termArguments);
 		try {
-			term = org.strategoxt.imp.debug.stratego.transformer.trans.Main.mainNoExit(context, transformer_args);
+			term = org.strategoxt.imp.debug.stratego.transformer.trans.stratego_transformer.stratego_transformer.mainNoExit(context, transformer_args);
 			// term will be null because of the StrategoExit Exception
 		} catch (StrategoExit e) {
 			if (e.getValue() != StrategoExit.SUCCESS)
@@ -359,7 +359,7 @@ public class DebugCompiler {
 	protected void generateBreakpointLookupTable(IPath tableFilenameString, Collection<IPath> strategoDebugFileNames)
 	{
 		// transform a stratego program to a stratego program with debug information
-		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.Main.init();
+		Context context = org.strategoxt.imp.debug.stratego.transformer.trans.stratego_transformer.stratego_transformer.init();
 		// TODO: Use CustomIOAgent to forward output
 		StrategoTermBuilder builder = new StrategoTermBuilder();
 		IStrategoList inputfilenames = builder.convertToIStrategoList(strategoDebugFileNames);
@@ -373,7 +373,7 @@ public class DebugCompiler {
 		TermFactory factory = new TermFactory();
 		IStrategoTerm tableFilename = factory.makeString(tableFilenameString.toOSString()); 
 		long startTime = System.currentTimeMillis();
-		IStrategoTerm output = org.strategoxt.imp.debug.stratego.transformer.trans.create_table_0_1.instance.invoke(context, current, tableFilename);
+		IStrategoTerm output = context.getStrategyCollector().getStrategyExecutor("create_table_0_1").invoke(context, current, tableFilename);
 		long finishTime = System.currentTimeMillis();
 		long duration = finishTime - startTime;
 		this.debugCompileProgress.setGenerateLookupTableDuration(duration);
@@ -418,14 +418,14 @@ public class DebugCompiler {
 		// Combine the basic_strj_args and the extra_I_args
 		String[] strj_args = StringUtil.concat(basic_strj_args, extra_args);
 		boolean succes = false;
-		Context c = org.strategoxt.strj.Main.init();
+		Context c = org.strategoxt.strj.strj.strj.init();
 		CustomIOAgent ioAgent = new CustomIOAgent();
 		c.setIOAgent(ioAgent);
 		long startTime = System.currentTimeMillis();
 		long finishTime = -1;
 		try {
 			// TODO: can we forward the error log messages?
-			org.strategoxt.strj.Main.mainNoExit(c, strj_args);
+			org.strategoxt.strj.strj.strj.mainNoExit(c, strj_args);
 			succes = true; // also succes, the program did not call the exit strategy
 		}
 		catch(StrategoExit e)
