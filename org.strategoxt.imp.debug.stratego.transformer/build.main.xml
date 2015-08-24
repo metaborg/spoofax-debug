@@ -38,8 +38,8 @@
 	<property name="build.sdf.imports" value="" />
 	<property name="build.stratego.args" value="
 		                -m main
-                        -I &quot;${trans}&quot;
-                        -I &quot;${basedir}&quot;
+                        
+                        
 		                -la org.strategoxt.imp.debug.stratego.transformer.strategies;
                         -la stratego-lib -la stratego-sglr -la stratego-gpp -la stratego-xtc -la stratego-aterm -la strc" />
 
