@@ -166,6 +166,7 @@
     <copy file="${eclipse.spoofaximp.jars}/sdf2imp.jar" tofile="utils/sdf2imp.jar" failonerror="false" />
     <copy file="${eclipse.spoofaximp.jars}/aster.jar" tofile="utils/aster.jar" failonerror="false" />
     <copy file="${eclipse.spoofaximp.jars}/StrategoMix.def" tofile="utils/StrategoMix.def" failonerror="false" />
+	<echo> Copy Stratego Jar ${eclipse.spoofaximp.strategojar}</echo>
     <copy file="${eclipse.spoofaximp.strategojar}" tofile="utils/strategoxt.jar" failonerror="false" />
   </target>
 
