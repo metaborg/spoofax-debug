@@ -15,9 +15,31 @@
 	</parent>
 
 	<build>
-		<sourceDirectory>src/java</sourceDirectory>
-		<testSourceDirectory>test/java</testSourceDirectory>
+		<sourceDirectory>src/files</sourceDirectory>
+		<testSourceDirectory>src/files</testSourceDirectory>
+		
+		<!-- Moritz: Disabled compilation of this project, because there are no scripts to recompile
+			the Stratego sources in this project. So adaption to separate compilation scheme is
+			not possible -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<version>0.20.0</version>
+					<executions>
+					     <execution>
+					       <id>default-compile</id>
+					       <phase>none</phase>
+					     </execution>    
+					</executions> 
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		
 	</build>
+
+		
 
 	<developers>
 	</developers>
